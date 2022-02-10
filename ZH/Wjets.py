@@ -49,7 +49,7 @@ doJME  = args.doSystematics.lower() == 'true' or args.doSystematics.lower() == '
 #cats = ['eee','eem','eet', 'mmm', 'mme', 'mmt']
 cats=[ 'eeee', 'eemm', 'mmee', 'mmmm', 'eee', 'eem', 'mme', 'mmm', 'ee', 'mm']
 catss=[ 'enu', 'mnu']
-catss=[ 'mnu']
+#catss=[ 'mnu']
 cats=catss
 
 sysT = ["Central"]
@@ -263,7 +263,7 @@ for count, e in enumerate(inTree) :
     pairList=[]
    
     
-    goodElectronList = tauFun.makeGoodElectronList(e)
+    goodElectronList = tauFun.makeGoodElectronListWjets(e)
     goodMuonList = tauFun.makeGoodMuonListWjets(e)
     goodElectronList, goodMuonList = tauFun.eliminateCloseLeptons(e, goodElectronList, goodMuonList)
     goodElectronListExtraLepton=[]
@@ -277,18 +277,19 @@ for count, e in enumerate(inTree) :
         lepMode = cat
         if lepMode == 'enu' :
 
+            if e.nElectron != 1 : continue
             if len(goodElectronList) < 1 :continue
 	    cutCounter[cat].count('GoodLeptons')
+            if e.nMuon > 0:
+		for i in range(e.nMuon):
+		    if e.Muon_pt[i]>10  :  continue
+	    cutCounter[cat].count('GoodLeptons')
 	    if MC : cutCounterGenWeight[cat].countGenWeight('GoodLeptons', e.genWeight)
+
+            lepList=goodElectronList
             #pairlist is the TLorentz
-            pairList, lepList = tauFun.findW(goodElectronList,[], e)
-            if len(lepList) <1 : continue
-            #goodElectronListExtraLepton = tauFun.makeGoodElectronListExtraLepton(e,lepList)
-            goodMuonListExtraLepton = goodMuonList
-            #for i in lepList : 
-            #    if i in goodMuonListExtraLepton : goodMuonListExtraLepton.remove(i)
 	    cutCounter[cat].count('LeptonPair')
-	    if MC : cutCounterGenWeight[cat].countGenWeight('LeptonPair', e.genWeight)
+	    if  MC :   cutCounterGenWeight[cat].countGenWeight('LeptonPair', e.genWeight)
             
         
         if lepMode == 'mnu' :
@@ -355,6 +356,7 @@ for count, e in enumerate(inTree) :
 	if not MC : isMC = False
 
         if len(lepList)<1 : continue
+        #print 'will fill now', cat,Lep,lepList, tauList, photonList
         outTuple.FillW(e, cat,Lep,lepList, tauList, photonList, isMC,era,doJME, proc)
 
 	if maxPrint > 0 :

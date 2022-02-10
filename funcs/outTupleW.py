@@ -151,6 +151,9 @@ class outTupleW() :
         
         self.nGoodElectron    = array('l',[0])
         self.nGoodMuon        = array('l',[0])
+        self.Flag_hfNoisyHitsFilter        = array('f',[0])
+        self.Electron_convVeto        = array('f',[0])
+        self.Electron_lostHits        = array('l',[0])
 
         self.L1PreFiringWeight_Nom        = array('f',[0])
         self.L1PreFiringWeight_Up        = array('f',[0])
@@ -163,6 +166,7 @@ class outTupleW() :
         self.m_uncor_1        = array('f',[0])
 
         self.Electron_mvaFall17V2noIso_WP90_1 = array('f',[0])
+        self.Electron_mvaFall17V2Iso_WP90_1 = array('f',[0])
         self.Electron_cutBased_1 = array('f',[0])
         self.gen_match_1 = array('l',[0])
 
@@ -221,51 +225,53 @@ class outTupleW() :
 
 	self.PuppiMET_pt = array('f',[0])
 	self.PuppiMET_phi = array('f',[0])
-	self.PuppiMET_ptJESUp = array('f',[0])
-	self.PuppiMET_ptJESDown = array('f',[0])
-	self.PuppiMET_ptJERUp = array('f',[0])
-	self.PuppiMET_ptJERDown = array('f',[0])
-	self.PuppiMET_ptUnclusteredUp = array('f',[0])
-	self.PuppiMET_ptUnclusteredDown = array('f',[0])
 
-	self.PuppiMET_phiJESUp = array('f',[0])
-	self.PuppiMET_phiJESDown = array('f',[0])
-	self.PuppiMET_phiJERUp = array('f',[0])
-	self.PuppiMET_phiJERDown = array('f',[0])
-	self.PuppiMET_phiUnclusteredUp = array('f',[0])
-	self.PuppiMET_phiUnclusteredDown = array('f',[0])
+        if doSyst :
+	    self.PuppiMET_ptJESUp = array('f',[0])
+	    self.PuppiMET_ptJESDown = array('f',[0])
+	    self.PuppiMET_ptJERUp = array('f',[0])
+	    self.PuppiMET_ptJERDown = array('f',[0])
+	    self.PuppiMET_ptUnclusteredUp = array('f',[0])
+	    self.PuppiMET_ptUnclusteredDown = array('f',[0])
 
-        #does not exist in nAOV9, has to make it from DeltaX,Y
-	self.MET_ptUnclusteredUp = array('f',[0])
-	self.MET_ptUnclusteredDown = array('f',[0])
-	self.MET_phiUnclusteredUp = array('f',[0])
-	self.MET_phiUnclusteredDown = array('f',[0])
+	    self.PuppiMET_phiJESUp = array('f',[0])
+	    self.PuppiMET_phiJESDown = array('f',[0])
+	    self.PuppiMET_phiJERUp = array('f',[0])
+	    self.PuppiMET_phiJERDown = array('f',[0])
+	    self.PuppiMET_phiUnclusteredUp = array('f',[0])
+	    self.PuppiMET_phiUnclusteredDown = array('f',[0])
 
-	self.MET_ptJESUp = array('f',[0])
-	self.MET_ptJESDown = array('f',[0])
-	self.MET_ptJERUp = array('f',[0])
-	self.MET_ptJERDown = array('f',[0])
+	    #does not exist in nAOV9, has to make it from DeltaX,Y
+	    self.MET_ptUnclusteredUp = array('f',[0])
+	    self.MET_ptUnclusteredDown = array('f',[0])
+	    self.MET_phiUnclusteredUp = array('f',[0])
+	    self.MET_phiUnclusteredDown = array('f',[0])
 
-	self.MET_phiJESUp = array('f',[0])
-	self.MET_phiJESDown = array('f',[0])
-	self.MET_phiJERUp = array('f',[0])
-	self.MET_phiJERDown = array('f',[0])
+	    self.MET_ptJESUp = array('f',[0])
+	    self.MET_ptJESDown = array('f',[0])
+	    self.MET_ptJERUp = array('f',[0])
+	    self.MET_ptJERDown = array('f',[0])
 
-	self.MET_T1_pt = array('f',[0])
-	self.MET_T1_phi = array('f',[0])
-	self.MET_T1_ptJESUp = array('f',[0])
-	self.MET_T1_phiJESUp = array('f',[0])
-	self.MET_T1_ptJESDown = array('f',[0])
-	self.MET_T1_phiJESDown = array('f',[0])
-	self.MET_T1_ptJERUp = array('f',[0])
-	self.MET_T1_phiJERUp = array('f',[0])
-	self.MET_T1_ptJERDown = array('f',[0])
-	self.MET_T1_phiJERDown = array('f',[0])
+	    self.MET_phiJESUp = array('f',[0])
+	    self.MET_phiJESDown = array('f',[0])
+	    self.MET_phiJERUp = array('f',[0])
+	    self.MET_phiJERDown = array('f',[0])
 
-	self.MET_T1_ptUnclusteredUp = array('f',[0])
-	self.MET_T1_ptUnclusteredDown = array('f',[0])
-	self.MET_T1_phiUnclusteredUp = array('f',[0])
-	self.MET_T1_phiUnclusteredDown = array('f',[0])
+	    self.MET_T1_pt = array('f',[0])
+	    self.MET_T1_phi = array('f',[0])
+	    self.MET_T1_ptJESUp = array('f',[0])
+	    self.MET_T1_phiJESUp = array('f',[0])
+	    self.MET_T1_ptJESDown = array('f',[0])
+	    self.MET_T1_phiJESDown = array('f',[0])
+	    self.MET_T1_ptJERUp = array('f',[0])
+	    self.MET_T1_phiJERUp = array('f',[0])
+	    self.MET_T1_ptJERDown = array('f',[0])
+	    self.MET_T1_phiJERDown = array('f',[0])
+
+	    self.MET_T1_ptUnclusteredUp = array('f',[0])
+	    self.MET_T1_ptUnclusteredDown = array('f',[0])
+	    self.MET_T1_phiUnclusteredUp = array('f',[0])
+	    self.MET_T1_phiUnclusteredDown = array('f',[0])
 
 	self.METWmass = array('f',[0])
 	self.boson_pt = array('f',[0])
@@ -288,138 +294,139 @@ class outTupleW() :
 	self.u_par_PuppiMET = array('f',[-99])
 	self.u_perp_PuppiMET = array('f',[-99])
 
-        #systematics
-	self.METWmassUnclusteredUp = array('f',[0])
-	self.boson_ptUnclusteredUp = array('f',[0])
-	self.boson_phiUnclusteredUp = array('f',[0])
-	self.Puppiboson_ptUnclusteredUp = array('f',[0])
-	self.Puppiboson_phiUnclusteredUp = array('f',[0])
-	self.METWTmassUnclusteredUp = array('f',[0])
-	self.PuppiMETWmassUnclusteredUp = array('f',[0])
-	self.PuppiMETWTmassUnclusteredUp = array('f',[0])
-	self.METmTmassUnclusteredUp = array('f',[0])
-	self.PuppiMETmTmassUnclusteredUp = array('f',[0])
+        if doSyst :
+	    #systematics
+	    self.METWmassUnclusteredUp = array('f',[0])
+	    self.boson_ptUnclusteredUp = array('f',[0])
+	    self.boson_phiUnclusteredUp = array('f',[0])
+	    self.Puppiboson_ptUnclusteredUp = array('f',[0])
+	    self.Puppiboson_phiUnclusteredUp = array('f',[0])
+	    self.METWTmassUnclusteredUp = array('f',[0])
+	    self.PuppiMETWmassUnclusteredUp = array('f',[0])
+	    self.PuppiMETWTmassUnclusteredUp = array('f',[0])
+	    self.METmTmassUnclusteredUp = array('f',[0])
+	    self.PuppiMETmTmassUnclusteredUp = array('f',[0])
 
-	self.DphiWMETUnclusteredUp = array('f',[0])
-	self.DphiWPuppiMETUnclusteredUp = array('f',[0])
-	self.DphilMETUnclusteredUp = array('f',[0])
-	self.DphilPuppiMETUnclusteredUp = array('f',[0])
+	    self.DphiWMETUnclusteredUp = array('f',[0])
+	    self.DphiWPuppiMETUnclusteredUp = array('f',[0])
+	    self.DphilMETUnclusteredUp = array('f',[0])
+	    self.DphilPuppiMETUnclusteredUp = array('f',[0])
 
-	self.u_par_METUnclusteredUp = array('f',[-99])
-	self.u_perp_METUnclusteredUp = array('f',[-99])
-	self.u_par_PuppiMETUnclusteredUp = array('f',[-99])
-	self.u_perp_PuppiMETUnclusteredUp = array('f',[-99])
-
-
-	self.METWmassUnclusteredDown = array('f',[0])
-	self.boson_ptUnclusteredDown = array('f',[0])
-	self.boson_phiUnclusteredDown = array('f',[0])
-	self.Puppiboson_ptUnclusteredDown = array('f',[0])
-	self.Puppiboson_phiUnclusteredDown = array('f',[0])
-	self.METWTmassUnclusteredDown = array('f',[0])
-	self.PuppiMETWmassUnclusteredDown = array('f',[0])
-	self.PuppiMETWTmassUnclusteredDown = array('f',[0])
-	self.METmTmassUnclusteredDown = array('f',[0])
-	self.PuppiMETmTmassUnclusteredDown = array('f',[0])
-
-	self.DphiWMETUnclusteredDown = array('f',[0])
-	self.DphiWPuppiMETUnclusteredDown = array('f',[0])
-	self.DphilMETUnclusteredDown = array('f',[0])
-	self.DphilPuppiMETUnclusteredDown = array('f',[0])
-
-	self.u_par_METUnclusteredDown = array('f',[-99])
-	self.u_perp_METUnclusteredDown = array('f',[-99])
-	self.u_par_PuppiMETUnclusteredDown = array('f',[-99])
-	self.u_perp_PuppiMETUnclusteredDown = array('f',[-99])
-
-        #JES
-	self.METWmassJESUp = array('f',[0])
-	self.boson_ptJESUp = array('f',[0])
-	self.boson_phiJESUp = array('f',[0])
-	self.Puppiboson_ptJESUp = array('f',[0])
-	self.Puppiboson_phiJESUp = array('f',[0])
-	self.METWTmassJESUp = array('f',[0])
-	self.PuppiMETWmassJESUp = array('f',[0])
-	self.PuppiMETWTmassJESUp = array('f',[0])
-	self.METmTmassJESUp = array('f',[0])
-	self.PuppiMETmTmassJESUp = array('f',[0])
-
-	self.DphiWMETJESUp = array('f',[0])
-	self.DphiWPuppiMETJESUp = array('f',[0])
-	self.DphilMETJESUp = array('f',[0])
-	self.DphilPuppiMETJESUp = array('f',[0])
-
-	self.u_par_METJESUp = array('f',[-99])
-	self.u_perp_METJESUp = array('f',[-99])
-	self.u_par_PuppiMETJESUp = array('f',[-99])
-	self.u_perp_PuppiMETJESUp = array('f',[-99])
+	    self.u_par_METUnclusteredUp = array('f',[-99])
+	    self.u_perp_METUnclusteredUp = array('f',[-99])
+	    self.u_par_PuppiMETUnclusteredUp = array('f',[-99])
+	    self.u_perp_PuppiMETUnclusteredUp = array('f',[-99])
 
 
-	self.METWmassJESDown = array('f',[0])
-	self.boson_ptJESDown = array('f',[0])
-	self.boson_phiJESDown = array('f',[0])
-	self.Puppiboson_ptJESDown = array('f',[0])
-	self.Puppiboson_phiJESDown = array('f',[0])
-	self.METWTmassJESDown = array('f',[0])
-	self.PuppiMETWmassJESDown = array('f',[0])
-	self.PuppiMETWTmassJESDown = array('f',[0])
-	self.METmTmassJESDown = array('f',[0])
-	self.PuppiMETmTmassJESDown = array('f',[0])
+	    self.METWmassUnclusteredDown = array('f',[0])
+	    self.boson_ptUnclusteredDown = array('f',[0])
+	    self.boson_phiUnclusteredDown = array('f',[0])
+	    self.Puppiboson_ptUnclusteredDown = array('f',[0])
+	    self.Puppiboson_phiUnclusteredDown = array('f',[0])
+	    self.METWTmassUnclusteredDown = array('f',[0])
+	    self.PuppiMETWmassUnclusteredDown = array('f',[0])
+	    self.PuppiMETWTmassUnclusteredDown = array('f',[0])
+	    self.METmTmassUnclusteredDown = array('f',[0])
+	    self.PuppiMETmTmassUnclusteredDown = array('f',[0])
 
-	self.DphiWMETJESDown = array('f',[0])
-	self.DphiWPuppiMETJESDown = array('f',[0])
-	self.DphilMETJESDown = array('f',[0])
-	self.DphilPuppiMETJESDown = array('f',[0])
+	    self.DphiWMETUnclusteredDown = array('f',[0])
+	    self.DphiWPuppiMETUnclusteredDown = array('f',[0])
+	    self.DphilMETUnclusteredDown = array('f',[0])
+	    self.DphilPuppiMETUnclusteredDown = array('f',[0])
 
-	self.u_par_METJESDown = array('f',[-99])
-	self.u_perp_METJESDown = array('f',[-99])
-	self.u_par_PuppiMETJESDown = array('f',[-99])
-	self.u_perp_PuppiMETJESDown = array('f',[-99])
+	    self.u_par_METUnclusteredDown = array('f',[-99])
+	    self.u_perp_METUnclusteredDown = array('f',[-99])
+	    self.u_par_PuppiMETUnclusteredDown = array('f',[-99])
+	    self.u_perp_PuppiMETUnclusteredDown = array('f',[-99])
+
+            #JES
+	    self.METWmassJESUp = array('f',[0])
+	    self.boson_ptJESUp = array('f',[0])
+	    self.boson_phiJESUp = array('f',[0])
+	    self.Puppiboson_ptJESUp = array('f',[0])
+	    self.Puppiboson_phiJESUp = array('f',[0])
+	    self.METWTmassJESUp = array('f',[0])
+	    self.PuppiMETWmassJESUp = array('f',[0])
+	    self.PuppiMETWTmassJESUp = array('f',[0])
+	    self.METmTmassJESUp = array('f',[0])
+	    self.PuppiMETmTmassJESUp = array('f',[0])
+
+	    self.DphiWMETJESUp = array('f',[0])
+	    self.DphiWPuppiMETJESUp = array('f',[0])
+	    self.DphilMETJESUp = array('f',[0])
+	    self.DphilPuppiMETJESUp = array('f',[0])
+
+	    self.u_par_METJESUp = array('f',[-99])
+	    self.u_perp_METJESUp = array('f',[-99])
+	    self.u_par_PuppiMETJESUp = array('f',[-99])
+	    self.u_perp_PuppiMETJESUp = array('f',[-99])
 
 
-        #JER
-	self.METWmassJERUp = array('f',[0])
-	self.boson_ptJERUp = array('f',[0])
-	self.boson_phiJERUp = array('f',[0])
-	self.Puppiboson_ptJERUp = array('f',[0])
-	self.Puppiboson_phiJERUp = array('f',[0])
-	self.METWTmassJERUp = array('f',[0])
-	self.PuppiMETWmassJERUp = array('f',[0])
-	self.PuppiMETWTmassJERUp = array('f',[0])
-	self.METmTmassJERUp = array('f',[0])
-	self.PuppiMETmTmassJERUp = array('f',[0])
+	    self.METWmassJESDown = array('f',[0])
+	    self.boson_ptJESDown = array('f',[0])
+	    self.boson_phiJESDown = array('f',[0])
+	    self.Puppiboson_ptJESDown = array('f',[0])
+	    self.Puppiboson_phiJESDown = array('f',[0])
+	    self.METWTmassJESDown = array('f',[0])
+	    self.PuppiMETWmassJESDown = array('f',[0])
+	    self.PuppiMETWTmassJESDown = array('f',[0])
+	    self.METmTmassJESDown = array('f',[0])
+	    self.PuppiMETmTmassJESDown = array('f',[0])
 
-	self.DphiWMETJERUp = array('f',[0])
-	self.DphiWPuppiMETJERUp = array('f',[0])
-	self.DphilMETJERUp = array('f',[0])
-	self.DphilPuppiMETJERUp = array('f',[0])
+	    self.DphiWMETJESDown = array('f',[0])
+	    self.DphiWPuppiMETJESDown = array('f',[0])
+	    self.DphilMETJESDown = array('f',[0])
+	    self.DphilPuppiMETJESDown = array('f',[0])
 
-	self.u_par_METJERUp = array('f',[-99])
-	self.u_perp_METJERUp = array('f',[-99])
-	self.u_par_PuppiMETJERUp = array('f',[-99])
-	self.u_perp_PuppiMETJERUp = array('f',[-99])
+	    self.u_par_METJESDown = array('f',[-99])
+	    self.u_perp_METJESDown = array('f',[-99])
+	    self.u_par_PuppiMETJESDown = array('f',[-99])
+	    self.u_perp_PuppiMETJESDown = array('f',[-99])
 
 
-	self.METWmassJERDown = array('f',[0])
-	self.boson_ptJERDown = array('f',[0])
-	self.boson_phiJERDown = array('f',[0])
-	self.Puppiboson_ptJERDown = array('f',[0])
-	self.Puppiboson_phiJERDown = array('f',[0])
-	self.METWTmassJERDown = array('f',[0])
-	self.PuppiMETWmassJERDown = array('f',[0])
-	self.PuppiMETWTmassJERDown = array('f',[0])
-	self.METmTmassJERDown = array('f',[0])
-	self.PuppiMETmTmassJERDown = array('f',[0])
+	    #JER
+	    self.METWmassJERUp = array('f',[0])
+	    self.boson_ptJERUp = array('f',[0])
+	    self.boson_phiJERUp = array('f',[0])
+	    self.Puppiboson_ptJERUp = array('f',[0])
+	    self.Puppiboson_phiJERUp = array('f',[0])
+	    self.METWTmassJERUp = array('f',[0])
+	    self.PuppiMETWmassJERUp = array('f',[0])
+	    self.PuppiMETWTmassJERUp = array('f',[0])
+	    self.METmTmassJERUp = array('f',[0])
+	    self.PuppiMETmTmassJERUp = array('f',[0])
 
-	self.DphiWMETJERDown = array('f',[0])
-	self.DphiWPuppiMETJERDown = array('f',[0])
-	self.DphilMETJERDown = array('f',[0])
-	self.DphilPuppiMETJERDown = array('f',[0])
+	    self.DphiWMETJERUp = array('f',[0])
+	    self.DphiWPuppiMETJERUp = array('f',[0])
+	    self.DphilMETJERUp = array('f',[0])
+	    self.DphilPuppiMETJERUp = array('f',[0])
 
-	self.u_par_METJERDown = array('f',[-99])
-	self.u_perp_METJERDown = array('f',[-99])
-	self.u_par_PuppiMETJERDown = array('f',[-99])
-	self.u_perp_PuppiMETJERDown = array('f',[-99])
+	    self.u_par_METJERUp = array('f',[-99])
+	    self.u_perp_METJERUp = array('f',[-99])
+	    self.u_par_PuppiMETJERUp = array('f',[-99])
+	    self.u_perp_PuppiMETJERUp = array('f',[-99])
+
+
+	    self.METWmassJERDown = array('f',[0])
+	    self.boson_ptJERDown = array('f',[0])
+	    self.boson_phiJERDown = array('f',[0])
+	    self.Puppiboson_ptJERDown = array('f',[0])
+	    self.Puppiboson_phiJERDown = array('f',[0])
+	    self.METWTmassJERDown = array('f',[0])
+	    self.PuppiMETWmassJERDown = array('f',[0])
+	    self.PuppiMETWTmassJERDown = array('f',[0])
+	    self.METmTmassJERDown = array('f',[0])
+	    self.PuppiMETmTmassJERDown = array('f',[0])
+
+	    self.DphiWMETJERDown = array('f',[0])
+	    self.DphiWPuppiMETJERDown = array('f',[0])
+	    self.DphilMETJERDown = array('f',[0])
+	    self.DphilPuppiMETJERDown = array('f',[0])
+
+	    self.u_par_METJERDown = array('f',[-99])
+	    self.u_perp_METJERDown = array('f',[-99])
+	    self.u_par_PuppiMETJERDown = array('f',[-99])
+	    self.u_perp_PuppiMETJERDown = array('f',[-99])
 
 
 
@@ -449,6 +456,8 @@ class outTupleW() :
       
         self.t.Branch('run',              self.run,               'run/l' )
         self.t.Branch('nElectron',              self.nElectron,               'nElectron/l' )
+        self.t.Branch('Electron_convVeto',              self.Electron_convVeto,               'Electron_convVeto/F' )
+        self.t.Branch('Electron_lostHits',              self.Electron_lostHits,               'Electron_lostHits/I' )
         self.t.Branch('nMuon',              self.nMuon,               'nMuon/l' )
         self.t.Branch('nTau',              self.nTau,               'nTau/l' )
         self.t.Branch('hasTau',              self.hasTau,               'hasTau/l' )
@@ -482,6 +491,7 @@ class outTupleW() :
         
         self.t.Branch('nGoodElectron',    self.nGoodElectron,     'nGoodElectron/I' )
         self.t.Branch('nGoodMuon',        self.nGoodMuon,         'nGoodMuon/I' )
+        self.t.Branch('Flag_hfNoisyHitsFilter',        self.Flag_hfNoisyHitsFilter,         'Flag_hfNoisyHitsFilter/F' )
         
         self.t.Branch('GenPart_statusFlags_1',     self.GenPart_statusFlags_1,     'GenPart_statusFlags_1/I')
         self.t.Branch('GenPart_status_1',     self.GenPart_status_1,     'GenPart_status_1/I')
@@ -552,130 +562,131 @@ class outTupleW() :
 	self.t.Branch('DphilPuppiMET', self.DphilPuppiMET, 'DphilPuppiMET/F')
 
 
-	self.t.Branch('u_par_METUnclusteredUp', self.u_par_METUnclusteredUp, 'u_par_METUnclusteredUp/F')
-	self.t.Branch('u_perp_METUnclusteredUp', self.u_perp_METUnclusteredUp, 'u_perp_METUnclusteredUp/F')
-	self.t.Branch('u_par_PuppiMETUnclusteredUp', self.u_par_PuppiMETUnclusteredUp, 'u_par_PuppiMETUnclusteredUp/F')
-	self.t.Branch('u_perp_PuppiMETUnclusteredUp', self.u_perp_PuppiMETUnclusteredUp, 'u_perp_PuppiMETUnclusteredUp/F')
+        if doSyst :
+	    self.t.Branch('u_par_METUnclusteredUp', self.u_par_METUnclusteredUp, 'u_par_METUnclusteredUp/F')
+	    self.t.Branch('u_perp_METUnclusteredUp', self.u_perp_METUnclusteredUp, 'u_perp_METUnclusteredUp/F')
+	    self.t.Branch('u_par_PuppiMETUnclusteredUp', self.u_par_PuppiMETUnclusteredUp, 'u_par_PuppiMETUnclusteredUp/F')
+	    self.t.Branch('u_perp_PuppiMETUnclusteredUp', self.u_perp_PuppiMETUnclusteredUp, 'u_perp_PuppiMETUnclusteredUp/F')
 
-	self.t.Branch('boson_ptUnclusteredUp/F', self.boson_ptUnclusteredUp, 'boson_ptUnclusteredUp/F')
-	self.t.Branch('boson_phiUnclusteredUp/F', self.boson_phiUnclusteredUp, 'boson_phiUnclusteredUp/F')
-	self.t.Branch('Puppiboson_ptUnclusteredUp/F', self.Puppiboson_ptUnclusteredUp, 'Puppiboson_ptUnclusteredUp/F')
-	self.t.Branch('Puppiboson_phiUnclusteredUp/F', self.Puppiboson_phiUnclusteredUp, 'Puppiboson_phiUnclusteredUp/F')
-	self.t.Branch('METWmassUnclusteredUp/F', self.METWmassUnclusteredUp, 'METWmassUnclusteredUp/F')
-	self.t.Branch('METWTmassUnclusteredUp/F', self.METWTmassUnclusteredUp, 'METWTmassUnclusteredUp/F')
-	self.t.Branch('METmTmassUnclusteredUp/F', self.METmTmassUnclusteredUp, 'METmTmassUnclusteredUp/F')
-	self.t.Branch('PuppiMETWmassUnclusteredUp/F', self.PuppiMETWmassUnclusteredUp, 'PuppiMETWmassUnclusteredUp/F')
-	self.t.Branch('PuppiMETWTmassUnclusteredUp/F', self.PuppiMETWTmassUnclusteredUp, 'PuppiMETWTmassUnclusteredUp/F')
-	self.t.Branch('PuppiMETmTmassUnclusteredUp/F', self.PuppiMETmTmassUnclusteredUp, 'PuppiMETmTmassUnclusteredUp/F')
-	self.t.Branch('DphiWMETUnclusteredUp/F', self.DphiWMETUnclusteredUp, 'DphiWMETUnclusteredUp/F')
-	self.t.Branch('DphiWPuppiMETUnclusteredUp/F', self.DphiWPuppiMETUnclusteredUp, 'DphiWPuppiMETUnclusteredUp/F')
-	self.t.Branch('DphilMETUnclusteredUp/F', self.DphilMETUnclusteredUp, 'DphilMETUnclusteredUp/F')
-	self.t.Branch('DphilPuppiMETUnclusteredUp/F', self.DphilPuppiMETUnclusteredUp, 'DphilPuppiMETUnclusteredUp/F')
-
-
-	self.t.Branch('u_par_METUnclusteredDown', self.u_par_METUnclusteredDown, 'u_par_METUnclusteredDown/F')
-	self.t.Branch('u_perp_METUnclusteredDown', self.u_perp_METUnclusteredDown, 'u_perp_METUnclusteredDown/F')
-	self.t.Branch('u_par_PuppiMETUnclusteredDown', self.u_par_PuppiMETUnclusteredDown, 'u_par_PuppiMETUnclusteredDown/F')
-	self.t.Branch('u_perp_PuppiMETUnclusteredDown', self.u_perp_PuppiMETUnclusteredDown, 'u_perp_PuppiMETUnclusteredDown/F')
-
-	self.t.Branch('boson_ptUnclusteredDown/F', self.boson_ptUnclusteredDown, 'boson_ptUnclusteredDown/F')
-	self.t.Branch('boson_phiUnclusteredDown/F', self.boson_phiUnclusteredDown, 'boson_phiUnclusteredDown/F')
-	self.t.Branch('Puppiboson_ptUnclusteredDown/F', self.Puppiboson_ptUnclusteredDown, 'Puppiboson_ptUnclusteredDown/F')
-	self.t.Branch('Puppiboson_phiUnclusteredDown/F', self.Puppiboson_phiUnclusteredDown, 'Puppiboson_phiUnclusteredDown/F')
-	self.t.Branch('METWmassUnclusteredDown/F', self.METWmassUnclusteredDown, 'METWmassUnclusteredDown/F')
-	self.t.Branch('METWTmassUnclusteredDown/F', self.METWTmassUnclusteredDown, 'METWTmassUnclusteredDown/F')
-	self.t.Branch('METmTmassUnclusteredDown/F', self.METmTmassUnclusteredDown, 'METmTmassUnclusteredDown/F')
-	self.t.Branch('PuppiMETWmassUnclusteredDown/F', self.PuppiMETWmassUnclusteredDown, 'PuppiMETWmassUnclusteredDown/F')
-	self.t.Branch('PuppiMETWTmassUnclusteredDown/F', self.PuppiMETWTmassUnclusteredDown, 'PuppiMETWTmassUnclusteredDown/F')
-	self.t.Branch('PuppiMETmTmassUnclusteredDown/F', self.PuppiMETmTmassUnclusteredDown, 'PuppiMETmTmassUnclusteredDown/F')
-	self.t.Branch('DphiWMETUnclusteredDown/F', self.DphiWMETUnclusteredDown, 'DphiWMETUnclusteredDown/F')
-	self.t.Branch('DphiWPuppiMETUnclusteredDown/F', self.DphiWPuppiMETUnclusteredDown, 'DphiWPuppiMETUnclusteredDown/F')
-	self.t.Branch('DphilMETUnclusteredDown/F', self.DphilMETUnclusteredDown, 'DphilMETUnclusteredDown/F')
-	self.t.Branch('DphilPuppiMETUnclusteredDown/F', self.DphilPuppiMETUnclusteredDown, 'DphilPuppiMETUnclusteredDown/F')
+	    self.t.Branch('boson_ptUnclusteredUp/F', self.boson_ptUnclusteredUp, 'boson_ptUnclusteredUp/F')
+	    self.t.Branch('boson_phiUnclusteredUp/F', self.boson_phiUnclusteredUp, 'boson_phiUnclusteredUp/F')
+	    self.t.Branch('Puppiboson_ptUnclusteredUp/F', self.Puppiboson_ptUnclusteredUp, 'Puppiboson_ptUnclusteredUp/F')
+	    self.t.Branch('Puppiboson_phiUnclusteredUp/F', self.Puppiboson_phiUnclusteredUp, 'Puppiboson_phiUnclusteredUp/F')
+	    self.t.Branch('METWmassUnclusteredUp/F', self.METWmassUnclusteredUp, 'METWmassUnclusteredUp/F')
+	    self.t.Branch('METWTmassUnclusteredUp/F', self.METWTmassUnclusteredUp, 'METWTmassUnclusteredUp/F')
+	    self.t.Branch('METmTmassUnclusteredUp/F', self.METmTmassUnclusteredUp, 'METmTmassUnclusteredUp/F')
+	    self.t.Branch('PuppiMETWmassUnclusteredUp/F', self.PuppiMETWmassUnclusteredUp, 'PuppiMETWmassUnclusteredUp/F')
+	    self.t.Branch('PuppiMETWTmassUnclusteredUp/F', self.PuppiMETWTmassUnclusteredUp, 'PuppiMETWTmassUnclusteredUp/F')
+	    self.t.Branch('PuppiMETmTmassUnclusteredUp/F', self.PuppiMETmTmassUnclusteredUp, 'PuppiMETmTmassUnclusteredUp/F')
+	    self.t.Branch('DphiWMETUnclusteredUp/F', self.DphiWMETUnclusteredUp, 'DphiWMETUnclusteredUp/F')
+	    self.t.Branch('DphiWPuppiMETUnclusteredUp/F', self.DphiWPuppiMETUnclusteredUp, 'DphiWPuppiMETUnclusteredUp/F')
+	    self.t.Branch('DphilMETUnclusteredUp/F', self.DphilMETUnclusteredUp, 'DphilMETUnclusteredUp/F')
+	    self.t.Branch('DphilPuppiMETUnclusteredUp/F', self.DphilPuppiMETUnclusteredUp, 'DphilPuppiMETUnclusteredUp/F')
 
 
-	self.t.Branch('u_par_METJESUp', self.u_par_METJESUp, 'u_par_METJESUp/F')
-	self.t.Branch('u_perp_METJESUp', self.u_perp_METJESUp, 'u_perp_METJESUp/F')
-	self.t.Branch('u_par_PuppiMETJESUp', self.u_par_PuppiMETJESUp, 'u_par_PuppiMETJESUp/F')
-	self.t.Branch('u_perp_PuppiMETJESUp', self.u_perp_PuppiMETJESUp, 'u_perp_PuppiMETJESUp/F')
+	    self.t.Branch('u_par_METUnclusteredDown', self.u_par_METUnclusteredDown, 'u_par_METUnclusteredDown/F')
+	    self.t.Branch('u_perp_METUnclusteredDown', self.u_perp_METUnclusteredDown, 'u_perp_METUnclusteredDown/F')
+	    self.t.Branch('u_par_PuppiMETUnclusteredDown', self.u_par_PuppiMETUnclusteredDown, 'u_par_PuppiMETUnclusteredDown/F')
+	    self.t.Branch('u_perp_PuppiMETUnclusteredDown', self.u_perp_PuppiMETUnclusteredDown, 'u_perp_PuppiMETUnclusteredDown/F')
 
-	self.t.Branch('boson_ptJESUp/F', self.boson_ptJESUp, 'boson_ptJESUp/F')
-	self.t.Branch('boson_phiJESUp/F', self.boson_phiJESUp, 'boson_phiJESUp/F')
-	self.t.Branch('Puppiboson_ptJESUp/F', self.Puppiboson_ptJESUp, 'Puppiboson_ptJESUp/F')
-	self.t.Branch('Puppiboson_phiJESUp/F', self.Puppiboson_phiJESUp, 'Puppiboson_phiJESUp/F')
-	self.t.Branch('METWmassJESUp/F', self.METWmassJESUp, 'METWmassJESUp/F')
-	self.t.Branch('METWTmassJESUp/F', self.METWTmassJESUp, 'METWTmassJESUp/F')
-	self.t.Branch('METmTmassJESUp/F', self.METmTmassJESUp, 'METmTmassJESUp/F')
-	self.t.Branch('PuppiMETWmassJESUp/F', self.PuppiMETWmassJESUp, 'PuppiMETWmassJESUp/F')
-	self.t.Branch('PuppiMETWTmassJESUp/F', self.PuppiMETWTmassJESUp, 'PuppiMETWTmassJESUp/F')
-	self.t.Branch('PuppiMETmTmassJESUp/F', self.PuppiMETmTmassJESUp, 'PuppiMETmTmassJESUp/F')
-	self.t.Branch('DphiWMETJESUp/F', self.DphiWMETJESUp, 'DphiWMETJESUp/F')
-	self.t.Branch('DphiWPuppiMETJESUp/F', self.DphiWPuppiMETJESUp, 'DphiWPuppiMETJESUp/F')
-	self.t.Branch('DphilMETJESUp/F', self.DphilMETJESUp, 'DphilMETJESUp/F')
-	self.t.Branch('DphilPuppiMETJESUp/F', self.DphilPuppiMETJESUp, 'DphilPuppiMETJESUp/F')
-
-
-	self.t.Branch('u_par_METJESDown', self.u_par_METJESDown, 'u_par_METJESDown/F')
-	self.t.Branch('u_perp_METJESDown', self.u_perp_METJESDown, 'u_perp_METJESDown/F')
-	self.t.Branch('u_par_PuppiMETJESDown', self.u_par_PuppiMETJESDown, 'u_par_PuppiMETJESDown/F')
-	self.t.Branch('u_perp_PuppiMETJESDown', self.u_perp_PuppiMETJESDown, 'u_perp_PuppiMETJESDown/F')
-
-	self.t.Branch('boson_ptJESDown/F', self.boson_ptJESDown, 'boson_ptJESDown/F')
-	self.t.Branch('boson_phiJESDown/F', self.boson_phiJESDown, 'boson_phiJESDown/F')
-	self.t.Branch('Puppiboson_ptJESDown/F', self.Puppiboson_ptJESDown, 'Puppiboson_ptJESDown/F')
-	self.t.Branch('Puppiboson_phiJESDown/F', self.Puppiboson_phiJESDown, 'Puppiboson_phiJESDown/F')
-	self.t.Branch('METWmassJESDown/F', self.METWmassJESDown, 'METWmassJESDown/F')
-	self.t.Branch('METWTmassJESDown/F', self.METWTmassJESDown, 'METWTmassJESDown/F')
-	self.t.Branch('METmTmassJESDown/F', self.METmTmassJESDown, 'METmTmassJESDown/F')
-	self.t.Branch('PuppiMETWmassJESDown/F', self.PuppiMETWmassJESDown, 'PuppiMETWmassJESDown/F')
-	self.t.Branch('PuppiMETWTmassJESDown/F', self.PuppiMETWTmassJESDown, 'PuppiMETWTmassJESDown/F')
-	self.t.Branch('PuppiMETmTmassJESDown/F', self.PuppiMETmTmassJESDown, 'PuppiMETmTmassJESDown/F')
-	self.t.Branch('DphiWMETJESDown/F', self.DphiWMETJESDown, 'DphiWMETJESDown/F')
-	self.t.Branch('DphiWPuppiMETJESDown/F', self.DphiWPuppiMETJESDown, 'DphiWPuppiMETJESDown/F')
-	self.t.Branch('DphilMETJESDown/F', self.DphilMETJESDown, 'DphilMETJESDown/F')
-	self.t.Branch('DphilPuppiMETJESDown/F', self.DphilPuppiMETJESDown, 'DphilPuppiMETJESDown/F')
+	    self.t.Branch('boson_ptUnclusteredDown/F', self.boson_ptUnclusteredDown, 'boson_ptUnclusteredDown/F')
+	    self.t.Branch('boson_phiUnclusteredDown/F', self.boson_phiUnclusteredDown, 'boson_phiUnclusteredDown/F')
+	    self.t.Branch('Puppiboson_ptUnclusteredDown/F', self.Puppiboson_ptUnclusteredDown, 'Puppiboson_ptUnclusteredDown/F')
+	    self.t.Branch('Puppiboson_phiUnclusteredDown/F', self.Puppiboson_phiUnclusteredDown, 'Puppiboson_phiUnclusteredDown/F')
+	    self.t.Branch('METWmassUnclusteredDown/F', self.METWmassUnclusteredDown, 'METWmassUnclusteredDown/F')
+	    self.t.Branch('METWTmassUnclusteredDown/F', self.METWTmassUnclusteredDown, 'METWTmassUnclusteredDown/F')
+	    self.t.Branch('METmTmassUnclusteredDown/F', self.METmTmassUnclusteredDown, 'METmTmassUnclusteredDown/F')
+	    self.t.Branch('PuppiMETWmassUnclusteredDown/F', self.PuppiMETWmassUnclusteredDown, 'PuppiMETWmassUnclusteredDown/F')
+	    self.t.Branch('PuppiMETWTmassUnclusteredDown/F', self.PuppiMETWTmassUnclusteredDown, 'PuppiMETWTmassUnclusteredDown/F')
+	    self.t.Branch('PuppiMETmTmassUnclusteredDown/F', self.PuppiMETmTmassUnclusteredDown, 'PuppiMETmTmassUnclusteredDown/F')
+	    self.t.Branch('DphiWMETUnclusteredDown/F', self.DphiWMETUnclusteredDown, 'DphiWMETUnclusteredDown/F')
+	    self.t.Branch('DphiWPuppiMETUnclusteredDown/F', self.DphiWPuppiMETUnclusteredDown, 'DphiWPuppiMETUnclusteredDown/F')
+	    self.t.Branch('DphilMETUnclusteredDown/F', self.DphilMETUnclusteredDown, 'DphilMETUnclusteredDown/F')
+	    self.t.Branch('DphilPuppiMETUnclusteredDown/F', self.DphilPuppiMETUnclusteredDown, 'DphilPuppiMETUnclusteredDown/F')
 
 
-	self.t.Branch('u_par_METJERUp', self.u_par_METJERUp, 'u_par_METJERUp/F')
-	self.t.Branch('u_perp_METJERUp', self.u_perp_METJERUp, 'u_perp_METJERUp/F')
-	self.t.Branch('u_par_PuppiMETJERUp', self.u_par_PuppiMETJERUp, 'u_par_PuppiMETJERUp/F')
-	self.t.Branch('u_perp_PuppiMETJERUp', self.u_perp_PuppiMETJERUp, 'u_perp_PuppiMETJERUp/F')
+	    self.t.Branch('u_par_METJESUp', self.u_par_METJESUp, 'u_par_METJESUp/F')
+	    self.t.Branch('u_perp_METJESUp', self.u_perp_METJESUp, 'u_perp_METJESUp/F')
+	    self.t.Branch('u_par_PuppiMETJESUp', self.u_par_PuppiMETJESUp, 'u_par_PuppiMETJESUp/F')
+	    self.t.Branch('u_perp_PuppiMETJESUp', self.u_perp_PuppiMETJESUp, 'u_perp_PuppiMETJESUp/F')
 
-	self.t.Branch('boson_ptJERUp/F', self.boson_ptJERUp, 'boson_ptJERUp/F')
-	self.t.Branch('boson_phiJERUp/F', self.boson_phiJERUp, 'boson_phiJERUp/F')
-	self.t.Branch('Puppiboson_ptJERUp/F', self.Puppiboson_ptJERUp, 'Puppiboson_ptJERUp/F')
-	self.t.Branch('Puppiboson_phiJERUp/F', self.Puppiboson_phiJERUp, 'Puppiboson_phiJERUp/F')
-	self.t.Branch('METWmassJERUp/F', self.METWmassJERUp, 'METWmassJERUp/F')
-	self.t.Branch('METWTmassJERUp/F', self.METWTmassJERUp, 'METWTmassJERUp/F')
-	self.t.Branch('METmTmassJERUp/F', self.METmTmassJERUp, 'METmTmassJERUp/F')
-	self.t.Branch('PuppiMETWmassJERUp/F', self.PuppiMETWmassJERUp, 'PuppiMETWmassJERUp/F')
-	self.t.Branch('PuppiMETWTmassJERUp/F', self.PuppiMETWTmassJERUp, 'PuppiMETWTmassJERUp/F')
-	self.t.Branch('PuppiMETmTmassJERUp/F', self.PuppiMETmTmassJERUp, 'PuppiMETmTmassJERUp/F')
-	self.t.Branch('DphiWMETJERUp/F', self.DphiWMETJERUp, 'DphiWMETJERUp/F')
-	self.t.Branch('DphiWPuppiMETJERUp/F', self.DphiWPuppiMETJERUp, 'DphiWPuppiMETJERUp/F')
-	self.t.Branch('DphilMETJERUp/F', self.DphilMETJERUp, 'DphilMETJERUp/F')
-	self.t.Branch('DphilPuppiMETJERUp/F', self.DphilPuppiMETJERUp, 'DphilPuppiMETJERUp/F')
+	    self.t.Branch('boson_ptJESUp/F', self.boson_ptJESUp, 'boson_ptJESUp/F')
+	    self.t.Branch('boson_phiJESUp/F', self.boson_phiJESUp, 'boson_phiJESUp/F')
+	    self.t.Branch('Puppiboson_ptJESUp/F', self.Puppiboson_ptJESUp, 'Puppiboson_ptJESUp/F')
+	    self.t.Branch('Puppiboson_phiJESUp/F', self.Puppiboson_phiJESUp, 'Puppiboson_phiJESUp/F')
+	    self.t.Branch('METWmassJESUp/F', self.METWmassJESUp, 'METWmassJESUp/F')
+	    self.t.Branch('METWTmassJESUp/F', self.METWTmassJESUp, 'METWTmassJESUp/F')
+	    self.t.Branch('METmTmassJESUp/F', self.METmTmassJESUp, 'METmTmassJESUp/F')
+	    self.t.Branch('PuppiMETWmassJESUp/F', self.PuppiMETWmassJESUp, 'PuppiMETWmassJESUp/F')
+	    self.t.Branch('PuppiMETWTmassJESUp/F', self.PuppiMETWTmassJESUp, 'PuppiMETWTmassJESUp/F')
+	    self.t.Branch('PuppiMETmTmassJESUp/F', self.PuppiMETmTmassJESUp, 'PuppiMETmTmassJESUp/F')
+	    self.t.Branch('DphiWMETJESUp/F', self.DphiWMETJESUp, 'DphiWMETJESUp/F')
+	    self.t.Branch('DphiWPuppiMETJESUp/F', self.DphiWPuppiMETJESUp, 'DphiWPuppiMETJESUp/F')
+	    self.t.Branch('DphilMETJESUp/F', self.DphilMETJESUp, 'DphilMETJESUp/F')
+	    self.t.Branch('DphilPuppiMETJESUp/F', self.DphilPuppiMETJESUp, 'DphilPuppiMETJESUp/F')
 
 
-	self.t.Branch('u_par_METJERDown', self.u_par_METJERDown, 'u_par_METJERDown/F')
-	self.t.Branch('u_perp_METJERDown', self.u_perp_METJERDown, 'u_perp_METJERDown/F')
-	self.t.Branch('u_par_PuppiMETJERDown', self.u_par_PuppiMETJERDown, 'u_par_PuppiMETJERDown/F')
-	self.t.Branch('u_perp_PuppiMETJERDown', self.u_perp_PuppiMETJERDown, 'u_perp_PuppiMETJERDown/F')
+	    self.t.Branch('u_par_METJESDown', self.u_par_METJESDown, 'u_par_METJESDown/F')
+	    self.t.Branch('u_perp_METJESDown', self.u_perp_METJESDown, 'u_perp_METJESDown/F')
+	    self.t.Branch('u_par_PuppiMETJESDown', self.u_par_PuppiMETJESDown, 'u_par_PuppiMETJESDown/F')
+	    self.t.Branch('u_perp_PuppiMETJESDown', self.u_perp_PuppiMETJESDown, 'u_perp_PuppiMETJESDown/F')
 
-	self.t.Branch('boson_ptJERDown/F', self.boson_ptJERDown, 'boson_ptJERDown/F')
-	self.t.Branch('boson_phiJERDown/F', self.boson_phiJERDown, 'boson_phiJERDown/F')
-	self.t.Branch('Puppiboson_ptJERDown/F', self.Puppiboson_ptJERDown, 'Puppiboson_ptJERDown/F')
-	self.t.Branch('Puppiboson_phiJERDown/F', self.Puppiboson_phiJERDown, 'Puppiboson_phiJERDown/F')
-	self.t.Branch('METWmassJERDown/F', self.METWmassJERDown, 'METWmassJERDown/F')
-	self.t.Branch('METWTmassJERDown/F', self.METWTmassJERDown, 'METWTmassJERDown/F')
-	self.t.Branch('METmTmassJERDown/F', self.METmTmassJERDown, 'METmTmassJERDown/F')
-	self.t.Branch('PuppiMETWmassJERDown/F', self.PuppiMETWmassJERDown, 'PuppiMETWmassJERDown/F')
-	self.t.Branch('PuppiMETWTmassJERDown/F', self.PuppiMETWTmassJERDown, 'PuppiMETWTmassJERDown/F')
-	self.t.Branch('PuppiMETmTmassJERDown/F', self.PuppiMETmTmassJERDown, 'PuppiMETmTmassJERDown/F')
-	self.t.Branch('DphiWMETJERDown/F', self.DphiWMETJERDown, 'DphiWMETJERDown/F')
-	self.t.Branch('DphiWPuppiMETJERDown/F', self.DphiWPuppiMETJERDown, 'DphiWPuppiMETJERDown/F')
-	self.t.Branch('DphilMETJERDown/F', self.DphilMETJERDown, 'DphilMETJERDown/F')
-	self.t.Branch('DphilPuppiMETJERDown/F', self.DphilPuppiMETJERDown, 'DphilPuppiMETJERDown/F')
+	    self.t.Branch('boson_ptJESDown/F', self.boson_ptJESDown, 'boson_ptJESDown/F')
+	    self.t.Branch('boson_phiJESDown/F', self.boson_phiJESDown, 'boson_phiJESDown/F')
+	    self.t.Branch('Puppiboson_ptJESDown/F', self.Puppiboson_ptJESDown, 'Puppiboson_ptJESDown/F')
+	    self.t.Branch('Puppiboson_phiJESDown/F', self.Puppiboson_phiJESDown, 'Puppiboson_phiJESDown/F')
+	    self.t.Branch('METWmassJESDown/F', self.METWmassJESDown, 'METWmassJESDown/F')
+	    self.t.Branch('METWTmassJESDown/F', self.METWTmassJESDown, 'METWTmassJESDown/F')
+	    self.t.Branch('METmTmassJESDown/F', self.METmTmassJESDown, 'METmTmassJESDown/F')
+	    self.t.Branch('PuppiMETWmassJESDown/F', self.PuppiMETWmassJESDown, 'PuppiMETWmassJESDown/F')
+	    self.t.Branch('PuppiMETWTmassJESDown/F', self.PuppiMETWTmassJESDown, 'PuppiMETWTmassJESDown/F')
+	    self.t.Branch('PuppiMETmTmassJESDown/F', self.PuppiMETmTmassJESDown, 'PuppiMETmTmassJESDown/F')
+	    self.t.Branch('DphiWMETJESDown/F', self.DphiWMETJESDown, 'DphiWMETJESDown/F')
+	    self.t.Branch('DphiWPuppiMETJESDown/F', self.DphiWPuppiMETJESDown, 'DphiWPuppiMETJESDown/F')
+	    self.t.Branch('DphilMETJESDown/F', self.DphilMETJESDown, 'DphilMETJESDown/F')
+	    self.t.Branch('DphilPuppiMETJESDown/F', self.DphilPuppiMETJESDown, 'DphilPuppiMETJESDown/F')
+
+
+	    self.t.Branch('u_par_METJERUp', self.u_par_METJERUp, 'u_par_METJERUp/F')
+	    self.t.Branch('u_perp_METJERUp', self.u_perp_METJERUp, 'u_perp_METJERUp/F')
+	    self.t.Branch('u_par_PuppiMETJERUp', self.u_par_PuppiMETJERUp, 'u_par_PuppiMETJERUp/F')
+	    self.t.Branch('u_perp_PuppiMETJERUp', self.u_perp_PuppiMETJERUp, 'u_perp_PuppiMETJERUp/F')
+
+	    self.t.Branch('boson_ptJERUp/F', self.boson_ptJERUp, 'boson_ptJERUp/F')
+	    self.t.Branch('boson_phiJERUp/F', self.boson_phiJERUp, 'boson_phiJERUp/F')
+	    self.t.Branch('Puppiboson_ptJERUp/F', self.Puppiboson_ptJERUp, 'Puppiboson_ptJERUp/F')
+	    self.t.Branch('Puppiboson_phiJERUp/F', self.Puppiboson_phiJERUp, 'Puppiboson_phiJERUp/F')
+	    self.t.Branch('METWmassJERUp/F', self.METWmassJERUp, 'METWmassJERUp/F')
+	    self.t.Branch('METWTmassJERUp/F', self.METWTmassJERUp, 'METWTmassJERUp/F')
+	    self.t.Branch('METmTmassJERUp/F', self.METmTmassJERUp, 'METmTmassJERUp/F')
+	    self.t.Branch('PuppiMETWmassJERUp/F', self.PuppiMETWmassJERUp, 'PuppiMETWmassJERUp/F')
+	    self.t.Branch('PuppiMETWTmassJERUp/F', self.PuppiMETWTmassJERUp, 'PuppiMETWTmassJERUp/F')
+	    self.t.Branch('PuppiMETmTmassJERUp/F', self.PuppiMETmTmassJERUp, 'PuppiMETmTmassJERUp/F')
+	    self.t.Branch('DphiWMETJERUp/F', self.DphiWMETJERUp, 'DphiWMETJERUp/F')
+	    self.t.Branch('DphiWPuppiMETJERUp/F', self.DphiWPuppiMETJERUp, 'DphiWPuppiMETJERUp/F')
+	    self.t.Branch('DphilMETJERUp/F', self.DphilMETJERUp, 'DphilMETJERUp/F')
+	    self.t.Branch('DphilPuppiMETJERUp/F', self.DphilPuppiMETJERUp, 'DphilPuppiMETJERUp/F')
+
+
+	    self.t.Branch('u_par_METJERDown', self.u_par_METJERDown, 'u_par_METJERDown/F')
+	    self.t.Branch('u_perp_METJERDown', self.u_perp_METJERDown, 'u_perp_METJERDown/F')
+	    self.t.Branch('u_par_PuppiMETJERDown', self.u_par_PuppiMETJERDown, 'u_par_PuppiMETJERDown/F')
+	    self.t.Branch('u_perp_PuppiMETJERDown', self.u_perp_PuppiMETJERDown, 'u_perp_PuppiMETJERDown/F')
+
+	    self.t.Branch('boson_ptJERDown/F', self.boson_ptJERDown, 'boson_ptJERDown/F')
+	    self.t.Branch('boson_phiJERDown/F', self.boson_phiJERDown, 'boson_phiJERDown/F')
+	    self.t.Branch('Puppiboson_ptJERDown/F', self.Puppiboson_ptJERDown, 'Puppiboson_ptJERDown/F')
+	    self.t.Branch('Puppiboson_phiJERDown/F', self.Puppiboson_phiJERDown, 'Puppiboson_phiJERDown/F')
+	    self.t.Branch('METWmassJERDown/F', self.METWmassJERDown, 'METWmassJERDown/F')
+	    self.t.Branch('METWTmassJERDown/F', self.METWTmassJERDown, 'METWTmassJERDown/F')
+	    self.t.Branch('METmTmassJERDown/F', self.METmTmassJERDown, 'METmTmassJERDown/F')
+	    self.t.Branch('PuppiMETWmassJERDown/F', self.PuppiMETWmassJERDown, 'PuppiMETWmassJERDown/F')
+	    self.t.Branch('PuppiMETWTmassJERDown/F', self.PuppiMETWTmassJERDown, 'PuppiMETWTmassJERDown/F')
+	    self.t.Branch('PuppiMETmTmassJERDown/F', self.PuppiMETmTmassJERDown, 'PuppiMETmTmassJERDown/F')
+	    self.t.Branch('DphiWMETJERDown/F', self.DphiWMETJERDown, 'DphiWMETJERDown/F')
+	    self.t.Branch('DphiWPuppiMETJERDown/F', self.DphiWPuppiMETJERDown, 'DphiWPuppiMETJERDown/F')
+	    self.t.Branch('DphilMETJERDown/F', self.DphilMETJERDown, 'DphilMETJERDown/F')
+	    self.t.Branch('DphilPuppiMETJERDown/F', self.DphilPuppiMETJERDown, 'DphilPuppiMETJERDown/F')
 
 
 
@@ -688,56 +699,57 @@ class outTupleW() :
         self.t.Branch('PuppiMET_pt', self.PuppiMET_pt, 'PuppiMET_pt /F')
         self.t.Branch('PuppiMET_phi', self.PuppiMET_phi, 'PuppiMET_phi /F')
 
-        self.t.Branch('PuppiMET_ptJESUp', self.PuppiMET_ptJESUp, 'PuppiMET_ptJESUp /F')
-        self.t.Branch('PuppiMET_ptJESDown', self.PuppiMET_ptJESDown, 'PuppiMET_ptJESDown /F')
-        self.t.Branch('PuppiMET_ptJERUp', self.PuppiMET_ptJERUp, 'PuppiMET_ptJERUp /F')
-        self.t.Branch('PuppiMET_ptJERDown', self.PuppiMET_ptJERDown, 'PuppiMET_ptJERDown /F')
-        self.t.Branch('PuppiMET_ptUnclusteredUp', self.PuppiMET_ptUnclusteredUp, 'PuppiMET_ptUnclusteredUp /F')
-        self.t.Branch('PuppiMET_ptUnclusteredDown', self.PuppiMET_ptUnclusteredDown, 'PuppiMET_ptUnclusteredDown /F')
+        if doSyst :
+	    self.t.Branch('PuppiMET_ptJESUp', self.PuppiMET_ptJESUp, 'PuppiMET_ptJESUp /F')
+	    self.t.Branch('PuppiMET_ptJESDown', self.PuppiMET_ptJESDown, 'PuppiMET_ptJESDown /F')
+	    self.t.Branch('PuppiMET_ptJERUp', self.PuppiMET_ptJERUp, 'PuppiMET_ptJERUp /F')
+	    self.t.Branch('PuppiMET_ptJERDown', self.PuppiMET_ptJERDown, 'PuppiMET_ptJERDown /F')
+	    self.t.Branch('PuppiMET_ptUnclusteredUp', self.PuppiMET_ptUnclusteredUp, 'PuppiMET_ptUnclusteredUp /F')
+	    self.t.Branch('PuppiMET_ptUnclusteredDown', self.PuppiMET_ptUnclusteredDown, 'PuppiMET_ptUnclusteredDown /F')
 
-        self.t.Branch('PuppiMET_phiJESUp', self.PuppiMET_phiJESUp, 'PuppiMET_phiJESUp /F')
-        self.t.Branch('PuppiMET_phiJESDown', self.PuppiMET_phiJESDown, 'PuppiMET_phiJESDown /F')
-        self.t.Branch('PuppiMET_phiJERUp', self.PuppiMET_phiJERUp, 'PuppiMET_phiJERUp /F')
-        self.t.Branch('PuppiMET_phiJERDown', self.PuppiMET_phiJERDown, 'PuppiMET_phiJERDown /F')
-        self.t.Branch('PuppiMET_phiUnclusteredUp', self.PuppiMET_phiUnclusteredUp, 'PuppiMET_phiUnclusteredUp /F')
-        self.t.Branch('PuppiMET_phiUnclusteredDown', self.PuppiMET_phiUnclusteredDown, 'PuppiMET_phiUnclusteredDown /F')
+	    self.t.Branch('PuppiMET_phiJESUp', self.PuppiMET_phiJESUp, 'PuppiMET_phiJESUp /F')
+	    self.t.Branch('PuppiMET_phiJESDown', self.PuppiMET_phiJESDown, 'PuppiMET_phiJESDown /F')
+	    self.t.Branch('PuppiMET_phiJERUp', self.PuppiMET_phiJERUp, 'PuppiMET_phiJERUp /F')
+	    self.t.Branch('PuppiMET_phiJERDown', self.PuppiMET_phiJERDown, 'PuppiMET_phiJERDown /F')
+	    self.t.Branch('PuppiMET_phiUnclusteredUp', self.PuppiMET_phiUnclusteredUp, 'PuppiMET_phiUnclusteredUp /F')
+	    self.t.Branch('PuppiMET_phiUnclusteredDown', self.PuppiMET_phiUnclusteredDown, 'PuppiMET_phiUnclusteredDown /F')
 
-        self.t.Branch('MET_ptJESUp', self.MET_ptJESUp, 'MET_ptJESUp /F')
-        self.t.Branch('MET_ptJESDown', self.MET_ptJESDown, 'MET_ptJESDown /F')
-        self.t.Branch('MET_ptJERUp', self.MET_ptJERUp, 'MET_ptJERUp /F')
-        self.t.Branch('MET_ptJERDown', self.MET_ptJERDown, 'MET_ptJERDown /F')
-        self.t.Branch('MET_ptUnclusteredUp', self.MET_ptUnclusteredUp, 'MET_ptUnclusteredUp /F')
-        self.t.Branch('MET_ptUnclusteredDown', self.MET_ptUnclusteredDown, 'MET_ptUnclusteredDown /F')
+	    self.t.Branch('MET_ptJESUp', self.MET_ptJESUp, 'MET_ptJESUp /F')
+	    self.t.Branch('MET_ptJESDown', self.MET_ptJESDown, 'MET_ptJESDown /F')
+	    self.t.Branch('MET_ptJERUp', self.MET_ptJERUp, 'MET_ptJERUp /F')
+	    self.t.Branch('MET_ptJERDown', self.MET_ptJERDown, 'MET_ptJERDown /F')
+	    self.t.Branch('MET_ptUnclusteredUp', self.MET_ptUnclusteredUp, 'MET_ptUnclusteredUp /F')
+	    self.t.Branch('MET_ptUnclusteredDown', self.MET_ptUnclusteredDown, 'MET_ptUnclusteredDown /F')
 
-        self.t.Branch('MET_phiJESUp', self.MET_phiJESUp, 'MET_phiJESUp /F')
-        self.t.Branch('MET_phiJESDown', self.MET_phiJESDown, 'MET_phiJESDown /F')
-        self.t.Branch('MET_phiJERUp', self.MET_phiJERUp, 'MET_phiJERUp /F')
-        self.t.Branch('MET_phiJERDown', self.MET_phiJERDown, 'MET_phiJERDown /F')
-        self.t.Branch('MET_phiUnclusteredUp', self.MET_phiUnclusteredUp, 'MET_phiUnclusteredUp /F')
-        self.t.Branch('MET_phiUnclusteredDown', self.MET_phiUnclusteredDown, 'MET_phiUnclusteredDown /F')
+	    self.t.Branch('MET_phiJESUp', self.MET_phiJESUp, 'MET_phiJESUp /F')
+	    self.t.Branch('MET_phiJESDown', self.MET_phiJESDown, 'MET_phiJESDown /F')
+	    self.t.Branch('MET_phiJERUp', self.MET_phiJERUp, 'MET_phiJERUp /F')
+	    self.t.Branch('MET_phiJERDown', self.MET_phiJERDown, 'MET_phiJERDown /F')
+	    self.t.Branch('MET_phiUnclusteredUp', self.MET_phiUnclusteredUp, 'MET_phiUnclusteredUp /F')
+	    self.t.Branch('MET_phiUnclusteredDown', self.MET_phiUnclusteredDown, 'MET_phiUnclusteredDown /F')
 
 
-        self.t.Branch('MET_phi', self.MET_phi, 'MET_phi /F')
-        self.t.Branch('MET_pt', self.MET_pt, 'MET_pt /F')
+	    self.t.Branch('MET_phi', self.MET_phi, 'MET_phi /F')
+	    self.t.Branch('MET_pt', self.MET_pt, 'MET_pt /F')
 
-        self.t.Branch('MET_significance', self.MET_significance, 'MET_significance /F')
-        self.t.Branch('MET_T1_pt', self.MET_T1_pt, 'MET_T1_pt /F')
-        self.t.Branch('MET_T1_phi', self.MET_T1_phi, 'MET_T1_phi /F')
+	    self.t.Branch('MET_significance', self.MET_significance, 'MET_significance /F')
+	    self.t.Branch('MET_T1_pt', self.MET_T1_pt, 'MET_T1_pt /F')
+	    self.t.Branch('MET_T1_phi', self.MET_T1_phi, 'MET_T1_phi /F')
 
-        self.t.Branch('MET_T1_ptJESUp', self.MET_T1_ptJESUp, 'MET_T1_ptJESUp /F')
-        self.t.Branch('MET_T1_phiJESUp', self.MET_T1_phiJESUp, 'MET_T1_phiJESUp /F')
-        self.t.Branch('MET_T1_ptJESDown', self.MET_T1_ptJESDown, 'MET_T1_ptJESDown /F')
-        self.t.Branch('MET_T1_phiJESDown', self.MET_T1_phiJESDown, 'MET_T1_phiJESDown /F')
-        self.t.Branch('MET_T1_ptJERUp', self.MET_T1_ptJERUp, 'MET_T1_ptJERUp /F')
-        self.t.Branch('MET_T1_phiJERUp', self.MET_T1_phiJERUp, 'MET_T1_phiJERUp /F')
-        self.t.Branch('MET_T1_ptJERDown', self.MET_T1_ptJERDown, 'MET_T1_ptJERDown /F')
-        self.t.Branch('MET_T1_phiJERDown', self.MET_T1_phiJERDown, 'MET_T1_phiJERDown /F')
+	    self.t.Branch('MET_T1_ptJESUp', self.MET_T1_ptJESUp, 'MET_T1_ptJESUp /F')
+	    self.t.Branch('MET_T1_phiJESUp', self.MET_T1_phiJESUp, 'MET_T1_phiJESUp /F')
+	    self.t.Branch('MET_T1_ptJESDown', self.MET_T1_ptJESDown, 'MET_T1_ptJESDown /F')
+	    self.t.Branch('MET_T1_phiJESDown', self.MET_T1_phiJESDown, 'MET_T1_phiJESDown /F')
+	    self.t.Branch('MET_T1_ptJERUp', self.MET_T1_ptJERUp, 'MET_T1_ptJERUp /F')
+	    self.t.Branch('MET_T1_phiJERUp', self.MET_T1_phiJERUp, 'MET_T1_phiJERUp /F')
+	    self.t.Branch('MET_T1_ptJERDown', self.MET_T1_ptJERDown, 'MET_T1_ptJERDown /F')
+	    self.t.Branch('MET_T1_phiJERDown', self.MET_T1_phiJERDown, 'MET_T1_phiJERDown /F')
 
-        self.t.Branch('MET_T1_ptUnclusteredUp', self.MET_T1_ptUnclusteredUp, 'MET_T1_ptUnclusteredUp /F')
-        self.t.Branch('MET_T1_ptUnclusteredDown', self.MET_T1_ptUnclusteredDown, 'MET_T1_ptUnclusteredDown /F')
+	    self.t.Branch('MET_T1_ptUnclusteredUp', self.MET_T1_ptUnclusteredUp, 'MET_T1_ptUnclusteredUp /F')
+	    self.t.Branch('MET_T1_ptUnclusteredDown', self.MET_T1_ptUnclusteredDown, 'MET_T1_ptUnclusteredDown /F')
 
-        self.t.Branch('MET_T1_phiUnclusteredUp', self.MET_T1_phiUnclusteredUp, 'MET_T1_phiUnclusteredUp /F')
-        self.t.Branch('MET_T1_phiUnclusteredDown', self.MET_T1_phiUnclusteredDown, 'MET_T1_phiUnclusteredDown /F')
+	    self.t.Branch('MET_T1_phiUnclusteredUp', self.MET_T1_phiUnclusteredUp, 'MET_T1_phiUnclusteredUp /F')
+	    self.t.Branch('MET_T1_phiUnclusteredDown', self.MET_T1_phiUnclusteredDown, 'MET_T1_phiUnclusteredDown /F')
 
 
 
@@ -936,10 +948,10 @@ class outTupleW() :
                 #if syst=='_nom' : print jpt[j],  entry.Jet_pt[j],  syst
                 #if entry.event==18093 and syst=='_jesEC2Up' : print 'inside jets', jpt[j], syst, entry.event, "Jet_pt{0:s}".format(str(syst))
 
+		if jpt[j] < 20. : continue
 		if entry.Jet_jetId[j]  < 2  : continue  #require tight jets
-		#if jpt[j] > 30 and jpt[j] < 50 and entry.Jet_puId[j]  < 4  : continue #loose jetPU_iD
+		if jpt[j] < 50 and entry.Jet_puId[j]  < 4  : continue #loose jetPU_iD
 		#if str(era) == '2017'  and jpt[j] > 20 and jpt[j] < 50 and abs(entry.Jet_eta[j]) > 2.65 and abs(entry.Jet_eta[j]) < 3.139 : continue  #remove noisy jets
-		if jpt[j] < 30. : continue
 		if abs(entry.Jet_eta[j]) > 4.7 : continue
 
 		#for iv, lepv in enumerate(LepList) : 
@@ -957,7 +969,6 @@ class outTupleW() :
         #print 'will check failed jets',  entry.luminosityBlock, entry.event, entry.run, failJets, goodJets, 'from nJet i', j, entry.nJet
         for j in failJets : 
             if j in goodJets : goodJets.remove(j)
-        if entry.event == 207273709 : print 'jetList', jetList, 'pt', jetListPt
         jpt=0
         for jj in goodJets : 
             #if isMC : 
@@ -1000,10 +1011,6 @@ class outTupleW() :
         covMET[1][0] = entry.MET_covXY
         covMET[0][1] = entry.MET_covXY
         covMET[1][1] = entry.MET_covYY
-        #covMET[0][0] = 787.352
-        #covMET[1][0] = -178.63
-        #covMET[0][1] = -178.63
-        #covMET[1][1] = 179.545
 
         #self.kUndefinedDecayType, self.kTauToHadDecay,  self.kTauToElecDecay, self.kTauToMuDecay = 0, 1, 2, 3
 
@@ -1247,7 +1254,7 @@ class outTupleW() :
 
 	if SystIndex ==0 : 
 	    self.isTrig_1[0]   = is_trig_1
-
+        #print 'cat', cat, channel_ll, self.pt_1[0], self.eta_1[0], self.isTrig_1[0]
 	leplist=[]
 	leplist.append(Lep)
 
@@ -1258,7 +1265,10 @@ class outTupleW() :
             self.d0_1[0]   = entry.Electron_dxy[lep_index_1]
             self.dZ_1[0]   = entry.Electron_dz[lep_index_1]
             self.Electron_mvaFall17V2noIso_WP90_1[0]  = entry.Electron_mvaFall17V2noIso_WP90[lep_index_1]
+            self.Electron_mvaFall17V2Iso_WP90_1[0]  = entry.Electron_mvaFall17V2Iso_WP90[lep_index_1]
             self.Electron_cutBased_1[0]  = entry.Electron_cutBased[lep_index_1]
+            self.Electron_convVeto[0]  = entry.Electron_convVeto[lep_index_1]
+            self.Electron_lostHits[0]  = ord(entry.Electron_lostHits[lep_index_1])
 	    #if SystIndex ==0 and  isMC : 
             #	self.pt_uncor_1[0] = ePt[lep_index_1]
             #	self.m_uncor_1[0] = eMass[lep_index_1]
@@ -1318,14 +1328,29 @@ class outTupleW() :
 		self.GenPart_statusFlags_1[0]    = entry.GenPart_statusFlags[idx_Lep1_tr]
 		self.GenPart_status_1[0]    = entry.GenPart_status[idx_Lep1_tr]
 	
-	
-        SaveEvent = (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>29 and self.mediumId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.5 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
-	if str(era) == '2016':  SaveEvent = (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>26 and self.mediumId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.5# and fabs(self.PVz[0])<26 and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
-        if SaveEvent:
+	SaveEventMu = False
+	SaveEventEl = False
+
+	if str(era) == '2016':  
+            SaveEventMu = cat=='mnu' and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>26 and self.mediumId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.5# and fabs(self.PVz[0])<26 and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+            SaveEventEl = cat=='enu' and  self.pt_1[0]>27 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.5 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+
+        else : 
+	    SaveEventMu = cat=='mnu' and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>29 and self.mediumId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.5 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+	    SaveEventEl = cat=='enu' and  self.pt_1[0]>37 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.5 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+        #print 'saveeent', SaveEventMu, SaveEventEl, cat
+        if SaveEventMu or SaveEventEl:
 
 	#if True:  
 	    self.MET_significance[0]= entry.MET_significance
 	    metV, metUn =  TLorentzVector(), TLorentzVector()
+           
+	    if 'UL' in proc  or str(era) != '2016': 
+                try : 
+                    self.Flag_hfNoisyHitsFilter = entry.Flag_hfNoisyHitsFilter
+            
+		except AttributeError:
+                    self.Flag_hfNoisyHitsFilter = 1
 
 	    if 'UL' in proc  or str(era) != '2017': 
 		try:
@@ -1399,26 +1424,27 @@ class outTupleW() :
 		self.RawMET_phi[0]= entry.RawMET_phi
 
 
+	        if  doUncertainties : 
                 # in case of no corrections, the default MET is used
-		self.MET_ptUnclusteredUp[0] =  (metV+metUn).Pt()
-		self.MET_ptUnclusteredDown[0] =  (metV-metUn).Pt()
-		self.MET_phiUnclusteredUp[0] =  (metV+metUn).Phi()
-		self.MET_phiUnclusteredDown[0] =  (metV-metUn).Phi()
-     
-		self.PuppiMET_ptJESUp[0] = entry.PuppiMET_ptJESUp
-		self.PuppiMET_ptJESDown[0] = entry.PuppiMET_ptJESDown
-		self.PuppiMET_ptJERUp[0] = entry.PuppiMET_ptJERUp
-		self.PuppiMET_ptJERDown[0] = entry.PuppiMET_ptJERDown
+		    self.MET_ptUnclusteredUp[0] =  (metV+metUn).Pt()
+		    self.MET_ptUnclusteredDown[0] =  (metV-metUn).Pt()
+		    self.MET_phiUnclusteredUp[0] =  (metV+metUn).Phi()
+		    self.MET_phiUnclusteredDown[0] =  (metV-metUn).Phi()
+	 
+		    self.PuppiMET_ptJESUp[0] = entry.PuppiMET_ptJESUp
+		    self.PuppiMET_ptJESDown[0] = entry.PuppiMET_ptJESDown
+		    self.PuppiMET_ptJERUp[0] = entry.PuppiMET_ptJERUp
+		    self.PuppiMET_ptJERDown[0] = entry.PuppiMET_ptJERDown
 
-		self.PuppiMET_phiJESUp[0] = entry.PuppiMET_phiJESUp
-		self.PuppiMET_phiJESDown[0] = entry.PuppiMET_phiJESDown
-		self.PuppiMET_phiJERUp[0] = entry.PuppiMET_phiJERUp
-		self.PuppiMET_phiJERDown[0] = entry.PuppiMET_phiJERDown
+		    self.PuppiMET_phiJESUp[0] = entry.PuppiMET_phiJESUp
+		    self.PuppiMET_phiJESDown[0] = entry.PuppiMET_phiJESDown
+		    self.PuppiMET_phiJERUp[0] = entry.PuppiMET_phiJERUp
+		    self.PuppiMET_phiJERDown[0] = entry.PuppiMET_phiJERDown
 
-		self.PuppiMET_ptUnclusteredUp[0] = entry.PuppiMET_ptUnclusteredUp
-		self.PuppiMET_ptUnclusteredDown[0] = entry.PuppiMET_ptUnclusteredDown
-		self.PuppiMET_phiUnclusteredUp[0] = entry.PuppiMET_phiUnclusteredUp
-		self.PuppiMET_phiUnclusteredDown[0] = entry.PuppiMET_phiUnclusteredDown
+		    self.PuppiMET_ptUnclusteredUp[0] = entry.PuppiMET_ptUnclusteredUp
+		    self.PuppiMET_ptUnclusteredDown[0] = entry.PuppiMET_ptUnclusteredDown
+		    self.PuppiMET_phiUnclusteredUp[0] = entry.PuppiMET_phiUnclusteredUp
+		    self.PuppiMET_phiUnclusteredDown[0] = entry.PuppiMET_phiUnclusteredDown
      
 
                 #this will act with the latest metV
@@ -1432,25 +1458,26 @@ class outTupleW() :
 		self.DphilMET[0] = self.getdPhi(entry,Lep,metV)
 		self.METmTmass[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMET[0])))
 
-		self.METWmassUnclusteredUp[0] = (metV+metUn+Lep).M()
-		self.boson_ptUnclusteredUp[0] = (metV+metUn+Lep).Pt()
-		self.boson_phiUnclusteredUp[0] = (metV+metUn+Lep).Phi()
-		self.METWTmassUnclusteredUp[0] = (metV+metUn+Lep).Mt()
-		self.DphiWMETUnclusteredUp[0] = self.getdPhi(entry,metV+metUn+Lep, metV+metUn)
-		self.DphilMETUnclusteredUp[0] = self.getdPhi(entry,Lep,metV+metUn)
-		self.METmTmassUnclusteredUp[0] = sqrt(2*Lep.Pt()*(metV+metUn).Pt()*(1-cos(self.DphilMETUnclusteredUp[0])))
-		self.u_par_METUnclusteredUp[0]= - (metV+metUn+Lep).Pt() * cos(Lep.Phi()-(metV+metUn+Lep).Phi())
-		self.u_perp_METUnclusteredUp[0]=  (metV+metUn).Pt() * sin(Lep.Phi()-(metV+metUn).Phi())
+	        if  doUncertainties : 
+		    self.METWmassUnclusteredUp[0] = (metV+metUn+Lep).M()
+		    self.boson_ptUnclusteredUp[0] = (metV+metUn+Lep).Pt()
+		    self.boson_phiUnclusteredUp[0] = (metV+metUn+Lep).Phi()
+		    self.METWTmassUnclusteredUp[0] = (metV+metUn+Lep).Mt()
+		    self.DphiWMETUnclusteredUp[0] = self.getdPhi(entry,metV+metUn+Lep, metV+metUn)
+		    self.DphilMETUnclusteredUp[0] = self.getdPhi(entry,Lep,metV+metUn)
+		    self.METmTmassUnclusteredUp[0] = sqrt(2*Lep.Pt()*(metV+metUn).Pt()*(1-cos(self.DphilMETUnclusteredUp[0])))
+		    self.u_par_METUnclusteredUp[0]= - (metV+metUn+Lep).Pt() * cos(Lep.Phi()-(metV+metUn+Lep).Phi())
+		    self.u_perp_METUnclusteredUp[0]=  (metV+metUn).Pt() * sin(Lep.Phi()-(metV+metUn).Phi())
 
-		self.METWmassUnclusteredDown[0] = (metV-metUn+Lep).M()
-		self.boson_ptUnclusteredDown[0] = (metV-metUn+Lep).Pt()
-		self.boson_phiUnclusteredDown[0] = (metV-metUn+Lep).Phi()
-		self.METWTmassUnclusteredDown[0] = (metV-metUn+Lep).Mt()
-		self.DphiWMETUnclusteredDown[0] = self.getdPhi(entry,metV-metUn+Lep, metV-metUn)
-		self.DphilMETUnclusteredDown[0] = self.getdPhi(entry,Lep,metV-metUn)
-		self.METmTmassUnclusteredDown[0] = sqrt(2*Lep.Pt()*(metV-metUn).Pt()*(1-cos(self.DphilMETUnclusteredDown[0])))
-		self.u_par_METUnclusteredDown[0]= - (metV-metUn+Lep).Pt() * cos(Lep.Phi()-(metV-metUn+Lep).Phi())
-		self.u_perp_METUnclusteredDown[0]=  (metV-metUn).Pt() * sin(Lep.Phi()-(metV-metUn).Phi())
+		    self.METWmassUnclusteredDown[0] = (metV-metUn+Lep).M()
+		    self.boson_ptUnclusteredDown[0] = (metV-metUn+Lep).Pt()
+		    self.boson_phiUnclusteredDown[0] = (metV-metUn+Lep).Phi()
+		    self.METWTmassUnclusteredDown[0] = (metV-metUn+Lep).Mt()
+		    self.DphiWMETUnclusteredDown[0] = self.getdPhi(entry,metV-metUn+Lep, metV-metUn)
+		    self.DphilMETUnclusteredDown[0] = self.getdPhi(entry,Lep,metV-metUn)
+		    self.METmTmassUnclusteredDown[0] = sqrt(2*Lep.Pt()*(metV-metUn).Pt()*(1-cos(self.DphilMETUnclusteredDown[0])))
+		    self.u_par_METUnclusteredDown[0]= - (metV-metUn+Lep).Pt() * cos(Lep.Phi()-(metV-metUn+Lep).Phi())
+		    self.u_perp_METUnclusteredDown[0]=  (metV-metUn).Pt() * sin(Lep.Phi()-(metV-metUn).Phi())
 
 
 		metV.SetPtEtaPhiM(entry.PuppiMET_pt,0, entry.PuppiMET_phi,0)
@@ -1468,100 +1495,95 @@ class outTupleW() :
 
 		if doUncertainties : 
 
-		    if True : 
-			#print 'met entries', entry.MET_T1_pt, entry.MET_T1_pt_jesTotalUp, entry.MET_T1_pt_jesTotalDown, entry.MET_T1_pt_jerUp, entry.MET_T1_pt_jerDown, entry.event
+		    if isMC: 
+			metV.SetPtEtaPhiM(entry.MET_T1_pt_unclustEnUp,0, entry.MET_T1_phi_unclustEnUp,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.METWmassUnclusteredUp[0] = (metV+Lep).M()
+			self.boson_ptUnclusteredUp[0] = (metV+Lep).Pt()
+			self.boson_phiUnclusteredUp[0] = (metV+Lep).Phi()
+			self.METWTmassUnclusteredUp[0] = (metV+Lep).Mt()
+			self.DphiWMETUnclusteredUp[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilMETUnclusteredUp[0] = self.getdPhi(entry,Lep,metV)
+			self.METmTmassUnclusteredUp[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETUnclusteredUp[0])))
+			self.u_par_METUnclusteredUp[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_METUnclusteredUp[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
 
-			if isMC: 
-			    metV.SetPtEtaPhiM(entry.MET_T1_pt_unclustEnUp,0, entry.MET_T1_phi_unclustEnUp,0)
-			    metV.SetPz(0.)
-			    metV.SetE(metV.Pt())
-			    self.METWmassUnclusteredUp[0] = (metV+Lep).M()
-			    self.boson_ptUnclusteredUp[0] = (metV+Lep).Pt()
-			    self.boson_phiUnclusteredUp[0] = (metV+Lep).Phi()
-			    self.METWTmassUnclusteredUp[0] = (metV+Lep).Mt()
-			    self.DphiWMETUnclusteredUp[0] = self.getdPhi(entry,metV+Lep, metV)
-			    self.DphilMETUnclusteredUp[0] = self.getdPhi(entry,Lep,metV)
-			    self.METmTmassUnclusteredUp[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETUnclusteredUp[0])))
-			    self.u_par_METUnclusteredUp[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
-			    self.u_perp_METUnclusteredUp[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
-
-			    metV.SetPtEtaPhiM(entry.MET_T1_pt_unclustEnDown,0, entry.MET_T1_phi_unclustEnDown,0)
-			    metV.SetPz(0.)
-			    metV.SetE(metV.Pt())
-			    self.METWmassUnclusteredDown[0] = (metV+Lep).M()
-			    self.boson_ptUnclusteredDown[0] = (metV+Lep).Pt()
-			    self.boson_phiUnclusteredDown[0] = (metV+Lep).Phi()
-			    self.METWTmassUnclusteredDown[0] = (metV+Lep).Mt()
-			    self.DphiWMETUnclusteredDown[0] = self.getdPhi(entry,metV+Lep, metV)
-			    self.DphilMETUnclusteredDown[0] = self.getdPhi(entry,Lep,metV)
-			    self.METmTmassUnclusteredDown[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETUnclusteredDown[0])))
-			    self.u_par_METUnclusteredDown[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
-			    self.u_perp_METUnclusteredDown[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+			metV.SetPtEtaPhiM(entry.MET_T1_pt_unclustEnDown,0, entry.MET_T1_phi_unclustEnDown,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.METWmassUnclusteredDown[0] = (metV+Lep).M()
+			self.boson_ptUnclusteredDown[0] = (metV+Lep).Pt()
+			self.boson_phiUnclusteredDown[0] = (metV+Lep).Phi()
+			self.METWTmassUnclusteredDown[0] = (metV+Lep).Mt()
+			self.DphiWMETUnclusteredDown[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilMETUnclusteredDown[0] = self.getdPhi(entry,Lep,metV)
+			self.METmTmassUnclusteredDown[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETUnclusteredDown[0])))
+			self.u_par_METUnclusteredDown[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_METUnclusteredDown[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
 
 
-			    self.MET_T1_ptJESUp[0] = entry.MET_T1_pt_jesTotalUp
-			    self.MET_T1_ptJESDown[0] = entry.MET_T1_pt_jesTotalDown
-			    self.MET_T1_ptJERUp[0] = entry.MET_T1_pt_jerUp
-			    self.MET_T1_ptJERDown[0] = entry.MET_T1_pt_jerDown
+			self.MET_T1_ptJESUp[0] = entry.MET_T1_pt_jesTotalUp
+			self.MET_T1_ptJESDown[0] = entry.MET_T1_pt_jesTotalDown
+			self.MET_T1_ptJERUp[0] = entry.MET_T1_pt_jerUp
+			self.MET_T1_ptJERDown[0] = entry.MET_T1_pt_jerDown
 
-			    self.MET_T1_ptUnclusteredUp[0] = entry.MET_T1_pt_unclustEnUp
-			    self.MET_T1_ptUnclusteredDown[0] = entry.MET_T1_pt_unclustEnDown
-			    self.MET_T1_phiUnclusteredUp[0] = entry.MET_T1_phi_unclustEnUp
-			    self.MET_T1_phiUnclusteredDown[0] = entry.MET_T1_phi_unclustEnDown
+			self.MET_T1_ptUnclusteredUp[0] = entry.MET_T1_pt_unclustEnUp
+			self.MET_T1_ptUnclusteredDown[0] = entry.MET_T1_pt_unclustEnDown
+			self.MET_T1_phiUnclusteredUp[0] = entry.MET_T1_phi_unclustEnUp
+			self.MET_T1_phiUnclusteredDown[0] = entry.MET_T1_phi_unclustEnDown
 
-			    metV.SetPtEtaPhiM(entry.MET_T1_pt_jesTotalUp,0, entry.MET_T1_phi_jesTotalUp,0)
-			    metV.SetPz(0.)
-			    metV.SetE(metV.Pt())
-			    self.METWmassJESUp[0] = (metV+Lep).M()
-			    self.boson_ptJESUp[0] = (metV+Lep).Pt()
-			    self.boson_phiJESUp[0] = (metV+Lep).Phi()
-			    self.METWTmassJESUp[0] = (metV+Lep).Mt()
-			    self.DphiWMETJESUp[0] = self.getdPhi(entry,metV+Lep, metV)
-			    self.DphilMETJESUp[0] = self.getdPhi(entry,Lep,metV)
-			    self.METmTmassJESUp[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETJESUp[0])))
-			    self.u_par_METJESUp[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
-			    self.u_perp_METJESUp[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+			metV.SetPtEtaPhiM(entry.MET_T1_pt_jesTotalUp,0, entry.MET_T1_phi_jesTotalUp,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.METWmassJESUp[0] = (metV+Lep).M()
+			self.boson_ptJESUp[0] = (metV+Lep).Pt()
+			self.boson_phiJESUp[0] = (metV+Lep).Phi()
+			self.METWTmassJESUp[0] = (metV+Lep).Mt()
+			self.DphiWMETJESUp[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilMETJESUp[0] = self.getdPhi(entry,Lep,metV)
+			self.METmTmassJESUp[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETJESUp[0])))
+			self.u_par_METJESUp[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_METJESUp[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
 
-			    metV.SetPtEtaPhiM(entry.MET_T1_pt_jesTotalDown,0, entry.MET_T1_phi_jesTotalDown,0)
-			    metV.SetPz(0.)
-			    metV.SetE(metV.Pt())
-			    self.METWmassJESDown[0] = (metV+Lep).M()
-			    self.boson_ptJESDown[0] = (metV+Lep).Pt()
-			    self.boson_phiJESDown[0] = (metV+Lep).Phi()
-			    self.METWTmassJESDown[0] = (metV+Lep).Mt()
-			    self.DphiWMETJESDown[0] = self.getdPhi(entry,metV+Lep, metV)
-			    self.DphilMETJESDown[0] = self.getdPhi(entry,Lep,metV)
-			    self.METmTmassJESDown[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETJESDown[0])))
-			    self.u_par_METJESDown[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
-			    self.u_perp_METJESDown[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+			metV.SetPtEtaPhiM(entry.MET_T1_pt_jesTotalDown,0, entry.MET_T1_phi_jesTotalDown,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.METWmassJESDown[0] = (metV+Lep).M()
+			self.boson_ptJESDown[0] = (metV+Lep).Pt()
+			self.boson_phiJESDown[0] = (metV+Lep).Phi()
+			self.METWTmassJESDown[0] = (metV+Lep).Mt()
+			self.DphiWMETJESDown[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilMETJESDown[0] = self.getdPhi(entry,Lep,metV)
+			self.METmTmassJESDown[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETJESDown[0])))
+			self.u_par_METJESDown[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_METJESDown[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
 
-			    metV.SetPtEtaPhiM(entry.MET_T1_pt_jerUp,0, entry.MET_T1_phi_jerUp,0)
-			    metV.SetPz(0.)
-			    metV.SetE(metV.Pt())
-			    self.METWmassJERUp[0] = (metV+Lep).M()
-			    self.boson_ptJERUp[0] = (metV+Lep).Pt()
-			    self.boson_phiJERUp[0] = (metV+Lep).Phi()
-			    self.METWTmassJERUp[0] = (metV+Lep).Mt()
-			    self.DphiWMETJERUp[0] = self.getdPhi(entry,metV+Lep, metV)
-			    self.DphilMETJERUp[0] = self.getdPhi(entry,Lep,metV)
-			    self.METmTmassJERUp[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETJERUp[0])))
-			    self.u_par_METJERUp[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
-			    self.u_perp_METJERUp[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+			metV.SetPtEtaPhiM(entry.MET_T1_pt_jerUp,0, entry.MET_T1_phi_jerUp,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.METWmassJERUp[0] = (metV+Lep).M()
+			self.boson_ptJERUp[0] = (metV+Lep).Pt()
+			self.boson_phiJERUp[0] = (metV+Lep).Phi()
+			self.METWTmassJERUp[0] = (metV+Lep).Mt()
+			self.DphiWMETJERUp[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilMETJERUp[0] = self.getdPhi(entry,Lep,metV)
+			self.METmTmassJERUp[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETJERUp[0])))
+			self.u_par_METJERUp[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_METJERUp[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
 
-			    metV.SetPtEtaPhiM(entry.MET_T1_pt_jerDown,0, entry.MET_T1_phi_jerDown,0)
-			    metV.SetPz(0.)
-			    metV.SetE(metV.Pt())
-			    self.METWmassJERDown[0] = (metV+Lep).M()
-			    self.boson_ptJERDown[0] = (metV+Lep).Pt()
-			    self.boson_phiJERDown[0] = (metV+Lep).Phi()
-			    self.METWTmassJERDown[0] = (metV+Lep).Mt()
-			    self.DphiWMETJERDown[0] = self.getdPhi(entry,metV+Lep, metV)
-			    self.DphilMETJERDown[0] = self.getdPhi(entry,Lep,metV)
-			    self.METmTmassJERDown[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETJERDown[0])))
-			    self.u_par_METJERDown[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
-			    self.u_perp_METJERDown[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
-
-
+			metV.SetPtEtaPhiM(entry.MET_T1_pt_jerDown,0, entry.MET_T1_phi_jerDown,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.METWmassJERDown[0] = (metV+Lep).M()
+			self.boson_ptJERDown[0] = (metV+Lep).Pt()
+			self.boson_phiJERDown[0] = (metV+Lep).Phi()
+			self.METWTmassJERDown[0] = (metV+Lep).Mt()
+			self.DphiWMETJERDown[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilMETJERDown[0] = self.getdPhi(entry,Lep,metV)
+			self.METmTmassJERDown[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETJERDown[0])))
+			self.u_par_METJERDown[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_METJERDown[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
 
 
 			metV.SetPtEtaPhiM(entry.PuppiMET_ptJESUp,0, entry.PuppiMET_phiJESUp,0)
@@ -1659,31 +1681,33 @@ class outTupleW() :
 		self.RawMETFixEE2017_pt[0]= entry.RawMETFixEE2017_pt
 		self.RawMETFixEE2017_phi[0]= entry.RawMETFixEE2017_phi
 
-		metV, metUn =  TLorentzVector(), TLorentzVector()
-		metUn.SetXYZT(entry.METFixEE2017_MetUnclustEnUpDeltaX,entry.METFixEE2017_MetUnclustEnUpDeltaY,0,0)
-		metV.SetPtEtaPhiM(entry.METFixEE2017_pt,0, entry.METFixEE2017_phi,0)
-		metV.SetPz(0.)
-		metV.SetE(metV.Pt())
 
-		self.MET_ptUnclusteredUp[0] =  (metV+metUn).Pt()
-		self.MET_ptUnclusteredDown[0] =  (metV-metUn).Pt()
-		self.MET_phiUnclusteredUp[0] =  (metV+metUn).Phi()
-		self.MET_phiUnclusteredDown[0] =  (metV-metUn).Phi()
-     
-		self.PuppiMET_ptJESUp[0] = entry.PuppiMETFixEE2017_ptJESUp
-		self.PuppiMET_ptJESDown[0] = entry.PuppiMETFixEE2017_ptJESDown
-		self.PuppiMET_ptJERUp[0] = entry.PuppiMETFixEE2017_ptJERUp
-		self.PuppiMET_ptJERDown[0] = entry.PuppiMETFixEE2017_ptJERDown
+		if doUncertainties : 
+		    metV, metUn =  TLorentzVector(), TLorentzVector()
+		    metUn.SetXYZT(entry.METFixEE2017_MetUnclustEnUpDeltaX,entry.METFixEE2017_MetUnclustEnUpDeltaY,0,0)
+		    metV.SetPtEtaPhiM(entry.METFixEE2017_pt,0, entry.METFixEE2017_phi,0)
+		    metV.SetPz(0.)
+		    metV.SetE(metV.Pt())
 
-		self.PuppiMET_phiJESUp[0] = entry.PuppiMETFixEE2017_phiJESUp
-		self.PuppiMET_phiJESDown[0] = entry.PuppiMETFixEE2017_phiJESDown
-		self.PuppiMET_phiJERUp[0] = entry.PuppiMETFixEE2017_phiJERUp
-		self.PuppiMET_phiJERDown[0] = entry.PuppiMETFixEE2017_phiJERDown
+		    self.MET_ptUnclusteredUp[0] =  (metV+metUn).Pt()
+		    self.MET_ptUnclusteredDown[0] =  (metV-metUn).Pt()
+		    self.MET_phiUnclusteredUp[0] =  (metV+metUn).Phi()
+		    self.MET_phiUnclusteredDown[0] =  (metV-metUn).Phi()
+	 
+		    self.PuppiMET_ptJESUp[0] = entry.PuppiMETFixEE2017_ptJESUp
+		    self.PuppiMET_ptJESDown[0] = entry.PuppiMETFixEE2017_ptJESDown
+		    self.PuppiMET_ptJERUp[0] = entry.PuppiMETFixEE2017_ptJERUp
+		    self.PuppiMET_ptJERDown[0] = entry.PuppiMETFixEE2017_ptJERDown
 
-		self.PuppiMET_ptUnclusteredUp[0] = entry.PuppiMETFixEE2017_ptUnclusteredUp
-		self.PuppiMET_ptUnclusteredDown[0] = entry.PuppiMETFixEE2017_ptUnclusteredDown
-		self.PuppiMET_phiUnclusteredUp[0] = entry.PuppiMETFixEE2017_phiUnclusteredUp
-		self.PuppiMET_phiUnclusteredDown[0] = entry.PuppiMETFixEE2017_phiUnclusteredDown
+		    self.PuppiMET_phiJESUp[0] = entry.PuppiMETFixEE2017_phiJESUp
+		    self.PuppiMET_phiJESDown[0] = entry.PuppiMETFixEE2017_phiJESDown
+		    self.PuppiMET_phiJERUp[0] = entry.PuppiMETFixEE2017_phiJERUp
+		    self.PuppiMET_phiJERDown[0] = entry.PuppiMETFixEE2017_phiJERDown
+
+		    self.PuppiMET_ptUnclusteredUp[0] = entry.PuppiMETFixEE2017_ptUnclusteredUp
+		    self.PuppiMET_ptUnclusteredDown[0] = entry.PuppiMETFixEE2017_ptUnclusteredDown
+		    self.PuppiMET_phiUnclusteredUp[0] = entry.PuppiMETFixEE2017_phiUnclusteredUp
+		    self.PuppiMET_phiUnclusteredDown[0] = entry.PuppiMETFixEE2017_phiUnclusteredDown
 
 
 		if doUncertainties : 
@@ -1744,48 +1768,48 @@ class outTupleW() :
 			    except IndexError : print 'hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
 
 
-	#fill the un-corrected or just in the case you dont care to doUncertainties      
-        nom_=''
-        sysj = ''
-        if doUncertainties : sysj='nom'
-	jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,sysj,proc) 
-	self.njets[0] = len(jetList)
-	self.nbtagL[0] = len(bJetListL)
-	self.nbtagM[0] = len(bJetListM)
-	self.nbtagT[0] = len(bJetListT)
-        self.jpt[0]  = -9.99
-        self.jeta[0]  = -9.99
-	for ifl in range(len(jetListPt)) :
-	    try :
-		self.jflavour[ifl]  = jetListFlav[ifl]
-		self.jeta[ifl]  = jetListEta[ifl]
-		self.jpt[ifl]  = jetListPt[ifl]
-		self.btagDeep[ifl] = bTagListDeep[ifl]
-	    except IndexError : print 'we hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
-	'''
-	if self.nMuon[0] !=1 : print 'failed nMuon', entry.event, self.nMuon[0]
-	if self.nTau[0]!=0 :  print 'failed nTau', entry.event, self.nTau[0]
-	if (self.isGlobal_1[0]<1 and self.isTracker_1[0]<1) :  print 'failed muon Id', entry.event, self.isGlobal_1[0], self.isTracker_1[0]
-	if self.pt_1[0]<29 :  print 'failed pt', entry.event, self.pt_1[0]
-	if self.mediumId_1[0]<1 :  print 'failed mediumId', entry.event, self.mediumId_1[0]
-	if fabs(self.eta_1[0])>2.4 or  fabs(self.dZ_1[0])>0.2 or fabs(self.d0_1[0])>0.045:  print 'failed eta, dZ, d0', entry.event, fabs(self.eta_1[0]), fabs(self.dZ_1[0]),  fabs(self.d0_1[0])
-	if self.iso_1[0]>0.15 :  print 'failed iSo', entry.event, self.iso_1[0]
-	if self.isTrig_1[0]<1 :  print 'failed Trig', entry.event,  self.isTrig_1[0]
-	if self.nbtagT[0]>0 :  print 'failed bTag', entry.event, self.nbtagT[0]
-	if fabs(self.q_1[0]) !=1 :  print 'failed charge', entry.event, fabs(self.q_1[0])
-	'''
-	#SaveEvent = (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>24 and self.mediumId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.nbtagT[0]==0
-	#SaveEvent=True
-	#if SaveEvent:
-	    #print 'I will save this......', entry.event
-	#if  self.nbtag[0] == 0 : 
+	    #fill the un-corrected or just in the case you dont care to doUncertainties      
+	    nom_=''
+	    sysj = ''
+	    if doUncertainties : sysj='nom'
+	    jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,sysj,proc) 
+	    self.njets[0] = len(jetList)
+	    self.nbtagL[0] = len(bJetListL)
+	    self.nbtagM[0] = len(bJetListM)
+	    self.nbtagT[0] = len(bJetListT)
+	    self.jpt[0]  = -9.99
+	    self.jeta[0]  = -9.99
+	    for ifl in range(len(jetListPt)) :
+		try :
+		    self.jflavour[ifl]  = jetListFlav[ifl]
+		    self.jeta[ifl]  = jetListEta[ifl]
+		    self.jpt[ifl]  = jetListPt[ifl]
+		    self.btagDeep[ifl] = bTagListDeep[ifl]
+		except IndexError : print 'we hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
+	    '''
+	    if self.nMuon[0] !=1 : print 'failed nMuon', entry.event, self.nMuon[0]
+	    if self.nTau[0]!=0 :  print 'failed nTau', entry.event, self.nTau[0]
+	    if (self.isGlobal_1[0]<1 and self.isTracker_1[0]<1) :  print 'failed muon Id', entry.event, self.isGlobal_1[0], self.isTracker_1[0]
+	    if self.pt_1[0]<29 :  print 'failed pt', entry.event, self.pt_1[0]
+	    if self.mediumId_1[0]<1 :  print 'failed mediumId', entry.event, self.mediumId_1[0]
+	    if fabs(self.eta_1[0])>2.4 or  fabs(self.dZ_1[0])>0.2 or fabs(self.d0_1[0])>0.045:  print 'failed eta, dZ, d0', entry.event, fabs(self.eta_1[0]), fabs(self.dZ_1[0]),  fabs(self.d0_1[0])
+	    if self.iso_1[0]>0.15 :  print 'failed iSo', entry.event, self.iso_1[0]
+	    if self.isTrig_1[0]<1 :  print 'failed Trig', entry.event,  self.isTrig_1[0]
+	    if self.nbtagT[0]>0 :  print 'failed bTag', entry.event, self.nbtagT[0]
+	    if fabs(self.q_1[0]) !=1 :  print 'failed charge', entry.event, fabs(self.q_1[0])
+	    '''
+	    #SaveEvent = (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>24 and self.mediumId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.nbtagT[0]==0
+	    #SaveEvent=True
+	    #if SaveEvent:
+		#print 'I will save this......', entry.event
+	    #if  self.nbtag[0] == 0 : 
 
-        #if self.nbtagL[0] == 0 :
+	    #if self.nbtagL[0] == 0 :
 
-	if SystIndex == 0 : 
-	    self.t.Fill()
-	else : 
-	    self.tN[SystIndex-1].Fill()
+	    if SystIndex == 0 : 
+		self.t.Fill()
+	    else : 
+		self.tN[SystIndex-1].Fill()
 
 	return
 
