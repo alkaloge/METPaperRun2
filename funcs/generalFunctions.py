@@ -634,8 +634,11 @@ def findSingleLeptTrigger(goodLeptonList,entry,flavour,era, printOn=False):
 		#if  HLT_IsoMu24  and entry.Muon_pt[leadL] > 25 and abs(entry.Muon_eta[leadL]) < 2.4 and isbit2 :
 		#    hltList.append(True)
 
-		if  HLT_IsoMu27 and entry.Muon_pt[leadL] > 29 and abs(entry.Muon_eta[leadL]) < 2.4 and isbit2 and isbit8:
+		if  HLT_IsoMu24 and entry.Muon_pt[leadL] > 26 and abs(entry.Muon_eta[leadL]) < 2.4 and isbit2 and isbit8:
 		    hltList.append(True)
+
+		if  HLT_IsoMu27 and entry.Muon_pt[leadL] > 29 and abs(entry.Muon_eta[leadL]) < 2.4 and isbit2 and isbit8:
+		    hltListSubL.append(True)
 
 
 	    if str(era)=='2016' and (flavour == 'ee' or flavour=='enu'): 

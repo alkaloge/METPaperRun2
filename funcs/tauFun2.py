@@ -1192,7 +1192,7 @@ def goodMuonWjets(entry, j ):
     if abs(entry.Muon_eta[j]) > mm['mu_eta']: return False
     if mm['mu_iso_f'] and entry.Muon_pfRelIso04_all[j] >  mm['mu_iso']: return False
     if mm['mu_ID'] :
-        if not (entry.Muon_mediumId[j] or entry.Muon_tightId[j]): return False
+        if not (entry.Muon_tightId[j]) or ord(entry.Muon_pfIsoId[j]) < 4: return False
         #if not (entry.Muon_mediumId[j]): return False
     if abs(entry.Muon_dxy[j]) > mm['mu_dxy']: return False 
     if abs(entry.Muon_dz[j]) > mm['mu_dz']: return False
@@ -1260,6 +1260,28 @@ def goodElectron(entry, j) :
 
     return True 
 
+def goodElectronWjets(entry, j) :
+    """ tauFun.goodElectron(): select good electrons 
+                               for Z -> ele + ele
+    """
+    ee = selections['ee'] # selections for Z->ee
+    if entry.Electron_pt[j] < ee['ele_pt']: return False
+    if abs(entry.Electron_eta[j]) > ee['ele_eta']: return False
+    if abs(entry.Electron_eta[j]) >  1.44 and abs(entry.Electron_eta[j]) < 1.57 : return False
+
+    if abs(entry.Electron_dxy[j]) > ee['ele_dxy']: return False
+    if abs(entry.Electron_dz[j]) > ee['ele_dz']: return False
+
+    if ord(entry.Electron_lostHits[j]) > ee['ele_lostHits']: return False
+    if ee['ele_iso_f'] and entry.Electron_pfRelIso03_all[j] >  ee['ele_iso']: return False
+    if ee['ele_convVeto']:
+        if not entry.Electron_convVeto[j]: return False
+    if ee['ele_ID']:
+        if not entry.Electron_mvaFall17V2Iso_WP90[j] : return False
+
+    return True 
+
+
 def vetoElectron(entry, j) :
     ee = selections['elveto'] # selections for Z->ee
     if entry.Electron_pt[j] > ee['ele_pt'] and \
@@ -1294,6 +1316,12 @@ def makeGoodElectronList(entry) :
     goodElectronList = []
     for i in range(entry.nElectron) :
         if goodElectron(entry, i) : goodElectronList.append(i)
+    return goodElectronList
+
+def makeGoodElectronListWjets(entry) :
+    goodElectronList = []
+    for i in range(entry.nElectron) :
+        if goodElectronWjets(entry, i) : goodElectronList.append(i)
     return goodElectronList
 
 #Double Charged Higgs cuts

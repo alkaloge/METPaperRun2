@@ -332,7 +332,8 @@ for count, e in enumerate(inTree) :
         Lep = TLorentzVector()
         #if len(pairList)>1 : 
         #    LepP, LepM = pairList[0], pairList[1]
-        Lep.SetPtEtaPhiM(e.Muon_pt[lepList[0]],e.Muon_eta[lepList[0]],e.Muon_phi[lepList[0]],0.105)
+        if lepMode == 'mnu' :Lep.SetPtEtaPhiM(e.Muon_pt[lepList[0]],e.Muon_eta[lepList[0]],e.Muon_phi[lepList[0]],0.105)
+        if lepMode == 'enu' :Lep.SetPtEtaPhiM(e.Electron_pt[lepList[0]],e.Electron_eta[lepList[0]],e.Electron_phi[lepList[0]],0.0005)
         #METV.SetPtEtaPhiM(met_pt, 0, met_phi,0)
          
         #Wb = Lep + METV
