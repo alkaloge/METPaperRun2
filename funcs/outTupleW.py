@@ -8,6 +8,8 @@ import os
 import sys
 import generalFunctions as GF
 
+sys.path.insert(1,'../correctionlib/')
+from correctionlib import _core
 
 electronMass = 0.0005
 muonMass  = 0.105
@@ -16,9 +18,31 @@ class outTupleW() :
     def __init__(self,fileName, era, doSyst=False,shift=[], isMC=True, onlyNom=False, isW=False):
         from array import array
         from ROOT import TFile, TTree
+        self.evaluator=''
+	self.fname = "./muon_Z_{0:s}.json.gz".format(str(era))
+	if self.fname.endswith(".json.gz"):
+	    import gzip
+	    with gzip.open(self.fname,'rt') as file:
+		self.datasf = file.read().strip()
+		self.evaluator = _core.CorrectionSet.from_string(self.datasf)
+	else:
+	    self.evaluator = _core.CorrectionSet.from_file(self.fname)
+		# Tau Decay types
 
-        # Tau Decay types
-       
+        self.evaluatorEl=''
+	self.fnameEl = "./electron_{0:s}.json.gz".format(str(era))
+	if self.fnameEl.endswith(".json.gz"):
+	    import gzip
+	    with gzip.open(self.fnameEl,'rt') as file:
+		self.datasfEl = file.read().strip()
+		self.evaluatorEl = _core.CorrectionSet.from_string(self.datasfEl)
+	else:
+	    self.evaluatorEl = _core.CorrectionSet.from_file(self.fnameEl)
+		# Tau Decay types
+        print 'initialized the UL SF from', self.fname, self.fnameEl
+	# TrackerMuon Reconstruction UL scale factor
+	#self.valsf = self.evaluator["NUM_MediumID_DEN_TrackerMuons"].evaluate("2017_UL", 1.1, 30.0, "sf")
+	#print("sf 1 is: " + str(self.valsf))
         ########### JetMet systematics
 	#self.listsyst=['njets', 'nbtag', 'jpt', 'jeta', 'jflavour','MET_T1_pt', 'MET_T1_phi', 'MET_pt', 'MET_phi', 'MET_T1Smear_pt', 'MET_T1Smear_phi']
         self.jessyst=['_nom']
@@ -81,25 +105,25 @@ class outTupleW() :
             for jes in self.jessyst :
 		    if 'nom' in jes :   
 			self.allsystJets.append(jes)
-			self.list_of_arraysJetsNjets.append( array('f',[0]))
-			self.list_of_arraysJetsNbtagL.append( array('f',[0]))
-			self.list_of_arraysJetsNbtagM.append( array('f',[0]))
-			self.list_of_arraysJetsNbtagT.append( array('f',[0]))
-			self.list_of_arraysJetsFlavour.append( array('f',[-9.99]*15))
+			self.list_of_arraysJetsNjets.append( array('i',[-1]))
+			self.list_of_arraysJetsNbtagL.append( array('i',[-1]))
+			self.list_of_arraysJetsNbtagM.append( array('i',[-1]))
+			self.list_of_arraysJetsNbtagT.append( array('i',[-1]))
+			self.list_of_arraysJetsFlavour.append( array('i',[-1]*15))
 			self.list_of_arraysJetsEta.append( array('f',[-9.99]*15))
 			self.list_of_arraysJetsPt.append( array('f',[-9.99]*15))
-			self.list_of_arraysJetsNbtagDeep.append( array('f',[-9.99]*15))
+			self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*15))
 		    else :   
 		        for var in varss :
 			    self.allsystJets.append(jes+var)
-			    self.list_of_arraysJetsNjets.append( array('f',[0]))
-			    self.list_of_arraysJetsNbtagL.append( array('f',[0]))
-			    self.list_of_arraysJetsNbtagM.append( array('f',[0]))
-			    self.list_of_arraysJetsNbtagT.append( array('f',[0]))
-			    self.list_of_arraysJetsFlavour.append( array('f',[-9.99]*15))
+			    self.list_of_arraysJetsNjets.append( array('i',[-1]))
+			    self.list_of_arraysJetsNbtagL.append( array('i',[-1]))
+			    self.list_of_arraysJetsNbtagM.append( array('i',[-1]))
+			    self.list_of_arraysJetsNbtagT.append( array('i',[-1]))
+			    self.list_of_arraysJetsFlavour.append( array('i',[-1]*15))
 			    self.list_of_arraysJetsEta.append( array('f',[-9.99]*15))
 			    self.list_of_arraysJetsPt.append( array('f',[-9.99]*15))
-			    self.list_of_arraysJetsNbtagDeep.append( array('f',[-9.99]*15))
+			    self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*15))
                      
                 
 	    #for i_ in self.allsystMET :  self.list_of_arrays.append(array('f', [ 0 ]))
@@ -117,43 +141,47 @@ class outTupleW() :
 
         self.entries          = 0 
         self.run              = array('l',[0])
-        self.nElectron        = array('l',[0])
-        self.nMuon            = array('l',[0])
-        self.nTau            = array('l',[0])
-        self.hasTau            = array('l',[0])
-        self.hasPhoton            = array('l',[0])
         self.lumi             = array('l',[0])
         self.evnt              = array('l',[0])
-        self.nPU              = array('l',[0])
-        self.nPUEOOT              = array('l',[0])
-        self.nPULOOT              = array('l',[0])
+
+        self.nElectron        = array('I',[0])
+        self.nMuon            = array('I',[0])
+        self.nTau            = array('I',[0])
+        self.VetoTau            = array('I',[0])
+        self.VetoPhoton            = array('I',[0])
+        self.VetoElectron            = array('I',[0])
+        self.VetoMuon            = array('I',[0])
+        self.nPU              = array('I',[0])
+        self.nPUEOOT              = array('I',[0])
+        self.nPULOOT              = array('I',[0])
         self.nPUtrue              = array('f',[0])
-        self.nPV              = array('l',[0])
+        self.nPV              = array('I',[0])
         self.PVx              = array('f',[0])
         self.PVy              = array('f',[0])
         self.PVz              = array('f',[0])
         self.nPVscore              = array('f',[0])
         self.nPVchi2              = array('f',[0])
         self.nPVndof              = array('f',[0])
-        self.nPVGood              = array('l',[0])
-        self.cat              = array('l',[0])
+        self.nPVGood              = array('I',[0])
+        self.cat              = array('I',[0])
         self.weight           = array('f',[0])
         self.weightPU           = array('f',[0])
         self.weightPUtrue           = array('f',[0])
         self.LHEweight        = array('f',[0])
         self.Generator_weight = array('f',[0])
-        self.LHE_Njets        = array('l',[0])
-        self.electronTriggerWord  = array('l',[0])
-        self.muonTriggerWord  = array('l',[0])         
-        self.whichTriggerWord  = array('l',[0])         
-        self.whichTriggerWordSubL  = array('l',[0])         
+        self.LHE_Njets        = array('I',[0])
+        self.electronTriggerWord  = array('I',[0])
+        self.muonTriggerWord  = array('I',[0])         
+        self.whichTriggerWord  = array('I',[0])         
+        self.whichTriggerWordSubL  = array('I',[0])         
         self.LHEScaleWeights        = array('f',[1]*9)
         
-        self.nGoodElectron    = array('l',[0])
-        self.nGoodMuon        = array('l',[0])
-        self.Flag_hfNoisyHitsFilter        = array('f',[0])
+        self.nGoodElectron    = array('I',[0])
+        self.nGoodMuon        = array('I',[0])
+        self.Flag_hfNoisyHitsFilter        = array('I',[0])
+        self.Flag_BadPFMuonDzFilter        = array('I',[0])
         self.Electron_convVeto        = array('f',[0])
-        self.Electron_lostHits        = array('l',[0])
+        self.Electron_lostHits        = array('I',[0])
 
         self.L1PreFiringWeight_Nom        = array('f',[0])
         self.L1PreFiringWeight_Up        = array('f',[0])
@@ -168,7 +196,7 @@ class outTupleW() :
         self.Electron_mvaFall17V2noIso_WP90_1 = array('f',[0])
         self.Electron_mvaFall17V2Iso_WP90_1 = array('f',[0])
         self.Electron_cutBased_1 = array('f',[0])
-        self.gen_match_1 = array('l',[0])
+        self.gen_match_1 = array('i',[0])
 
 
         # di-lepton variables.   1 and 2 refer to plus and minus charge
@@ -177,16 +205,21 @@ class outTupleW() :
         self.mll       = array('f',[0])
         self.W_Pt       = array('f',[0])
         self.pt_1      = array('f',[0])
+        self.IDSF      = array('f',[0])
+        self.IsoSF      = array('f',[0])
+        self.TrigSF      = array('f',[0])
+        #self.muonTightiDsf_1      = array('f',[0])
 
         self.m_1_tr   = array('f',[0])
         self.pt_1_tr   = array('f',[0])
-        self.GenPart_statusFlags_1   = array('l',[0])
-        self.GenPart_status_1     = array('l',[0])
+        self.GenPart_statusFlags_1   = array('i',[0])
+        self.GenPart_status_1     = array('i',[0])
         self.phi_1     = array('f',[0])
         self.phi_1_tr  = array('f',[0])
         self.eta_1     = array('f',[0])
         self.eta_1_tr  = array('f',[0])
         self.iso_1       = array('f',[0])
+        self.PFiso_1       = array('f',[0])
         self.q_1       = array('f',[0])
         self.Muon_Id_1       = array('f',[0])
         self.isGlobal_1       = array('f',[0])
@@ -197,14 +230,15 @@ class outTupleW() :
         self.inTimeMuon_1       = array('f',[0])
         self.ip3d_1       = array('f',[0])
         self.sip3d_1       = array('f',[0])
-        self.stations_1       = array('l',[0])
-        self.TrackerL_1       = array('l',[0])
+        self.stations_1       = array('I',[0])
+        self.TrackerL_1       = array('I',[0])
 
         self.isPFcand_1       = array('f',[0])
         self.isTracker_1       = array('f',[0])
         self.tightId_1       = array('f',[0])
         self.tightCharge_1       = array('f',[0])
         self.mediumId_1       = array('f',[0])
+        self.pfIsoId_1       = array('f',[0])
         self.mediumPromptId_1       = array('f',[0])
         self.looseId_1       = array('f',[0])
         
@@ -241,7 +275,7 @@ class outTupleW() :
 	    self.PuppiMET_phiUnclusteredUp = array('f',[0])
 	    self.PuppiMET_phiUnclusteredDown = array('f',[0])
 
-	    #does not exist in nAOV9, has to make it from DeltaX,Y
+	    #does not exist in nAOV9, make it from DeltaX,Y
 	    self.MET_ptUnclusteredUp = array('f',[0])
 	    self.MET_ptUnclusteredDown = array('f',[0])
 	    self.MET_phiUnclusteredUp = array('f',[0])
@@ -431,16 +465,16 @@ class outTupleW() :
 
 
         self.isTrig_1   = array('f',[0])
-        self.isTrigObj   = array('l',[0])
+        self.isTrigObj   = array('I',[0])
 
         # jet variables
         #self.njetsold = array('f',[-1]*15)
-        self.njets     = array('f',[0])
-        self.nbtagL     = array('f',[0])
-        self.nbtagM     = array('f',[0])
-        self.nbtagT     = array('f',[0])
+        self.njets     = array('i',[-1])
+        self.nbtagL     = array('i',[-1])
+        self.nbtagM     = array('i',[-1])
+        self.nbtagT     = array('i',[-1])
 
-        self.jflavour     = array('f',[-9.99]*15)
+        self.jflavour     = array('i',[-1]*15)
         self.jeta     = array('f',[-9.99]*15)
         self.jpt     = array('f',[-9.99]*15)
         self.btagDeep     = array('f',[-9.99]*15)
@@ -455,15 +489,21 @@ class outTupleW() :
         self.bcsvfv_1    = array('f',[0]*15)
       
         self.t.Branch('run',              self.run,               'run/l' )
-        self.t.Branch('nElectron',              self.nElectron,               'nElectron/l' )
+        self.t.Branch('lumi',             self.lumi,              'lumi/l' )
+        self.t.Branch('evnt',              self.evnt,               'evnt/l' )
+        self.t.Branch('nElectron',              self.nElectron,               'nElectron/I' )
         self.t.Branch('Electron_convVeto',              self.Electron_convVeto,               'Electron_convVeto/F' )
         self.t.Branch('Electron_lostHits',              self.Electron_lostHits,               'Electron_lostHits/I' )
-        self.t.Branch('nMuon',              self.nMuon,               'nMuon/l' )
-        self.t.Branch('nTau',              self.nTau,               'nTau/l' )
-        self.t.Branch('hasTau',              self.hasTau,               'hasTau/l' )
-        self.t.Branch('hasPhoton',              self.hasPhoton,               'hasPhoto/l' )
-        self.t.Branch('lumi',             self.lumi,              'lumi/I' )
-        self.t.Branch('evnt',              self.evnt,               'evnt/l' )
+        self.t.Branch('Electron_mvaFall17V2Iso_WP90_1',              self.Electron_mvaFall17V2Iso_WP90_1,               'Electron_mvaFall17V2Iso_WP90_1/F' )
+        self.t.Branch('Electron_mvaFall17V2noIso_WP90_1',              self.Electron_mvaFall17V2noIso_WP90_1,               'Electron_mvaFall17V2noIso_WP90_1/F' )
+        self.t.Branch('Electron_cutBased_1',              self.Electron_cutBased_1,               'Electron_cutBased_1/I' )
+
+        self.t.Branch('nMuon',              self.nMuon,               'nMuon/I' )
+        self.t.Branch('nTau',              self.nTau,               'nTau/I' )
+        self.t.Branch('VetoTau',              self.VetoTau,               'VetoTau/I' )
+        self.t.Branch('VetoPhoton',              self.VetoPhoton,               'VetoPhoton/I' )
+        self.t.Branch('VetoElectron',              self.VetoElectron,               'VetoElectron/I' )
+        self.t.Branch('VetoMuon',              self.VetoMuon,               'VetoMuon/I' )
         self.t.Branch('nPU',              self.nPU,               'nPU/I' )
         self.t.Branch('nPUEOOT',              self.nPUEOOT,               'nPUEOOT/I' )
         self.t.Branch('nPULOOT',              self.nPULOOT,               'nPULOOT/I' )
@@ -491,24 +531,29 @@ class outTupleW() :
         
         self.t.Branch('nGoodElectron',    self.nGoodElectron,     'nGoodElectron/I' )
         self.t.Branch('nGoodMuon',        self.nGoodMuon,         'nGoodMuon/I' )
-        self.t.Branch('Flag_hfNoisyHitsFilter',        self.Flag_hfNoisyHitsFilter,         'Flag_hfNoisyHitsFilter/F' )
+        self.t.Branch('Flag_hfNoisyHitsFilter',        self.Flag_hfNoisyHitsFilter,         'Flag_hfNoisyHitsFilter/I' )
+        self.t.Branch('Flag_BadPFMuonDzFilter',        self.Flag_BadPFMuonDzFilter,         'Flag_BadPFMuonDzFilter/I' )
         
         self.t.Branch('GenPart_statusFlags_1',     self.GenPart_statusFlags_1,     'GenPart_statusFlags_1/I')
         self.t.Branch('GenPart_status_1',     self.GenPart_status_1,     'GenPart_status_1/I')
         self.t.Branch('pt_uncor_1',        self.pt_uncor_1,        'pt_uncor_1/F')
         self.t.Branch('m_uncor_1',        self.m_uncor_1,        'm_uncor_1/F')
-        self.t.Branch('gen_match_1', self.gen_match_1, 'gen_match_1/l')
-        self.t.Branch('stations_1', self.stations_1, 'stations_1/l')
-        self.t.Branch('TrackerL_1', self.TrackerL_1, 'TrackerL_1/l')
+        self.t.Branch('gen_match_1', self.gen_match_1, 'gen_match_1/I')
+        self.t.Branch('stations_1', self.stations_1, 'stations_1/I')
+        self.t.Branch('TrackerL_1', self.TrackerL_1, 'TrackerL_1/I')
 
 
         self.t.Branch('pt_1',        self.pt_1,        'pt_1/F')
+        self.t.Branch('IDSF',        self.IDSF,        'IDSF/F')
+        self.t.Branch('TrigSF',        self.TrigSF,        'TrigSF/F')
+        self.t.Branch('IsoSF',        self.IsoSF,        'IsoSF/F')
         self.t.Branch('m_1_tr',     self.m_1_tr,     'm_1_tr/F')
         self.t.Branch('pt_1_tr',     self.pt_1_tr,     'pt_1_tr/F')
         self.t.Branch('phi_1',       self.phi_1,       'phi_1/F')  
         self.t.Branch('phi_1_tr',    self.phi_1_tr,    'phi_1_tr/F')
         self.t.Branch('eta_1',       self.eta_1,       'eta_1/F')    
         self.t.Branch('iso_1',       self.iso_1,       'iso_1/F')
+        self.t.Branch('PFiso_1',       self.PFiso_1,       'PFiso_1/F')
         self.t.Branch('q_1',       self.q_1,       'q_1/F')
         self.t.Branch('L1PreFiringWeight_Nom',        self.L1PreFiringWeight_Nom,        'L1PreFiringWeight_Nom/F')
         self.t.Branch('L1PreFiringWeight_Up',        self.L1PreFiringWeight_Up,        'L1PreFiringWeight_Up/F')
@@ -531,6 +576,7 @@ class outTupleW() :
         self.t.Branch('tightId_1', self.tightId_1, 'tightId_1/F')
         self.t.Branch('tightCharge_1', self.tightCharge_1, 'tightCharge_1/F')
         self.t.Branch('mediumId_1', self.mediumId_1, 'mediumId_1/F')
+        self.t.Branch('pfIsoId_1', self.pfIsoId_1, 'pfIsoId_1/F')
         self.t.Branch('mediumPromptId_1', self.mediumPromptId_1, 'mediumPromptId_1/F')
         self.t.Branch('looseId_1', self.looseId_1, 'looseId_1/F')
         
@@ -756,21 +802,21 @@ class outTupleW() :
 
         # trigger sf
         self.t.Branch('isTrig_1',  self.isTrig_1, 'isTrig_1/F' )
-        self.t.Branch('isTrigObj',  self.isTrigObj, 'isTrigObj/l' )
+        self.t.Branch('isTrigObj',  self.isTrigObj, 'isTrigObj/i' )
 
 
         # jet variables
         #self.t.Branch('njetsold', self.njetsold, 'njetsold[8]/F') 
         #self.t.Branch('nbtagold', self.nbtagold, 'nbtagold[8]/F')
-        self.t.Branch('njets', self.njets, 'njets/F')
-        self.t.Branch('nbtagL', self.nbtagL, 'nbtagL/F')
-        self.t.Branch('nbtagM', self.nbtagM, 'nbtagM/F')
-        self.t.Branch('nbtagT', self.nbtagT, 'nbtagT/F')
+        self.t.Branch('njets', self.njets, 'njets/i')
+        self.t.Branch('nbtagL', self.nbtagL, 'nbtagL/i')
+        self.t.Branch('nbtagM', self.nbtagM, 'nbtagM/i')
+        self.t.Branch('nbtagT', self.nbtagT, 'nbtagT/i')
 
-        self.t.Branch('jflavour',     self.jflavour,     'jflavour[15]/F' )
+        self.t.Branch('jflavour',     self.jflavour,     'jflavour[15]/i' )
         self.t.Branch('jeta',     self.jeta,     'jeta[15]/F' )
         self.t.Branch('jpt',     self.jpt,     'jpt[15]/F' )
-        self.t.Branch('btagDeep', self.btagDeep, 'btagDeep[15]/F')
+        self.t.Branch('btagDeep', self.btagDeep, 'btagDeep[15]/i')
 
         if doSyst : 
                 #Book the branches and the arrays needed to store variables
@@ -784,14 +830,14 @@ class outTupleW() :
 	            self.t.Branch(iiMET, self.list_of_arrays_noES[i], '{0:s}/F'.format(iiMET))
 
 		for i, v in enumerate(self.allsystJets):
-		    self.t.Branch('njets{0:s}'.format(v), self.list_of_arraysJetsNjets[i], 'njets{0:s}/F'.format(v))
-		    self.t.Branch('nbtagL{0:s}'.format(v), self.list_of_arraysJetsNbtagL[i], 'nbtagL{0:s}/F'.format(v))
-		    self.t.Branch('nbtagM{0:s}'.format(v), self.list_of_arraysJetsNbtagM[i], 'nbtagM{0:s}/F'.format(v))
-		    self.t.Branch('nbtagT{0:s}'.format(v), self.list_of_arraysJetsNbtagT[i], 'nbtagT{0:s}/F'.format(v))
-		    self.t.Branch('jflavour{0:s}'.format(v), self.list_of_arraysJetsFlavour[i], 'jflavour{0:s}[15]/F'.format(v))
+		    self.t.Branch('njets{0:s}'.format(v), self.list_of_arraysJetsNjets[i], 'njets{0:s}/i'.format(v))
+		    self.t.Branch('nbtagL{0:s}'.format(v), self.list_of_arraysJetsNbtagL[i], 'nbtagL{0:s}/i'.format(v))
+		    self.t.Branch('nbtagM{0:s}'.format(v), self.list_of_arraysJetsNbtagM[i], 'nbtagM{0:s}/i'.format(v))
+		    self.t.Branch('nbtagT{0:s}'.format(v), self.list_of_arraysJetsNbtagT[i], 'nbtagT{0:s}/i'.format(v))
+		    self.t.Branch('jflavour{0:s}'.format(v), self.list_of_arraysJetsFlavour[i], 'jflavour{0:s}[15]/i'.format(v))
 		    self.t.Branch('jpt{0:s}'.format(v), self.list_of_arraysJetsPt[i], 'jpt{0:s}[15]/F'.format(v))
 		    self.t.Branch('jeta{0:s}'.format(v), self.list_of_arraysJetsEta[i], 'jeta{0:s}[15]/F'.format(v))
-		    self.t.Branch('btagDeep{0:s}'.format(v), self.list_of_arraysJetsNbtagDeep[i], 'bagDeep{0:s}[15]/F'.format(v))
+		    self.t.Branch('btagDeep{0:s}'.format(v), self.list_of_arraysJetsNbtagDeep[i], 'bagDeep{0:s}[15]/i'.format(v))
 
 
 
@@ -948,7 +994,7 @@ class outTupleW() :
                 #if syst=='_nom' : print jpt[j],  entry.Jet_pt[j],  syst
                 #if entry.event==18093 and syst=='_jesEC2Up' : print 'inside jets', jpt[j], syst, entry.event, "Jet_pt{0:s}".format(str(syst))
 
-		if jpt[j] < 20. : continue
+		if jpt[j] < 30. : continue
 		if entry.Jet_jetId[j]  < 2  : continue  #require tight jets
 		if jpt[j] < 50 and entry.Jet_puId[j]  < 4  : continue #loose jetPU_iD
 		#if str(era) == '2017'  and jpt[j] > 20 and jpt[j] < 50 and abs(entry.Jet_eta[j]) > 2.65 and abs(entry.Jet_eta[j]) < 3.139 : continue  #remove noisy jets
@@ -986,6 +1032,7 @@ class outTupleW() :
                 jetList.append(jj) 
 
 		if abs(entry.Jet_eta[jj]) < 2.5 : 
+                    #print entry.Jet_btagDeepB[jj],  bjet_discrL,  bjet_discrM ,  bjet_discrT
 		    if entry.Jet_btagDeepB[jj] > bjet_discrL : bJetListL.append(jj)
 		    if entry.Jet_btagDeepB[jj] > bjet_discrM : bJetListM.append(jj)
 		    if entry.Jet_btagDeepB[jj] > bjet_discrT : bJetListT.append(jj)
@@ -995,7 +1042,9 @@ class outTupleW() :
         #if len(jetList)!=len(jetListPt) : print 'going out....', jetList, jetListPt, syst, len(jetList), len(jetListPt), entry.luminosityBlock, entry.event, entry.run
         #print 'going out....', jetList, jetListPt, syst, len(jetList), len(jetListPt), entry.luminosityBlock, entry.event, entry.run, btagWeightDeepCSVB
         #print ''
-        if entry.event == 207273709 : print 'this is check', jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
+        #if entry.event == 207273709 : print 'this is check', jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
+        #print 'lets see', len(bJetListL), len(bJetListM), len(bJetListT), len(jetList)
+        #print ''
         return jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
 
 
@@ -1039,7 +1088,7 @@ class outTupleW() :
         return ttP4.M(), ttP4.Mt() 
     
 
-    def FillW(self, entry, cat, Lep, lepList, tauList, photonList, isMC, era, doUncertainties=False , proc="EOY") : 
+    def FillW(self, entry, cat, Lep, lepList, tauList, photonList, electronList, muonList, isMC, era, doUncertainties=False , proc="EOY") : 
     #def Fill(self, entry, SVFit, cat, jt1, jt2, LepP, LepM, lepList, isMC, era, doUncertainties=False ,  met_pt=-99, met_phi=-99, systIndex=0) : 
         SystIndex = 0
 
@@ -1066,9 +1115,9 @@ class outTupleW() :
 	    if len(hltListLep) > 0 and  len(hltListLepSubL) == 0 :
 		is_trig_1 = 1
 	    if len(hltListLep) == 0 and len(hltListLepSubL) > 0 :
-		is_trig_1 = -1
-	    if len(hltListLep) > 0 and len(hltListLepSubL)>0 :
 		is_trig_1 = 2
+	    if len(hltListLep) > 0 and len(hltListLepSubL)>0 :
+		is_trig_1 = 3
             #for 2016 UL, leadL= IsoMu24, subLeadL = IsoTkMu24 should give 2 if both fire,
 
 	    self.whichTriggerWord[0]=0
@@ -1093,11 +1142,14 @@ class outTupleW() :
 	    self.nElectron[0]  = entry.nElectron
 	    self.nMuon[0]  = entry.nMuon
 	    self.nTau[0]  = entry.nTau
-	    self.hasTau[0]  = len(tauList)
-	    self.hasPhoton[0]  = len(photonList)
+	    self.VetoTau[0]  = len(tauList)
+	    self.VetoPhoton[0]  = len(photonList)
+	    self.VetoElectron[0]  = len(electronList)
+	    self.VetoMuon[0]  = len(muonList)
 	    self.lumi[0] = entry.luminosityBlock 
 	    self.evnt[0]  = entry.event
-	    self.iso_1[0]  = --1
+	    self.iso_1[0]  = -1
+	    self.PFiso_1[0]  = -1
 	    self.q_1[0]  = -2
 
 
@@ -1113,6 +1165,7 @@ class outTupleW() :
 	    self.sip3d_1[0]  = -99
 	    self.looseId_1[0]       = -1
 	    self.mediumId_1[0]       = -1 
+	    self.pfIsoId_1[0]       = -1 
 	    self.mediumPromptId_1[0]   = -1
 	    self.tightId_1[0]       = -1 
 	    self.tightCharge_1[0] = -1
@@ -1167,7 +1220,7 @@ class outTupleW() :
 			self.LHEScaleWeights[i] = entry.LHEScaleWeight[i]
 	    except AttributeError :
 		self.LHEweight[0]        = 1. 
-		self.LHE_Njets[0] = -1
+		self.LHE_Njets[0] = 0
                 self.LHEScaleWeights[0] = -1
 
 			    
@@ -1249,6 +1302,43 @@ class outTupleW() :
         self.pt_1[0]   = Lep.Pt()
         self.phi_1[0]  = Lep.Phi()
         self.eta_1[0]  = Lep.Eta()
+        muoneff=1.
+        muoniso=1.
+        muontrig=1.
+        eleeff=1.
+        eleiso=1.
+        eletrig=1.
+	self.IDSF[0]  = 1.
+	self.IsoSF[0]  = 1.
+	self.TrigSF[0]  = 1.
+        if isMC :
+
+	    if channel_ll == 'mnu' : 
+		  
+		muoneff = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format(str(era)), fabs(Lep.Eta()), Lep.Pt(), "sf")
+		muoniso = self.evaluator["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate("{0:s}_UL".format(str(era)), fabs(Lep.Eta()), Lep.Pt(), "sf")
+		if era =='2016' :  muontrig = self.evaluator["NUM_IsoMu22_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(Lep.Eta()), Lep.Pt(), "sf")
+		if era =='2017' :  muontrig = self.evaluator["NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(Lep.Eta()), Lep.Pt(), "sf")
+		if era =='2018' :  muontrig = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(Lep.Eta()), Lep.Pt(), "sf")  ### for 2018 the json Veto only 24 SF..but we have used the HLT27
+		#print 'sfs are', muoneff , muoniso, muontrig
+
+		self.IDSF[0]  = muoneff
+		self.IsoSF[0]  = muoniso
+		self.TrigSF[0]  = muontrig
+
+	    if channel_ll == 'enu' : 
+		yearin=era
+		if '2016' in era and 'pre' in era : yearin='2016preVFP'
+		if '2016' in era and 'pre' not in era : yearin='2016postVFP'
+		eleeff = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "RecoAbove20", Lep.Eta(), Lep.Pt() )
+		eleiso = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "wp90iso", Lep.Eta(), Lep.Pt() )
+
+		self.IDSF[0]  = eleeff
+		self.IsoSF[0]  = eleiso
+		self.TrigSF[0]  = 1.
+
+
+
 
 	lep_index_1 = lepList[0]
 
@@ -1278,6 +1368,7 @@ class outTupleW() :
 
 	if channel_ll == 'mnu' : 
             self.iso_1[0]  = entry.Muon_pfRelIso04_all[lep_index_1]
+            self.PFiso_1[0]  = ord(entry.Muon_pfIsoId[lep_index_1])
 	    self.q_1[0]  = entry.Muon_charge[lep_index_1]
 	    self.d0_1[0]   = entry.Muon_dxy[lep_index_1]
 	    self.dZ_1[0]   = entry.Muon_dz[lep_index_1]
@@ -1285,14 +1376,17 @@ class outTupleW() :
             self.tightId_1[0]      = entry.Muon_tightId[lep_index_1]
             self.tightCharge_1[0]      = entry.Muon_tightCharge[lep_index_1]
 	    self.mediumId_1[0]   = entry.Muon_mediumId[lep_index_1] 
+	    self.pfIsoId_1[0]   = ord(entry.Muon_pfIsoId[lep_index_1])
 	    self.mediumPromptId_1[0]   = entry.Muon_mediumPromptId[lep_index_1] 
 	    self.isGlobal_1[0]   = entry.Muon_isGlobal[lep_index_1] 
-	    self.isStandalone_1[0]   = entry.Muon_isStandalone[lep_index_1] 
-	    self.isPFcand_1[0]   = entry.Muon_isPFcand[lep_index_1] 
+	    try : self.isStandalone_1[0]   = entry.Muon_isStandalone[lep_index_1] 
+	    except AttributeError : self.isStandalone_1[0] = 0 
+            self.isPFcand_1[0]   = entry.Muon_isPFcand[lep_index_1] 
 	    self.isTracker_1[0]   = entry.Muon_isTracker[lep_index_1] 
 
 	    self.highPtId_1[0]  = ord(entry.Muon_highPtId[lep_index_1])
-	    self.highPurity_1[0]  = entry.Muon_highPurity[lep_index_1]
+	    try : self.highPurity_1[0]  = entry.Muon_highPurity[lep_index_1]
+            except AttributeError : self.highPurity_1[0] = 0
 	    self.inTimeMuon_1[0]  = entry.Muon_inTimeMuon[lep_index_1]
 	    self.ip3d_1[0]  = entry.Muon_ip3d[lep_index_1]
 	    self.sip3d_1[0]  = entry.Muon_sip3d[lep_index_1]
@@ -1332,11 +1426,11 @@ class outTupleW() :
 	SaveEventEl = False
 
 	if str(era) == '2016':  
-            SaveEventMu = cat=='mnu' and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>26 and self.mediumId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.5# and fabs(self.PVz[0])<26 and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+            SaveEventMu = cat=='mnu' and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>26 and self.tightId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and (self.iso_1[0] < 0.5 or self.PFiso_1[0]>2) # and fabs(self.PVz[0])<26 and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
             SaveEventEl = cat=='enu' and  self.pt_1[0]>27 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.5 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
 
         else : 
-	    SaveEventMu = cat=='mnu' and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>29 and self.mediumId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.5 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+	    SaveEventMu = cat=='mnu' and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>29 and self.tightId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and (self.iso_1[0] < 0.5 or self.PFiso_1[0]>2)#and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
 	    SaveEventEl = cat=='enu' and  self.pt_1[0]>37 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.5 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
         #print 'saveeent', SaveEventMu, SaveEventEl, cat
         if SaveEventMu or SaveEventEl:
@@ -1344,13 +1438,17 @@ class outTupleW() :
 	#if True:  
 	    self.MET_significance[0]= entry.MET_significance
 	    metV, metUn =  TLorentzVector(), TLorentzVector()
-           
-	    if 'UL' in proc  or str(era) != '2016': 
+            self.Flag_hfNoisyHitsFilter[0] = 1
+            self.Flag_BadPFMuonDzFilter[0] = 1
+
+	    if 'UL' in proc or str(era) != '2016':
                 try : 
-                    self.Flag_hfNoisyHitsFilter = entry.Flag_hfNoisyHitsFilter
+                    self.Flag_hfNoisyHitsFilter[0] = int(entry.Flag_hfNoisyHitsFilter)
             
-		except AttributeError:
-                    self.Flag_hfNoisyHitsFilter = 1
+		except AttributeError:  self.Flag_hfNoisyHitsFilter[0] = 1
+
+                try : self.Flag_BadPFMuonDzFilter[0] = int(entry.Flag_BadPFMuonDzFilter)
+		except AttributeError: self.Flag_BadPFMuonDzFilter[0] = 1
 
 	    if 'UL' in proc  or str(era) != '2017': 
 		try:
@@ -1773,10 +1871,12 @@ class outTupleW() :
 	    sysj = ''
 	    if doUncertainties : sysj='nom'
 	    jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,sysj,proc) 
+            self.njets[0], self.nbtagL[0], self.nbtagM[0], self.nbtagT[0]= -1, -1, -1, 1
 	    self.njets[0] = len(jetList)
 	    self.nbtagL[0] = len(bJetListL)
 	    self.nbtagM[0] = len(bJetListM)
 	    self.nbtagT[0] = len(bJetListT)
+            #print 'and again', len(bJetListL),  len(bJetListM), len(bJetListT), self.nbtagL[0], self.nbtagM[0], self.nbtagT[0]
 	    self.jpt[0]  = -9.99
 	    self.jeta[0]  = -9.99
 	    for ifl in range(len(jetListPt)) :

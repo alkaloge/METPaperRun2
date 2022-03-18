@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 
-""" ZH.py: makes an nTuple for the ZH->tautau analysis """
 
-__author__ = "Dan Marlow, Alexis Kalogeropoulos, Gage DeZoort" 
-__version__ = "GageDev_v1.1"
+__author__ = "Alexis Kalogeropoulos" 
 
 # import external modules 
 import sys
@@ -46,7 +44,7 @@ cutCounter = {}
 cutCounterGenWeight = {}
 
 doJME  = args.doSystematics.lower() == 'true' or args.doSystematics.lower() == 'yes' or args.doSystematics == '1'
-#cats = ['eee','eem','eet', 'mmm', 'mme', 'mmt']
+#cats = ['eee'eem','eet', 'mmm', 'mme', 'mmt']
 cats=[ 'eeee', 'eemm', 'mmee', 'mmmm', 'eee', 'eem', 'mme', 'mmm', 'ee', 'mm']
 catss=[ 'enu', 'mnu']
 #catss=[ 'mnu']
@@ -203,175 +201,197 @@ for count, e in enumerate(inTree) :
      if meanW !=0. : 
          if float(e.genWeight/meanW) < 5 : hWeightAll.Fill(0, e.genWeight)
 '''
-for count, e in enumerate(inTree) :
-    if count % countMod == 0 :
-        print("Count={0:d}".format(count))
-        if count >= 10000 : countMod = 10000
-    if count == nMax : break    
-    
-    for cat in cats : 
-        cutCounter[cat].count('All')
-	if  MC :   cutCounterGenWeight[cat].countGenWeight('All', e.genWeight)
+if inTree.GetEntries()>0 : 
+    for count, e in enumerate(inTree) :
+	if count % countMod == 0 :
+	    print("Count={0:d}".format(count))
+	    if count >= 10000 : countMod = 10000
+	if count == nMax : break    
+	
+	for cat in cats : 
+	    cutCounter[cat].count('All')
+	    if  MC :   cutCounterGenWeight[cat].countGenWeight('All', e.genWeight)
 
-    isInJSON = False
-    if not MC : isInJSON = CJ.checkJSON(e.luminosityBlock,e.run)
-    if not isInJSON and not MC :
-        #print("Event not in JSON: Run:{0:d} LS:{1:d}".format(e.run,e.luminosityBlock))
-        continue
+	isInJSON = False
+	if not MC : isInJSON = CJ.checkJSON(e.luminosityBlock,e.run)
+	if not isInJSON and not MC :
+	    #print("Event not in JSON: Run:{0:d} LS:{1:d}".format(e.run,e.luminosityBlock))
+	    continue
 
-    for cat in cats: cutCounter[cat].count('InJSON')
-    
-    MetFilter = GF.checkMETFlags(e,args.year, 'UL')
-    if MetFilter : continue
-    
-    for cat in cats: cutCounter[cat].count('METfilter') 
+	for cat in cats: cutCounter[cat].count('InJSON')
+	
+	MetFilter = GF.checkMETFlags(e,args.year, 'UL')
+	if MetFilter : continue
+	
+	for cat in cats: cutCounter[cat].count('METfilter') 
 
-    if unique :
-        if e.event in uniqueEvents :
-            for cat in cats: cutCounter[cat].count('Unique') 
-        else :
-            continue
+	if unique :
+	    if e.event in uniqueEvents :
+		for cat in cats: cutCounter[cat].count('Unique') 
+	    else :
+		continue
 
-    if not tauFun.goodTrigger(e, args.year) : continue
-    #met_pt = float(e.MET_pt)
-    #met_phi = float(e.MET_phi)
-    if doJME and isMC: 
-        met_pt = float(e.MET_T1_pt)
-        met_phi = float(e.MET_T1_phi)
+	if not tauFun.goodTrigger(e, args.year) : continue
+	#met_pt = float(e.MET_pt)
+	#met_phi = float(e.MET_phi)
+	if doJME and isMC: 
+	    met_pt = float(e.MET_T1_pt)
+	    met_phi = float(e.MET_T1_phi)
 
-    #puppimet_pt = float(e.PuppiMET_pt)
-    #puppimet_phi = float(e.PuppiMET_phi)
+	#puppimet_pt = float(e.PuppiMET_pt)
+	#puppimet_phi = float(e.PuppiMET_phi)
 
-    for cat in cats: 
-        lepMode = cat[:2]
-	cutCounter[cat].count('Trigger')
-	if  MC :   cutCounterGenWeight[cat].countGenWeight('Trigger', e.genWeight)
-            
-        if args.category != 'none' and not lepMode in args.category : continue
+	for cat in cats: 
+	    lepMode = cat
+	    cutCounter[cat].count('Trigger')
+	    if  MC :   cutCounterGenWeight[cat].countGenWeight('Trigger', e.genWeight)
+		
+	    if args.category != 'none' and not lepMode in args.category : continue
+            '''
+	    if lepMode == 'enu' :
+		if e.nElectron < 1 : continue
+		cutCounter[cat].count('LeptonCount')
+		if  MC :   cutCounterGenWeight[cat].countGenWeight('LeptonCount', e.genWeight)
 
-        if lepMode == 'enu' :
-            if e.nElectron < 1 : continue
-	    cutCounter[cat].count('LeptonCount')
-	    if  MC :   cutCounterGenWeight[cat].countGenWeight('LeptonCount', e.genWeight)
+	    if lepMode == 'mnu' :
+		if e.nMuon != 1 : continue 
+		cutCounter[cat].count('LeptonCount')
+	 	if  MC :   cutCounterGenWeight[cat].countGenWeight('LeptonCount', e.genWeight)
+            '''
+	lepList=[]
+	pairList=[]
+       
+	
+	goodElectronList = tauFun.makeGoodElectronListWjets(e)
+	goodMuonList = tauFun.makeGoodMuonListWjets(e)
+	goodElectronList, goodMuonList = tauFun.eliminateCloseLeptons(e, goodElectronList, goodMuonList)
+	goodElectronListExtraLepton=[]
+	goodMuonListExtraLepton=[]
+	muonList = []
+	electronList = []
+	tauList=[]
+	photonList=[]
 
-        if lepMode == 'mnu' :
-            if e.nMuon != 1 : continue 
-	    cutCounter[cat].count('LeptonCount')
-	    if  MC :   cutCounterGenWeight[cat].countGenWeight('LeptonCount', e.genWeight)
+	isTau=0.
+	#if len(tauList)>0  : isTau = 1
+	for cat in catss: 
+	    lepMode = cat
+	    if lepMode == 'enu' :
 
-    lepList=[]
-    pairList=[]
-   
-    
-    goodElectronList = tauFun.makeGoodElectronListWjets(e)
-    goodMuonList = tauFun.makeGoodMuonListWjets(e)
-    goodElectronList, goodMuonList = tauFun.eliminateCloseLeptons(e, goodElectronList, goodMuonList)
-    goodElectronListExtraLepton=[]
-    goodMuonListExtraLepton=[]
-    tauList=[]
-    photonList=[]
+		#if e.nElectron != 1 : continue
+		if len(goodElectronList) != 1 :continue
+		cutCounter[cat].count('GoodLeptons')
+		if MC : cutCounterGenWeight[cat].countGenWeight('GoodLeptons', e.genWeight)
 
-    isTau=0.
-    #if len(tauList)>0  : isTau = 1
-    for cat in catss: 
-        lepMode = cat
-        if lepMode == 'enu' :
 
-            if e.nElectron != 1 : continue
-            if len(goodElectronList) < 1 :continue
-	    cutCounter[cat].count('GoodLeptons')
-            if e.nMuon > 0:
-		for i in range(e.nMuon):
-		    if e.Muon_pt[i]>10  :  continue
-	    cutCounter[cat].count('GoodLeptons')
-	    if MC : cutCounterGenWeight[cat].countGenWeight('GoodLeptons', e.genWeight)
+		muonList = tauFun.makevetoMuonList(e)
 
-            lepList=goodElectronList
-            #pairlist is the TLorentz
-	    cutCounter[cat].count('LeptonPair')
-	    if  MC :   cutCounterGenWeight[cat].countGenWeight('LeptonPair', e.genWeight)
-            
-        
-        if lepMode == 'mnu' :
-            if e.nMuon != 1 : continue
-            if len(goodMuonList) != 1 : continue
-            #vetoElectrons = tauFun.makevetoElectronList(e)
-            #if len(vetoElectrons) > 0 : 
-            if e.nElectron > 0:
-		for i in range(e.nElectron):
-		    if e.Electron_pt[i]>10  :  continue
+		#if len(vetoMuons) > 0 : continue
+		'''
+		if e.nMuon > 0:
+		    for i in range(e.nMuon):
+			if e.Muon_pt[i]>15  :  continue
+		'''
+		cutCounter[cat].count('VetoLeptons')
+		if MC : cutCounterGenWeight[cat].countGenWeight('VetoLeptons', e.genWeight)
 
-	    cutCounter[cat].count('GoodLeptons')
-	    if  MC :   cutCounterGenWeight[cat].countGenWeight('GoodLeptons', e.genWeight)
+		lepList=goodElectronList
+		#pairlist is the TLorentz
+		
+	    
+	    if lepMode == 'mnu' :
+		#if e.nMuon != 1 : continue
 
-            #pairList, lepList = tauFun.findW([],goodMuonList, e)
-            #pairList, lepList = 
-            lepList=goodMuonList
-            #if len(lepList) <1 : continue
-            #goodMuonListExtraLepton = tauFun.makeGoodMuonListExtraLepton(e,lepList)
-            #goodElectronListExtraLepton = goodElectronList
-            #for i in lepList : 
-            #    if i in goodElectronListExtraLepton : goodElectronListExtraLepton.remove(i)
-	    cutCounter[cat].count('LeptonPair')
-	    if  MC :   cutCounterGenWeight[cat].countGenWeight('LeptonPair', e.genWeight)
-            
+		if len(goodMuonList) != 1 : continue
+		cutCounter[cat].count('GoodLeptons')
+		if MC : cutCounterGenWeight[cat].countGenWeight('GoodLeptons', e.genWeight)
 
-        #print 'info..', goodMuonList, len(lepList), lepList, lepMode, cat
-        # eliminate close leptons amongst selected ones
-        #goodElectronListExtraLepton, goodMuonListExtraLepton, goodTauList = tauFun.eliminateCloseTauAndLepton(e, goodElectronListExtraLepton, goodMuonListExtraLepton, tauList)
-        if len(lepList)<1 : continue
-        #print len(lepList), 'index:', lepList[0], e.Muon_pt[lepList[0]], e.Muon_eta[lepList[0]], 'nMuon', e.nMuon, 'genPartFlav: ', ord(e.Muon_genPartFlav[lepList[0]]), 'genPartIdx: ', e.Muon_genPartIdx[lepList[0]]
+		electronList = tauFun.makevetoElectronList(e)
 
-        tauList = tauFun.getGoodTauListWjets(cat, e, lepList[0])
-        
-        if e.nPhoton > 0 :
-            for i in range(e.nPhoton):
-                if e.Photon_pt[i]>10  :    photonList.append(i)
+		'''
+		#if e.nElectron > 0:
+		#	for i in range(e.nElectron):
+		#	    if e.Electron_pt[i]>15  :  continue
+		'''
 
-        newList=[]
-        Lep = TLorentzVector()
-        #if len(pairList)>1 : 
-        #    LepP, LepM = pairList[0], pairList[1]
-        if lepMode == 'mnu' :Lep.SetPtEtaPhiM(e.Muon_pt[lepList[0]],e.Muon_eta[lepList[0]],e.Muon_phi[lepList[0]],0.105)
-        if lepMode == 'enu' :Lep.SetPtEtaPhiM(e.Electron_pt[lepList[0]],e.Electron_eta[lepList[0]],e.Electron_phi[lepList[0]],0.0005)
-        #METV.SetPtEtaPhiM(met_pt, 0, met_phi,0)
-         
-        #Wb = Lep + METV
-        #print 'some info...', Wb.M(), Wb.Mt(), METV.Pt(), Lep.Pt(), goodMuonList
-        #if len(goodElectronListExtraLepton)>0 or len(goodMuonListExtraLepton)>0 or len(goodTauList)> 0: continue
+		cutCounter[cat].count('VetoLeptons')
+		if  MC :   cutCounterGenWeight[cat].countGenWeight('VetoLeptons', e.genWeight)
 
-	cutCounter[cat].count('FoundW')
-	if  MC :   cutCounterGenWeight[cat].countGenWeight('FoundW', e.genWeight)
-        
-        
-	if MC :
-	    outTuple.setWeight(PU.getWeight(e.PV_npvs)) 
-	    outTuple.setWeightPU(PU.getWeight(e.Pileup_nPU)) 
-	    outTuple.setWeightPUtrue(PU.getWeight(e.Pileup_nTrueInt)) 
-	    #print 'nPU', e.Pileup_nPU, e.Pileup_nTrueInt, PU.getWeight(e.Pileup_nPU), PU.getWeight(e.Pileup_nTrueInt), PU.getWeight(e.PV_npvs), PU.getWeight(e.PV_npvsGood)
-	else : 
-	    outTuple.setWeight(1.) 
-	    outTuple.setWeightPU(1.) ##
-	    outTuple.setWeightPUtrue(1.)
+		#pairList, lepList = tauFun.findW([],goodMuonList, e)
+		#pairList, lepList = 
+		lepList=goodMuonList
+		#if len(lepList) <1 : continue
+		#cutCounter[cat].count('GoodLeptons')
+		#if  MC :   cutCounterGenWeight[cat].countGenWeight('GoodLeptons', e.genWeight)
+		#goodMuonListExtraLepton = tauFun.makeGoodMuonListExtraLepton(e,lepList)
+		#goodElectronListExtraLepton = goodElectronList
+		#for i in lepList : 
+		#    if i in goodElectronListExtraLepton : goodElectronListExtraLepton.remove(i)
+		
 
-	if not MC : isMC = False
+	    #print 'info..', goodMuonList, len(lepList), lepList, lepMode, cat
+	    # eliminate close leptons amongst selected ones
+	    #goodElectronListExtraLepton, goodMuonListExtraLepton, goodTauList = tauFun.eliminateCloseTauAndLepton(e, goodElectronListExtraLepton, goodMuonListExtraLepton, tauList)
+	    if len(lepList)<1 : continue
+	    #print len(lepList), 'index:', lepList[0], e.Muon_pt[lepList[0]], e.Muon_eta[lepList[0]], 'nMuon', e.nMuon, 'genPartFlav: ', ord(e.Muon_genPartFlav[lepList[0]]), 'genPartIdx: ', e.Muon_genPartIdx[lepList[0]]
 
-        if len(lepList)<1 : continue
-        #print 'will fill now', cat,Lep,lepList, tauList, photonList
-        outTuple.FillW(e, cat,Lep,lepList, tauList, photonList, isMC,era,doJME, proc)
+	    tauList = tauFun.getGoodTauListWjets(cat, e, lepList[0])
+	    
+	    if e.nPhoton > 0 :
+		for i in range(e.nPhoton):
+		    if e.Photon_pt[i]>10  :    photonList.append(i)
 
-	if maxPrint > 0 :
-	    maxPrint -= 1
-	    print("\n\nGood Event={0:d} cat={1:s}  MCcat={2:s}".format(e.event,cat,GF.eventID(e)))
-	    print("goodMuonList={0:s} goodElectronList={1:s} Mll={2:.1f} bestTauPair={3:s}".format(
-		str(goodMuonList),str(goodElectronList),M,str(bestTauPair)))
-	    print("Lep1.pt() = {0:.1f} Lep2.pt={1:.1f}".format(pairList[0].Pt(),pairList[1].Pt()))
-	    GF.printEvent(e)
-	    print("Event ID={0:s} cat={1:s}".format(GF.eventID(e),cat))
-                
+	    newList=[]
+	    Lep = TLorentzVector()
+	    #if len(pairList)>1 : 
+	    #    LepP, LepM = pairList[0], pairList[1]
+	    if lepMode == 'mnu' :Lep.SetPtEtaPhiM(e.Muon_pt[lepList[0]],e.Muon_eta[lepList[0]],e.Muon_phi[lepList[0]],0.105)
+	    if lepMode == 'enu' :Lep.SetPtEtaPhiM(e.Electron_pt[lepList[0]],e.Electron_eta[lepList[0]],e.Electron_phi[lepList[0]],0.0005)
+	    #METV.SetPtEtaPhiM(met_pt, 0, met_phi,0)
+	     
+	    #Wb = Lep + METV
+	    #print 'some info...', Wb.M(), Wb.Mt(), METV.Pt(), Lep.Pt(), goodMuonList
+	    #if len(goodElectronListExtraLepton)>0 or len(goodMuonListExtraLepton)>0 or len(goodTauList)> 0: continue
 
-dT = time.time() - tStart
-print("Run time={0:.2f} s  time/event={1:.1f} us".format(dT,1000000.*dT/count))
+	    cutCounter[cat].count('FoundW')
+	    if  MC :   cutCounterGenWeight[cat].countGenWeight('FoundW', e.genWeight)
+	    
+	    
+	    if MC :
+		try : outTuple.setWeight(PU.getWeight(e.PV_npvs)) 
+		except IndexError : outTuple.setWeight(1.)
+                try : outTuple.setWeightPU(PU.getWeight(e.Pileup_nPU)) 
+		except IndexError : outTuple.setWeightPU(1.)
+		try : outTuple.setWeightPUtrue(PU.getWeight(e.Pileup_nTrueInt)) 
+		except IndexError : outTuple.setWeightPUtrue()
+		#print 'nPU', e.Pileup_nPU, e.Pileup_nTrueInt, PU.getWeight(e.Pileup_nPU), PU.getWeight(e.Pileup_nTrueInt), PU.getWeight(e.PV_npvs), PU.getWeight(e.PV_npvsGood)
+	    else : 
+		outTuple.setWeight(1.) 
+		outTuple.setWeightPU(1.) ##
+		outTuple.setWeightPUtrue(1.)
+
+	    if not MC : isMC = False
+
+	    if len(lepList)<1 : continue
+	    #print 'will fill now', cat,Lep,lepList, tauList, photonList
+            #print 'some info', electronList, tauList, photonList, e.nMuon
+	    outTuple.FillW(e, cat,Lep,lepList, tauList, photonList, electronList, muonList, isMC,era,doJME, proc)
+
+	    if maxPrint > 0 :
+		maxPrint -= 1
+		print("\n\nGood Event={0:d} cat={1:s}  MCcat={2:s}".format(e.event,cat,GF.eventID(e)))
+		print("goodMuonList={0:s} goodElectronList={1:s} Mll={2:.1f} bestTauPair={3:s}".format(
+		    str(goodMuonList),str(goodElectronList),M,str(bestTauPair)))
+		print("Lep1.pt() = {0:.1f} Lep2.pt={1:.1f}".format(pairList[0].Pt(),pairList[1].Pt()))
+		GF.printEvent(e)
+		print("Event ID={0:s} cat={1:s}".format(GF.eventID(e),cat))
+		    
+
+    dT = time.time() - tStart
+    if count > 0 : print("Run time={0:.2f} s  time/event={1:.1f} us".format(dT,1000000.*dT/count))
+
+else: print 'looks like not many entries...'
+
 
 hCutFlow=[]
 hCutFlowW=[]
