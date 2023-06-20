@@ -308,7 +308,7 @@ def extract2():
 	    h_uperp_t1 = folder.Get("h_uperp_t1_vspt_{}".format(i))
 	    h_uperp_t1smear = folder.Get("h_uperp_t1smear_vspt_{}".format(i))
 	    h_uperp_puppi = folder.Get("h_uperp_puppi_vspt_{}".format(i))
-	    
+	    '''
 	    changeSignOfHistogram(h_upara_rawmet)
 	    changeSignOfHistogram(h_upara_rawpuppi)
 	    changeSignOfHistogram(h_upara_t1)
@@ -319,7 +319,7 @@ def extract2():
 	    changeSignOfHistogram(h_uperp_t1)
 	    if isMC : changeSignOfHistogram(h_uperp_t1smear)
 	    changeSignOfHistogram(h_uperp_puppi)
-
+            '''
 	    if isMC : 
 		h_scale_rawmet.Scale(weight)
 		h_scale_rawpuppi.Scale(weight)
