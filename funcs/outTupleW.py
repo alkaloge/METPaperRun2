@@ -186,7 +186,7 @@ class outTupleW() :
         self.weightPUtrue           = array('f',[0])
         self.LHEweight        = array('f',[0])
         self.Generator_weight = array('f',[0])
-        self.LHE_Njets        = array('I',[0])
+        self.LHE_Njets        = array('i',[-1])
         self.electronTriggerWord  = array('I',[0])
         self.muonTriggerWord  = array('I',[0])         
         self.whichTriggerWord  = array('I',[0])         
@@ -197,8 +197,6 @@ class outTupleW() :
         self.nGoodMuon        = array('I',[0])
         self.Flag_hfNoisyHitsFilter        = array('I',[0])
         self.Flag_BadPFMuonDzFilter        = array('I',[0])
-        self.Electron_convVeto        = array('f',[0])
-        self.Electron_lostHits        = array('I',[0])
 
         self.L1PreFiringWeight_Nom        = array('f',[0])
         self.L1PreFiringWeight_Up        = array('f',[0])
@@ -213,21 +211,21 @@ class outTupleW() :
         self.Electron_mvaFall17V2noIso_WP90_1 = array('f',[0])
         self.Electron_mvaFall17V2Iso_WP90_1 = array('f',[0])
         self.Electron_cutBased_1 = array('f',[0])
+        self.Electron_convVeto        = array('f',[0])
+        self.Electron_lostHits        = array('I',[0])
         self.gen_match_1 = array('i',[0])
 
 
         # di-lepton variables.   1 and 2 refer to plus and minus charge
-        self.H_LT       = array('f',[0])
-        self.dRlH       = array('f',[0])
         self.mll       = array('f',[0])
         self.W_Pt       = array('f',[0])
-        self.pt_1      = array('f',[0])
         self.IDSF      = array('f',[0])
         self.IsoSF      = array('f',[0])
         self.TrigSF      = array('f',[0])
         #self.muonTightiDsf_1      = array('f',[0])
 
         self.m_1_tr   = array('f',[0])
+        self.pt_1      = array('f',[0])
         self.pt_1_tr   = array('f',[0])
         self.GenPart_statusFlags_1   = array('i',[0])
         self.GenPart_status_1     = array('i',[0])
@@ -581,9 +579,6 @@ class outTupleW() :
         self.t.Branch('nElectron',              self.nElectron,               'nElectron/I' )
         self.t.Branch('Electron_convVeto',              self.Electron_convVeto,               'Electron_convVeto/F' )
         self.t.Branch('Electron_lostHits',              self.Electron_lostHits,               'Electron_lostHits/I' )
-        self.t.Branch('Electron_mvaFall17V2Iso_WP90_1',              self.Electron_mvaFall17V2Iso_WP90_1,               'Electron_mvaFall17V2Iso_WP90_1/F' )
-        self.t.Branch('Electron_mvaFall17V2noIso_WP90_1',              self.Electron_mvaFall17V2noIso_WP90_1,               'Electron_mvaFall17V2noIso_WP90_1/F' )
-        self.t.Branch('Electron_cutBased_1',              self.Electron_cutBased_1,               'Electron_cutBased_1/I' )
 
         self.t.Branch('nMuon',              self.nMuon,               'nMuon/I' )
         self.t.Branch('nTau',              self.nTau,               'nTau/I' )
@@ -608,13 +603,17 @@ class outTupleW() :
         self.t.Branch('weightPU',           self.weightPU,            'weightPU/F' )
         self.t.Branch('weightPUtrue',           self.weightPUtrue,            'weightPUtrue/F' )
         self.t.Branch('LHEweight',        self.LHEweight,         'LHEweight/F' )
-        self.t.Branch('LHE_Njets',        self.LHE_Njets,         'LHE_Njets/I' )
+        self.t.Branch('LHE_Njets',        self.LHE_Njets,         'LHE_Njets/i' )
         self.t.Branch('LHEScaleWeights',        self.LHEScaleWeights,         'LHEScaleWeights[9]/F' )
         self.t.Branch('Generator_weight', self.Generator_weight,  'Generator_weight/F' )
         self.t.Branch('electronTriggerWord',  self.electronTriggerWord, 'electronTriggerWord/I' )
         self.t.Branch('muonTriggerWord',      self.muonTriggerWord,  'muonTriggerWord/I' )
         self.t.Branch('whichTriggerWord',      self.whichTriggerWord,  'whichTriggerWord/I' )
         self.t.Branch('whichTriggerWordSubL',      self.whichTriggerWordSubL,  'whichTriggerWordSubL/I' )
+
+        self.t.Branch('L1PreFiringWeight_Nom',        self.L1PreFiringWeight_Nom,        'L1PreFiringWeight_Nom/F')
+        self.t.Branch('L1PreFiringWeight_Up',        self.L1PreFiringWeight_Up,        'L1PreFiringWeight_Up/F')
+        self.t.Branch('L1PreFiringWeight_Down',        self.L1PreFiringWeight_Down,        'L1PreFiringWeight_Down/F')
         
         self.t.Branch('nGoodElectron',    self.nGoodElectron,     'nGoodElectron/I' )
         self.t.Branch('nGoodMuon',        self.nGoodMuon,         'nGoodMuon/I' )
@@ -642,9 +641,6 @@ class outTupleW() :
         self.t.Branch('iso_1',       self.iso_1,       'iso_1/F')
         self.t.Branch('PFiso_1',       self.PFiso_1,       'PFiso_1/F')
         self.t.Branch('q_1',       self.q_1,       'q_1/F')
-        self.t.Branch('L1PreFiringWeight_Nom',        self.L1PreFiringWeight_Nom,        'L1PreFiringWeight_Nom/F')
-        self.t.Branch('L1PreFiringWeight_Up',        self.L1PreFiringWeight_Up,        'L1PreFiringWeight_Up/F')
-        self.t.Branch('L1PreFiringWeight_Down',        self.L1PreFiringWeight_Down,        'L1PreFiringWeight_Down/F')
         self.t.Branch('d0_1',        self.d0_1,        'd0_1/F')
         self.t.Branch('dZ_1',        self.dZ_1,        'dZ_1/F')
         self.t.Branch('Muon_Id_1',       self.Muon_Id_1,       'Muon_Id_1/F')
@@ -666,6 +662,10 @@ class outTupleW() :
         self.t.Branch('pfIsoId_1', self.pfIsoId_1, 'pfIsoId_1/F')
         self.t.Branch('mediumPromptId_1', self.mediumPromptId_1, 'mediumPromptId_1/F')
         self.t.Branch('looseId_1', self.looseId_1, 'looseId_1/F')
+
+        self.t.Branch('Electron_mvaFall17V2Iso_WP90_1',              self.Electron_mvaFall17V2Iso_WP90_1,               'Electron_mvaFall17V2Iso_WP90_1/F' )
+        self.t.Branch('Electron_mvaFall17V2noIso_WP90_1',              self.Electron_mvaFall17V2noIso_WP90_1,               'Electron_mvaFall17V2noIso_WP90_1/F' )
+        self.t.Branch('Electron_cutBased_1',              self.Electron_cutBased_1,               'Electron_cutBased_1/I' )
         
         # MET variables
         self.t.Branch('metcov00', self.metcov00, 'metcov00/F')
@@ -1012,7 +1012,7 @@ class outTupleW() :
                 #self.t.SetBranchStatus("Smear",1)
                 self.tN[i-1].SetName(isyst)
 
-                print '====================>',self.tN[i-1], self.tN[i-1].GetName()
+                #print '====================>',self.tN[i-1], self.tN[i-1].GetName()
 
 	self.t.SetBranchStatus("GenPart*",1)
 	self.t.SetBranchStatus("*_tr*",1)
@@ -1201,6 +1201,7 @@ class outTupleW() :
         #if entry.event == 207273709 : print 'this is check', jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
         #print 'lets see', len(bJetListL), len(bJetListM), len(bJetListT), len(jetList)
         #print ''
+        #print jetList, jetListEta, jetListPt
         return jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
 
 
@@ -1366,14 +1367,15 @@ class outTupleW() :
 
 
 	    try :
-		self.LHEweight[0]        = entry.LHEWeight_originalXWGTUP
-		self.LHE_Njets[0]        = ord(entry.LHE_Njets)
+		if isMC : 
+		    self.LHEweight[0]        = entry.LHEWeight_originalXWGTUP
+		    self.LHE_Njets[0]        = ord(entry.LHE_Njets)
 		if SystIndex == 0 : 
 		    for i in range(0, int(entry.nLHEScaleWeight)) : 
 			self.LHEScaleWeights[i] = entry.LHEScaleWeight[i]
 	    except AttributeError :
 		self.LHEweight[0]        = 1. 
-		self.LHE_Njets[0] = 0
+		self.LHE_Njets[0] = -1
                 self.LHEScaleWeights[0] = -1
 
 			    
@@ -2191,7 +2193,7 @@ class outTupleW() :
 		    for i, v in enumerate(self.allsystJets) : 
 		    #njets_sys, nbtag_sys
 			jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,v) 
-			#print 'jessyst', systematic, len(jetList), cat
+			print 'jessyst===============!!!!!!!!!!!!', systematic, len(jetList), cat
 			try : 
 			    self.list_of_arraysJetsNjets[i][0] = len(jetList)
 			    self.list_of_arraysJetsNbtagL[i][0] = len(bJetListL)
@@ -2228,7 +2230,8 @@ class outTupleW() :
 		    self.jpt[ifl]  = jetListPt[ifl]
 		    self.btagDeep[ifl] = bTagListDeep[ifl]
 		except IndexError : print 'we hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
-	    '''
+	    #print self.jpt[0], self.jeta[0]
+            '''
 	    if self.nMuon[0] !=1 : print 'failed nMuon', entry.event, self.nMuon[0]
 	    if self.nTau[0]!=0 :  print 'failed nTau', entry.event, self.nTau[0]
 	    if (self.isGlobal_1[0]<1 and self.isTracker_1[0]<1) :  print 'failed muon Id', entry.event, self.isGlobal_1[0], self.isTracker_1[0]

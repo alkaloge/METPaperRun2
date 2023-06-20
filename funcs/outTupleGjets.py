@@ -1,6 +1,6 @@
-#r output ntuple for H->tautau analysis for CMSSW_10_2_X
+# output ntuple for H->tautau analysis for CMSSW_10_2_X
 
-from ROOT import TLorentzVector, TH1, std
+from ROOT import TLorentzVector, TH1
 from math import sqrt, sin, cos, pi, fabs
 import tauFun2
 import ROOT, array
@@ -16,24 +16,27 @@ from correctionlib import _core
 
 electronMass = 0.0005
 muonMass  = 0.105
-class outTuple2Lep() :
+class outTupleGjets() :
     
     def __init__(self,fileName, era, doSyst=False,shift=[], isMC=True, onlyNom=False, isW=False):
         from array import array
         from ROOT import TFile, TTree
-
+        if 'preV' in fileName : era = '2016preVFP'
+        print 'setting the schene.....', era, fileName
         # Tau Decay types
         ########### JetMet systematics
         self.sf_EleTrig = ''
         self.sf_EleTrig = SF.SFs()
+        #self.sf_PhotonTrig = SF.SFs()
         #Electron_RunUL2016postVFP_Ele25_EtaLt2p1.root  Electron_RunUL2016preVFP_Ele25_EtaLt2p1.root   Electron_RunUL2017_Ele35.root                  Electron_RunUL2018_Ele35.root
-        self.TriggerSF={'dir' : './', 'fileMuon' : 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron' : 'Electron_RunUL2018_Ele35.root'}
-        if '2016pre' in str(era):  self.TriggerSF={'dir' : './', 'fileMuon' : 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron' : 'Electron_RunUL2016preVFP_Ele25_EtaLt2p1.root'}
-        if '2016' in str(era) and 'pre' not in str(era):  self.TriggerSF={'dir' : './', 'fileMuon' : 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron' : 'Electron_RunUL2016postVFP_Ele25_EtaLt2p1.root'}
+        self.TriggerSF={'dir' : './', 'fileMuon' : 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron' : 'Electron_RunUL2018_Ele35.root', 'filePhoton' : 'egammaEffi.txt_EGM2D_Pho_Tight.root_UL18.root'}
+        if '2016pre' in str(era) or 'pre' in fileName:  self.TriggerSF={'dir' : './', 'fileMuon' : 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron' : 'Electron_RunUL2016preVFP_Ele25_EtaLt2p1.root'}
+        if '2016' in str(era) and 'pre' not in str(era) and 'pre' not in fileName:  self.TriggerSF={'dir' : './', 'fileMuon' : 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron' : 'Electron_RunUL2016postVFP_Ele25_EtaLt2p1.root'}
         if '2017' in str(era) :  self.TriggerSF={'dir' : './', 'fileMuon' : 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron' : 'Electron_RunUL2017_Ele35.root'}
 
         print 'era', era, self.TriggerSF['fileElectron']
         self.sf_EleTrig.ScaleFactor("{0:s}{1:s}".format(self.TriggerSF['dir'],self.TriggerSF['fileElectron']))
+        #self.sf_PhotonTrig.ScaleFactor("{0:s}{1:s}".format(self.TriggerSF['dir'],self.TriggerSF['filePhoton']))
 
         #lines above with .root files, lines below with correction lib
 
@@ -49,7 +52,7 @@ class outTuple2Lep() :
 		# Tau Decay types
 
         self.evaluatorEl=''
-	self.fnameEl = "./electron_{0:s}.json.gz".format(str(era))
+	self.fnameEl = "./photon_{0:s}.json.gz".format(str(era))
 	if self.fnameEl.endswith(".json.gz"):
 	    import gzip
 	    with gzip.open(self.fnameEl,'rt') as file:
@@ -58,7 +61,24 @@ class outTuple2Lep() :
 	else:
 	    self.evaluatorEl = _core.CorrectionSet.from_file(self.fnameEl)
 		# Tau Decay types
-        print 'initialized the UL SF from', self.fname, self.fnameEl
+
+
+        self.evaluatorPresc=''
+        eraa = era
+        if 'preVF' in era or 'postVF' in era : eraa='2016'
+	self.fnamePresc = "./prescale_{0:s}.json.gz".format(str(eraa))
+	if self.fnamePresc.endswith(".json.gz"):
+	    import gzip
+	    with gzip.open(self.fnamePresc,'rt') as file:
+		self.datasPresc = file.read().strip()
+		self.evaluatorPresc = _core.CorrectionSet.from_string(self.datasPresc)
+	else:
+	    self.evaluatorPresc = _core.CorrectionSet.from_file(self.fnamePresc)
+		# Tau Decay types
+
+
+
+        print 'initialized the UL SF from', self.fname, self.fnameEl, self.fnamePresc
 	# TrackerMuon Reconstruction UL scale factor
 	#self.valsf = self.evaluator["NUM_MediumID_DEN_TrackerMuons"].evaluate("2017_UL", 1.1, 30.0, "sf")
 	#print("sf 1 is: " + str(self.valsf))
@@ -66,13 +86,11 @@ class outTuple2Lep() :
 	#self.listsyst=['njets', 'nbtag', 'jpt', 'jeta', 'jflavour','MET_T1_pt', 'MET_T1_phi', 'MET_pt', 'MET_phi', 'MET_T1Smear_pt', 'MET_T1Smear_phi']
         self.jessyst=['_nom']
 	self.listsyst=['MET_T1_pt', 'MET_T1_phi', 'MET_pt', 'MET_phi', 'PuppiMET_pt', 'PuppiMET_phi', 'MET_T1Smear_pt', 'MET_T1Smear_phi']
-	#self.flavlist = ['MET', 'MET_T1', 'MET_T1', 'METCor_T1', 'METCorGood_T1', 'PuppiMET', 'PuppiMETCor', 'PuppiMETCorGood']
         if doSyst :
 	    self.jessyst=['_nom', '_jesTotal', '_jer','_jesHEMIssue']  
 
         if onlyNom :
 	    self.jessyst=['_nom']
-
 
 
 	varss=['Up','Down']
@@ -130,7 +148,7 @@ class outTuple2Lep() :
 			self.list_of_arraysJetsNbtagL.append( array('i',[-1]))
 			self.list_of_arraysJetsNbtagM.append( array('i',[-1]))
 			self.list_of_arraysJetsNbtagT.append( array('i',[-1]))
-			self.list_of_arraysJetsFlavour.append( array('i',[-99]*15))
+			self.list_of_arraysJetsFlavour.append( array('i',[-1]*15))
 			self.list_of_arraysJetsEta.append( array('f',[-9.99]*15))
 			self.list_of_arraysJetsPt.append( array('f',[-9.99]*15))
 			self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*15))
@@ -141,7 +159,7 @@ class outTuple2Lep() :
 			    self.list_of_arraysJetsNbtagL.append( array('i',[-1]))
 			    self.list_of_arraysJetsNbtagM.append( array('i',[-1]))
 			    self.list_of_arraysJetsNbtagT.append( array('i',[-1]))
-			    self.list_of_arraysJetsFlavour.append( array('i',[-99]*15))
+			    self.list_of_arraysJetsFlavour.append( array('i',[-1]*15))
 			    self.list_of_arraysJetsEta.append( array('f',[-9.99]*15))
 			    self.list_of_arraysJetsPt.append( array('f',[-9.99]*15))
 			    self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*15))
@@ -168,6 +186,13 @@ class outTuple2Lep() :
         self.nElectron        = array('I',[0])
         self.nMuon            = array('I',[0])
         self.nTau            = array('I',[0])
+        self.nPhoton            = array('I',[0])
+        self.Photon_r9_1            = array('f',[0])
+        self.Photon_pdgid_1            = array('f',[0])
+        self.Photon_cutBased_1             = array('f',[0])
+        self.Photon_pixelSeed_1             = array('f',[0])
+        self.Photon_electronVeto_1             = array('f',[0])
+
         self.VetoTau            = array('I',[0])
         self.VetoPhoton            = array('I',[0])
         self.VetoElectron            = array('I',[0])
@@ -186,6 +211,9 @@ class outTuple2Lep() :
         self.nPVGood              = array('I',[0])
         self.cat              = array('I',[0])
         self.weight           = array('f',[0])
+        self.weightps           = array('f',[0])
+        self.weightps2           = array('f',[0])
+        self.weightpsjson           = array('f',[0])
         self.weightPU           = array('f',[0])
         self.weightPUtrue           = array('f',[0])
         self.LHEweight        = array('f',[0])
@@ -248,15 +276,11 @@ class outTuple2Lep() :
         #self.muonTightiDsf_1      = array('f',[0])
 
 
-        self.m_1_tr   = array('f',[0])
         self.pt_1      = array('f',[0])
-        self.pt_1_tr   = array('f',[0])
         self.GenPart_statusFlags_1   = array('l',[0])
         self.GenPart_status_1     = array('l',[0])
         self.phi_1     = array('f',[0])
-        self.phi_1_tr  = array('f',[0])
         self.eta_1     = array('f',[0])
-        self.eta_1_tr  = array('f',[0])
         self.iso_1       = array('f',[0])
         self.PFiso_1       = array('f',[0])
         self.q_1       = array('f',[0])
@@ -284,46 +308,12 @@ class outTuple2Lep() :
 
 
 
-        # second candidate
-        self.m_2_tr   = array('f',[0])
-        self.pt_2   = array('f',[0])
-        self.pt_2_tr   = array('f',[0])
-        self.GenPart_statusFlags_2   = array('l',[0])
-        self.GenPart_status_2     = array('l',[0])
-        self.phi_2     = array('f',[0])
-        self.phi_2_tr  = array('f',[0])
-        self.eta_2     = array('f',[0])
-        self.eta_2_tr  = array('f',[0])
-        self.iso_2       = array('f',[0])
-        self.PFiso_2       = array('f',[0])
-        self.q_2       = array('f',[0])
-        self.Muon_Id_2       = array('f',[0])
-        self.isGlobal_2       = array('f',[0])
-        self.isStandalone_2       = array('f',[0])
-
-        self.highPtId_2       = array('f',[0])
-        self.highPurity_2       = array('f',[0])
-        self.inTimeMuon_2       = array('f',[0])
-        self.ip3d_2       = array('f',[0])
-        self.sip3d_2       = array('f',[0])
-        self.stations_2       = array('I',[0])
-        self.TrackerL_2       = array('I',[0])
-
-        self.isPFcand_2       = array('f',[0])
-        self.isTracker_2       = array('f',[0])
-        self.tightId_2       = array('f',[0])
-        self.tightCharge_2       = array('f',[0])
-        self.mediumId_2       = array('f',[0])
-        self.pfIsoId_2       = array('f',[0])
-        self.mediumPromptId_2       = array('f',[0])
-        self.looseId_2       = array('f',[0])
-
-
         # MET variables
         self.metcov00    = array('f',[0])
         self.metcov01    = array('f',[0])
         self.metcov10    = array('f',[0])
         self.metcov11    = array('f',[0])
+
 
 	self.MET_significance = array('f',[-99])
 
@@ -347,9 +337,7 @@ class outTuple2Lep() :
 	self.u_perp_MET = array('f',[-999])
 
 
-        
         if doSyst :
-
 	    branches = ['MET', 'MET_T1', 'METCor_T1', 'METCorGood_T1', 'PuppiMET', 'PuppiMETCor', 'PuppiMETCorGood', 'MET_T1Smear', 'METCor_T1Smear', 'METCorGood_T1Smear']
             if not isMC:  branches = ['MET', 'MET_T1', 'METCor_T1', 'METCorGood_T1', 'PuppiMET', 'PuppiMETCor', 'PuppiMETCorGood']
 
@@ -407,22 +395,19 @@ class outTuple2Lep() :
 
         # jet variables
         #self.njetsold = array('f',[-1]*12)
-        self.njets     = array('i',[0])
-        self.nbtagL     = array('i',[0])
-        self.nbtagM     = array('i',[0])
-        self.nbtagT     = array('i',[0])
+        self.njets     = array('i',[-1])
+        self.nbtagL     = array('i',[-1])
+        self.nbtagM     = array('i',[-1])
+        self.nbtagT     = array('i',[-1])
 
-        self.jflavour     = array('f',[-9.99]*12)
+        self.jflavour     = array('i',[-9]*12)
         self.jeta     = array('f',[-9.99]*12)
         self.jpt     = array('f',[-9.99]*12)
         self.btagDeep     = array('f',[-9.99]*12)
 
         self.bpt_1     = array('f',[0]*12)
-        self.bpt_1_tr  = array('f',[0]*12)
         self.beta_1    = array('f',[0]*12)
-        self.beta_1_tr = array('f',[0]*12)
         self.bphi_1    = array('f',[0]*12)
-        self.bphi_1_tr = array('f',[0]*12)
         self.bcsv_1    = array('f',[0]*12)
         self.bcsvfv_1    = array('f',[0]*12)
       
@@ -439,6 +424,14 @@ class outTuple2Lep() :
 
         self.t.Branch('nMuon',              self.nMuon,               'nMuon/I' )
         self.t.Branch('nTau',              self.nTau,               'nTau/I' )
+        self.t.Branch('nPhoton',              self.nPhoton,               'nPhoton/I' )
+        self.t.Branch('Photon_r9_1',              self.Photon_r9_1,               'Photon_r9_1/F' )
+        self.t.Branch('Photon_pdgid_1',              self.Photon_pdgid_1,               'Photon_pdgid_1/F' )
+        self.t.Branch('Photon_cutBased_1',              self.Photon_cutBased_1,               'Photon_cutBased_1/F' )
+        self.t.Branch('Photon_pixelSeed_1',              self.Photon_pixelSeed_1,               'Photon_pixelSeed_1/F' )
+        self.t.Branch('Photon_electronVeto_1',              self.Photon_electronVeto_1,               'Photon_electronVeto_1/F' )
+
+
         self.t.Branch('VetoTau',              self.VetoTau,               'VetoTau/I' )
         self.t.Branch('VetoPhoton',              self.VetoPhoton,               'VetoPhoton/I' )
         self.t.Branch('VetoElectron',              self.VetoElectron,               'VetoElectron/I' )
@@ -457,6 +450,9 @@ class outTuple2Lep() :
         self.t.Branch('nPVGood',              self.nPVGood,               'nPVGood/I' )
         self.t.Branch('cat',              self.cat,               'cat/I' )
         self.t.Branch('weight',           self.weight,            'weight/F' )
+        self.t.Branch('weightps',           self.weightps,            'weightps/F' )
+        self.t.Branch('weightps2',           self.weightps2,            'weightps2/F' )
+        self.t.Branch('weightpsjson',           self.weightpsjson,            'weightpsjson/F' )
         self.t.Branch('weightPU',           self.weightPU,            'weightPU/F' )
         self.t.Branch('weightPUtrue',           self.weightPUtrue,            'weightPUtrue/F' )
         self.t.Branch('LHEweight',        self.LHEweight,         'LHEweight/F' )
@@ -488,20 +484,13 @@ class outTuple2Lep() :
         self.t.Branch('IDSF1',        self.IDSF1,        'IDSF1/F')
         self.t.Branch('TrigSF1',        self.TrigSF1,        'TrigSF1/F')
         self.t.Branch('IsoSF1',        self.IsoSF1,        'IsoSF1/F')
-        self.t.Branch('IDSF2',        self.IDSF2,        'IDSF2/F')
-        self.t.Branch('TrigSF2',        self.TrigSF2,        'TrigSF2/F')
-        self.t.Branch('IsoSF2',        self.IsoSF2,        'IsoSF2/F')
         self.t.Branch('IDSF',        self.IDSF,        'IDSF/F')
         self.t.Branch('TrigSF',        self.TrigSF,        'TrigSF/F')
         self.t.Branch('IsoSF',        self.IsoSF,        'IsoSF/F')
 
         self.t.Branch('pt_1',        self.pt_1,        'pt_1/F')
-        self.t.Branch('m_1_tr',     self.m_1_tr,     'm_1_tr/F')
-        self.t.Branch('pt_1_tr',     self.pt_1_tr,     'pt_1_tr/F')
         self.t.Branch('phi_1',       self.phi_1,       'phi_1/F')  
-        self.t.Branch('phi_1_tr',    self.phi_1_tr,    'phi_1_tr/F')
         self.t.Branch('eta_1',       self.eta_1,       'eta_1/F')    
-        self.t.Branch('eta_1_tr',       self.eta_1_tr,       'eta_1_tr/F')    
         self.t.Branch('iso_1',       self.iso_1,       'iso_1/F')
         self.t.Branch('PFiso_1',       self.PFiso_1,       'PFiso_1/F')
         self.t.Branch('q_1',       self.q_1,       'q_1/F')
@@ -511,11 +500,6 @@ class outTuple2Lep() :
         self.t.Branch('isGlobal_1',       self.isGlobal_1,       'isGlobal_1/F')
         self.t.Branch('isStandalone_1',       self.isStandalone_1,       'isStandalone_1/F')
 
-        self.t.Branch('highPtId_1',       self.highPtId_1,       'highPtId_1/F')
-        self.t.Branch('highPurity_1',       self.highPurity_1,       'highPurity_1/F')
-        self.t.Branch('inTimeMuon_1',       self.inTimeMuon_1,       'inTimeMuon_1/F')
-        self.t.Branch('ip3d_1',       self.ip3d_1,       'ip3d_1/F')
-        self.t.Branch('sip3d_1',       self.sip3d_1,       'sip3d_1/F')
 
 
         self.t.Branch('isPFcand_1',       self.isPFcand_1,       'isPFcand_1/F')
@@ -531,54 +515,6 @@ class outTuple2Lep() :
         self.t.Branch('Electron_mvaFall17V2Iso_WP90_1',              self.Electron_mvaFall17V2Iso_WP90_1,               'Electron_mvaFall17V2Iso_WP90_1/F' )
         self.t.Branch('Electron_mvaFall17V2noIso_WP90_1',              self.Electron_mvaFall17V2noIso_WP90_1,               'Electron_mvaFall17V2noIso_WP90_1/F' )
         self.t.Branch('Electron_cutBased_1',              self.Electron_cutBased_1,               'Electron_cutBased_1/I' )
-
-
-        self.t.Branch('GenPart_statusFlags_2',     self.GenPart_statusFlags_2,     'GenPart_statusFlags_2/I')
-        self.t.Branch('GenPart_status_2',     self.GenPart_status_2,     'GenPart_status_2/I')
-        self.t.Branch('pt_uncor_2',        self.pt_uncor_2,        'pt_uncor_2/F')
-        self.t.Branch('m_uncor_2',        self.m_uncor_2,        'm_uncor_2/F')
-        self.t.Branch('gen_match_2', self.gen_match_2, 'gen_match_2/I')
-        self.t.Branch('stations_2', self.stations_2, 'stations_2/I')
-        self.t.Branch('TrackerL_2', self.TrackerL_2, 'TrackerL_2/I')
-
-
-        self.t.Branch('pt_2',        self.pt_2,        'pt_2/F')
-        self.t.Branch('m_2_tr',     self.m_2_tr,     'm_2_tr/F')
-        self.t.Branch('pt_2_tr',     self.pt_2_tr,     'pt_2_tr/F')
-        self.t.Branch('phi_2',       self.phi_2,       'phi_2/F')  
-        self.t.Branch('phi_2_tr',    self.phi_2_tr,    'phi_2_tr/F')
-        self.t.Branch('eta_2',       self.eta_2,       'eta_2/F')    
-        self.t.Branch('eta_2_tr',       self.eta_2_tr,       'eta_2_tr/F')    
-        self.t.Branch('iso_2',       self.iso_2,       'iso_2/F')
-        self.t.Branch('PFiso_2',       self.PFiso_2,       'PFiso_2/F')
-        self.t.Branch('q_2',       self.q_2,       'q_2/F')
-        self.t.Branch('d0_2',        self.d0_2,        'd0_2/F')
-        self.t.Branch('dZ_2',        self.dZ_2,        'dZ_2/F')
-        self.t.Branch('Muon_Id_2',       self.Muon_Id_2,       'Muon_Id_2/F')
-        self.t.Branch('isGlobal_2',       self.isGlobal_2,       'isGlobal_2/F')
-        self.t.Branch('isStandalone_2',       self.isStandalone_2,       'isStandalone_2/F')
-
-        self.t.Branch('highPtId_2',       self.highPtId_2,       'highPtId_2/F')
-        self.t.Branch('highPurity_2',       self.highPurity_2,       'highPurity_2/F')
-        self.t.Branch('inTimeMuon_2',       self.inTimeMuon_2,       'inTimeMuon_2/F')
-        self.t.Branch('ip3d_2',       self.ip3d_2,       'ip3d_2/F')
-        self.t.Branch('sip3d_2',       self.sip3d_2,       'sip3d_2/F')
-
-
-        self.t.Branch('isPFcand_2',       self.isPFcand_2,       'isPFcand_2/F')
-        self.t.Branch('isTracker_2',       self.isTracker_2,       'isTracker_2/F')
-        self.t.Branch('tightId_2', self.tightId_2, 'tightId_2/F')
-        self.t.Branch('tightCharge_2', self.tightCharge_2, 'tightCharge_2/F')
-        self.t.Branch('mediumId_2', self.mediumId_2, 'mediumId_2/F')
-        self.t.Branch('pfIsoId_2', self.pfIsoId_2, 'pfIsoId_2/F')
-        self.t.Branch('mediumPromptId_2', self.mediumPromptId_2, 'mediumPromptId_2/F')
-        self.t.Branch('looseId_2', self.looseId_2, 'looseId_2/F')
-
-
-        self.t.Branch('Electron_mvaFall17V2Iso_WP90_2',              self.Electron_mvaFall17V2Iso_WP90_2,               'Electron_mvaFall17V2Iso_WP90_2/F' )
-        self.t.Branch('Electron_mvaFall17V2noIso_WP90_2',              self.Electron_mvaFall17V2noIso_WP90_2,               'Electron_mvaFall17V2noIso_WP90_2/F' )
-        self.t.Branch('Electron_cutBased_2',              self.Electron_cutBased_2,               'Electron_cutBased_2/I' )
-
 
 
         
@@ -614,13 +550,14 @@ class outTuple2Lep() :
         self.t.Branch('boson_phi', self.boson_phi, 'boson_phi /F')
 
 
+
         # trigger sf
         self.t.Branch('isTrig_1',  self.isTrig_1, 'isTrig_1/F' )
         self.t.Branch('isLead_1',  self.isLead_1, 'isLead_1/F' )
         self.t.Branch('isTrigObj',  self.isTrigObj, 'isTrigObj/l' )
 
 
-        # jet variables
+
         #self.t.Branch('njetsold', self.njetsold, 'njetsold[8]/F') 
         #self.t.Branch('nbtagold', self.nbtagold, 'nbtagold[8]/F')
         self.t.Branch('njets', self.njets, 'njets/i')
@@ -651,6 +588,7 @@ class outTuple2Lep() :
 		    self.t.Branch('jpt{0:s}'.format(v), self.list_of_arraysJetsPt[i], 'jpt{0:s}[12]/F'.format(v))
 		    self.t.Branch('jeta{0:s}'.format(v), self.list_of_arraysJetsEta[i], 'jeta{0:s}[12]/F'.format(v))
 		    self.t.Branch('btagDeep{0:s}'.format(v), self.list_of_arraysJetsNbtagDeep[i], 'btagDeep{0:s}[12]/F'.format(v))
+
 
 
 
@@ -686,32 +624,6 @@ class outTuple2Lep() :
 	self.t.SetBranchStatus("*Up*",1)
 	self.t.SetBranchStatus("*Down*",1)
 
-    def calculate_upara(self, met, phi, boson, boson_phi):
-	uX = -met * cos(phi) - boson * cos(boson_phi)
-	uY = -met * sin(phi) - boson * sin(boson_phi)
-	upara = (uX * boson * cos(boson_phi) + uY * boson * sin(boson_phi)) /boson
-	return upara
-
-
-    def makeUpara(self,met, phi,boson, boson_phi):
-
-        uX = -met *cos(phi) - boson *cos(boson_phi)
-        uY =  -met*sin(phi) -  boson*sin(boson_phi)
-	#uPara = ( (   (  uX*boson*cos(boson_phi) + uY *boson*sin(boson_phi ))/ boson )/boson )
-	uPara = ( (  uX*boson*cos(boson_phi) + uY *boson*sin(boson_phi ))/ boson )
-	#return uPara
-	#uPara = ( "((( -"+ met + "*cos("+phi +" ) "+ " - " +boson + "*cos( " + boson_phi +"))* " + boson + "*cos( " +boson_phi +" )+(- "+ met + "*sin( "+ phi+ " )- " +boson+"*sin(" + boson_phi +" ))* " +boson +"*sin( " +boson_phi +" ))/" +boson+")"/boson )
-
-	return float(uPara)
-
-    def makeUparaa(self, met_pt, met_phi, boson_pt, boson_phi):
-
-        uPara = ( ((( - met_pt  *cos(met_phi  )  -  boson_pt *cos( boson_phi ))* boson_pt  *cos( boson_phi )+ ( -met_pt  *sin( met_phi)- boson_pt *sin( boson_phi  )) *boson_pt *sin( boson_phi ))/ boson_pt )/boson_pt)
-
-        #uPara = ( " - " +boson + "*cos( " + boson_phi +"))* " + boson + "*cos( " +boson_phi +" )+(- "+ met + "*sin( "+ phi+ " )- " +boson+"*sin(" + boson_phi +" ))* " +bo    son +"*sin( " +boson_phi +" ))/" +boson+")/zll_pt" )
-        #uPara = ( "((( -"+ met + "*cos("+phi +" ) "+ " - " +boson + "*cos( " + boson_phi +"))* " + boson + "*cos( " +boson_phi +" )+(- "+ met + "*sin( "+ phi+ " )- " +boson+"*sin(" + boson_phi +" ))* " +bo    son +"*sin( " +boson_phi +" ))/" +boson+")/zll_pt" )
-        return uPara
-
 
     def getu_par_MET(self, entry, metx, mety, qx, qy, qt):
 
@@ -722,11 +634,6 @@ class outTuple2Lep() :
 	return upara
 
 
-        #uPara = (((-met*cos(phi) - boson*cos(boson_phi)) * boson*cos(boson_phi) +
-        #   (-met*sin(phi) - boson*sin(boson_phi)) * boson*sin(boson_phi)) / boson + boson)
-
-        #((-metx- qx )* qx + (-mety - qy)*qy)/boson + boson
-        #uX*qx + uY*qy
 
     def getu_perp_MET(self, entry, metx, mety, qx, qy, qt):
 
@@ -736,11 +643,6 @@ class outTuple2Lep() :
 	uperp = (uX*qy - uY*qx)
 
 	return uperp
-        #(((-metx - qx))*qy - (-mety-qy)qx
-        #uPerp = (((-met*cos(phi) - boson*cos(boson_phi)) * boson*sin(boson_phi) -
-        #  (-met*sin(phi) - boson*sin(boson_phi)) * boson*cos(boson_phi)) / boson)
-
-
 
         '''
         upar_puppi_TypeI = (vec_u_puppi_TypeI.x*vec_boson_unit.x) + (vec_u_puppi_TypeI.y*vec_boson_unit.y)
@@ -753,41 +655,7 @@ class outTuple2Lep() :
         '''
 
 
-    def getu_par_METv2(self, entry, metx, mety, qx, qy, qt):
-	uX = - metx - qx
-	uY = - mety - qy
-	upara = (uX*qx + uY*qy)/qt
-	uperp = (uX*qy - uY*qx)/qt
-
-	upara_plus_qt = upara + qt
-	upara = -upara
-	uperp = -uperp
-
-	return upara, upara_plus_qt, uperp
-
-
-
-    def calculate_uperp_and_upara(self, met_x, met_y, q_x, q_y, q_t):
-	# Calculate the components of the "u" vector
-	u_x = -met_x - q_x
-	u_y = -met_y - q_y
-	
-	# Calculate the dot product of "u" and "q"
-	u_dot_q = u_x*q_x + u_y*q_y
-	
-	# Calculate the magnitudes of "u" and "q"
-	u_mag = sqrt(u_x**2 + u_y**2)
-	q_mag = q_t
-	
-	# Calculate the perpendicular and parallel components of "u"
-	uperp = (u_x*q_y - u_y*q_x)/q_mag
-	upara = u_dot_q/q_mag
-	
-	return uperp, upara
-
-
-
-    def makeUpara2(self, entry, met_pt, met_phi, boson_pt, boson_phi):
+    def makeUpara(self, enry, met_pt, met_phi, boson_pt, boson_phi):
 
         uPara = ( ((( - met_pt  *cos(met_phi  )  -  boson_pt *cos( boson_phi ))* boson_pt  *cos( boson_phi )+ ( -met_pt  *sin( met_phi)- boson_pt *sin( boson_phi  )) *boson_pt *sin( boson_phi ))/ boson_pt )/boson_pt)
 
@@ -808,6 +676,9 @@ class outTuple2Lep() :
 	#uPerp = ( "((( -"+ met + "*cos("+phi +" ) "+ " - " +boson + "*cos( " + boson_phi +"))* " + boson + "*sin( " +boson_phi +" )-(- "+ met + "*sin( "+ phi+ " )- " +boson+"*sin(" + boson_phi +" ))* " +boson +"*cos( " +boson_phi +" ))/" +boson +")" )                             
 	uPerp = ( ((( -met_pt  *cos(met_phi  ) -boson_pt *cos( boson_phi ))  *boson_pt *sin( boson_phi  )- (-met_pt *sin( met_phi )- boson_pt *sin(boson_phi  )) *boson_pt  *cos( boson_phi  ))/ boson_pt ) )                             
 	return uPerp
+
+
+
 
 
 
@@ -885,7 +756,6 @@ class outTuple2Lep() :
                 jetList.append(j) 
 
         return jetList, bJetList,bJetListFlav
-
 
 
     def getJetsJMEMV(self,entry,LepList,era, syst,proc) :
@@ -992,6 +862,112 @@ class outTuple2Lep() :
         return jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
 
 
+    def getJetsJMEMVGjets(self,entry,LepList,era, syst,proc) :
+	jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = [], [], [], [], [], [], [], [], []
+	#print 'will try', len(LepList), 'syst', syst, 'proc', proc
+	#bjet_discrL = 0.2217
+	#bjet_discrM = 0.6321
+	#bjet_discrT = 0.8953
+
+        #default is 2016 post
+	bjet_discrFlav = 0.0614
+	bjet_discrL = 0.1918
+	bjet_discrM = 0.5847
+	bjet_discrT = 0.8767
+        #print 'inside jets', era, proc
+	if '2016pre' in str(era): 
+	    bjet_discrL = 0.2027
+	    bjet_discrM = 0.6001
+	    bjet_discrT = 0.8819
+
+	if '2016post' in str(era): 
+	    bjet_discrL = 0.1918
+	    bjet_discrM = 0.5847
+	    bjet_discrT = 0.8767
+
+	if str(era) == '2017' : 
+	    bjet_discrL = 0.1355
+	    bjet_discrM = 0.4506
+	    bjet_discrT = 0.7738
+	if str(era) == '2018' : 
+	    bjet_discrL = 0.1208
+	    bjet_discrM = 0.4168
+	    bjet_discrT = 0.7665
+
+	failJets=[]
+        goodJets=[]
+        bJetListL=[]
+        bJetListM=[]
+        bJetListT=[]
+        bTagListDeep=[]
+        
+        #if syst !='' : syst="_"+syst
+     
+        if 'nom' in syst : syst='_nom'
+          
+        jpt=0.
+        for j in range(entry.nJet) :
+            try : 
+		jpt = getattr(entry, "Jet_pt{0:s}".format(str(syst)), None)
+                #if syst=='_nom' : print jpt[j],  entry.Jet_pt[j],  syst
+
+		if jpt[j] < 40. : continue
+		if entry.Jet_jetId[j]  < 6  : continue  #pass tight and tightLepVeto ID. 
+		if jpt[j] < 50  : #loose jetPU_iD
+		    if '2016' not in str(era) and  entry.Jet_puId[j]  < 4  : continue #loose jetPU_iD
+		    if '2016' in str(era) and  entry.Jet_puId[j]  > 4  : continue #inverted working points https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetIDUL
+
+		#if str(era) == '2017'  and jpt[j] > 20 and jpt[j] < 50 and abs(entry.Jet_eta[j]) > 2.65 and abs(entry.Jet_eta[j]) < 3.139 : continue  #remove noisy jets
+		if abs(entry.Jet_eta[j]) > 2.4 : continue
+
+		#for iv, lepv in enumerate(LepList) : 
+		for iv, lv  in  enumerate(LepList) :
+		    dr = self.getDRnV(entry, entry.Jet_eta[j], entry.Jet_phi[j], LepList[iv].Eta(), LepList[iv].Phi())
+		    if float(dr) > 0.5 : 
+			if j not in goodJets : goodJets.append(j)
+		    else: 
+			if j not in failJets : failJets.append(j)
+            except : continue
+
+        #print 'will check failed jets',  entry.luminosityBlock, entry.event, entry.run, failJets, goodJets, 'from nJet i', j, entry.nJet
+        for j in failJets : 
+            if j in goodJets : goodJets.remove(j)
+        jpt=0
+        for jj in goodJets : 
+            #if isMC : 
+            try : 
+                jetListFlav.append(entry.Jet_partonFlavour[jj])
+            except AttributeError  : jetListFlav.append(0)
+            jetListEta.append(entry.Jet_eta[jj])
+            jpt = getattr(entry, "Jet_pt{0:s}".format(str(syst)), None)
+            jetListPt.append(jpt[jj])
+            bTagListDeep.append(entry.Jet_btagDeepB[jj])
+
+            #print 'will check',  entry.luminosityBlock, entry.event, entry.run, goodJets, jj, jpt[jj], 'flav', entry.Jet_partonFlavour[jj]
+            if jpt[jj] > 40 : 
+
+                jetList.append(jj) 
+
+		if abs(entry.Jet_eta[jj]) < 2.4 : 
+                    #print entry.Jet_btagDeepB[jj],  bjet_discrL,  bjet_discrM ,  bjet_discrT
+		    if entry.Jet_btagDeepB[jj] > bjet_discrL : bJetListL.append(jj)
+		    if entry.Jet_btagDeepB[jj] > bjet_discrM : bJetListM.append(jj)
+		    if entry.Jet_btagDeepB[jj] > bjet_discrT : bJetListT.append(jj)
+		    if entry.Jet_btagDeepFlavB[jj] > bjet_discrFlav : bJetListFlav.append(jj)
+                #print '--added ', jj, 'in good list', jpt[jj], abs(entry.Jet_eta[jj])
+
+        #if len(jetList)!=len(jetListPt) : print 'going out....', jetList, jetListPt, syst, len(jetList), len(jetListPt), entry.luminosityBlock, entry.event, entry.run
+        #print 'going out....', jetList, jetListPt, syst, len(jetList), len(jetListPt), entry.luminosityBlock, entry.event, entry.run, btagWeightDeepCSVB
+        #print ''
+        #if entry.event == 207273709 : print 'this is check', jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
+        #print 'lets see', len(bJetListL), len(bJetListM), len(bJetListT), len(jetList)
+        #print ''
+        #print jetList, jetListEta, jetListPt
+        return jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
+
+
+
+
     def runSVFit(self, entry, channel, jt1, jt2, tau1, tau2, metpt, metphi) :
                       
         measuredMETx = metpt*cos(metphi)
@@ -1032,34 +1008,45 @@ class outTuple2Lep() :
     
 
 
-    def Fill2Lep(self, entry, cat, LepP, LepM, lepList, isMC, era, doUncertainties=False , proc="EOY") : 
-    #def Fill(self, entry, SVFit, cat, jt1, jt2, LepP, LepM, lepList, isMC, era, doUncertainties=False ,  met_pt=-99, met_phi=-99, systIndex=0) : 
+    def FillGjets(self, entry, cat,  photonindex, isMC, era, doUncertainties=False , proc="EOY") : 
         SystIndex = 0
 
         #if SystIndex >0 : doUncertainties=False
-        leadL, subL =  TLorentzVector(), TLorentzVector()
-
-        if LepP.Pt()>LepM.Pt() : 
-            leadL=LepP
-            subL=LepM
-            self.isLead_1[0] = 1.
-        else : 
-            leadL=LepM
-            subL=LepP
-            self.isLead_1[0] = 0.
-
-        #channel_ll = 'mm' or 'ee'
-        channel_ll = cat
+        leadL =   TLorentzVector()
+        LepP =   TLorentzVector()
+        LepM =   TLorentzVector()
+        leadL.SetPtEtaPhiM(entry.Photon_pt[photonindex], entry.Photon_eta[photonindex], entry.Photon_phi[photonindex], entry.Photon_mass[photonindex])
+        LepM.SetPtEtaPhiM(0., 0., 0., 0.,) 
+        LepP = leadL
+        channel_ll = 'gjets'
 	channel = cat
+        is_trig_1 = 0
+	yearin=era
+        yearinpresc =era
+ 
+	if '2016' in era and 'pre' in era : 
+            yearin='2016preVFP'
+            yearinpresc = '2016'
+	if '2016' in era and 'pre' not in era : 
+            yearin='2016postVFP'
+            yearinpresc = '2016'
 
         if SystIndex ==0 : 
 
 	    is_trig_1, is_trig_2, is_Dtrig_1 = 0., 0., 0.
-	    TrigListLep = []
-	    TrigListTau = []
-	    hltListLep  = []
-	    hltListLepSubL  = []
+	    self.weightps[0]  = GF.findSinglePhotonTrigger( entry, channel_ll, yearin)
+	    self.weightps2[0], is_trig_1  = GF.findSinglePhotonTrigger2( entry, photonindex,  yearinpresc)
+            HLTName = GF.findSinglePhotonTriggerName(entry, photonindex,  yearinpresc)
+            try:    
+                self.weightpsjson[0] = self.evaluatorPresc["HLT_prescale"].evaluate("{0:s}".format( str(yearinpresc)), str(HLTName), int(entry.run), float(entry.luminosityBlock))
 
+            except IndexError:
+                #print 'this does not exist....', str(HLTName), int(entry.run), float(entry.luminosityBlock), entry.Photon_pt[photonindex], photonindex
+                self.weightpsjson[0] = 0
+
+            #print HLTName, self.weightps2[0], self.weightpsjson[0], yearinpresc 
+            #print 'two ps', self.weightps[0], GF.findSinglePhotonTrigger2( entry, findSinglePhotonTrigger2, channel_ll, era), is_trig_1
+            '''
 	    TrigListLep, hltListLep, hltListLepSubL  = GF.findSingleLeptTrigger(lepList, entry, channel_ll, era)
 
 	    TrigListLep = list(dict.fromkeys(TrigListLep))
@@ -1072,46 +1059,30 @@ class outTuple2Lep() :
 	    if len(hltListLep) > 0 and len(hltListLepSubL)>0 :
 		is_trig_1 = 2
 
-	    self.whichTriggerWord[0]=0
-	    self.whichTriggerWordSubL[0]=0
-
-            #if is_trig_1 == 0 : continue
-
-	    #if len(TrigListLep) >0 : print 'TrigerList ===========>', TrigListLep, lepList, hltListLep, channel_ll, 'istrig_1', is_trig_1, 'istrig_2', is_trig_2, 'lenTrigList', len(TrigListLep),  'lenLept', len(lepList), 'lepList_0', lepList[0], 'TrigList_0', TrigListLep[0], hltListLep
-	    
-	    for i,bit in enumerate(hltListLep):
-		    
-		if bit : 
-		    self.whichTriggerWord[0] += 2**i
-
-	    for j,bitt in enumerate(hltListLepSubL):
-		if bitt : self.whichTriggerWordSubL[0] += 2**j
-
-	    #if channel_ll=='ee' and entry.luminosityBlock==90 and entry.event==8904: print self.whichTriggerWord[0], 'hlt', hltListLep, 'hltsub', hltListLepSubL
-	    #print cat, self.whichTriggerWord
-	    # channel = 'mt', 'et', 'tt', or 'em'
+            '''
 	    self.entries += 1
 
 	    self.run[0]  = entry.run
 	    self.nElectron[0]  = entry.nElectron
 	    self.nMuon[0]  = entry.nMuon
 	    self.nTau[0]  = entry.nTau
+	    self.nPhoton[0]  = entry.nPhoton
 	    self.lumi[0] = entry.luminosityBlock 
 	    self.evnt[0]  = entry.event
 
 
-	    self.mll[0]  = (LepP+LepM).M()
-	    self.zll_pt[0]  = (LepP+LepM).Pt()
-	    self.zll_phi[0]  = (LepP+LepM).Phi()
-	    self.boson_pt[0] = (LepP+LepM).Pt()
-	    self.boson_phi[0] = (LepP+LepM).Phi()
+	    self.boson_pt[0] = leadL.Pt()
+	    self.boson_phi[0] = leadL.Phi()
 
 	    self.iso_1[0]  = -99
-	    self.q_1[0]  = -99
-	    self.isGlobal_1[0]  = -99
-	    self.iso_2[0]  = -99
-	    self.q_2[0]  = -99
-	    self.isGlobal_2[0]  = -99
+	    self.iso_1[0]  = entry.Photon_pfRelIso03_all[photonindex]
+            self.Photon_pdgid_1[0] = entry.Photon_pdgId[photonindex]
+            self.Photon_r9_1[0] = entry.Photon_r9[photonindex]
+            self.Photon_cutBased_1[0] = entry.Photon_cutBased[photonindex]
+            self.Photon_electronVeto_1[0] = entry.Photon_electronVeto[photonindex]
+            self.Photon_pixelSeed_1[0] = entry.Photon_pixelSeed[photonindex]
+	    self.q_1[0]  = entry.Photon_charge[photonindex]
+
 	    try:
 		self.L1PreFiringWeight_Nom[0] = entry.L1PreFiringWeight_Nom
 		self.L1PreFiringWeight_Up[0] = entry.L1PreFiringWeight_Up
@@ -1121,27 +1092,7 @@ class outTuple2Lep() :
 		self.L1PreFiringWeight_Up[0] = 1
 		self.L1PreFiringWeight_Down[0] = 1
 		
-	    self.tightId_1[0]       = -1 
-	    self.mediumId_1[0]       = -1 
-	    self.mediumPromptId_1[0]   = -1
-	    self.looseId_1[0]       = -1
-	    self.isGlobal_1[0]      = -1
-	    self.isTracker_1[0]     = -1
 
-	    self.GenPart_statusFlags_1[0]    = -1
-	    self.GenPart_status_1[0]    = -1
-	    self.gen_match_1[0] = -1
-
-	    self.tightId_2[0]       = -1 
-	    self.mediumId_2[0]       = -1 
-	    self.mediumPromptId_2[0]   = -1
-	    self.looseId_2[0]       = -1
-	    self.isGlobal_2[0]      = -1
-	    self.isTracker_2[0]     = -1
-
-	    self.GenPart_statusFlags_2[0]    = -1
-	    self.GenPart_status_2[0]    = -1
-	    self.gen_match_2[0] = -1
 
 	    self.nPV[0]  = entry.PV_npvs
 	    self.nPVGood[0]  = entry.PV_npvsGood
@@ -1187,165 +1138,34 @@ class outTuple2Lep() :
 
         e = entry
 
-        '''
-        List from Cecile 
-        single ele 2016: HLT Ele25 eta2p1 WPTight Gsf v and cut pt(ele)>26, eta(ele)<2.1
-        single ele 2017: HLT Ele27 WPTight Gsf v, HLT Ele32 WPTight Gsf v, HLT Ele35 WPTight Gsf v and cut pt(ele)>28, eta(ele)<2.1
-        single ele 2018: HLT Ele32 WPTight Gsf v, HLT Ele35 WPTight Gsf v and cut pt(ele)>33, eta(ele)<2.1
-        '''
-        
+        #HLT_Photon50_R9Id90_HE10_IsoM || HLT_Photon75_R9Id90_HE10_IsoM || HLT_Photon90_R9Id90_HE10_IsoM  || HLT_Photon120_R9Id90_HE10_IsoM  || HLT_Photon165_R9Id90_HE10_IsoM
         if int(SystIndex) ==0 : 
 	    bits=[]
-	    try : bits.append(e.HLT_Ele25_eta2p1_WPTight_Gsf)
-	    except AttributeError : bits.append(False)
-	    try : bits.append(e.HLT_Ele27_WPTight_Gsf)
-	    except AttributeError : bits.append(False)
-	    try : bits.append(e.HLT_Ele32_WPTight_Gsf)
-	    except AttributeError : bits.append(False)
-	    try : bits.append(e.HLT_Ele35_WPTight_Gsf)
-	    except AttributeError : bits.append(False)
-	    # pad upper bits in this byte with zeros (False) 
-	    #for i in range(4) :
-	    #    bits.append(False)
-		
-	    try : bits.append(e.HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL)
-	    except AttributeError : bits.append(False)
-	    try : bits.append(e.HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ)
-	    except AttributeError : bits.append(False) 
-
-	    self.electronTriggerWord[0] = 0
-	    for i, bit in enumerate(bits) :
-		if bit : self.electronTriggerWord[0] += 2**i
-
-	    '''
-	    List from Cecile 
-	    single mu 2016: HLT IsoMu22 v, HLT IsoMu22 eta2p1 v, HLT IsoTkMu22 v, HLT IsoTkMu22 eta2p1 v and cut pt(mu)>23, eta(mu)<2.1
-	    single mu 2017: HLT IsoMu24 v, HLT IsoMu27 v and cut pt(mu)>25, eta(mu)<2.4
-	    single mu 2018: HLT IsoMu24 v, HLT IsoMu27 v and cut pt(mu)>25, eta(mu)<2.4
-	    '''
-	    bits=[]
-	    try : bits.append(e.HLT_IsoMu22)
-	    except AttributeError : bits.append(False)
-	    try : bits.append(e.HLT_IsoMu22_eta2p1)
-	    except AttributeError : bits.append(False)
-	    try : bits.append(e.HLT_IsoTkMu22)
-	    except AttributeError : bits.append(False)
-	    try : bits.append(e.HLT_IsoTkMu22_eta2p1)
-	    except AttributeError : bits.append(False)
-	    try : bits.append(e.HLT_IsoMu24)
-	    except AttributeError : bits.append(False) 
-	    try : bits.append(e.HLT_IsoMu27)
-	    except AttributeError : bits.append(False) 
-
-	    #for i in range(2) :
-	    #    bits.append(False)                             # pad remaining bit in this bit 
-	   
-	    try : bits.append(e.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ)
-	    except AttributeError : bits.append(False) 
-	    try : bits.append(e.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass12)
-	    except AttributeError : bits.append(False)
-	    try : bits.append(e.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p12)
-	    except AttributeError : bits.append(False)
-	    try : bits.append(e.HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ)
-	    except AttributeError : bits.append(False) 
-	    try : bits.append(e.HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_Mass12)
-	    except AttributeError : bits.append(False) 
-
-	    self.muonTriggerWord[0] = 0
-	    for i, bit in enumerate(bits) :
-		if bit : self.muonTriggerWord[0] += 2**i
 
             #neede for all systematics as jt1/jt2 may change per systematic
-	self.cat[0]  = tauFun2.catToNumber2Lep(cat)
+	self.cat[0]  = 1
 
 
-        self.pt_1[0]   = LepP.Pt()
-        self.phi_1[0]  = LepP.Phi()
-        self.eta_1[0]  = LepP.Eta()
-        self.pt_2[0]   = LepM.Pt()
-        self.phi_2[0]  = LepM.Phi()
-        self.eta_2[0]  = LepM.Eta()
-        muoneff1=1.
-        muoniso1=1.
-        muontrig1=1.
-        eleeff1=1.
-        eleiso1=1.
-        eletrig1=1.
+        self.pt_1[0]   = entry.Photon_pt[photonindex]
+        self.phi_1[0]  = entry.Photon_phi[photonindex]
+        self.eta_1[0]  = entry.Photon_eta[photonindex]
 
-        muoneff2=1.
-        muoniso2=1.
-        muontrig2=1.
-        eleeff=1.
-        eleiso=1.
-        eletrig=1.
-
+        #print 'check', self.pt_1[0], leadL.Pt(), self.eta_1[0], leadL.Eta()
 	self.IDSF[0]  = 1.
 	self.IsoSF[0]  = 1.
 	self.TrigSF[0]  = 1.
 	self.IDSF1[0]  = 1.
 	self.IsoSF1[0]  = 1.
 	self.TrigSF1[0]  = 1.
-	self.IDSF2[0]  = 1.
-	self.IsoSF2[0]  = 1.
-	self.TrigSF2[0]  = 1.
-	yearin=era
         #print leadL.Pt(), subL.Pt(), channel_ll, LepP.Pt(), LepM.Pt(), era, is_trig_1
         if isMC :
-	    if '2016' in era and 'pre' in era : yearin='2016preVFP'
-	    if '2016' in era and 'pre' not in era : yearin='2016postVFP'
 
-	    if channel_ll == 'mm' : 
-		  
-		if LepP.Pt()> 15 : muoneff1 = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "sf")
-		if LepM.Pt()> 15 : muoneff2 = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "sf")
-		if LepP.Pt()> 15 : muoniso1 = self.evaluator["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate("{0:s}_UL".format(str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "sf")
-		if LepM.Pt()> 15 : muoniso2 = self.evaluator["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate("{0:s}_UL".format(str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "sf")
-
-		if era == '2016' : 
-                    if leadL.Pt() > 26  : muontrig1 = self.evaluator["NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(yearin)), fabs(leadL.Eta()), leadL.Pt(), "sf")
-                    if subL.Pt() > 26 : muontrig2 = self.evaluator["NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(yearin)), fabs(subL.Eta()), subL.Pt(), "sf")
-                #NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight  
-		if era =='2017' :  
-
-                    if leadL.Pt() > 29 : muontrig1 = self.evaluator["NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(leadL.Eta()), leadL.Pt(), "sf")
-                    if subL.Pt()>29 :muontrig2 = self.evaluator["NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(subL.Eta()), subL.Pt(), "sf")
-		if era =='2018' :  
-
-                    if leadL.Pt() > 26 : muontrig1 = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(leadL.Eta()), leadL.Pt(), "sf")  ### for 2018 the json Veto only 24 SF..but we have used the HLT27
-                    if subL.Pt() > 26 : muontrig2 = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(subL.Eta()), subL.Pt(), "sf")  ### fora 2018 the json Veto only 24 SF..but we have used the HLT27
-
-		#print 'sfs are', muoneff , muoniso, muontrig
-
-		self.IDSF[0]  = muoneff1*muoneff2
-		self.IsoSF[0]  = muoniso1*muoniso2
-
-		self.IDSF1[0]  = muoneff1
-		self.IsoSF1[0]  = muoniso1
-		self.TrigSF1[0]  = muontrig1
-
-		self.IDSF2[0]  = muoneff2
-		self.IsoSF2[0]  = muoniso2
-		self.TrigSF2[0]  = muontrig2
-		if is_trig_1 == 2 : self.TrigSF[0]  = muontrig1*muontrig2
-		if is_trig_1 == 1 : self.TrigSF[0]  = muontrig1
-		if is_trig_1 == -1 : self.TrigSF[0]  = muontrig2
-
-	    if channel_ll == 'ee' : 
+	    if channel_ll == 'gjets' : 
                 eleeff1=1.
-                eleeff2=1.
                 eleiso1=1.
-                eleiso2=1.
-		if LepP.Pt()> 20 : eleeff1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "RecoAbove20", LepP.Eta(), LepP.Pt() )
-		if LepM.Pt() > 20 : eleeff2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "RecoAbove20", LepM.Eta(), LepM.Pt() )
-		if LepP.Pt()>20 : eleiso1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "wp90iso", LepP.Eta(), LepP.Pt() )
-		if LepM.Pt() > 20 : eleiso2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "wp90iso", LepM.Eta(), LepM.Pt() )
-
-		self.IDSF[0]  = eleeff1*eleeff2
-                self.IsoSF[0]  = eleiso1*eleiso2
+		if leadL.Pt()> 50 : eleeff1 = self.evaluatorEl["UL-Photon-ID-SF"].evaluate(yearin, "sf" , "Tight", leadL.Eta(), leadL.Pt() )
+		self.IDSF[0]  = eleeff1
 		self.IDSF1[0]  = eleeff1
-                self.IsoSF1[0]  = eleiso1
-		self.IDSF2[0]  = eleeff2
-                self.IsoSF2[0]  = eleiso2
 
                 self.TrigSF[0] = 1.
                 self.TrigSF1[0] = 1.
@@ -1353,199 +1173,36 @@ class outTuple2Lep() :
 
 		eff_trig_d_1 =  self.sf_EleTrig.get_EfficiencyData(leadL.Pt,leadL.Eta())
 		eff_trig_mc_1 =  self.sf_EleTrig.get_EfficiencyMC(leadL.Pt,leadL.Eta())
-		eff_trig_mc_2 =  self.sf_EleTrig.get_EfficiencyMC(subL.Pt,subL.Eta())
-		eff_trig_d_2 =  self.sf_EleTrig.get_EfficiencyData(subL.Pt,subL.Eta())
+		#eff_trig_d_1 =  self.sf_PhotonTrig.get_EfficiencyData(leadL.Pt,leadL.Eta())
+		#eff_trig_mc_1 =  self.sf_PhotonTrig.get_EfficiencyMC(leadL.Pt,leadL.Eta())
 
 
+                #print 'let see ', channel_ll, eff_trig_d_1, eff_trig_mc_1
                 if eff_trig_mc_1 !=0 :    self.TrigSF1[0] = float(eff_trig_d_1/eff_trig_mc_1)
-                if eff_trig_mc_2 !=0 :    self.TrigSF2[0] = float(eff_trig_d_2/eff_trig_mc_2)
 		else : self.TrigSF[0]  = 1.
 		if is_trig_1 == 2 : self.TrigSF[0]  = self.TrigSF1[0]*self.TrigSF2[0]
 		if is_trig_1 == 1 : self.TrigSF[0]  = self.TrigSF1[0]
 		if is_trig_1 == -1 : self.TrigSF[0]  = self.TrigSF2[0]
 
 
-	lep_index_1 = lepList[0]
-	lep_index_2 = lepList[1]
+	#lep_index_1 = lepList[0]
         # trig
         if SystIndex ==0 : 
 	    self.isTrig_1[0]   = is_trig_1
 
         leplist=[]
-        leplist.append(LepP)
-        leplist.append(LepM)
-
-	if channel_ll == 'ee' : 
-            self.Electron_convVeto[0]  = entry.Electron_convVeto[lep_index_1]
-            self.Electron_lostHits[0]  = ord(entry.Electron_lostHits[lep_index_1])
-      
-            self.iso_1[0]  = entry.Electron_pfRelIso03_all[lep_index_1]
-            self.q_1[0]  = entry.Electron_charge[lep_index_1]
-            self.d0_1[0]   = entry.Electron_dxy[lep_index_1]
-            self.dZ_1[0]   = entry.Electron_dz[lep_index_1]
-            self.Electron_mvaFall17V2noIso_WP90_1[0]  = entry.Electron_mvaFall17V2noIso_WP90[lep_index_1]
-            self.Electron_mvaFall17V2Iso_WP90_1[0]  = entry.Electron_mvaFall17V2Iso_WP90[lep_index_1]
-            self.Electron_cutBased_1[0]  = entry.Electron_cutBased[lep_index_1]
-	    #if SystIndex ==0 and  isMC : 
-	    #	self.pt_uncor_1[0] = ePt[lep_index_1]
-	    #	self.m_uncor_1[0] = eMass[lep_index_1]
-
-            if isMC :
-		self.gen_match_1[0] = ord(entry.Electron_genPartFlav[lep_index_1])
-
-            self.iso_2[0]  = entry.Electron_pfRelIso03_all[lep_index_2]
-            self.q_2[0]  = entry.Electron_charge[lep_index_2]
-            self.d0_2[0]   = entry.Electron_dxy[lep_index_2]
-            self.dZ_2[0]   = entry.Electron_dz[lep_index_2]
-            self.Electron_mvaFall17V2noIso_WP90_2[0]  = entry.Electron_mvaFall17V2noIso_WP90[lep_index_2]
-            self.Electron_mvaFall17V2Iso_WP90_2[0]  = entry.Electron_mvaFall17V2Iso_WP90[lep_index_2]
-            self.Electron_cutBased_2[0]  = entry.Electron_cutBased[lep_index_2]
-	    #if SystIndex ==0 and  isMC : 
-	    #	self.pt_uncor_2[0] = ePt[lep_index_2]
-            #	self.m_uncor_2[0] = eMass[lep_index_2]
-
-            if isMC :
-		self.gen_match_2[0] = ord(entry.Electron_genPartFlav[lep_index_2])
-
-	if channel_ll == 'mm' : 
-
-            self.iso_1[0]  = entry.Muon_pfRelIso04_all[lep_index_1]
-            self.PFiso_1[0]  = ord(entry.Muon_pfIsoId[lep_index_1])
-	    self.q_1[0]  = entry.Muon_charge[lep_index_1]
-	    self.d0_1[0]   = entry.Muon_dxy[lep_index_1]
-	    self.dZ_1[0]   = entry.Muon_dz[lep_index_1]
-	    self.looseId_1[0]   = entry.Muon_looseId[lep_index_1] 
-            self.tightId_1[0]      = entry.Muon_tightId[lep_index_1]
-            self.tightCharge_1[0]      = entry.Muon_tightCharge[lep_index_1]
-	    self.mediumId_1[0]   = entry.Muon_mediumId[lep_index_1] 
-	    self.pfIsoId_1[0]   = ord(entry.Muon_pfIsoId[lep_index_1])
-	    self.mediumPromptId_1[0]   = entry.Muon_mediumPromptId[lep_index_1] 
-	    self.isGlobal_1[0]   = entry.Muon_isGlobal[lep_index_1] 
-	    try : self.isStandalone_1[0]   = entry.Muon_isStandalone[lep_index_1] 
-	    except AttributeError : self.isStandalone_1[0] = 0 
-            self.isPFcand_1[0]   = entry.Muon_isPFcand[lep_index_1] 
-	    self.isTracker_1[0]   = entry.Muon_isTracker[lep_index_1] 
-
-	    self.highPtId_1[0]  = ord(entry.Muon_highPtId[lep_index_1])
-	    try : self.highPurity_1[0]  = entry.Muon_highPurity[lep_index_1]
-            except AttributeError : self.highPurity_1[0] = 0
-	    self.inTimeMuon_1[0]  = entry.Muon_inTimeMuon[lep_index_1]
-	    self.ip3d_1[0]  = entry.Muon_ip3d[lep_index_1]
-	    self.sip3d_1[0]  = entry.Muon_sip3d[lep_index_1]
-
-            self.stations_1[0] = entry.Muon_nStations[lep_index_1]
-            self.TrackerL_1[0] = entry.Muon_nTrackerLayers[lep_index_1]
-
-            if isMC :
-		self.gen_match_1[0] = ord(entry.Muon_genPartFlav[lep_index_1])
-
-
-            self.iso_2[0]  = entry.Muon_pfRelIso04_all[lep_index_2]
-            self.PFiso_2[0]  = ord(entry.Muon_pfIsoId[lep_index_2])
-	    self.q_2[0]  = entry.Muon_charge[lep_index_2]
-	    self.d0_2[0]   = entry.Muon_dxy[lep_index_2]
-	    self.dZ_2[0]   = entry.Muon_dz[lep_index_2]
-	    self.looseId_2[0]   = entry.Muon_looseId[lep_index_2] 
-            self.tightId_2[0]      = entry.Muon_tightId[lep_index_2]
-            self.tightCharge_2[0]      = entry.Muon_tightCharge[lep_index_2]
-	    self.mediumId_2[0]   = entry.Muon_mediumId[lep_index_2] 
-	    self.pfIsoId_2[0]   = ord(entry.Muon_pfIsoId[lep_index_2])
-	    self.mediumPromptId_2[0]   = entry.Muon_mediumPromptId[lep_index_2] 
-	    self.isGlobal_2[0]   = entry.Muon_isGlobal[lep_index_2] 
-	    try : self.isStandalone_2[0]   = entry.Muon_isStandalone[lep_index_2] 
-	    except AttributeError : self.isStandalone_2[0] = 0 
-            self.isPFcand_2[0]   = entry.Muon_isPFcand[lep_index_2] 
-	    self.isTracker_2[0]   = entry.Muon_isTracker[lep_index_2] 
-
-	    self.highPtId_2[0]  = ord(entry.Muon_highPtId[lep_index_2])
-	    try : self.highPurity_2[0]  = entry.Muon_highPurity[lep_index_2]
-            except AttributeError : self.highPurity_2[0] = 0
-	    self.inTimeMuon_2[0]  = entry.Muon_inTimeMuon[lep_index_2]
-	    self.ip3d_2[0]  = entry.Muon_ip3d[lep_index_2]
-	    self.sip3d_2[0]  = entry.Muon_sip3d[lep_index_2]
-
-            self.stations_2[0] = entry.Muon_nStations[lep_index_2]
-            self.TrackerL_2[0] = entry.Muon_nTrackerLayers[lep_index_2]
-
-            if isMC :
-		self.gen_match_2[0] = ord(entry.Muon_genPartFlav[lep_index_2])
-        
-        # genMatch the di-lepton variables
-	if isMC :
-	    idx_Lep1 = -1
-	    idx_Lep1_tr = -1
-	    if (LepP.M() > 0.05): # muon mass 
-		idx_Lep1 = GF.getLepIdxFrom4Vec(entry, LepP, 'm')
-		try :
-		    idx_Lep1_tr = entry.Muon_genPartIdx[idx_Lep1]
-		except IndexError : pass 
-		    
-	    elif (LepP.M() < 0.05 < 0.05): # electron mass
-		idx_Lep1 = GF.getLepIdxFrom4Vec(entry, LepP, 'e')
-		try :
-		    idx_Lep1_tr = entry.Electron_genPartIdx[idx_Lep1]
-		except IndexError : pass 
-		    
-	    if idx_Lep1_tr >= 0 :
-		self.m_1_tr[0]  = entry.GenPart_mass[idx_Lep1_tr]
-		self.pt_1_tr[0]  = entry.GenPart_pt[idx_Lep1_tr]
-		self.eta_1_tr[0] = entry.GenPart_eta[idx_Lep1_tr]
-		self.phi_1_tr[0] = entry.GenPart_phi[idx_Lep1_tr]
-		self.GenPart_statusFlags_1[0]    = entry.GenPart_statusFlags[idx_Lep1_tr]
-		self.GenPart_status_1[0]    = entry.GenPart_status[idx_Lep1_tr]
-
-	    idx_Lep2 = -1
-	    idx_Lep2_tr = -1
-	    if (LepM.M() > 0.05): # muon mass 
-		idx_Lep2 = GF.getLepIdxFrom4Vec(entry, LepM, 'm')
-		try :
-		    idx_Lep2_tr = entry.Muon_genPartIdx[idx_Lep2]
-		except IndexError : pass 
-		    
-	    elif (LepM.M() < 0.05 < 0.05): # electron mass
-		idx_Lep2 = GF.getLepIdxFrom4Vec(entry, LepM, 'e')
-		try :
-		    idx_Lep2_tr = entry.Electron_genPartIdx[idx_Lep2]
-		except IndexError : pass 
-		    
-	    if idx_Lep2_tr >= 0 :
-		self.m_2_tr[0]  = entry.GenPart_mass[idx_Lep2_tr]
-		self.pt_2_tr[0]  = entry.GenPart_pt[idx_Lep2_tr]
-		self.eta_2_tr[0] = entry.GenPart_eta[idx_Lep2_tr]
-		self.phi_2_tr[0] = entry.GenPart_phi[idx_Lep2_tr]
-		self.GenPart_statusFlags_2[0]    = entry.GenPart_statusFlags[idx_Lep2_tr]
-		self.GenPart_status_2[0]    = entry.GenPart_status[idx_Lep2_tr]
-        
-
-
+        leplist.append(leadL)
 
 
         #fill the un-corrected or just in the case you dont care to doUncertainties       
-	SaveEventMu = False
-	SaveEventEl = False
-
-        #SaveEventMu =  cat=='mm' and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>24 and self.mediumId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.iso_1[0]<0.2   and (self.isGlobal_2[0]>0 or self.isTracker_2[0]>0) and self.pt_2[0]>24 and self.mediumId_2[0]>0 and fabs(self.eta_2[0])<2.4 and  fabs(self.dZ_2[0])<0.2 and  fabs(self.d0_2[0])<0.045 and self.iso_2[0]<0.2 and self.isTrig_1[0]!=0 and self.nbtagT[0]==0
+	SaveEvent = False
 
 
+        SaveEvent = True
+        if SaveEvent:
 
-	if '2016' in era:
-	    SaveEventMu =  cat=='mm' and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>10 and self.mediumId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.iso_1[0]<0.2   and (self.isGlobal_2[0]>0 or self.isTracker_2[0]>0) and self.pt_2[0]>10 and self.mediumId_2[0]>0 and fabs(self.eta_2[0])<2.4 and  fabs(self.dZ_2[0])<0.2 and  fabs(self.d0_2[0])<0.045 and self.iso_2[0]<0.2 and self.isTrig_1[0]!=0 
-	    SaveEventEl = cat=='ee' and  self.pt_1[0]>10 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.iso_1[0] < 0.15 and  self.pt_2[0]>10 and self.Electron_mvaFall17V2Iso_WP90_2[0]>0 and fabs(self.eta_2[0])<2.1 and  fabs(self.dZ_2[0])<0.2 and  fabs(self.d0_2[0])<0.045 and self.iso_2[0] < 0.15        and self.isTrig_1[0]!=0    
-
-	else :
-	    SaveEventMu =  cat=='mm' and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>10 and self.mediumId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.iso_1[0]<0.2   and (self.isGlobal_2[0]>0 or self.isTracker_2[0]>0) and self.pt_2[0]>10 and self.mediumId_2[0]>0 and fabs(self.eta_2[0])<2.4 and  fabs(self.dZ_2[0])<0.2 and  fabs(self.d0_2[0])<0.045 and self.iso_2[0]<0.2 and self.isTrig_1[0]!=0 
-
-	    SaveEventEl = cat=='ee' and  self.pt_1[0]>10 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.iso_1[0] < 0.15 and  self.pt_2[0]>10 and self.Electron_mvaFall17V2Iso_WP90_2[0]>0 and fabs(self.eta_2[0])<2.1 and  fabs(self.dZ_2[0])<0.2 and  fabs(self.d0_2[0])<0.045 and self.iso_2[0] < 0.15        and self.isTrig_1[0]!=0    
-
-
-        #if not SaveEventMu : 
-        #    print (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0)  ,  self.pt_1[0]>10  ,  self.mediumId_1[0]>0  ,  fabs(self.eta_1[0])<2.4  ,   fabs(self.dZ_1[0])<0.2  ,   fabs(     self.d0_1[0])<0.045  ,  self.iso_1[0]<0.2    ,  (self.isGlobal_2[0]>0 or self.isTracker_2[0]>0)  ,  self.pt_2[0]>10  ,  self.mediumId_2[0]>0  ,  fabs(self.eta_2[0])<2.4  ,   fabs(self.dZ_2[0])<0.2  ,        fabs(self.d0_2[0])<0.045  ,  self.iso_2[0]<0.2  ,  self.isTrig_1[0], self.iso_2[0], self.nbtagL[0], self.nbtagM[0], self.nbtagT[0]
-        if SaveEventMu or SaveEventEl:
-            #print 'I will save this......', entry.event
-            #if  self.nbtag[0] == 0 : 
-
-	#if True:  
 	    self.MET_significance[0]= entry.MET_significance
+            ###############################filling MET systematics
 	    pmetV, metV, metVT1, metVR, metUn, metVTest, metVSmear, metVTestSmear=  TLorentzVector(),TLorentzVector(),TLorentzVector(),TLorentzVector(),  TLorentzVector(), TLorentzVector(), TLorentzVector(), TLorentzVector()
             self.Flag_hfNoisyHitsFilter[0] = 1
             self.Flag_BadPFMuonDzFilter[0] = 1
@@ -1907,6 +1564,8 @@ class outTuple2Lep() :
 
 
 
+            ###############################filling MET systematics
+
 
 	    if 'UL' in proc or '2016' not in str(era):
                 try : 
@@ -1916,7 +1575,6 @@ class outTuple2Lep() :
 
                 try : self.Flag_BadPFMuonDzFilter[0] = int(entry.Flag_BadPFMuonDzFilter)
 		except AttributeError: self.Flag_BadPFMuonDzFilter[0] = 1
-
 
 
 	    if  doUncertainties : 
@@ -1935,7 +1593,7 @@ class outTuple2Lep() :
 
 		for i, v in enumerate(self.allsystJets) : 
 		#njets_sys, nbtag_sys
-		    jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist, era, str(v), proc) 
+		    jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMVGjets(entry,leplist, era, str(v), proc) 
 		    try : 
 			self.list_of_arraysJetsNjets[i][0] = -1
 			self.list_of_arraysJetsNjets[i][0] = len(jetList)#fix
@@ -1957,7 +1615,7 @@ class outTuple2Lep() :
 	    nom_=''
 	    sysj = ''
 	    if doUncertainties : sysj='nom'
-	    jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,sysj,proc) 
+	    jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMVGjets(entry,leplist,era,sysj,proc) 
             #print 'jessyst=========%%%%%%%%%%======!!!!!!!!!!!!', v, len(jetList), sysj, jetList
             self.njets[0], self.nbtagL[0], self.nbtagM[0], self.nbtagT[0]= -1, -1, -1, 1
 	    self.njets[0] = len(jetList)

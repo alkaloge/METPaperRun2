@@ -12,12 +12,6 @@ import os
 import os.path
 import sys
 sys.path.append('../TauPOG')
-#from TauPOG.TauIDSFs.TauIDSFTool import TauIDSFTool
-#from TauPOG.TauIDSFs.TauIDSFTool import TauESTool
-#from TauPOG.TauIDSFs.TauIDSFTool import TauFESTool
-
-__author__ = "Dan Marlow, Alexis Kalogeropoulos, Gage DeZoort"
-__date__   = "Monday, Oct. 28th, 2019"
 
 
 # get selections from configZH.yaml:
@@ -47,7 +41,6 @@ def goodTrigger(e, year):
 
         goodDouble = (e.HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL or e.HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ  or e.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8 or e.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8)
     
-
 
     else :
         print("Invalid year={0:d} in goodTrigger()".format(year))
@@ -203,13 +196,6 @@ def getGoodTauListWjets(channel, entry, muIndex,  printOn=False) :
 	#if tt['tau_vEle'] > 0 and not ord(entry.Tau_idDeepTau2017v2p1VSe[j]) & tt['tau_vEle'] > 0 :
         #    if printOn : print("        fail DeepTau vs. ele={0:d}".format(ord(entry.Tau_idDeepTau2017v2p1VSe[j])))
         #    continue
-    '''
-    if len(tauList) > 0 : 
-	for jj in range(len(tauList)):    
-	     j= tauList[jj]
-	     print 'has a tau not coming from mu', len(tauList), jj, entry.nTau, entry.Tau_pt[j], entry.Tau_phi[j], entry.Tau_dz[j], entry.Tau_idDecayModeOldDMs[j], entry.Tau_decayMode[j], 'Flv', ord(entry.Tau_genPartFlav[j]), 'antiDead',  entry.Tau_idAntiEleDeadECal[j], 'antiEl', ord(entry.Tau_idDeepTau2017v2p1VSe[j]), 'antiMu', ord(entry.Tau_idDeepTau2017v2p1VSmu[j]), 'antiJet', ord(entry.Tau_idDeepTau2017v2p1VSjet[j]), 'lDR', llDR(entry.Tau_eta[j], entry.Tau_phi[j], eta2, phi2), entry.Muon_pt[muIndex], entry.Muon_phi[muIndex]
-        print ''
-    '''
     return tauList
 
 
@@ -1175,9 +1161,6 @@ def goodPhoton(entry, j ):
     if entry.Photon_pt[j] < gj['photon_pt']: return False
     if abs(entry.Photon_eta[j]) > gj['photon_eta']: return False
     if entry.Photon_cutBased[j] !=  gj['photon_cutbased']: return False
-    if entry.Photon_r9[j] < 0.9 : return False
-    if entry.Photon_electronVeto[j] == 0  : return False
-    if entry.Photon_pixelSeed[j] ==  1 : return False
              
     return True 
 
