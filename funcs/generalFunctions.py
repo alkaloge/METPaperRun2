@@ -429,7 +429,7 @@ def findSinglePhotonTriggerName(entry,photonindex, era, printOn=False):
 	else: 
 	    if entry.Photon_pt[photonindex] >= 95 and entry.Photon_pt[photonindex] < 130 and entry.HLT_Photon90_R9Id90_HE10_IsoM : ps= "HLT_Photon90_R9Id90_HE10_IsoM"
 	    else: 
-		if entry.Photon_pt[photonindex] >= 130 and entry.Photon_pt[photonindex] < 175 and entry.HLT_Photon120_R9Id90_HE10_IsoM : ps= "HLT_Photon50_R9Id90_HE10_IsoM"
+		if entry.Photon_pt[photonindex] >= 130 and entry.Photon_pt[photonindex] < 175 and entry.HLT_Photon120_R9Id90_HE10_IsoM : ps= "HLT_Photon120_R9Id90_HE10_IsoM"
 		else: 
 		    if entry.Photon_pt[photonindex] >= 175 and entry.HLT_Photon165_R9Id90_HE10_IsoM : ps= "HLT_Photon165_R9Id90_HE10_IsoM"
 		    else: ps=''

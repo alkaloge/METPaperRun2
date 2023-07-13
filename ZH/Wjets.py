@@ -28,7 +28,7 @@ def getArgs() :
     parser.add_argument("-n","--nEvents",default=0,type=int,help="Number of events to process.")
     parser.add_argument("-m","--maxPrint",default=0,type=int,help="Maximum number of events to print.")
     parser.add_argument("-t","--testMode",default='',help="tau MVA selection")
-    parser.add_argument("-y","--year",default=2017,type=int,help="Data taking period, 2016, 2017 or 2018")
+    parser.add_argument("-y","--year",default='2017',type=str,help="Data taking period, 2016, 2017 or 2018")
     parser.add_argument("-s","--selection",default='ZH',help="is this for the ZH or the AZH analysis?")
     parser.add_argument("-u","--unique",default='none',help="CSV file containing list of unique events for sync studies.") 
     parser.add_argument("-w","--weights",default=False,type=int,help="to re-estimate Sum of Weights")
@@ -63,7 +63,8 @@ print("Opening {0:s} as input.  Event category {1:s}".format(inFileName,cat))
 inFile = TFile.Open(inFileName)
 inFile.cd()
 inTree = inFile.Get("Events")
-nentries = inTree.GetEntries()
+try : nentries = inTree.GetEntries()
+except AttributeError : nentries = 0
 nMax = nentries
 print("nentries={0:d} nMax={1:d}".format(nentries,nMax))
 if args.nEvents > 0 : nMax = min(args.nEvents-1,nentries)
@@ -83,9 +84,9 @@ else :
     #if args.year == 2016 : CJ = GF.checkJSON(filein='Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt')
     #if args.year == 2017 : CJ = GF.checkJSON(filein='Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt')
     #if args.year == 2018 : CJ = GF.checkJSON(filein='Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt')
-    if args.year == 2016 : CJ = GF.checkJSON(filein='Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt ')
-    if args.year == 2017 : CJ = GF.checkJSON(filein='Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt')
-    if args.year == 2018 : CJ = GF.checkJSON(filein='Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt')
+    if '2016' in args.year: CJ = GF.checkJSON(filein='Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt')
+    if '2017' in args.year: CJ = GF.checkJSON(filein='Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt')
+    if '2018' in args.year: CJ = GF.checkJSON(filein='Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt')
 
 varSystematics=['']
 if doJME : varSystematics= ['', 'nom', 'jesTotalUp', 'jesTotalDown', 'jerUp', 'jerDown']
@@ -98,6 +99,7 @@ if not doJME  : varSystematics=['']
 print 'systematics', doJME, varSystematics
 
 era=str(args.year)
+#if '2016preVFP' in era : era
 proc='UL'
 
 
@@ -108,7 +110,7 @@ hW=[]
 #hWeightAll = TH1D("hWeightsAll","hWeightsAll",1,-0.5,0.5)
 #htestW = TH1D("htestW","htestW",2000,0,1000)
 
-if MC and str(args.weights) == '1' : 
+if MC and str(args.weights) != '0' : 
     hW.append(inFile.Get('hWeights'))
     if "WJetsToLNu" in outFileName:
 	htest=[]
@@ -121,7 +123,16 @@ if MC and str(args.weights) == '1' :
 	    htest = inFile.Get("DY{0:s}genWeights".format(str(i)))
             hW.append(htest)
 
-for i in range(len(hW)) : print 'name is ', hW[i].GetName()
+if MC and (str(args.weights) == '1' or str(args.weights) == '2'): 
+    fW = outFileName.replace(".ntup",".weights")
+    fWF = TFile( fW, 'recreate' )
+    fWF.cd()
+    for i in range(len(hW)):
+	hW[i].Write()
+    fWF.Close()
+    if str(args.weights) == '2':   sys.exit()
+
+#for i in range(len(hW)) : print 'name is ', hW[i].GetName()
 
 
 '''
@@ -336,9 +347,12 @@ if inTree.GetEntries()>0 :
 	    #print len(lepList), 'index:', lepList[0], e.Muon_pt[lepList[0]], e.Muon_eta[lepList[0]], 'nMuon', e.nMuon, 'genPartFlav: ', ord(e.Muon_genPartFlav[lepList[0]]), 'genPartIdx: ', e.Muon_genPartIdx[lepList[0]]
 
 	    tauList = tauFun.getGoodTauListWjets(cat, e, lepList[0])
-	    
-	    if e.nPhoton > 0 :
-		for i in range(e.nPhoton):
+	    nphoton = 0 
+
+	    try : nphoton =  e.nPhoton 
+            except AttributeError: nphoton=0
+            if nphoton >0 : 
+  		for i in range(nphoton):
 		    if e.Photon_pt[i]>10  :    photonList.append(i)
 
 	    newList=[]
@@ -374,7 +388,7 @@ if inTree.GetEntries()>0 :
 
 	    if len(lepList)<1 : continue
 	    #print 'will fill now', cat,Lep,lepList, tauList, photonList
-            #print 'some info', electronList, tauList, photonList, e.nMuon
+            #print 'some info', lepList, electronList, tauList, photonList, e.nMuon
 	    outTuple.FillW(e, cat,Lep,lepList, tauList, photonList, electronList, muonList, isMC,era,doJME, proc)
 
 	    if maxPrint > 0 :
@@ -424,13 +438,4 @@ for cat in cats :
 if not MC : CJ.printJSONsummary()
 
 outTuple.writeTree()
-
-if MC and str(args.weights) == '1' : 
-    fW = outFileName.replace(".ntup",".weights")
-    fWF = TFile( fW, 'recreate' )
-    fWF.cd()
-    #hWeightAll.Write()   
-    for i in range(len(hW)):
-	hW[i].Write()
-    fWF.Close()
 

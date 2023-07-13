@@ -214,6 +214,11 @@ class outTupleGjets() :
         self.weightps           = array('f',[0])
         self.weightps2           = array('f',[0])
         self.weightpsjson           = array('f',[0])
+        self.weightps50           = array('f',[0])
+        self.weightps75           = array('f',[0])
+        self.weightps90           = array('f',[0])
+        self.weightps120           = array('f',[0])
+        self.weightps165           = array('f',[0])
         self.weightPU           = array('f',[0])
         self.weightPUtrue           = array('f',[0])
         self.LHEweight        = array('f',[0])
@@ -453,6 +458,14 @@ class outTupleGjets() :
         self.t.Branch('weightps',           self.weightps,            'weightps/F' )
         self.t.Branch('weightps2',           self.weightps2,            'weightps2/F' )
         self.t.Branch('weightpsjson',           self.weightpsjson,            'weightpsjson/F' )
+        self.histoHLT = ROOT.TH1F("histoHLT", "histoHLT", 5, 0, 6)
+        self.histoHLTw = ROOT.TH1F("histoHLTw", "histoHLTw", 5, 0, 6)
+        self.t.Branch("histoHLT", self.histoHLT)
+        self.t.Branch('weightps50',           self.weightps50,            'weightps50/F' )
+        self.t.Branch('weightps75',           self.weightps75,            'weightps75/F' )
+        self.t.Branch('weightps90',           self.weightps90,            'weightps90/F' )
+        self.t.Branch('weightps120',           self.weightps120,            'weightps120/F' )
+        self.t.Branch('weightps165',           self.weightps165,            'weightps165/F' )
         self.t.Branch('weightPU',           self.weightPU,            'weightPU/F' )
         self.t.Branch('weightPUtrue',           self.weightPUtrue,            'weightPUtrue/F' )
         self.t.Branch('LHEweight',        self.LHEweight,         'LHEweight/F' )
@@ -1023,6 +1036,8 @@ class outTupleGjets() :
         is_trig_1 = 0
 	yearin=era
         yearinpresc =era
+        self.weightpsjson[0] = 0
+        self.weightps2[0] = 0
  
 	if '2016' in era and 'pre' in era : 
             yearin='2016preVFP'
@@ -1037,14 +1052,42 @@ class outTupleGjets() :
 	    self.weightps[0]  = GF.findSinglePhotonTrigger( entry, channel_ll, yearin)
 	    self.weightps2[0], is_trig_1  = GF.findSinglePhotonTrigger2( entry, photonindex,  yearinpresc)
             HLTName = GF.findSinglePhotonTriggerName(entry, photonindex,  yearinpresc)
+
+            if 'Photon50' in HLTName : 
+                self.weightps50[0] +=1 
+                self.histoHLT.Fill(1)
+            if 'Photon75' in HLTName : 
+                self.weightps75[0] +=1 
+                self.histoHLT.Fill(2)
+            if 'Photon90' in HLTName : 
+                self.weightps90[0] +=1 
+                self.histoHLT.Fill(3)
+            if 'Photon120' in HLTName : 
+                self.weightps120[0] +=1 
+                self.histoHLT.Fill(4)
+            if 'Photon165' in HLTName : 
+                self.weightps165[0] +=1 
+                self.histoHLT.Fill(5)
+            
+            #print 'before', self.weightpsjson[0]
             try:    
                 self.weightpsjson[0] = self.evaluatorPresc["HLT_prescale"].evaluate("{0:s}".format( str(yearinpresc)), str(HLTName), int(entry.run), float(entry.luminosityBlock))
+		if 'Photon50' in HLTName : 
+		    self.histoHLTw.Fill(1,weightpsjson[0])
+		if 'Photon75' in HLTName : 
+		    self.histoHLTw.Fill(2,weightpsjson[0])
+		if 'Photon90' in HLTName : 
+		    self.histoHLTw.Fill(3,weightpsjson[0])
+		if 'Photon120' in HLTName : 
+		    self.histoHLTw.Fill(4,weightpsjson[0])
+		if 'Photon165' in HLTName : 
+		    self.histoHLTw.Fill(5,weightpsjson[0])
 
             except IndexError:
                 #print 'this does not exist....', str(HLTName), int(entry.run), float(entry.luminosityBlock), entry.Photon_pt[photonindex], photonindex
                 self.weightpsjson[0] = 0
 
-            #print HLTName, self.weightps2[0], self.weightpsjson[0], yearinpresc 
+            #print HLTName, self.weightps2[0], self.weightpsjson[0], yearinpresc, HLTName, int(entry.run), float(entry.luminosityBlock), entry.event
             #print 'two ps', self.weightps[0], GF.findSinglePhotonTrigger2( entry, findSinglePhotonTrigger2, channel_ll, era), is_trig_1
             '''
 	    TrigListLep, hltListLep, hltListLepSubL  = GF.findSingleLeptTrigger(lepList, entry, channel_ll, era)
@@ -1674,6 +1717,7 @@ class outTupleGjets() :
         #print("outTuple.setWeight() weight={0:f}".format(weight))
         return
     def setWeightPUtrue(self,weight) :
+        self.weightPUtrue[0] = 1
         self.weightPUtrue[0] = weight
         #print("outTuple.setWeight() weight={0:f}".format(weight))
         return

@@ -1,0 +1,98 @@
+#!/bin/bash
+#. makeStack 2016preVFP MET_T1_pt 0 WInclNLO_QCDHT_nLepEq1_njetsGt0_BtagL_WTmassGt80_T1_v2 ElEl
+years=(2016postVFP 2016preVFP 2017 2018)
+years=(2017 2018)
+years=(2016postVFP 2016preVFP)
+years=(2017 2018)
+years=(2016postVFP 2016preVFP 2017 2018)
+years=(2016BpreVFP 2016CpreVFP 2016DpreVFP 2016EpreVFP 2016FpreVFP)
+years=(2016CpreVFP 2016DpreVFP 2016EpreVFP 2016FpreVFP)
+years=(2016postVFP 2016preVFP 2017 2018)
+years=(2018 2017 2016postVFP 2016preVFP)
+#years=(2016postVFP 2016preVFP)
+years=(2016postVFP 2016preVFP 2017 2018)
+years=(2018)
+
+channels=(MuMu)
+
+
+vars=(METWmass u_par_MET u_perp_MET PuppiMETWmass MET_T1_pt PuppiMET_pt boson_pt)
+#vars=(METCor_T1_pt)
+vars=(MET_T1_pt PuppiMET_pt boson_pt MET_T1_pt PuppiMET_pt boson_pt METWmass u_par_MET u_perp_MET PuppiMETWmass)
+#vars=(PuppiMET_pt)
+vars=(PuppiMETCorGood_pt PuppiMETCor_pt PuppiMETCorGood_phi PuppiMETCor_phi PuppiMET_phi)
+vars=(njets METCorGood_T1_pt METCorGood_T1_pt PuppiMETCorGood_pt PuppiMETCorGood_phi mll boson_pt boson_phi nbtagL nbtagM nbtagT)
+vars=(PuppiMETCorGood_pt)
+vars=(njets METCorGood_T1_pt METCorGood_T1_pt PuppiMETCorGood_pt PuppiMETCorGood_phi mll boson_pt boson_phi u_par_METCorGood_T1 u_perp_METCorGood_T1 u_par_MET u_perp_MET u_par_PuppiMET u_perp_PuppiMET)
+#vars=(u_par_MET u_perp_MET u_par_PuppiMET u_perp_PuppiMET)
+vars=( mll METCorGood_T1_pt METCorGood_T1_phi PuppiMETCorGood_pt PuppiMETCorGood_phi boson_pt boson_phi u_par_METCorGood_T1 u_perp_METCorGood_T1 u_par_MET u_perp_MET u_par_PuppiMET u_perp_PuppiMET)
+vars=( mll METCorGood_T1_phi PuppiMETCorGood_phi boson_pt boson_phi u_par_METCorGood_T1 u_perp_METCorGood_T1 u_par_MET u_perp_MET u_par_PuppiMET u_perp_PuppiMET MET_T1_phi PuppiMET_phi)
+#vars=(RawMET_pt RawPuppiMET_pt MET_T1_pt METCorGood_T1_pt PuppiMETCorGood_pt  PuppiMET_pt)
+vars=(METCorGood_T1_phi PuppiMETCorGood_phi)
+#vars=(METCorGood_T1Smear_pt)
+vars=(u_par_MET_T1 u_par_METCorGood_T1 u_par_METCorGood_T1Smear u_par_PuppiMET  u_par_PuppiMETCorGood u_par_RawMET u_par_RawPuppiMET)
+vars=(u_perp_MET_T1 u_perp_METCorGood_T1 u_perp_METCorGood_T1Smear u_perp_PuppiMET  u_perp_PuppiMETCorGood u_perp_RawMET u_perp_RawPuppiMET)
+vars=(u_par_METCorGood_T1 u_perp_METCorGood_T1)
+vars=(u_parboson_METCorGood_T1 u_parresp_METCorGood_T1 u_perp_METCorGood_T1 )
+vars=(mll)
+vars=(u_perp_MET_T1 u_perp_METCorGood_T1 u_perp_METCorGood_T1Smear u_perp_PuppiMET  u_perp_PuppiMETCorGood u_perp_RawMET u_perp_RawPuppiMET)
+vars=(u_parboson_MET_T1 u_parboson_METCorGood_T1 u_parboson_METCorGood_T1Smear u_parboson_PuppiMET  u_parboson_PuppiMETCorGood u_parboson_RawMET u_parboson_RawPuppiMET)
+vars=(METCorGood_T1_phi PuppiMETCorGood_phi METCorGood_T1Smear_phi RawMET_phi RawPuppiMET_phi)
+vars=(PuppiMETCorGood_pt METCorGood_T1_pt METCorGood_T1Smear_pt RawMET_pt RawPuppiMET_pt MET_T1_pt PuppiMET_pt)
+vars=(mll boson_pt boson_phi)
+vars=(PuppiMETCorGood_pt METCorGood_T1_pt METCorGood_T1Smear_pt RawMET_pt RawPuppiMET_pt MET_T1_pt PuppiMET_pt)
+vars=(mll boson_pt boson_phi u_perp_MET_T1 u_perp_METCorGood_T1 u_perp_METCorGood_T1Smear u_perp_PuppiMET  u_perp_PuppiMETCorGood u_perp_RawMET u_perp_RawPuppiMET u_parboson_MET_T1 u_parboson_METCorGood_T1 u_parboson_METCorGood_T1Smear u_parboson_PuppiMET  u_parboson_PuppiMETCorGood u_parboson_RawMET u_parboson_RawPuppiMET)
+#vars=(mll)  
+#njets can be geq0 or gt0
+njets='njetsgt0_nbtagl_10bins'
+njets='njetsgeq0_nbtagl'
+#njets='njetsgeq0'
+vars=(PuppiMETCorGood_pt METCorGood_T1_pt METCorGood_T1Smear_pt)
+#vars=( u_perp_METCorGood_T1 u_perp_METCorGood_T1Smear u_perp_PuppiMETCorGood u_parboson_METCorGood_T1 u_parboson_METCorGood_T1Smear u_parboson_PuppiMETCorGood)
+vars=( u_perp_METCorGood_T1 u_perp_METCorGood_T1Smear u_perp_PuppiMETCorGood u_parboson_METCorGood_T1 u_parboson_METCorGood_T1Smear u_parboson_PuppiMETCorGood)
+veto="1"
+
+extraTagNLO="dynlo_"$njets"_noveto_hitslt"${veto}
+extraTag="dy_"$njets"_noveto_hitslt"${veto}
+
+#nLepEq1_njetsgt0_massgt0_nbtagl_noveto_hitslt2
+for yr in ${years[@]}; do
+  for ch in ${channels[@]} ; do
+
+    for var in ${vars[@]} ; do
+
+
+#if [[ ! -f plotS_${yr}_${ch}.root ]] ; then
+
+#hadd -f plotS_${yr}_${var}_${ch}.root Job/plotS_${yr}_*_${var}*_${ch}.root Jobs/plotS_${yr}_*_MET_T1_pt*Up*_${ch}.root Jobs/plotS_${yr}_*_MET_T1_pt*Down*_${ch}.root
+#echo hadd -f plotS_${yr}_${njets}_hitslt${veto}_${var}_${ch}.root Jobs_dy/plotS_${yr}_*_${njets}_hitslt${veto}_${var}_${ch}.root
+
+
+isJE=$(ls Jobs_dy/plotS_${yr}_*_${njets}_hitslt${veto}_${var}JE*_${ch}.root | wc -l)
+if [[ $isJE -ne 0 ]]; then
+  hadd -f plotS_${yr}_${njets}_hitslt${veto}_${var}_${ch}.root Jobs_dy/plotS_${yr}_*_${njets}_hitslt${veto}_${var}_${ch}.root Jobs_dy/plotS_${yr}_*_${njets}_hitslt${veto}_${var}JE*_${ch}.root Jobs_dy/plotS_${yr}_*_${njets}_hitslt${veto}_${var}Uncl*_${ch}.root
+else
+  hadd -f plotS_${yr}_${njets}_hitslt${veto}_${var}_${ch}.root Jobs_dy/plotS_${yr}_*_${njets}_hitslt${veto}_${var}_${ch}.root
+fi
+
+
+echo done merging
+#fi
+
+
+  #if 'nlo' in extraTag : python makeStack.py -y ${yr} -v ${var} -q 0 -e ${extraTagNLO} -c $ch -l no ;# -c is the channel, use mumu or mm 
+  python makeStack_dy.py -y ${yr} -v ${var} -q 0 -e ${extraTag} -c $ch -l no ;# -c is the channel, use mumu or mm 
+  python makeStack_dy.py -y ${yr} -v ${var} -q 0 -e ${extraTagNLO} -c $ch -l no ;# -c is the channel, use mumu or mm 
+  echo done plotting....
+
+
+    cp plots/test/paperv2/${var}_${ch}${yr}_doQCD_0${extraTag}_0Log.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/DYv2/${var}_${yr}_doQCD0_${extraTag}_noLog_${ch}.pdf
+    cp plots/test/paperv2/${var}_${ch}${yr}_doQCD_0${extraTagNLO}_0Log.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/DYv2/${var}_${yr}_doQCD0_${extraTagNLO}_noLog_${ch}.pdf
+
+    cp plots/test/paperv2/${var}_${ch}${yr}_doQCD_0${extraTag}_1Log.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/DYv2/${var}_${yr}_doQCD0_${extraTag}_Log_${ch}.pdf
+    cp plots/test/paperv2/${var}_${ch}${yr}_doQCD_0${extraTagNLO}_1Log.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/DYv2/${var}_${yr}_doQCD0_${extraTagNLO}_Log_${ch}.pdf
+
+ echo done copying over
+done
+done
+done

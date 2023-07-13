@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-""" ZH.py: makes an nTuple for the ZH->tautau analysis """
-
 __author__ = "Alexis Kalogeropoulos" 
 
 # import external modules 
@@ -29,7 +27,7 @@ def getArgs() :
     parser.add_argument("-n","--nEvents",default=0,type=int,help="Number of events to process.")
     parser.add_argument("-m","--maxPrint",default=0,type=int,help="Maximum number of events to print.")
     parser.add_argument("-t","--testMode",default='',help="tau MVA selection")
-    parser.add_argument("-y","--year",default=2017,type=int,help="Data taking period, 2016, 2017 or 2018")
+    parser.add_argument("-y","--year",default=2017,type=str,help="Data taking period, 2016, 2017 or 2018")
     parser.add_argument("-s","--selection",default='ZH',help="is this for the ZH or the AZH analysis?")
     parser.add_argument("-u","--unique",default='none',help="CSV file containing list of unique events for sync studies.") 
     parser.add_argument("-w","--weights",default=False,type=int,help="to re-estimate Sum of Weights")
@@ -69,8 +67,8 @@ if args.nEvents > 0 : nMax = min(args.nEvents-1,nentries)
 
 
 MC = len(args.nickName) > 0 
-if args.dataType == 'Data' or args.dataType == 'data' : MC = False
-if args.dataType == 'MC' or args.dataType == 'mc' : MC = True
+if args.dataType.lower() == 'data' : MC = False
+if args.dataType.lower() == 'mc' : MC = True
 isMC = MC
 
 if MC :
@@ -79,11 +77,12 @@ if MC :
     PU.calculateWeights(args.nickName,args.year)
 else :
     CJ = ''
-    if args.year == 2016 : CJ = GF.checkJSON(filein='Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt ')
-    if args.year == 2017 : CJ = GF.checkJSON(filein='Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt')
-    if args.year == 2018 : CJ = GF.checkJSON(filein='Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt')
+    if '2016' in args.year: CJ = GF.checkJSON(filein='Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt')
+    if '2017' in args.year: CJ = GF.checkJSON(filein='Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt')
+    if '2018' in args.year: CJ = GF.checkJSON(filein='Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt')
 
 
+doJME=True
 varSystematics=['']
 if doJME : varSystematics= ['', 'nom', 'jesTotalUp', 'jesTotalDown', 'jerUp', 'jerDown']
 if not MC : 
@@ -100,7 +99,7 @@ outFileName = GF.getOutFileName(args).replace(".root",".ntup")
 
 
 hW=[]
-if MC and str(args.weights) == '1' : 
+if MC and (str(args.weights) == '1' or str(args.weights) == '2'): 
     hW.append(inFile.Get('hWeights'))
     if "WJetsToLNu" in outFileName:
 	htest=[]
@@ -114,6 +113,13 @@ if MC and str(args.weights) == '1' :
             hW.append(htest)
 
 
+    fW = outFileName.replace(".ntup",".weights")
+    fWF = TFile( fW, 'recreate' )
+    fWF.cd()
+    for i in range(len(hW)):
+	hW[i].Write()
+    fWF.Close()
+    if str(args.weights) == '2':   sys.exit()
 
 '''
 if MC : 
@@ -182,7 +188,9 @@ outTuple = outTuple2Lep.outTuple2Lep(outFileName,  era, doSyst=True, isW=True)
 
 tStart = time.time()
 countMod = 1000
-isMC = True
+#isMC = True
+
+
 for count, e in enumerate(inTree) :
     if count % countMod == 0 :
         print("Count={0:d}".format(count))
@@ -250,7 +258,7 @@ for count, e in enumerate(inTree) :
     goodMuonListExtraLepton=[]
     #tauList = tauFun.getGoodTauList(cat, e)
 
-
+    #print len(goodMuonList), goodMuonList, goodElectronList, len(goodElectronList), cat
     for cat in catss: 
         lepMode = cat[:2]
         if lepMode == 'ee' :
@@ -344,7 +352,8 @@ for count, e in enumerate(inTree) :
                 
 
 dT = time.time() - tStart
-print("Run time={0:.2f} s  time/event={1:.1f} us".format(dT,1000000.*dT/count))
+try : print("Run time={0:.2f} s  time/event={1:.1f} us".format(dT,1000000.*dT/count))
+except NameError :  print("Run time={0:.2f} s".format(dT))
 
 hCutFlow=[]
 hCutFlowW=[]
@@ -378,10 +387,3 @@ if not MC : CJ.printJSONsummary()
 
 outTuple.writeTree()
 
-if MC and str(args.weights) == '1' : 
-    fW = outFileName.replace(".ntup",".weights")
-    fWF = TFile( fW, 'recreate' )
-    fWF.cd()
-    for i in range(len(hW)):
-	hW[i].Write()
-    fWF.Close()
