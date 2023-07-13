@@ -1073,15 +1073,15 @@ class outTupleGjets() :
             try:    
                 self.weightpsjson[0] = self.evaluatorPresc["HLT_prescale"].evaluate("{0:s}".format( str(yearinpresc)), str(HLTName), int(entry.run), float(entry.luminosityBlock))
 		if 'Photon50' in HLTName : 
-		    self.histoHLTw.Fill(1,weightpsjson[0])
+		    self.histoHLTw.Fill(1,self.weightpsjson[0])
 		if 'Photon75' in HLTName : 
-		    self.histoHLTw.Fill(2,weightpsjson[0])
+		    self.histoHLTw.Fill(2,self.weightpsjson[0])
 		if 'Photon90' in HLTName : 
-		    self.histoHLTw.Fill(3,weightpsjson[0])
+		    self.histoHLTw.Fill(3,self.weightpsjson[0])
 		if 'Photon120' in HLTName : 
-		    self.histoHLTw.Fill(4,weightpsjson[0])
+		    self.histoHLTw.Fill(4,self.weightpsjson[0])
 		if 'Photon165' in HLTName : 
-		    self.histoHLTw.Fill(5,weightpsjson[0])
+		    self.histoHLTw.Fill(5,self.weightpsjson[0])
 
             except IndexError:
                 #print 'this does not exist....', str(HLTName), int(entry.run), float(entry.luminosityBlock), entry.Photon_pt[photonindex], photonindex
