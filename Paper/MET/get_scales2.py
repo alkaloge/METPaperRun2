@@ -184,12 +184,16 @@ def get_scales():
         jcut = " ( event.nElectron==2  and  event.Flag_BadPFMuonDzFilter==1  and   ( math.fabs(event.eta_1)<=1.4442 or math.fabs(event.eta_1)>=1.5660) and math.fabs(event.d0_1)<0.045  and  math.fabs(event.dZ_1)<0.2 and  event.q_1==1  and  event.iso_1 <= .15  and   (math.fabs(event.eta_2)<=1.4442 or math.fabs(event.eta_2)>=1.5660)   and  math.fabs(event.d0_2)<0.045  and  math.fabs(event.dZ_2)<0.2  and   math.fabs(event.q_2)==1  and  event.iso_2 <= .15  and  event.nPVndof>4  and  math.fabs(event.PVz)<26  and  (event.PVy*event.PVy + event.PVx*event.PVx)<3  and  event.nPVGood>2  and  event.cat==1   and event.njets{0:s}    and  event.nbtagL==0.0  and  event.Electron_convVeto > 0  and  event.Electron_lostHits<1 )".format(str(sjets))
 
     if channel == "Gjets" : 
-        jcut = " (  event.nPhoton==1 and event.Flag_BadPFMuonDzFilter==1 and  event.nPVndof>4 and math.fabs(event.PVz)<26 and (event.PVy*event.PVy + event.PVx*event.PVx)<3 and event.nPVGood>2 and event.njets{0:s}  and event.Photon_r9_1>=0.9 and event.Photon_r9_1<=1. and event.nbtagL==0.0)".format(str(sjets))
+        #jcut = " (  event.Flag_BadPFMuonDzFilter==1 and  event.nPVndof>4 and math.fabs(event.PVz)<26 and (event.PVy*event.PVy + event.PVx*event.PVx)<3 and event.nPVGood>2 and event.njets{0:s}  and event.Photon_r9_1>=0.9 and event.Photon_r9_1<=1. and event.nbtagL==0.0)".format(str(sjets))
+        jcut = " (   event.pt_1>=50 and math.fabs(event.eta_1)<1.44 and event.Flag_BadPFMuonDzFilter==1 and event.nPVGood>2 and event.njets{0:s}  and event.Photon_r9_1>=0.9 and event.Photon_r9_1<=1. and event.nbtagL==0.0)".format(str(sjets))
 
 
     
-    if not isMC : jcut = jcut + " * (event.weightps2 )" 
-    extra_conditions = "( event.weight  * math.fabs(event.weightPUtrue) * event.L1PreFiringWeight_Nom * event.IDSF * event.TrigSF * event.IsoSF)"
+    if not isMC : 
+        #jcut = jcut + " * min( event.weightpsjson, event.weightps2 )" 
+        jcut = jcut + " * ( event.weightpsjson)" 
+
+    extra_conditions = "( event.weight  * math.fabs(event.weightPUtruejson) * event.L1PreFiringWeight_Nom * event.IDSF * event.TrigSF * event.IsoSF)"
  
     jcutmc = jcut + " * " + extra_conditions
     weight = 1.

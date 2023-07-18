@@ -68,7 +68,7 @@ def genMatchTau(entry, jt, decayMode=''):
 
     return idx_match
 
-def checkMETFlags(entry, year, isMC=False, proc="EOY") :
+def checkMETFlags(entry, year, isMC=False, proc="UL") :
     METfilter = False
     '''
     if entry.Flag_BadChargedCandidateFilter or entry.Flag_BadChargedCandidateSummer16Filter or entry.Flag_BadPFMuonFilter
@@ -85,15 +85,15 @@ def checkMETFlags(entry, year, isMC=False, proc="EOY") :
 
 
     if proc=='EOY':
-	if year== 2016 and (entry.Flag_goodVertices  == False or entry.Flag_globalSuperTightHalo2016Filter == False or entry.Flag_HBHENoiseFilter == False or entry.Flag_HBHENoiseIsoFilter  == False or entry.Flag_EcalDeadCellTriggerPrimitiveFilter  == False or  entry.Flag_BadPFMuonFilter  == False) : METfilter = True
+	if '2016' in str(year) and (entry.Flag_goodVertices  == False or entry.Flag_globalSuperTightHalo2016Filter == False or entry.Flag_HBHENoiseFilter == False or entry.Flag_HBHENoiseIsoFilter  == False or entry.Flag_EcalDeadCellTriggerPrimitiveFilter  == False or  entry.Flag_BadPFMuonFilter  == False) : METfilter = True
 
-	if year== 2018 and (entry.Flag_goodVertices  == False or entry.Flag_globalSuperTightHalo2016Filter == False or entry.Flag_HBHENoiseFilter  == False or entry.Flag_HBHENoiseIsoFilter  == False or entry.Flag_EcalDeadCellTriggerPrimitiveFilter  == False or  entry.Flag_BadPFMuonFilter == False  or entry.Flag_eeBadScFilter == False or entry.Flag_ecalBadCalibFilter == False) : METfilter = True
+	if '2018' in str(year) and (entry.Flag_goodVertices  == False or entry.Flag_globalSuperTightHalo2016Filter == False or entry.Flag_HBHENoiseFilter  == False or entry.Flag_HBHENoiseIsoFilter  == False or entry.Flag_EcalDeadCellTriggerPrimitiveFilter  == False or  entry.Flag_BadPFMuonFilter == False  or entry.Flag_eeBadScFilter == False or entry.Flag_ecalBadCalibFilter == False) : METfilter = True
 
 	#if not isMC and entry.Flag_eeBadScFilter == False : METfilter = True
     if proc=='UL' :
-        if year ==2016  and (entry.Flag_goodVertices  == False or entry.Flag_globalSuperTightHalo2016Filter == False or entry.Flag_HBHENoiseFilter  == False or entry.Flag_HBHENoiseIsoFilter  == False or entry.Flag_EcalDeadCellTriggerPrimitiveFilter  == False or  entry.Flag_BadPFMuonFilter == False  or entry.Flag_eeBadScFilter == False ) : METfilter = True
+        if '2016' in str(year)  and (entry.Flag_goodVertices  == False or entry.Flag_globalSuperTightHalo2016Filter == False or entry.Flag_HBHENoiseFilter  == False or entry.Flag_HBHENoiseIsoFilter  == False or entry.Flag_EcalDeadCellTriggerPrimitiveFilter  == False or  entry.Flag_BadPFMuonFilter == False  or entry.Flag_eeBadScFilter == False or entry.Flag_BadPFMuonDzFilter == False) : METfilter = True
 
-        if year !=2016  and (entry.Flag_goodVertices  == False or entry.Flag_globalSuperTightHalo2016Filter == False or entry.Flag_HBHENoiseFilter  == False or entry.Flag_HBHENoiseIsoFilter  == False or entry.Flag_EcalDeadCellTriggerPrimitiveFilter  == False or  entry.Flag_BadPFMuonFilter == False  or entry.Flag_eeBadScFilter == False or entry.Flag_ecalBadCalibFilter == False) : METfilter = True
+        if '2016' not in str(year)  and (entry.Flag_goodVertices  == False or entry.Flag_globalSuperTightHalo2016Filter == False or entry.Flag_HBHENoiseFilter  == False or entry.Flag_HBHENoiseIsoFilter  == False or entry.Flag_EcalDeadCellTriggerPrimitiveFilter  == False or  entry.Flag_BadPFMuonFilter == False  or entry.Flag_eeBadScFilter == False or entry.Flag_ecalBadCalibFilter == False or entry.Flag_BadPFMuonDzFilter== False) : METfilter = True
 
     #print metdz, METfilter, 'filters', entry.Flag_goodVertices, entry.Flag_globalSuperTightHalo2016Filter, entry.Flag_HBHENoiseFilter,  entry.Flag_HBHENoiseIsoFilter,entry.Flag_EcalDeadCellTriggerPrimitiveFilter, entry.Flag_BadPFMuonFilter,  entry.Flag_eeBadScFilter,entry.Flag_ecalBadCalibFilter, entry.Flag_BadPFMuonDzFilter
     return METfilter
@@ -300,8 +300,8 @@ def findDoubleLeptTrigger(goodLeptonList,entry,flavour,era):
         try : HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL = entry.HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL  
         except AttributeError : HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL = False 
         
-        if era == '2016' and  not HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ : return LepttrigList, hltList
-        if era != '2016'  and not HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ and not HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL  :
+        if '2016' in era and  not HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ : return LepttrigList, hltList
+        if '2016' not in era and not HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ and not HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL  :
             return LepttrigList, hltList
      
         if entry.Electron_pt[goodLeptonList[0]] > entry.Electron_pt[goodLeptonList[1]]: 
@@ -323,8 +323,8 @@ def findDoubleLeptTrigger(goodLeptonList,entry,flavour,era):
         try : HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_Mass8 = entry.HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_Mass8
         except AttributeError : HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_Mass8 = False  
         
-        if era == '2016' and not  HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ and not HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ : return LepttrigList, hltList
-        if era != '2016'  and not HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_Mass8:  return LepttrigList, hltList
+        if '2016' in era and not  HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ and not HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ : return LepttrigList, hltList
+        if '2016' not in era  and not HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ_Mass8:  return LepttrigList, hltList
                                   
 
         if entry.Muon_pt[goodLeptonList[0]] > entry.Muon_pt[goodLeptonList[1]]: 
@@ -369,11 +369,11 @@ def findDoubleLeptTrigger(goodLeptonList,entry,flavour,era):
 
 	    dR = DRobj(entry.Muon_eta[leadL],entry.Muon_phi[leadL], entry.TrigObj_eta[iobj], entry.TrigObj_phi[iobj])
 
-            if era == '2016' :
+            if '2016' in era :
 		if dR  < 0.5 and entry.TrigObj_filterBits[iobj] & 1 : 
 		    hltList.append("LeadDMu")
 		    i_lead = iobj
-            if era != '2016' :
+            if '2016' not in era :
 		if dR  < 0.5 and entry.TrigObj_filterBits[iobj] & 16 : 
 		    hltList.append("LeadDMu")
 		    i_lead = iobj
@@ -382,12 +382,12 @@ def findDoubleLeptTrigger(goodLeptonList,entry,flavour,era):
             for iobjj in range(iobj,entry.nTrigObj) :
 	        dRr = DRobj(entry.Muon_eta[subleadL],entry.Muon_phi[subleadL], entry.TrigObj_eta[iobjj], entry.TrigObj_phi[iobjj])
 
-                if era == '2016' : 
+                if '2016' in era : 
 		    if dRr  < 0.5 and entry.TrigObj_filterBits[iobjj] & 1 : 
 			hltList.append("TrailDMu")
 			i_trail = iobjj
 
-                if era != '2016' : 
+                if '2016' not in era : 
 		    if dRr  < 0.5 and entry.TrigObj_filterBits[iobjj] & 16 : 
 			hltList.append("TrailDMu")
 			i_trail = iobjj

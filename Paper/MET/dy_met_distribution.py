@@ -21,7 +21,7 @@ import include.helper     as helper
 import include.Region     as Region
 import include.Canvas     as Canvas
 import include.CutManager as CutManager
-import include.Sample     as Sample
+import include.Sample    as Sample
 import include.Rounder    as Rounder        
 #import include.METCorrections as METCor
 
@@ -64,13 +64,16 @@ if __name__ == "__main__":
     (opts, args) = parser.parse_args()
     doDY = True
     doNPV = True
-    dogjets = True
-    channel = 'Gjets'
+    doee = True
+    if 'mm' in str(opts.Channel.lower()) or 'mu' in str(opts.Channel.lower()) : doee = False
+    if 'el' in str(opts.Channel.lower()) : doee = True
+    if doee :   channel = 'ElEl'
+    else :   channel = 'MuMu'
     era = str(opts.Year)
     eras = str(opts.Year)
     ee = era
     
-    opts.sampleFile = 'samples_{0:s}_gjets.dat'.format(era[:4], channel)
+    opts.sampleFile = 'samples_{0:s}_2l.dat'.format(era[:4], channel)
      
     if '2016' in era and 'pre' in era : 
         eras ='2016preVFP'
@@ -79,59 +82,66 @@ if __name__ == "__main__":
     if '2016' in era and 'post' not in era  and 'pre' not in era: 
         eras ='2016postVFP'
 
-    opts.sampleFile = 'samples_{0:s}_gjets.dat'.format(eras)
+    opts.sampleFile = 'samples_{0:s}_2l.dat'.format(eras)
     print 'will read Datasets from ', opts.sampleFile
 
     lumis={'2016':35.93, '2017':41.48, '2018':59.83}
-    lumis={'2016':35.93, '2017':41.48, '2018':59.83, '2016BpreVFP':5.825, '2016CpreVFP':2.62, '2016DpreVFP':4.286, '2016EpreVFP':4.0659, '2016FpreVFP':2.865, '2016F':0.584, '2016G':7.653, '2016H':8.74, '2016preVFP':19.72, '2016postVFP':16.15,  '2017B':4.80, '2017C':9.57, '2017D':4.25, '2017E':9.315, '2017F':13.54, 'dry':10, '2018A':14.03, '2018B':7.07, '2018C':6.895, '2018D':31.84}
-    #pay attention! 2016=2016postVFP
-    lumis={'2016':16.9777, '2017':41.48, '2018':59.83, '2016BpreVFP':5.825, '2016CpreVFP':2.62, '2016DpreVFP':4.286, '2016EpreVFP':4.0659, '2016FpreVFP':2.865, '2016F':0.584, '2016G':7.653, '2016H':8.74, '2016preVFP':19.72, '2016postVFP':16.15,  '2017B':4.80, '2017C':9.57, '2017D':4.25, '2017E':9.315, '2017F':13.54, 'dry':10, '2018A':14.03, '2018B':7.07, '2018C':6.895, '2018D':31.84}
+    lumis={'2016':16.9777, '2017':41.48, '2018':59.83, '2016BpreVFP':5.825, '2016CpreVFP':2.62, '2016DpreVFP':4.286, '2016EpreVFP':4.0659, '2016FpreVFP':2.865, '2016F':0.584, '2016G':7.653, '2016H':8.74, '2016preVFP':19.351, '2016postVFP':16.9777,  '2017B':4.80, '2017C':9.57, '2017D':4.25, '2017E':9.315, '2017F':13.54, 'dry':10, '2018A':14.03, '2018B':7.07, '2018C':6.895, '2018D':31.84}
     lumi = lumis[era]
-
-
-
     yields={}
     print 'Going to load DATA and MC trees...'
     if doDY:
-        if dogjets:
-            channel = 'Gjets'
+        if doee:
+            channel = 'ElEl'
             lumi = lumis[era]
             run = era
 
+            ttDatasets = ['TTTo2L2Nu', 'TTToSemiLeptonic']
+            tt2L2NuDatasets = ['TTTo2L2Nu']
+            #ttDatasets = ['TTToSemiLeptonic']
+            ttDatasets = ['TTTo2L2Nu', 'TTToHadronic', 'TTToSemiLeptonic']
+            ttDatasets = ['TTTo2L2Nu', 'TTToSemiLeptonic']
 
-            txDatasets = ['TGjets', 'TTGjets', 'TTGjets_ext1']
-            topDatasets = ['ST_s-channel', 'ST_t-channel_top', 'ST_t-channel_antitop', 'ST_tW_antitop', 'ST_tW_top', 'TTTo2L2Nu', 'TTToSemiLeptonic', 'TTToHadronic', 'ttWJets']
-            #txDatasets += topDatasets
-            if '2017' in run or '2016' in run : txDatasets = ['TGjets', 'TTGjets']
-            #txDatasets = ['TTGjets']
+            stDatasets = ['ST_s-channel', 'ST_t-channel_top', 'ST_t-channel_antitop', 'ST_tW_antitop', 'ST_tW_top']
  
+            ttDatasets += stDatasets
 
             #ttDatasets = ['ST_s-channel_antitop', 'ST_t-channel_antitop', 'ST_tW_antitop', 'ST_tW_top', 'TTTo2L2Nu', 'TTToHadronic', 'TTToSemiLeptonic']
-            ewkDatasets = ['WJetsToLNu_NLO']
+            dyDatasets = ['DYJetsToLLM50', 'DYJetsToLLM10to50']
+            dyDatasetsNLO = ['DYJetsToLLM50NLO', 'DYJetsToLLM10to50']
 
-            ewnloDatasets = ['WGToLNuG']
-            ewnloDatasets = ['WGToLNuG', 'ZGTo2NuG', 'ZNuNuGJets_PtG-130', 'ZLLGJets_PtG-15to130', 'ZLLGJets_PtG-130']
-            ewDatasets = ['WG_PtG-130', 'WG_PtG-40To130', 'WGToLNuG', 'ZGTo2NuG', 'ZNuNuGJets_PtG-130', 'ZLLGJets_PtG-15to130', 'ZLLGJets_PtG-130']
-            ewDatasets = ['WG_PtG-130', 'WG_PtG-40To130', 'ZGTo2NuG', 'ZNuNuGJets_PtG-130', 'ZLLGJets_PtG-15to130', 'ZLLGJets_PtG-130']
-            if '2018' not in run : ewDatasets = ['WWG', 'WG_PtG-130', 'WG_PtG-40To130',  'ZGTo2NuG', 'ZNuNuGJets_PtG-130', 'ZLLGJets_PtG-15to130', 'ZLLGJets_PtG-130']
-              
-            gjetsDatasets = ['GJets_HT-40To100','GJets_HT-100To200', 'GJets_HT-200To400', 'GJets_HT-400To600', 'GJets_HT-600ToInf']
+
+            ewDatasets = ['ZZZ',  'WZTo2Q2L', 'WZTo3LNu', 'WWTo2L2Nu', 'WWW',  'WWZ', 'WZZ', 'ZZTo2L2Nu', 'ZZTo2Q2L', 'ZZTo4L', 'WGToLNuG']# only for 2017
+
+            #if '2016' in era : ewDatasets = ['WW', 'WZ', 'WWW', 'ZZTo2L2Nu', 'ZZTo2Q2L', 'ZZTo4L', 'WGToLNuG']
+            if '2016' in era : ewDatasets =  ['ZZZ', 'WWZ_ext1',  'WZTo2Q2L', 'WZTo3LNu', 'WWTo2L2Nu', 'WWW',  'WWZ', 'WZZ', 'ZZTo2L2Nu', 'ZZTo2Q2L', 'ZZTo4L', 'WGToLNuG']# only for 2017
+            #ewk1Datasets = ['W1JetsToLNu']#, 'W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu']
+            #ewk2Datasets = ['W2JetsToLNu']#, 'W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu']
+            ewk3Datasets = ['W3JetsToLNu']#, 'W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu']
+            ewk4Datasets = ['W4JetsToLNu']#, 'W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu']
+            ewkDatasets = ['W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu', 'WJetsToLNu']
+            ewkDatasets = ['WJetsToLNu_0J', 'WJetsToLNu_1J', 'WJetsToLNu_2J']
+            ewkNLODatasets = ['WJetsToLNu_NLO']
+            ewkDatasets = ['WJetsToLNu']
+            ewkAllDatasets = ['W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu', 'WJetsToLNu']
+            #ewkAllDatasets = ['WJetsToLNu']
 
             qcdDatasets = ['QCD_HT50to100', 'QCD_HT100to200', 'QCD_HT200to300', 'QCD_HT300to500', 'QCD_HT500to700',  'QCD_HT700to1000','QCD_HT1000to1500', 'QCD_HT1500to2000', 'QCD_HT2000toInf']
-
 
             #qcdDatasetsPt = [ 'QCD_Pt-20_MuEn']
             qcdDatasetsPtBins = [ 'QCD_Pt-1000_MuEn', 'QCD_Pt-15To20_MuEn', 'QCD_Pt-300To470_MuEn', 'QCD_Pt-470To600_MuEn', 'QCD_Pt-600To800_MuEn', 'QCD_Pt-80To120_MuEn', 'QCD_Pt-120To170_MuEn', 'QCD_Pt-170To300_MuEn', 'QCD_Pt-20To30_MuEn', 'QCD_Pt-30To50_MuEn', 'QCD_Pt-50To80_MuEn', 'QCD_Pt-800To1000_MuEn']
 
 
             #daDatasets = [ 'EGamma_Run2018A', 'EGamma_Run2018B', 'EGamma_Run2018C', 'EGamma_Run2018D']  
-            daDatasets  =['SinglePhoton_Run2017B','SinglePhoton_Run2017C',  'SinglePhoton_Run2017D', 'SinglePhoton_Run2017E', 'SinglePhoton_Run2017F']
-            if run =='2017B' : daDatasets = [ 'SinglePhoton_Run2017B']
-            if run =='2017C' : daDatasets = [ 'SinglePhoton_Run2017C']
-            if run =='2017D' : daDatasets = [ 'SinglePhoton_Run2017D']
-            if run =='2017E' : daDatasets = [ 'SinglePhoton_Run2017E']
-            if run =='2017F' : daDatasets = [ 'SinglePhoton_Run2017F']
-            if run=='dry': daDatasets = txDatasets
+            daDatasets = [ 'SingleElectron_Run2017B','SingleElectron_Run2017C', 'SingleElectron_Run2017D', 'SingleElectron_Run2017E', 'SingleElectron_Run2017F']  
+            #daDatasets = [ 'DoubleEG_Run2017B','DoubleEG_Run2017C', 'DoubleEG_Run2017D', 'DoubleEG_Run2017E', 'DoubleEG_Run2017F']  
+
+            if run =='2017B' : daDatasets = [ 'SingleElectron_Run2017B']
+            if run =='2017C' : daDatasets = [ 'SingleElectron_Run2017C']
+            if run =='2017D' : daDatasets = [ 'SingleElectron_Run2017D']
+            if run =='2017E' : daDatasets = [ 'SingleElectron_Run2017E']
+            if run =='2017F' : daDatasets = [ 'SingleElectron_Run2017F']
+            if run=='dry': daDatasets = dyyDatasets
 
             if run =='2018' : daDatasets = [ 'EGamma_Run2018B','EGamma_Run2018C', 'EGamma_Run2018D', 'EGamma_Run2018A']
             if run =='2018A' : daDatasets = [ 'EGamma_Run2018A']
@@ -139,49 +149,149 @@ if __name__ == "__main__":
             if run =='2018C' : daDatasets = [ 'EGamma_Run2018C']
             if run =='2018D' : daDatasets = [ 'EGamma_Run2018D']
 
-            #if run =='2016' : daDatasets = [ 'SinglePhoton_Run2016Bv1_preVFP', 'SinglePhoton_Run2016Bv2_preVFP',  'SinglePhoton_Run2016C_preVFP',  'SinglePhoton_Run2016D_preVFP',  'SinglePhoton_Run2016E_preVFP',  'SinglePhoton_Run2016Fv2_preVFP',  'SinglePhoton_Run2016Fv1',  'SinglePhoton_Run2016G',  'SinglePhoton_Run2016H']
-            if run =='2016preVFP' : daDatasets = [ 'SinglePhoton_Run2016Bv1_preVFP', 'SinglePhoton_Run2016Bv2_preVFP',  'SinglePhoton_Run2016C_preVFP',  'SinglePhoton_Run2016D_preVFP',  'SinglePhoton_Run2016E_preVFP',  'SinglePhoton_Run2016Fv2_preVFP']
-            if run =='2016postVFP' : daDatasets = [ 'SinglePhoton_Run2016Fv1',  'SinglePhoton_Run2016G',  'SinglePhoton_Run2016H']
-            if run =='2016' : daDatasets = [ 'SinglePhoton_Run2016Fv1',  'SinglePhoton_Run2016G',  'SinglePhoton_Run2016H']
+            if run =='2016' : daDatasets = [ 'SingleElectron_Run2016Bv1_preVFP', 'SingleElectron_Run2016Bv2_preVFP',  'SingleElectron_Run2016C_preVFP',  'SingleElectron_Run2016D_preVFP',  'SingleElectron_Run2016E_preVFP',  'SingleElectron_Run2016Fv2_preVFP',  'SingleElectron_Run2016Fv1',  'SingleElectron_Run2016G',  'SingleElectron_Run2016H']
+            if run =='2016preVFP' : daDatasets = [ 'SingleElectron_Run2016Bv1_preVFP', 'SingleElectron_Run2016Bv2_preVFP',  'SingleElectron_Run2016C_preVFP',  'SingleElectron_Run2016D_preVFP',  'SingleElectron_Run2016E_preVFP',  'SingleElectron_Run2016Fv2_preVFP']
+            if run =='2016postVFP' : daDatasets = [ 'SingleElectron_Run2016Fv1',  'SingleElectron_Run2016G',  'SingleElectron_Run2016H']
+            if run =='2016' : daDatasets = [ 'SingleElectron_Run2016Fv1',  'SingleElectron_Run2016G',  'SingleElectron_Run2016H']
 
-            if run =='2016BpreVFP' : daDatasets = [ 'SinglePhoton_Run2016Bv1_preVFP', 'SinglePhoton_Run2016Bv2_preVFP']
-            if run =='2016CpreVFP' : daDatasets = [ 'SinglePhoton_Run2016C_preVFP']
-            if run =='2016DpreVFP' : daDatasets = [ 'SinglePhoton_Run2016D_preVFP']
-            if run =='2016EpreVFP' : daDatasets = [ 'SinglePhoton_Run2016E_preVFP']
-            if run =='2016FpreVFP' : daDatasets = [ 'SinglePhoton_Run2016Fv2_preVFP']
-            if run =='2016F' : daDatasets = [ 'SinglePhoton_Run2016Fv1']
-            if run =='2016G' : daDatasets = [ 'SinglePhoton_Run2016G']
-            if run =='2016H' : daDatasets = [ 'SinglePhoton_Run2016H']
+            if run =='2016BpreVFP' : daDatasets = [ 'SingleElectron_Run2016Bv1_preVFP', 'SingleElectron_Run2016Bv2_preVFP']
+            if run =='2016CpreVFP' : daDatasets = [ 'SingleElectron_Run2016C_preVFP']
+            if run =='2016DpreVFP' : daDatasets = [ 'SingleElectron_Run2016D_preVFP']
+            if run =='2016EpreVFP' : daDatasets = [ 'SingleElectron_Run2016E_preVFP']
+            if run =='2016FpreVFP' : daDatasets = [ 'SingleElectron_Run2016Fv2_preVFP']
+            if run =='2016F' : daDatasets = [ 'SingleElectron_Run2016Fv1']
+            if run =='2016G' : daDatasets = [ 'SingleElectron_Run2016G']
+            if run =='2016H' : daDatasets = [ 'SingleElectron_Run2016H']
 
+            #daDatasets = [ 'SingleMuon_Run2017B','SingleMuon_Run2017C','SingleMuon_Run2017F']  
+            #daDatasets = [ 'SingleMuon_Run2017B']  
+        else:
+            channel = 'MuMu'
+            lumi = lumis[era]
+            run = era
+
+            ttDatasets = ['TTTo2L2Nu', 'TTToSemiLeptonic']
+            tt2L2NuDatasets = ['TTTo2L2Nu']
+            #ttDatasets = ['TTToSemiLeptonic']
+            ttDatasets = ['TTTo2L2Nu', 'TTToHadronic', 'TTToSemiLeptonic']
+            ttDatasets = ['TTTo2L2Nu', 'TTToSemiLeptonic']
+
+            stDatasets = ['ST_s-channel', 'ST_t-channel_top', 'ST_t-channel_antitop', 'ST_tW_antitop', 'ST_tW_top']
+            #stDatasets = ['ST_t-channel_top', 'ST_t-channel_antitop', 'ST_tW_antitop', 'ST_tW_top']
+            #stDatasets = ['ST_s-channel_antitop', 'ST_t-channel_top','ST_tW_antitop', 'ST_tW_top']
+ 
+            ttDatasets += stDatasets
+
+            #ttDatasets = ['ST_s-channel_antitop', 'ST_t-channel_antitop', 'ST_tW_antitop', 'ST_tW_top', 'TTTo2L2Nu', 'TTToHadronic', 'TTToSemiLeptonic']
+            dyDatasets = ['DYJetsToLLM50', 'DYJetsToLLM10to50']
+            dyDatasetsNLO = ['DYJetsToLLM50NLO', 'DYJetsToLLM10to50']
+            #ewDatasets = ['WW', 'WZTo3LNu', 'WZZ', 'WWW', 'ZZTo2L2Nu', 'ZZTo2Q2L', 'ZZTo4L', 'WGToLNuG']# only for 2017
+            ewDatasets = ['WW', 'ZZZ',  'WZTo2Q2L', 'WZTo3LNu', 'WWTo2L2Nu', 'WWW',  'WWZ', 'WZZ', 'ZZTo2L2Nu', 'ZZTo2Q2L', 'ZZTo4L', 'WGToLNuG']# only for 2017
+
+            #if '2016' in era : ewDatasets = ['WW', 'WZ', 'WWW', 'ZZTo2L2Nu', 'ZZTo2Q2L', 'ZZTo4L', 'WGToLNuG']
+            if '2016' in era : ewDatasets =  ['WW', 'ZZZ', 'WWZ_ext1',  'WZTo2Q2L', 'WZTo3LNu', 'WWTo2L2Nu', 'WWW',  'WWZ', 'WZZ', 'ZZTo2L2Nu', 'ZZTo2Q2L', 'ZZTo4L', 'WGToLNuG']# only for 2017
+            ewk1Datasets = ['W1JetsToLNu']#, 'W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu']
+            ewk2Datasets = ['W2JetsToLNu']#, 'W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu']
+            ewk3Datasets = ['W3JetsToLNu']#, 'W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu']
+            ewk4Datasets = ['W4JetsToLNu']#, 'W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu']
+            ewkDatasets = ['W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu', 'WJetsToLNu']
+            ewkDatasets = ['WJetsToLNu_0J', 'WJetsToLNu_1J', 'WJetsToLNu_2J']
+            ewkNLODatasets = ['WJetsToLNu_NLO']
+            #ewkDatasets = ['WJetsToLNu_0J','WJetsToLNu_1J','WJetsToLNu_2J']
+            #ewkDatasets = ['WJetsToLNu', 'W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu']
+            ewkDatasets = ['WJetsToLNu']
+            #ewkAllDatasets = ['WJetsToLNu']
+            ewkAllDatasets = ['W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu', 'WJetsToLNu']
+
+            qcdDatasets = ['QCD_HT50to100', 'QCD_HT100to200', 'QCD_HT200to300', 'QCD_HT300to500', 'QCD_HT500to700',  'QCD_HT700to1000','QCD_HT1000to1500', 'QCD_HT1500to2000', 'QCD_HT2000toInf']
+
+            #qcdDatasetsPt = [ 'QCD_Pt-20_MuEn']
+            qcdDatasetsPtBins = [ 'QCD_Pt-1000_MuEn', 'QCD_Pt-15To20_MuEn', 'QCD_Pt-300To470_MuEn', 'QCD_Pt-470To600_MuEn', 'QCD_Pt-600To800_MuEn', 'QCD_Pt-80To120_MuEn', 'QCD_Pt-120To170_MuEn', 'QCD_Pt-170To300_MuEn', 'QCD_Pt-20To30_MuEn', 'QCD_Pt-30To50_MuEn', 'QCD_Pt-50To80_MuEn', 'QCD_Pt-800To1000_MuEn']
+
+
+
+            daDatasets = [ 'SingleMuon_Run2017B','SingleMuon_Run2017C', 'SingleMuon_Run2017D', 'SingleMuon_Run2017E', 'SingleMuon_Run2017F']  
+            #daDatasets = [ 'DoubleMuon_Run2017B','DoubleMuon_Run2017C', 'DoubleMuon_Run2017D', 'DoubleMuon_Run2017E', 'DoubleMuon_Run2017F']  
+            if run =='2017B' : daDatasets = [ 'SingleMuon_Run2017B']
+            if run =='2017C' : daDatasets = [ 'SingleMuon_Run2017C']
+            if run =='2017D' : daDatasets = [ 'SingleMuon_Run2017D']
+            if run =='2017E' : daDatasets = [ 'SingleMuon_Run2017E']
+            if run =='2017F' : daDatasets = [ 'SingleMuon_Run2017F']
+            if run=='dry': daDatasets = dyyDatasets
+
+            if run =='2018' : daDatasets = [ 'SingleMuon_Run2018B','SingleMuon_Run2018C', 'SingleMuon_Run2018D', 'SingleMuon_Run2018A']
+            if run =='2018A' : daDatasets = [ 'SingleMuon_Run2018A']
+            if run =='2018B' : daDatasets = [ 'SingleMuon_Run2018B']
+            if run =='2018C' : daDatasets = [ 'SingleMuon_Run2018C']
+            if run =='2018D' : daDatasets = [ 'SingleMuon_Run2018D']
+
+            if run =='2016' : daDatasets = [ 'SingleMuon_Run2016Bv1_preVFP', 'SingleMuon_Run2016Bv2_preVFP',  'SingleMuon_Run2016C_preVFP',  'SingleMuon_Run2016D_preVFP',  'SingleMuon_Run2016E_preVFP',  'SingleMuon_Run2016Fv2_preVFP',  'SingleMuon_Run2016Fv1',  'SingleMuon_Run2016G',  'SingleMuon_Run2016H']
+            if run =='2016preVFP' : daDatasets = [ 'SingleMuon_Run2016Bv1_preVFP', 'SingleMuon_Run2016Bv2_preVFP',  'SingleMuon_Run2016C_preVFP',  'SingleMuon_Run2016D_preVFP',  'SingleMuon_Run2016E_preVFP',  'SingleMuon_Run2016Fv2_preVFP']
+            if run =='2016postVFP' : daDatasets = [ 'SingleMuon_Run2016Fv1',  'SingleMuon_Run2016G',  'SingleMuon_Run2016H']
+
+            if run =='2016BpreVFP' : daDatasets = [ 'SingleMuon_Run2016Bv1_preVFP', 'SingleMuon_Run2016Bv2_preVFP']
+            if run =='2016CpreVFP' : daDatasets = [ 'SingleMuon_Run2016C_preVFP']
+            if run =='2016DpreVFP' : daDatasets = [ 'SingleMuon_Run2016D_preVFP']
+            if run =='2016EpreVFP' : daDatasets = [ 'SingleMuon_Run2016E_preVFP']
+            if run =='2016FpreVFP' : daDatasets = [ 'SingleMuon_Run2016Fv2_preVFP']
+            if run =='2016F' : daDatasets = [ 'SingleMuon_Run2016Fv1']
+            if run =='2016G' : daDatasets = [ 'SingleMuon_Run2016G']
+            if run =='2016H' : daDatasets = [ 'SingleMuon_Run2016H']
+
+            #daDatasets = [ 'SingleMuon_Run2017B','SingleMuon_Run2017C','SingleMuon_Run2017F']  
+            #daDatasets = [ 'SingleMuon_Run2017B']  
         print 'the lumito be used is ',lumi
         isLocal = True
         if str(opts.Local) == '0' or str(opts.Local).lower() == 'false' or str(opts.Local).lower() == 'no': isLocal = False
-        treeTX = Sample.Tree(helper.selectSamples(opts.sampleFile, txDatasets, 'TX'), 'TX'  , 0, channel, isLocal)
+        treeTT = Sample.Tree(helper.selectSamples(opts.sampleFile, ttDatasets, 'TOP'), 'TOP'  , 0, channel, isLocal)
+        #treeST = Sample.Tree(helper.selectSamples(opts.sampleFile, stDatasets, 'STOP'), 'STOP'  , 0)
+        treeDY = Sample.Tree(helper.selectSamples(opts.sampleFile, dyDatasets, 'DY'), 'DY'  , 0, channel, isLocal)
+        treeDYnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, dyDatasetsNLO, 'DYnlo'), 'DYnlo'  , 0, channel, isLocal)
         treeEW = Sample.Tree(helper.selectSamples(opts.sampleFile, ewDatasets, 'EW'), 'EW'  , 0, channel, isLocal)
-        treeEWNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewnloDatasets, 'EWNLO'), 'EWNLO'  , 0, channel, isLocal)
-        treeEWKNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWKNLO'), 'EWKNLO'  , 0, channel, isLocal)
-        treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasets, 'QCD'), 'QCD'  , 0, channel, isLocal)
-        treeGjets = Sample.Tree(helper.selectSamples(opts.sampleFile, gjetsDatasets, 'GJets'), 'GJets'  , 0, channel, isLocal)
+        #treeEWK = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK'), 'EWK'  , 0, channel, isLocal)
+
+        #treeEWKAll = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkAllDatasets, 'EWK'), 'EWK'  , 0, channel, isLocal, True)
+
+        #treeEWKNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkNLODatasets, 'EWKNLO'), 'EWKNLO'  , 0, channel, isLocal)
+        #treeEWK1 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk1Datasets, 'EWK1'), 'EWK1'  , 0, channel, isLocal)
+        #treeEWK2 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk2Datasets, 'EWK2'), 'EWK2'  , 0, channel, isLocal)
+        #treeEWK3 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk3Datasets, 'EWK3'), 'EWK3'  , 0, channel, isLocal)
+        #treeEWK4 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk4Datasets, 'EWK4'), 'EWK4'  , 0, channel, isLocal)
+        #treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasets, 'QCD'), 'QCD'  , 0, channel, isLocal)
         #treeQCDPt = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPt, 'QCD'), 'QCD'  , 0, channel, isLocal)
         #treeQCDPtBins = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPtBins, 'QCD'), 'QCD'  , 0, channel, isLocal)
+        #treeEWKmcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWKmcnlo'), 'EWKmcnlo'  , 0)
+        #treeEWK1mcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK1mcnlo'), 'EWK1mcnlo'  , 0)
+        #treeEWK2mcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK2mcnlo'), 'EWK2mcnlo'  , 0)
+        #treeQCDPt = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdPtDatasets, 'QCD'), 'QCD'  , 0)
 
         treeDA = Sample.Tree(helper.selectSamples(opts.sampleFile, daDatasets, 'DA'), 'DATA', 1, channel, isLocal)
         #mcTrees = [  treeTT, treeEWK,  treeDY, treeEWK]   
         #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK, treeEWK1, treeEWK2, treeEWK3, treeEWK4]   
         #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK]   
-        mcTrees = [ treeQCD, treeEWKNLO, treeTX, treeEW, treeGjets]   
-
+        mcTrees = [ treeEW, treeTT, treeDY]   
         #mcTrees = [ treeDY]   
+        #if 'NLO' in str(opts.ExtraTag) : mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWKNLO]   
+
+        #mcTrees = [ treeDY, treeQCD, treeEWK]   
+        #mcTrees = [ treeDY, treeQCD,  treeTT, treeEW, treeEWKNLO]   
+        #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK]   
+        #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWKmcnlo]   
+        #mcTrees = [ treeDY, treeEWK]   
+        #mcTreesQCD = [ treeQCD]   
+        #mcTrees = [ treeEWK]   
         inn = str(opts.ExtraTag).lower()
         if 'data' not in inn : treeDA =[]
         mcTrees = []
-        if 'tx' in inn  : mcTrees = [treeTX]
+        if 'dy' in inn  : mcTrees = [treeDY]
+        if 'dynlo' in inn  : mcTrees = [treeDYnlo]
+        if 'singlet' in inn  : mcTrees = [treeST]
+        if 'top' in inn  : mcTrees = [treeTT]
         if 'qcd' in inn  : mcTrees = [treeQCD]
-        if 'gjets' in inn  : mcTrees = [treeGjets]
+        if 'ewk' in inn  : mcTrees = [treeEWKAll]
         if 'ewknlo' in inn  : mcTrees = [treeEWKNLO]
         if 'ew' in inn and 'ewk' not in inn : mcTrees = [treeEW]
-        if 'ewnlo' in inn  : mcTrees = [treeEWNLO]
-        if 'allmc' in inn : mcTrees = [ treeEWKNLO, treeQCD, treeTX, treeEW, treeGjets]
+        if 'allmc' in inn : mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWKNLO]
         boson = 'boson_pt'
         boson_phi = 'boson_phi'
         print '================================================================================================================checkkkkkkkkkkkkkkkkkkkkk', str(opts.ExtraTag).lower(), treeDA, mcTrees
@@ -206,6 +316,7 @@ if __name__ == "__main__":
     r9bins = [0.8 , 0.81, 0.82,0.83,  0.84,0.85, 0.86, 0.87,0.88, 0.89, 0.9,0.91, 0.92,0.93, 0.94,0.95, 0.96,0.97, 0.98,0.99, 1.0]
     phibins = [ -3., -2.9,-2.8, -2.7, -2.6,-2.5,  -2.4,-2.3, -2.2,-2.1, -2,-1.9, -1.8,-1.7, -1.6,-1.5, -1.4,-1.3, -1.2,-1.1, -1.,-0.9, -0.8,-0.7, -0.6, -0.5,-0.4,-0.3, -0.2,-0.1, 0.,0.1,  0.2,0.3,  0.4,0.5,  0.6,0.7,  0.8,0.9 ,  1.,1.1,  1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8,1.9,  2., 2.1, 2.2,2.3,  2.4,2.5,  2.6, 2.7, 2.8,2.9,  3.]
     jetCut = "(njet >= 0)"
+    jetCutInvIso = "(njet >= 0)"
     doQCD = int(opts.DoQCD)
     regions = []
     met = []
@@ -268,18 +379,17 @@ if __name__ == "__main__":
                 #leg = [0.7, 0.6, 0.88, 0.9]
             else:
                 leg = [0.65, 0.6, 0.81, 0.9]
+            #jetCut = " ( nMuon==1 && njets >=0  && pt_1> 27 && (isGlobal_1>0 || isTracker_1>0) && fabs(eta_1)<2.4 && fabs(d0_1)<0.045 && fabs(dZ_1)<0.2 && isTrig_1>0 &&  iso_1 < 0.15 && mediumId_1 >0 && nbtagT==0 )"
             givein ='{0:s}'.format(str(opts.varr))
+
             newname = givein
             newname = str(givein).replace(":", "_vs_")
             if 'Smear' in givein and 'data' in inn  : 
                 print 'need to FIX SMEARRRRRRRRRRRRRRRRRRRRRRRRRRRRRR', givein, inn
                 givein = givein.replace("Smear", "")
-
-
             docat='2'
-            if dogjets : docat='1'
-            nLep = 'nPhoton'
-
+            if doee : docat='1'
+            nLep = 'nMuon'
 
 
             jetcut='0'
@@ -288,19 +398,12 @@ if __name__ == "__main__":
             puppicut=''
             losthits="1"
             njetsSyst=''
-            tagname = str(opts.ExtraTag).lower()
 
             if 'njet' in givein.lower() : jetcut='-1'
             if 'njetsgeq' in str(opts.ExtraTag).lower() : jetcut='-1'
             if 'hitslt1' in str(opts.ExtraTag).lower() : losthits='1'
             if 'metwmass' in givein.lower() : wtmasscut='0'
-            '''
-            if 'jetsgeq0' in tagname: jetcut='=0'
-            if 'jetsgt0' in tagname: jetcut='0'
-            if 'hitslt1' in tagname : losthits='1'
-            if 'massgt0' in tagname: wtmasscut='0'
-            if 'massgt80' in tagname: wtmasscut='80'
-            '''
+             
             if 'jesup' in givein.lower() : 
                 extracut = 'JESUp'
                 njetsSyst = '_jesTotalUp'
@@ -318,29 +421,30 @@ if __name__ == "__main__":
                 extracut = 'JERDown'
                 njetsSyst = '_jerDown'
 
-            if 'puppi' in tagname : puppicut='Puppi'
-            if 'btagm' in tagname : btagcut="M"
-            if 'btagt' in tagname : btagcut="T"
-            #if 'nobtag' in tagname : btagcut="T"
-
-            photonr9='0.9'
-            if 'photon_r9_1' in givein.lower() : photonr9='0.8'
 
 
-	    jetCut = " (  nPhoton[0]==1 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>=0.9 && iso_1[0]<0.1 && nbtagL[0]==0.0 && cat==1 ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
+            #extracut = ''
+            if 'puppi' in givein.lower() : puppicut='Puppi'
 
-            if 'nobtag' in tagname :
-	        #jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>=0.9 && Photon_r9_1[0]<=1. ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
-	        jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>={5:s} && Photon_r9_1[0]<=1. ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, photonr9)
-            else :
-	        #jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>=0.9 && Photon_r9_1[0]<=1. && nbtagL[0]==0.0".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
-	        jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>={5:s} && Photon_r9_1[0]<=1. && nbtagL[0]==0.0".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, photonr9)
-
-	    jetCutInvIso = " (  pt_1[0] >=50 && nPhoton[0]==1 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>=0.9 && iso_1[0]>0.1 && nbtagL[0]==0.0 && cat==1 ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
+	    #jetCutMu = " (nMuon[0]==2 && Flag_BadPFMuonDzFilter[0]==1 &&  fabs(q_1[0])==1 && iso_1[0] <= .15  &&  fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPV[0]>2 && njets[0]> {1:s}  && nbtagL[0]==0.0 && cat=={0:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut)
 
 
 
-            if doQCD : jetCut = jetCutInvIso
+	    #jetCutEl = " (nElectron[0]==2 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(q_1[0])==1 && iso_1[0] <= .15 &&  fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPV[0]>2 && cat=={0:s} &&njets[0]> {1:s}   && nbtagL[0]==0.0 && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits)
+
+	    jetCutMu = " (nMuon[0]==2 && Flag_BadPFMuonDzFilter[0]==1 && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 && fabs(q_1[0])==1 && iso_1[0] <= .15  && fabs(d0_2[0])<0.045 && fabs(dZ_2[0])<0.2 && fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && nbtagL[0]==0.0 && cat=={0:s} ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
+
+	    jetCutEl = " ( nElectron[0]==2 && Flag_BadPFMuonDzFilter[0]==1  &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 && fabs(q_1[0])==1 && iso_1[0] <= .15 &&   !(fabs(eta_2[0])>1.4442 &&  fabs(eta_2[0])<1.5660) && fabs(d0_2[0])<0.045 && fabs(dZ_2[0])<0.2 &&  fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} &&njets{3:s}[0]> {1:s}   && nbtagL[0]==0.0 && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, losthits)
+
+
+            jetCut= jetCutMu
+            if doee : jetCut= jetCutEl
+
+            jetCutInvIso = " (nMuon==1 && pt_1[0]> 29 && (isGlobal_1[0]>0 || isTracker_1[0]>0) && fabs(eta_1[0])<2.4 && fabs(dZ_1[0])<0.2 && fabs(d0_1[0])<0.045 && isTrig_1[0]==2 &&  tightId_1[0] >0   &&  fabs(q_1[0])==1 &&  iso_1[0] > .15 && mediumPromptId_1[0]>0 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets[0]<20 && METWTmass[0]>0 && isStandalone_1[0]>0 && nbtagL[0]==0"
+
+            jetCutInvIso = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && nbtagL[0]==0".format(docat)
+
+            #jetCut +=  "  && pt_2> 29 && (isGlobal_2>0 || isTracker_2>0) && fabs(eta_2)<2.4 && fabs(dZ_2)<0.2 && fabs(d0_2)<0.045 &&  tightId_2 >0   &&  iso_2 <= 0.10"
 
             print color.blue+'************************************************************************************************'+color.end
             print 'jetCut', jetCut
@@ -354,9 +458,21 @@ if __name__ == "__main__":
                 met = ['DphilMET']
                 met = ['njets']
                 met = ['MET_T1_pt']
+                met = ['METWTmass']
+                met = ['METWmass']
+                met = ['DphilMET']
+                met = ['DphiWMET']
                 if 'boson_pt' in givein.lower() : varTitle    = 'q_{T} [GeV]'
                 if 'boson_phi' in givein : varTitle    = 'q_{#phi}'
                 if 'PuppiMETmTmass' in givein : varTitle    = 'm_{T} [GeV]'
+                if 'njets' in givein : varTitle    = 'njets'
+                if 'DphiWMET' in givein : varTitle    = '#Delta#Phi(W,p_{T}^{miss})'
+                if 'DphilMET' in givein : varTitle    = '#Delta#Phi(#mu,p_{T}^{miss})'
+                if 'PuppiMET' in givein : varTitle    = 'p_{T}^{miss}'
+                if 'wtmass' in givein.lower() : varTitle    = 'W_{T} [GeV]'
+                if 'wmass' in givein.lower() : varTitle    = 'W [GeV]'
+                if 'pt_1' in givein : varTitle    = 'p_{T}(#mu)'
+                if 'eta_1' in givein : varTitle    = '#eta(#mu)'
                 if 'phi_1' in givein.lower() : varTitle    = '#Phi(#mu)'
                 if 'phi' in givein.lower() : varTitle    = '#Phi'
                 if 'OQt' in givein.lower() : givein = givein.replace("OQt","/boson_pt")
@@ -379,7 +495,6 @@ if __name__ == "__main__":
             tmp_fullMCInvIso = 0
             tmp_fullQCDInvIso = 0
             
-
             fOut= TFile("plotS_{0:s}_{1:s}_{2:s}_{3:s}.root".format(str(era),str(inn), newname, str(channel)), "recreate")
             for m in met:
                 Variable = ""
@@ -435,12 +550,8 @@ if __name__ == "__main__":
                     #    data_hist.Scale(1,"width")
 
                 kfactor=1
-                '''
                 if doQCD and met.index(m) == 0: 
-                    data_histInvIso = treeDA.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , "", varTitle, doNPV, isLog)
-		    fOut.cd()
-                    data_histInvIso.SetName('histo_data_QCD_inv')
-                    data_histInvIso.Write('histo_data_QCD_inv')
+                    data_histInvIso = treeDA.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , inn, varTitle, doNPV, isLog)
 		    for itree, tree in  enumerate(mcTrees):
 			ind = 0
 			cuts = CutManager.CutManager()
@@ -448,24 +559,14 @@ if __name__ == "__main__":
 			print 'with  %s for QCD kfactor finding' %treename
 			print 'var to get', var+"_"+reg.name+treename+str(met.index(m)), ' or', var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , "", varTitle, doNPV
 			
-			if 'qcd' not in treename : 
-                            tmp_fullMCInvIso= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , "", varTitle, doNPV, isLog)
-		            fOut.cd()
-                            tmp_fullMCInvIso.SetName(tmp_fullMCInvIso.GetName() + 'MC_inv')
-                            tmp_fullMCInvIso.Write(tmp_fullMCInvIso.GetName() + 'MC_inv')
+			if 'qcd' not in treename : tmp_fullMCInvIso= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , inn, varTitle, doNPV, isLog)
+			if 'qcd' in treename :     tmp_fullQCDInvIso= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , inn, varTitle, doNPV, isLog)
 
-			if 'qcd' in treename :     
-                            tmp_fullQCDInvIso= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , "", varTitle, doNPV, isLog)
-		            fOut.cd()
-                            tmp_fullQCDInvIso.SetName(tmp_fullQCDInvIso.GetName() + 'QCD_inv')
-                            tmp_fullQCDInvIso.Write(tmp_fullQCDInvIso.GetName() + 'QCD_inv')
 
-                           
 		    data_histInvIso.Add(tmp_fullMCInvIso,-1)
 		    if tmp_fullQCDInvIso.GetSumOfWeights() > 0 : kfactor = data_histInvIso.GetSumOfWeights() / tmp_fullQCDInvIso.GetSumOfWeights()
 
-                '''
-
+                
                 print color.bold+color.red+'='*20
                 print ' kfactor QCD is', kfactor
                 print '='*20+color.end
@@ -511,7 +612,7 @@ if __name__ == "__main__":
                             tmp_full.SetTitle("W + jets (NLO)")
 
                         if treename == 'dy':
-                            if dogjets:
+                            if doee:
                                 tmp_full.SetTitle("Z/#gamma^{*} #rightarrow ee")
 				if 'nlo' in treename :
 				    tmp_full.SetTitle("Z/#gamma^{*} #rightarrow ee (NLO)")
@@ -523,18 +624,12 @@ if __name__ == "__main__":
                         if treename == 'tt' or treename =='top' or 'TT' in treename:
                             tmp_full.SetTitle("Top quark")
                         if treename == 'ew':
-                            tmp_full.SetTitle("V+Gamma")
-                        if treename == 'ewnlo':
-                            tmp_full.SetTitle("V+Gamma(WGnlo)")
+                            tmp_full.SetTitle("Di/Triboson")
                         if treename == 'stop':
                             tmp_full.SetTitle("Single-Top quark")
-                        if treename == 'tx':
-                            tmp_full.SetTitle("T(T)+Gamma ")
                         
                         getattr(reg, attr).setHisto(tmp_full, 'MC', 'central')
                         tmp_histo = copy.deepcopy(tmp_full.Clone(var+reg.name))
-                        if doQCD : tmp_histo.SetName(tmp_histo.GetName() + '_QCD_inv')
-
                         fOut.cd()
 			mnew = m.replace(":", "_vs_")
                         print 'should have the correct name ????????????????????????????', tmp_full.GetName(), mnew, m
@@ -578,7 +673,7 @@ if __name__ == "__main__":
                         if met.index(m) > 0:
                             #histo_err= tree.getTH1F(lumi, var+"_"+reg.name+treename+str(met.index(m)),  Variable,  110, -1.7, -0.3, cuts.Add(cut, jetCut) , "", varTitle, doNPV)
                             #histo_err= tree.getTH1F(lumi, var+"_"+reg.name+treename+str(met.index(m)),  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , "", varTitle, doNPV)
-                            histo_err= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , "", varTitle, doNPV, isLog)
+                            histo_err= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , inn, varTitle, doNPV, isLog)
                             fOut.cd()
                             histo_err.Write('histo_'+treename+"_"+m)
                             #if (option == 'qt' or option == 'qtZ' or option == 'qtG 'or option == 'qtgamma'): 

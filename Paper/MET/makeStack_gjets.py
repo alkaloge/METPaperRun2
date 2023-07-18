@@ -64,7 +64,8 @@ if __name__ == "__main__":
     #plotS_2018_njetsgeq0_nbtagl_10bins_hitslt1_METCorGood_T1_pt_Gjets.root
     if 'njetsgeq0' in str(opts.ExtraTag).lower() : fin = fin.replace("njetsgt0","njetsgeq0")
     if 'hitslt1' in str(opts.ExtraTag).lower() : fin = fin.replace("hitslt2","hitslt1")
-    if '10bins' not in str(opts.ExtraTag).lower() : fin = fin.replace("10bins_","")
+    if '10bins' not in str(opts.ExtraTag).lower() and 'varbins' not in str(opts.ExtraTag).lower(): fin = fin.replace("10bins_","")
+    if 'varbins' in str(opts.ExtraTag).lower() : fin = fin.replace("10bins_","varbins_")
     if 'nobtag' in str(opts.ExtraTag).lower() : fin = fin.replace("nbtagl","nobtag")
     fIn = TFile.Open(fin, 'read')
     #fIn = TFile.Open('plotS.root'.format(str(opts.Year), str(opts.varr), str(opts.Channel)), 'read')
@@ -88,7 +89,7 @@ if __name__ == "__main__":
     colors = {'gjets':kYellow, 'dynlo':kYellow+1, 'qcd':kMagenta, 'tx':kBlue, 'ew':kGreen+2, 'ewk':kCyan, 'ewknlo':kCyan}
     channel=''
     doQCD = int(opts.DoQCD)
-    doSyst = False
+    doSyst = True
     if 'boson_pt' in varbs : doSyst = False
     #doSyst = False
     doScaleToData = False

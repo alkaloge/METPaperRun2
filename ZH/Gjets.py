@@ -95,6 +95,7 @@ print 'systematics', doJME, varSystematics
 
 era=str(args.year)
 if 'preVFP' in args.nickName : era='2016preVFP'
+if 'postVFP' in args.nickName : era='2016postVFP'
 proc='UL'
 
 outFileName = GF.getOutFileName(args).replace(".root",".ntup")
@@ -186,6 +187,7 @@ if args.unique != 'none' :
     print("******* Analyzing only {0:d} events from {1:s} ******.".format(len(uniqueEvents),args.unique))
     
 print("Opening {0:s} as output.".format(outFileName))
+print 'preparing ntuple....', outFileName,  era
 outTuple = outTupleGjets.outTupleGjets(outFileName,  era, doSyst=True, isW=True)
 
 tStart = time.time()
@@ -210,7 +212,7 @@ if nentries > 0:
 
 	for cat in cats: cutCounter[cat].count('InJSON')
 	
-	MetFilter = GF.checkMETFlags(e,args.year)
+	MetFilter = GF.checkMETFlags(e,args.year, "UL")
 	if MetFilter : continue
 	
 	for cat in cats: cutCounter[cat].count('METfilter') 
@@ -295,6 +297,7 @@ if nentries > 0:
 	    #if e.nPhoton !=1 : 
 	    #	print 'fail nPhon', e.nPhoton
             #	continue
+          
 	    outTuple.FillGjets(e,catev, goodPhotonList[0], isMC,era,doJME, proc)
 
 	    if maxPrint > 0 :
