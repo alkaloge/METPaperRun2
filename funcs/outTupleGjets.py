@@ -9,6 +9,8 @@ import sys
 import generalFunctions as GF
 import ScaleFactor as SF
 from METCorrections import correctedMET
+from array import array
+#from METCorrections2 import correctedMET2
 
 sys.path.insert(1,'../correctionlib/')
 from correctionlib import _core
@@ -22,6 +24,7 @@ class outTupleGjets() :
         from array import array
         from ROOT import TFile, TTree
         if 'preV' in fileName : era = '2016preVFP'
+        if 'postV' in fileName : era = '2016postVFP'
         print 'setting the schene.....', era, fileName
         # Tau Decay types
         ########### JetMet systematics
@@ -39,6 +42,19 @@ class outTupleGjets() :
         #self.sf_PhotonTrig.ScaleFactor("{0:s}{1:s}".format(self.TriggerSF['dir'],self.TriggerSF['filePhoton']))
 
         #lines above with .root files, lines below with correction lib
+
+        self.evaluatorPU=''
+	self.fnamePU = "./puWeights_{0:s}.json.gz".format(str(era))
+	if self.fnamePU.endswith(".json.gz"):
+	    import gzip
+	    with gzip.open(self.fnamePU,'rt') as file:
+		self.datasfPU = file.read().strip()
+		self.evaluatorPU = _core.CorrectionSet.from_string(self.datasfPU)
+	else:
+	    self.evaluatorPU = _core.CorrectionSet.from_file(self.fnamePU)
+		# Tau Decay types
+
+
 
         self.evaluator=''
 	self.fname = "./muon_Z_{0:s}.json.gz".format(str(era))
@@ -64,9 +80,9 @@ class outTupleGjets() :
 
 
         self.evaluatorPresc=''
-        eraa = era
-        if 'preVF' in era or 'postVF' in era : eraa='2016'
-	self.fnamePresc = "./prescale_{0:s}.json.gz".format(str(eraa))
+        #eraa = era
+        #if 'preVF' in era or 'postVF' in era : eraa='2016'
+	self.fnamePresc = "./prescale_{0:s}.json.gz".format(str(era))
 	if self.fnamePresc.endswith(".json.gz"):
 	    import gzip
 	    with gzip.open(self.fnamePresc,'rt') as file:
@@ -103,6 +119,7 @@ class outTupleGjets() :
         self.list_of_arrays_noES = []           
         self.list_of_arraysJetsPt = []           
         self.list_of_arraysJetsEta = []           
+        self.list_of_arraysJetsPhi = []           
         self.list_of_arraysJetsFlavour = []           
         self.list_of_arraysJetsNbtagDeep = []           
         self.list_of_arraysJetsNbtagL = []           
@@ -151,6 +168,7 @@ class outTupleGjets() :
 			self.list_of_arraysJetsFlavour.append( array('i',[-1]*15))
 			self.list_of_arraysJetsEta.append( array('f',[-9.99]*15))
 			self.list_of_arraysJetsPt.append( array('f',[-9.99]*15))
+			self.list_of_arraysJetsPhi.append( array('f',[-9.99]*15))
 			self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*15))
 		    else :   
 		        for var in varss :
@@ -159,10 +177,11 @@ class outTupleGjets() :
 			    self.list_of_arraysJetsNbtagL.append( array('i',[-1]))
 			    self.list_of_arraysJetsNbtagM.append( array('i',[-1]))
 			    self.list_of_arraysJetsNbtagT.append( array('i',[-1]))
-			    self.list_of_arraysJetsFlavour.append( array('i',[-1]*15))
-			    self.list_of_arraysJetsEta.append( array('f',[-9.99]*15))
-			    self.list_of_arraysJetsPt.append( array('f',[-9.99]*15))
-			    self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*15))
+			    self.list_of_arraysJetsFlavour.append( array('i',[-1]*12))
+			    self.list_of_arraysJetsEta.append( array('f',[-9.99]*12))
+			    self.list_of_arraysJetsPt.append( array('f',[-9.99]*12))
+			    self.list_of_arraysJetsPhi.append( array('f',[-9.99]*12))
+			    self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*12))
                      
                 
 	    #for i_ in self.allsystMET :  self.list_of_arrays.append(array('f', [ 0 ]))
@@ -190,8 +209,16 @@ class outTupleGjets() :
         self.Photon_r9_1            = array('f',[0])
         self.Photon_pdgid_1            = array('f',[0])
         self.Photon_cutBased_1             = array('f',[0])
+        self.Photon_mvaID_WP90_1             = array('f',[0])
         self.Photon_pixelSeed_1             = array('f',[0])
+        self.Photon_hoe_1             = array('f',[0])
         self.Photon_electronVeto_1             = array('f',[0])
+        self.Photon_mvaID_WP80_1             = array('f',[0])
+        self.Photon_mvaID_WP90_1             = array('f',[0])
+        self.Photon_cutBased_1             = array('I',[0])
+        self.Photon_genPartFlav_1             = array('I',[0])
+        self.Photon_jetIdx_1             = array('I',[0])
+        self.Photon_pdgId_1             = array('I',[0])
 
         self.VetoTau            = array('I',[0])
         self.VetoPhoton            = array('I',[0])
@@ -221,6 +248,9 @@ class outTupleGjets() :
         self.weightps165           = array('f',[0])
         self.weightPU           = array('f',[0])
         self.weightPUtrue           = array('f',[0])
+        self.weightPUtruejson           = array('f',[0])
+        self.weightPUtruejson_up           = array('f',[0])
+        self.weightPUtruejson_down           = array('f',[0])
         self.LHEweight        = array('f',[0])
         self.Generator_weight = array('f',[0])
         self.LHE_Njets        = array('i',[-1])
@@ -391,8 +421,17 @@ class outTupleGjets() :
 			setattr(self, branch_name, array('f', [-999]))
                         self.t.Branch(branch_name, getattr(self, branch_name), '{}/F'.format(branch_name))
 			#print("Created branch:", branch_name)
+	    branches = ['dPhiMETCorGood_T1J1','dPhiPuppiMETCorGood_J1', 'dPhiMETCorGood_T1J2','dPhiPuppiMETCorGood_J2', 'dRMETCorGood_T1J1','dRPuppiMETCorGood_J1', 'dRMETCorGood_T1J2','dRPuppiMETCorGood_J2']
+	    attributes = []
+	    variations = ['','UnclusteredUp', 'UnclusteredDown', 'JESUp', 'JESDown', 'JERUp', 'JERDown']
+            if not isMC: variations = [''] 
 
-
+	    for branch in branches:
+		for var in variations:
+		    branch_name = "{}{}".format(branch,  var)
+		    setattr(self, branch_name, array('f', [-999]))
+		    self.t.Branch(branch_name, getattr(self, branch_name), '{}/F'.format(branch_name))
+		    #print("Created branch:", branch_name)
 
         self.isTrig_1   = array('f',[0])
         self.isLead_1   = array('f',[0])
@@ -408,6 +447,7 @@ class outTupleGjets() :
         self.jflavour     = array('i',[-9]*12)
         self.jeta     = array('f',[-9.99]*12)
         self.jpt     = array('f',[-9.99]*12)
+        self.jphi     = array('f',[-9.99]*12)
         self.btagDeep     = array('f',[-9.99]*12)
 
         self.bpt_1     = array('f',[0]*12)
@@ -433,8 +473,16 @@ class outTupleGjets() :
         self.t.Branch('Photon_r9_1',              self.Photon_r9_1,               'Photon_r9_1/F' )
         self.t.Branch('Photon_pdgid_1',              self.Photon_pdgid_1,               'Photon_pdgid_1/F' )
         self.t.Branch('Photon_cutBased_1',              self.Photon_cutBased_1,               'Photon_cutBased_1/F' )
+        self.t.Branch('Photon_mvaID_WP90_1',              self.Photon_mvaID_WP90_1,               'Photon_mvaID_WP90_1/I' )
         self.t.Branch('Photon_pixelSeed_1',              self.Photon_pixelSeed_1,               'Photon_pixelSeed_1/F' )
+        self.t.Branch('Photon_hoe_1',              self.Photon_hoe_1,               'Photon_hoe_1/F' )
         self.t.Branch('Photon_electronVeto_1',              self.Photon_electronVeto_1,               'Photon_electronVeto_1/F' )
+        self.t.Branch('Photon_genPartFlav_1',              self.Photon_genPartFlav_1,               'Photon_genPartFlav_1/I' )
+        self.t.Branch('Photon_jetIdx_1',              self.Photon_jetIdx_1,               'Photon_jetIdx_1/I' )
+        self.t.Branch('Photon_pdgId_1',              self.Photon_pdgId_1,               'Photon_pdgId_1/I' )
+        self.t.Branch('Photon_cutBased_1',              self.Photon_cutBased_1,               'Photon_cutBased_1/I' )
+        self.t.Branch('Photon_mvaID_WP80_1',              self.Photon_mvaID_WP80_1,               'Photon_mvaID_WP80_1/F' )
+        self.t.Branch('Photon_mvaID_WP90_1',              self.Photon_mvaID_WP90_1,               'Photon_mvaID_WP90_1/F' )
 
 
         self.t.Branch('VetoTau',              self.VetoTau,               'VetoTau/I' )
@@ -461,6 +509,7 @@ class outTupleGjets() :
         self.histoHLT = ROOT.TH1F("histoHLT", "histoHLT", 5, 0, 6)
         self.histoHLTw = ROOT.TH1F("histoHLTw", "histoHLTw", 5, 0, 6)
         self.t.Branch("histoHLT", self.histoHLT)
+        self.t.Branch("histoHLTw", self.histoHLTw)
         self.t.Branch('weightps50',           self.weightps50,            'weightps50/F' )
         self.t.Branch('weightps75',           self.weightps75,            'weightps75/F' )
         self.t.Branch('weightps90',           self.weightps90,            'weightps90/F' )
@@ -468,6 +517,9 @@ class outTupleGjets() :
         self.t.Branch('weightps165',           self.weightps165,            'weightps165/F' )
         self.t.Branch('weightPU',           self.weightPU,            'weightPU/F' )
         self.t.Branch('weightPUtrue',           self.weightPUtrue,            'weightPUtrue/F' )
+        self.t.Branch('weightPUtruejson',           self.weightPUtruejson,            'weightPUtruejson/F' )
+        self.t.Branch('weightPUtruejson_up',           self.weightPUtruejson_up,            'weightPUtruejson_up/F' )
+        self.t.Branch('weightPUtruejson_down',           self.weightPUtruejson_down,            'weightPUtruejson_down/F' )
         self.t.Branch('LHEweight',        self.LHEweight,         'LHEweight/F' )
         self.t.Branch('LHE_Njets',        self.LHE_Njets,         'LHE_Njets/i' )
         self.t.Branch('LHEScaleWeights',        self.LHEScaleWeights,         'LHEScaleWeights[9]/F' )
@@ -581,6 +633,7 @@ class outTupleGjets() :
         self.t.Branch('jflavour',     self.jflavour,     'jflavour[12]/i' )
         self.t.Branch('jeta',     self.jeta,     'jeta[12]/F' )
         self.t.Branch('jpt',     self.jpt,     'jpt[12]/F' )
+        self.t.Branch('jphi',     self.jphi,     'jphi[12]/F' )
         self.t.Branch('btagDeep', self.btagDeep, 'btagDeep[12]/F')
 
         if doSyst : 
@@ -599,6 +652,7 @@ class outTupleGjets() :
 		    self.t.Branch('nbtagT{0:s}'.format(v), self.list_of_arraysJetsNbtagT[i], 'nbtagT{0:s}/i'.format(v))
 		    self.t.Branch('jflavour{0:s}'.format(v), self.list_of_arraysJetsFlavour[i], 'jflavour{0:s}[12]/i'.format(v))
 		    self.t.Branch('jpt{0:s}'.format(v), self.list_of_arraysJetsPt[i], 'jpt{0:s}[12]/F'.format(v))
+		    self.t.Branch('jphi{0:s}'.format(v), self.list_of_arraysJetsPhi[i], 'jphi{0:s}[12]/F'.format(v))
 		    self.t.Branch('jeta{0:s}'.format(v), self.list_of_arraysJetsEta[i], 'jeta{0:s}[12]/F'.format(v))
 		    self.t.Branch('btagDeep{0:s}'.format(v), self.list_of_arraysJetsNbtagDeep[i], 'btagDeep{0:s}[12]/F'.format(v))
 
@@ -636,6 +690,42 @@ class outTupleGjets() :
 	self.t.SetBranchStatus("*LHEScaleWeight*",1)
 	self.t.SetBranchStatus("*Up*",1)
 	self.t.SetBranchStatus("*Down*",1)
+
+    def calculate_variation_values(self, var_suffix):
+	ptMiss, pptMiss = TLorentzVector(), TLorentzVector()
+
+	met_pt_var = getattr(self, "METCorGood_T1_pt{}".format(var_suffix))[0]
+	met_phi_var = getattr(self, "METCorGood_T1_phi{}".format(var_suffix))[0]
+	puppi_met_pt_var = getattr(self, "PuppiMETCorGood_pt{}".format(var_suffix))[0]
+	puppi_met_phi_var = getattr(self, "PuppiMETCorGood_phi{}".format(var_suffix))[0]
+
+	ptMiss.SetPtEtaPhiM(met_pt_var, 0., met_phi_var, 0.)
+	ptMiss.SetPz(0.)
+	ptMiss.SetE(ptMiss.Pt())
+
+	pptMiss.SetPtEtaPhiM(puppi_met_pt_var, 0., puppi_met_phi_var, 0.)
+	pptMiss.SetPz(0.)
+	pptMiss.SetE(pptMiss.Pt())
+
+	phim, etam = ptMiss.Phi(), ptMiss.Eta()
+	pphim, petam = pptMiss.Phi(), pptMiss.Eta()
+
+	phi1, eta1 = self.jeta[0], self.jphi[0]
+	self.__dict__["dPhiMETCorGood_T1J1" + var_suffix][0] = min(abs(phi1 - phim), 2. * ROOT.TMath.Pi() - abs(phi1 - phim))
+	self.__dict__["dPhiPuppiMETCorGood_J1" + var_suffix][0] = min(abs(phi1 - pphim), 2. * ROOT.TMath.Pi() - abs(phi1 - pphim))
+	self.__dict__["dRMETCorGood_T1J1" + var_suffix][0] = self.getDRnV(entry, self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+	self.__dict__["dRPuppiMETCorGood_J1" + var_suffix][0] = self.getDRnV(entry, self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+
+	if self.njets[0] > 1:
+	    phi2, eta2 = self.jeta[1], self.jphi[1]
+	    self.__dict__["dPhiMETCorGood_T1J2" + var_suffix][0] = min(abs(phi2 - phim), 2. * ROOT.TMath.Pi() - abs(phi2 - phim))
+	    self.__dict__["dPhiPuppiMETCorGood_J2" + var_suffix][0] = min(abs(phi2 - pphim), 2. * ROOT.TMath.Pi() - abs(phi2 - pphim))
+	    self.__dict__["dRMETCorGood_T1J2" + var_suffix][0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+	    self.__dict__["dRPuppiMETCorGood_J2" + var_suffix][0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+
+
+
 
 
     def getu_par_MET(self, entry, metx, mety, qx, qy, qt):
@@ -722,6 +812,22 @@ class outTupleGjets() :
         phi1, phi2, metphi = tau1.Phi(), tau2.Phi(), entry.MET_phi
         arg = 2.*(pt1*met*(1. - cos(phi1-metphi)) + pt2*met*(1. - cos(phi2-metphi)) + pt1*pt2*(1. - cos(phi2-phi1)))
         return sqrt(arg)
+
+    def setTLV(self, entry, ptMiss, pptMiss, MET_pt, MET_phi, PuppiMET_pt, PuppiMET_phi):
+	ptMiss.SetPtEtaPhiM(MET_pt, 0., MET_phi, 0.)
+	ptMiss.SetPz(0.)
+	ptMiss.SetE(ptMiss.Pt())
+	pptMiss.SetPtEtaPhiM(PuppiMET_pt, 0., PuppiMET_phi, 0.)
+	pptMiss.SetPz(0.)
+	pptMiss.SetE(pptMiss.Pt())
+
+    def calculate_dPhi(self, phi1, phi2):
+	dPhi = phi1 - phi2
+	while dPhi > pi:
+	    dPhi -= 2 * pi
+	while dPhi < -pi:
+	    dPhi += 2 * pi
+	return dPhi
 
     def getDR(self,entry, v1,v2) :
 
@@ -876,7 +982,7 @@ class outTupleGjets() :
 
 
     def getJetsJMEMVGjets(self,entry,LepList,era, syst,proc) :
-	jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = [], [], [], [], [], [], [], [], []
+	jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = [], [], [], [], [], [], [], [], [], []
 	#print 'will try', len(LepList), 'syst', syst, 'proc', proc
 	#bjet_discrL = 0.2217
 	#bjet_discrM = 0.6321
@@ -903,7 +1009,7 @@ class outTupleGjets() :
 	    bjet_discrM = 0.4506
 	    bjet_discrT = 0.7738
 	if str(era) == '2018' : 
-	    bjet_discrL = 0.1208
+	    bjet_discrstL = 0.1208
 	    bjet_discrM = 0.4168
 	    bjet_discrT = 0.7665
 
@@ -952,6 +1058,7 @@ class outTupleGjets() :
                 jetListFlav.append(entry.Jet_partonFlavour[jj])
             except AttributeError  : jetListFlav.append(0)
             jetListEta.append(entry.Jet_eta[jj])
+            jetListPhi.append(entry.Jet_phi[jj])
             jpt = getattr(entry, "Jet_pt{0:s}".format(str(syst)), None)
             jetListPt.append(jpt[jj])
             bTagListDeep.append(entry.Jet_btagDeepB[jj])
@@ -976,7 +1083,7 @@ class outTupleGjets() :
         #print 'lets see', len(bJetListL), len(bJetListM), len(bJetListT), len(jetList)
         #print ''
         #print jetList, jetListEta, jetListPt
-        return jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
+        return jetList, jetListFlav, jetListPhi, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
 
 
 
@@ -1119,12 +1226,20 @@ class outTupleGjets() :
 
 	    self.iso_1[0]  = -99
 	    self.iso_1[0]  = entry.Photon_pfRelIso03_all[photonindex]
-            self.Photon_pdgid_1[0] = entry.Photon_pdgId[photonindex]
             self.Photon_r9_1[0] = entry.Photon_r9[photonindex]
             self.Photon_cutBased_1[0] = entry.Photon_cutBased[photonindex]
+            self.Photon_mvaID_WP90_1[0] = entry.Photon_mvaID_WP90[photonindex]
             self.Photon_electronVeto_1[0] = entry.Photon_electronVeto[photonindex]
             self.Photon_pixelSeed_1[0] = entry.Photon_pixelSeed[photonindex]
+            self.Photon_hoe_1[0] = entry.Photon_hoe[photonindex]
+            self.Photon_mvaID_WP80_1[0] = entry.Photon_mvaID_WP80[photonindex]
+            self.Photon_mvaID_WP90_1[0] = entry.Photon_mvaID_WP90[photonindex]
+            self.Photon_cutBased_1[0] = entry.Photon_cutBased[photonindex]
 	    self.q_1[0]  = entry.Photon_charge[photonindex]
+            if isMC : 
+		self.Photon_pdgid_1[0] = entry.Photon_pdgId[photonindex]
+		self.Photon_genPartFlav_1[0] = ord(entry.Photon_genPartFlav[photonindex])
+		self.Photon_jetIdx_1[0] = entry.Photon_jetIdx[photonindex]
 
 	    try:
 		self.L1PreFiringWeight_Nom[0] = entry.L1PreFiringWeight_Nom
@@ -1204,9 +1319,16 @@ class outTupleGjets() :
         if isMC :
 
 	    if channel_ll == 'gjets' : 
+                hlt_pu = "Collisions18_UltraLegacy_goldenJSON"
+                if '2016' in era : hlt_pu='Collisions16_UltraLegacy_goldenJSON'
+                if '2017' in era : hlt_pu='Collisions17_UltraLegacy_goldenJSON'
                 eleeff1=1.
                 eleiso1=1.
 		if leadL.Pt()> 50 : eleeff1 = self.evaluatorEl["UL-Photon-ID-SF"].evaluate(yearin, "sf" , "Tight", leadL.Eta(), leadL.Pt() )
+		#if leadL.Pt()>= 50 : eleeff1 = self.evaluatorEl["UL-Photon-ID-SF"].evaluate(yearin, "sf" , "wp80", leadL.Eta(), leadL.Pt() )
+		self.weightPUtruejson[0] = self.evaluatorPU[hlt_pu].evaluate(entry.Pileup_nTrueInt, "nominal" )
+		self.weightPUtruejson_up[0] = self.evaluatorPU[hlt_pu].evaluate(entry.Pileup_nTrueInt, "up" )
+		self.weightPUtruejson_down[0] = self.evaluatorPU[hlt_pu].evaluate(entry.Pileup_nTrueInt, "down" )
 		self.IDSF[0]  = eleeff1
 		self.IDSF1[0]  = eleeff1
 
@@ -1261,6 +1383,7 @@ class outTupleGjets() :
 
 		    self.u_par_MET[0]= self.getu_par_MET( entry, metV.X(), metV.Y(), (LepP+LepM).X(), (LepP+LepM).Y(), (LepP+LepM).Pt() )
 		    self.u_perp_MET[0]= self.getu_perp_MET( entry, metV.X(), metV.Y(), (LepP+LepM).X(), (LepP+LepM).Y(), (LepP+LepM).Pt() )
+                    #print (LepP+LepM).X(), LepP.Pt(), LepM.Pt(), (LepP).X()
 
 	            metUn.SetXYZT(entry.MET_MetUnclustEnUpDeltaX,entry.MET_MetUnclustEnUpDeltaY,0,0)
 		    metUn.SetPz(0.)
@@ -1343,9 +1466,11 @@ class outTupleGjets() :
 
 		pmet = correctedMET(entry.PuppiMET_pt, entry.PuppiMET_phi, entry.PV_npvs, entry.run, isMC, yearin, True, True)
 		pmett = correctedMET(entry.PuppiMET_pt, entry.PuppiMET_phi, entry.PV_npvsGood, entry.run, isMC, yearin, True, True)
+                #print pmett[2], pmett[3], pmett2[2], pmett2[3]
 		self.PuppiMETCor_pt[0]= pmet[2]
 		self.PuppiMETCor_phi[0]= pmet[3]
 		self.PuppiMETCorGood_pt[0]= pmett[2]
+		self.PuppiMETCorGood_phi[0]= pmett[3]
 		self.PuppiMETCorGood_phi[0]= pmett[3]
 
 
@@ -1636,7 +1761,7 @@ class outTupleGjets() :
 
 		for i, v in enumerate(self.allsystJets) : 
 		#njets_sys, nbtag_sys
-		    jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMVGjets(entry,leplist, era, str(v), proc) 
+		    jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMVGjets(entry,leplist, era, str(v), proc) 
 		    try : 
 			self.list_of_arraysJetsNjets[i][0] = -1
 			self.list_of_arraysJetsNjets[i][0] = len(jetList)#fix
@@ -1650,6 +1775,7 @@ class outTupleGjets() :
 			try : 
 			    self.list_of_arraysJetsPt[i][ifl] = jetListPt[ifl]
 			    self.list_of_arraysJetsEta[i][ifl] = jetListEta[ifl]
+			    self.list_of_arraysJetsPhi[i][ifl] = jetListPhi[ifl]
 			    self.list_of_arraysJetsFlavour[i][ifl] = jetListFlav[ifl]
 			    #self.list_of_arraysJetsNbtagDeep[i][ifl] = bTagListDeep[ifl] #fix
 			except IndexError : print 'hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
@@ -1658,7 +1784,7 @@ class outTupleGjets() :
 	    nom_=''
 	    sysj = ''
 	    if doUncertainties : sysj='nom'
-	    jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMVGjets(entry,leplist,era,sysj,proc) 
+	    jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMVGjets(entry,leplist,era,sysj,proc) 
             #print 'jessyst=========%%%%%%%%%%======!!!!!!!!!!!!', v, len(jetList), sysj, jetList
             self.njets[0], self.nbtagL[0], self.nbtagM[0], self.nbtagT[0]= -1, -1, -1, 1
 	    self.njets[0] = len(jetList)
@@ -1672,6 +1798,7 @@ class outTupleGjets() :
 		try :
 		    self.jflavour[ifl]  = jetListFlav[ifl]
 		    self.jeta[ifl]  = jetListEta[ifl]
+		    self.jphi[ifl]  = jetListPhi[ifl]
 		    self.jpt[ifl]  = jetListPt[ifl]
 		    self.btagDeep[ifl] = bTagListDeep[ifl]
 		except IndexError : print 'we hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
@@ -1695,6 +1822,214 @@ class outTupleGjets() :
 	    #if  self.nbtag[0] == 0 : 
 
 	    #if self.nbtagL[0] == 0 :
+            ptMiss, pptMiss = TLorentzVector(), TLorentzVector()
+            if self.njets[0]>0 : 
+	        branches = ['dPhiMETCorGood_T1J1','dPhiPuppiMETCorGood_J1', 'dPhiMETCorGood_T1J2','dPhiPuppiMETCorGood_J2', 'dRMETCorGood_T1J1','dRPuppiMETCorGood_J1', 'dRMETCorGood_T1J2','dRPuppiMETCorGood_J2']
+		variations = ['','UnclusteredUp', 'UnclusteredDown', 'JESUp', 'JESDown', 'JERUp', 'JERDown']
+                #print self.njets[0],  self.list_of_arraysJetsNjets[1][0], self.list_of_arraysJetsNjets[2][0]
+		if not isMC: variations = [''] 
+                #starts here
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_pt[0],0.,self.METCorGood_T1_phi[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_pt[0],0.,self.PuppiMETCorGood_phi[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                if self.njets[0]>1 : 
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+
+                #ends here njets_jesTotalUp
+            #if self.njets_jesTotalUp>0 : 
+            if (isMC and self.list_of_arraysJetsNjets[1][0] > 0) or (not isMC and self.njets[0]>0):
+
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_ptJESUp[0],0.,self.METCorGood_T1_phiJESUp[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_ptJESUp[0],0.,self.PuppiMETCorGood_phiJESUp[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1JESUp[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1JESUp[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1JESUp[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1JESUp[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                #if self.list_of_arraysJetsNjets[1][0] >1: 
+                if (isMC and self.list_of_arraysJetsNjets[1][0] > 1) or (not isMC and self.njets[0]>1):
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2JESUp[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2JESUp[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2JESUp[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2JESUp[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+                #ends here
+
+            #if self.list_of_arraysJetsNjets[2][0] > 0:
+            if (isMC and self.list_of_arraysJetsNjets[2][0] > 0) or (not isMC and self.njets[0]>0):
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_ptJESDown[0],0.,self.METCorGood_T1_phiJESDown[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_ptJESDown[0],0.,self.PuppiMETCorGood_phiJESDown[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1JESDown[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1JESDown[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1JESDown[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1JESDown[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                #if self.list_of_arraysJetsNjets[2][0] > 1:
+                if (isMC and self.list_of_arraysJetsNjets[2][0] > 1) or (not isMC and self.njets[0]>1):
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2JESDown[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2JESDown[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2JESDown[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2JESDown[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+
+
+
+                #ends here
+
+            #if self.list_of_arraysJetsNjets[3][0] > 0:
+            if (isMC and self.list_of_arraysJetsNjets[3][0] > 0) or (not isMC and self.njets[0]>0):
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_ptJERUp[0],0.,self.METCorGood_T1_phiJERUp[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_ptJERUp[0],0.,self.PuppiMETCorGood_phiJERUp[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1JERUp[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1JERUp[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1JERUp[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1JERUp[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                #if self.list_of_arraysJetsNjets[3][0] > 1:
+                if (isMC and self.list_of_arraysJetsNjets[3][0] > 1) or (not isMC and self.njets[0]>1):
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2JERUp[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2JERUp[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2JERUp[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2JERUp[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+                #ends here
+
+            #if self.list_of_arraysJetsNjets[4][0] > 0:
+            if (isMC and self.list_of_arraysJetsNjets[4][0] > 0) or (not isMC and self.njets[0]>0):
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_ptJERDown[0],0.,self.METCorGood_T1_phiJERDown[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_ptJERDown[0],0.,self.PuppiMETCorGood_phiJERDown[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1JERDown[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1JERDown[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1JERDown[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1JERDown[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                #if self.list_of_arraysJetsNjets[4][0] > 1:
+                if (isMC and self.list_of_arraysJetsNjets[4][0] > 1) or (not isMC and self.njets[0]>1):
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2JERDown[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2JERDown[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2JERDown[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2JERDown[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+
+
+                #ends here unclustered follows
+            if self.njets[0]>0 : 
+
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_ptUnclusteredUp[0],0.,self.METCorGood_T1_phiUnclusteredUp[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_ptUnclusteredUp[0],0.,self.PuppiMETCorGood_phiUnclusteredUp[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1UnclusteredUp[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1UnclusteredUp[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1UnclusteredUp[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1UnclusteredUp[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                if self.njets[0]>1 : 
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2UnclusteredUp[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2UnclusteredUp[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2UnclusteredUp[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2UnclusteredUp[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+                #ends here
+
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_ptUnclusteredDown[0],0.,self.METCorGood_T1_phiUnclusteredDown[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_ptUnclusteredDown[0],0.,self.PuppiMETCorGood_phiUnclusteredDown[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1UnclusteredDown[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1UnclusteredDown[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1UnclusteredDown[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1UnclusteredDown[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                if self.njets[0]>1 : 
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2UnclusteredDown[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2UnclusteredDown[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2UnclusteredDown[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2UnclusteredDown[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+            '''
+	    if self.njets[0] > 0:
+		branches = ['dPhiMETCorGood_T1J1', 'dPhiPuppiMETCorGood_J1', 'dRMETCorGood_T1J1', 'dRPuppiMETCorGood_J1', 'dPhiMETCorGood_T1J2', 'dPhiPuppiMETCorGood_J2', 'dRMETCorGood_T1J2', 'dRPuppiMETCorGood_J2']
+		variations = ['', 'UnclusteredUp', 'UnclusteredDown', 'JESUp', 'JESDown', 'JERUp', 'JERDown']
+
+		if not isMC:
+		    variations = ['']
+
+		#for branch in branches:
+		#    for var in variations:
+		#	setattr(self, f"{branch}{var}", array('f', [-999]))
+		#	self.t.Branch(f"{branch}{var}", getattr(self, f"{branch}{var}"), f"{branch}{var}/F")
+
+		for var_suffix in variations:
+		    self.calculate_variation_values(var_suffix)
+            '''
+
 
 
 

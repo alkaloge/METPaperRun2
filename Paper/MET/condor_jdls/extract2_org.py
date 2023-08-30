@@ -26,11 +26,12 @@ def extract2():
 
     isMC=True
     channel='MuMu'
-    if "run20" in str(filename).lower()  or 'single' in str(filename).lower() or 'egamma' in str(filename).lower(): isMC = False
+    if "run20" in str(filename).lower() or 'dy' not in str(filename).lower() or 'single' in str(filename).lower() or 'egamma' in str(filename).lower(): isMC = False
 
-    year = str(sys.argv[2])
-    channel = str(sys.argv[3])
-    channelDir = str(sys.argv[4])
+    #if str(sys.argv[1]) == "1"  or str(sys.argv[1]).lower()  == "ismc" :  isMC = True
+    channel = str(sys.argv[2])
+    year = str(sys.argv[3])
+
 
     lumi=1.
     if year == "2017 ": lumi = 41.48
@@ -50,23 +51,14 @@ def extract2():
     'GJets_HT-40To100' : 20730.0,
     'GJets_HT-600ToInf' : 93.38,
     'QCD_HT1000to1500' : 1206.0,
-    'QCD_HT1000to1500MG' : 1064.0,
     'QCD_HT100to200' : 27990000.0,
-    'QCD_HT100to200MG' : 27990000.0,
     'QCD_HT1500to2000' : 119.9,
-    'QCD_HT1500to2000MG' : 119.9,
     'QCD_HT2000toInf' : 25.24,
-    'QCD_HT2000toInfMG' : 25.24,
     'QCD_HT200to300' : 1735000.0,
-    'QCD_HT200to300MG' : 1735000.0,
     'QCD_HT300to500' : 366800.0,
-    'QCD_HT300to500MG' : 366800.0,
     'QCD_HT500to700' : 31630.0,
-    'QCD_HT500to700MG' : 29370.0,
     'QCD_HT50to100' : 186100000.0,
-    'QCD_HT50to100MG' : 186100000.0,
     'QCD_HT700to1000' : 6802.0,
-    'QCD_HT700to1000MG' : 6524.0,
     'ST_s-channel' : 3.74,
     'ST_t-channel_antitop' : 69.09,
     'ST_t-channel_top' : 115.3,
@@ -90,6 +82,7 @@ def extract2():
     }
 
 
+
     xsec = None
     for sample, xsec in xsecslist.items():
 	if str(filename).lower() in sample.lower():
@@ -99,7 +92,7 @@ def extract2():
     if 'dy' in str(filename).lower() and 'nlo' not in str(filename).lower() : xsec = 6077
     if 'dy' in str(filename).lower() and 'nlo' in str(filename).lower() : xsec = 6529
 
-    print "year", year, "lumi", lumi, "isMC", isMC, "channel", channel, "channelDir", channelDir, "args", sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+    print "year", year, "lumi", lumi, "isMC", "channel", channel, "xsec", xsec, sys.argv[1], sys.argv[2], sys.argv[3]
 
 
 
@@ -112,7 +105,6 @@ def extract2():
 
     # Define the cuts for vspt and npv
     cuts_vspt = [
-	"(0<=boson_pt",
 	"(0<=boson_pt&&boson_pt<20)",
 	"(20<=boson_pt&&boson_pt<40)",
 	"(40<=boson_pt&&boson_pt<60)",
@@ -125,7 +117,18 @@ def extract2():
 	"(300<=boson_pt)"
     ]
     folder_names = {
-	"(0<=event.boson_pt)": "PtIncl",
+	"(0<=event.boson_pt and event.boson_pt<20)": "PtLt20",
+	"(20<=event.boson_pt and event.boson_pt<40)": "PtGt20Lt40",
+	"(40<=event.boson_pt and event.boson_pt<60)": "PtGt40Lt60",
+	"(60<=event.boson_pt and event.boson_pt<80)": "PtGt60Lt80",
+	"(80<=event.boson_pt and event.boson_pt<100)": "PtGt80Lt100",
+	"(100<=event.boson_pt and event.boson_pt<120)": "PtGt100Lt120",
+	"(120<=event.boson_pt and event.boson_pt<160)": "PtGt120Lt160",
+	"(160<=event.boson_pt and event.boson_pt<200)": "PtGt160Lt200",
+	"(200<=event.boson_pt and event.boson_pt<300)": "PtGt200Lt300",
+	"(300<=event.boson_pt)": "PtGt300"
+    }
+    folder_names = {
 	"(0<=event.boson_pt and event.boson_pt<20)": "PtLt20",
 	"(20<=event.boson_pt and event.boson_pt<40)": "PtGt20Lt40",
 	"(40<=event.boson_pt and event.boson_pt<60)": "PtGt40Lt60",
@@ -139,22 +142,20 @@ def extract2():
     }
 
     folder_names = {
-	0: "PtIncl",
-	1: "PtLt20",
-	2: "PtGt20Lt40",
-	3: "PtGt40Lt60",
-	4: "PtGt60Lt80",
-	5: "PtGt80Lt100",
-	6: "PtGt100Lt120",
-	7: "PtGt120Lt160",
-	8: "PtGt160Lt200",
-	9: "PtGt200Lt300",
-	10: "PtGt300"
+	0: "PtLt20",
+	1: "PtGt20Lt40",
+	2: "PtGt40Lt60",
+	3: "PtGt60Lt80",
+	4: "PtGt80Lt100",
+	5: "PtGt100Lt120",
+	6: "PtGt120Lt160",
+	7: "PtGt160Lt200",
+	8: "PtGt200Lt300",
+	9: "PtGt300"
     }
 
 
     cuts_npv = [
-	"(0<=nPVGood)",
 	"(0<=nPVGood&&nPVGood<10)",
 	"(10<=nPVGood&&nPVGood<20)",
 	"(20<=nPVGood&&nPVGood<30)",
@@ -164,7 +165,15 @@ def extract2():
 	"(60<=nPVGood)"
     ]
     folder_names_npv = {
-	"(0<=event.nPVGood )": "nPVGoodIncl",
+	"(0<=event.nPVGood  and  event.nPVGood<10)": "nPVGoodLt10",
+	"(10<=event.nPVGood  and  event.nPVGood<20)": "nPVGoodGt10Lt20",
+	"(20<=event.nPVGood  and  event.nPVGood<30)": "nPVGoodGt20Lt30",
+	"(30<=event.nPVGood  and  event.nPVGood<40)": "nPVGoodGt30Lt40",
+	"(40<=event.nPVGood  and  event.nPVGood<50)": "nPVGoodGt40Lt50",
+	"(50<=event.nPVGood  and  event.nPVGood<60)": "nPVGoodGt50Lt60",
+	"(60<=event.nPVGood)": "nPVGoodGt60"
+    }
+    folder_names_npv = {
 	"(0<=event.nPVGood  and  event.nPVGood<10)": "nPVGoodLt10",
 	"(10<=event.nPVGood  and  event.nPVGood<20)": "nPVGoodGt10Lt20",
 	"(20<=event.nPVGood  and  event.nPVGood<30)": "nPVGoodGt20Lt30",
@@ -175,14 +184,13 @@ def extract2():
     }
 
     folder_names_npv = {
-	0: "nPVGoodIncl",
-	1: "nPVGoodLt10",
-	2: "nPVGoodGt10Lt20",
-	3: "nPVGoodGt20Lt30",
-	4: "nPVGoodGt30Lt40",
-	5: "nPVGoodGt40Lt50",
-	6: "nPVGoodGt50Lt60",
-	7: "nPVGoodGt60"
+	0: "nPVGoodLt10",
+	1: "nPVGoodGt10Lt20",
+	2: "nPVGoodGt20Lt30",
+	3: "nPVGoodGt30Lt40",
+	4: "nPVGoodGt40Lt50",
+	5: "nPVGoodGt50Lt60",
+	6: "nPVGoodGt60"
     }
 
 
@@ -252,42 +260,35 @@ def extract2():
     if 'geq1' in filename : sjets = 'njetsgeq1'
     if 'incl' in filename : sjets = 'njetsincl'
     #channel='MuMu'
-    
     #year='2018'
     dataVsPtFileName = "alldata_vspt_"+sjets+"_"+channel+".txt"
     dataVsNvtxFileName = "alldata_npv_"+sjets+"_"+channel+".txt"
     mcVsPtFileName = "dy_vspt_"+sjets+"_"+channel+".txt"
     mcVsNvtxFileName = "dy_npv_"+sjets+"_"+channel+".txt"
-    if 'Gjets' not in channel: 
-	if isMC : 
-	    dataVsPtFileName = dataVsPtFileName.replace("alldata", "dy")
-	    dataVsNvtxFileName = dataVsNvtxFileName.replace("alldata", "dy")
 
-	if isMC and 'nlo' in str(filename).lower(): 
-	    dataVsPtFileName = dataVsPtFileName.replace("alldata", "dynlo")
-	    dataVsNvtxFileName = dataVsNvtxFileName.replace("alldata", "dynlo")
-	    dataVsPtFileName = dataVsPtFileName.replace("dy", "dynlo")
-	    dataVsNvtxFileName = dataVsNvtxFileName.replace("dy", "dynlo")
-    if 'Gjets' in channel: 
-	if isMC : 
-	    dataVsPtFileName = dataVsPtFileName.replace("alldata", "Gjets")
-	    dataVsNvtxFileName = dataVsNvtxFileName.replace("alldata", "Gjets")
-	    mcVsPtFileName = mcVsPtFileName.replace("dy", "Gjets")
-	    mcVsNvtxFileName = mcVsNvtxFileName.replace("dy", "Gjets")
+    if isMC : 
+	dataVsPtFileName = dataVsPtFileName.replace("alldata", "dy")
+	dataVsNvtxFileName = dataVsNvtxFileName.replace("alldata", "dy")
+
+    if isMC and 'nlo' in str(filename).lower(): 
+	dataVsPtFileName = dataVsPtFileName.replace("alldata", "dynlo")
+	dataVsNvtxFileName = dataVsNvtxFileName.replace("alldata", "dynlo")
+	dataVsPtFileName = dataVsPtFileName.replace("dy", "dynlo")
+	dataVsNvtxFileName = dataVsNvtxFileName.replace("dy", "dynlo")
 
 
-    outrawmetd = open("txt_"+channelDir+"/rawmet_" + year + "_" + dataVsPtFileName, "w")
-    outrawpuppid = open("txt_"+channelDir+"/rawpuppi_" + year + "_" + dataVsPtFileName, "w")
-    outt1d = open("txt_"+channelDir+"/t1_" + year + "_" + dataVsPtFileName, "w")
-    outt1smeard = open("txt_"+channelDir+"/t1smear_" + year + "_" + dataVsPtFileName, "w")
-    outpuppid = open("txt_"+channelDir+"/puppi_" + year + "_" + dataVsPtFileName, "w")
+    outrawmetd = open("txt/rawmet_" + year + "_" + dataVsPtFileName, "w")
+    outrawpuppid = open("txt/rawpuppi_" + year + "_" + dataVsPtFileName, "w")
+    outt1d = open("txt/t1_" + year + "_" + dataVsPtFileName, "w")
+    outt1smeard = open("txt/t1smear_" + year + "_" + dataVsPtFileName, "w")
+    outpuppid = open("txt/puppi_" + year + "_" + dataVsPtFileName, "w")
 
 
-    outrawmetdn = open("txt_"+channelDir+"/rawmet_" + year + "_" + dataVsNvtxFileName, "w")
-    outrawpuppidn = open("txt_"+channelDir+"/rawpuppi_" + year + "_" + dataVsNvtxFileName, "w")
-    outt1dn = open("txt_"+channelDir+"/t1_" + year + "_" + dataVsNvtxFileName, "w")
-    outt1smeardn = open("txt_"+channelDir+"/t1smear_" + year + "_" + dataVsNvtxFileName, "w")
-    outpuppidn = open("txt_"+channelDir+"/puppi_" + year + "_" + dataVsNvtxFileName, "w")
+    outrawmetdn = open("txt/rawmet_" + year + "_" + dataVsNvtxFileName, "w")
+    outrawpuppidn = open("txt/rawpuppi_" + year + "_" + dataVsNvtxFileName, "w")
+    outt1dn = open("txt/t1_" + year + "_" + dataVsNvtxFileName, "w")
+    outt1smeardn = open("txt/t1smear_" + year + "_" + dataVsNvtxFileName, "w")
+    outpuppidn = open("txt/puppi_" + year + "_" + dataVsNvtxFileName, "w")
 
 
 
@@ -298,7 +299,6 @@ def extract2():
     weight = 1.
     sumofw= 96233328.
     isNLO=''
-    '''
     if 'nlo' in str(filename).lower() : isNLO='NLO'
     if '2016all' in year : year = "2016"
     if channel != 'Gjets' : 
@@ -309,11 +309,10 @@ def extract2():
 	if isMC : weight *= 1000* lumi*xsec/hW.GetSumOfWeights()
     #if isMC : weight *= 1000* lumi*xsec/sumofw
     # Loop over vspt directories and fill the histogram
-    '''
     weight = 1.
     for i, cut in enumerate(cuts_vspt):
 	
-        if str(i) == "0" : continue
+
 	folder_name = "Folder_%d_vspt_%s" % (i, folder_names[i])
 	print '......................', folder_name
 	folder = top_directory.GetDirectory(folder_name)
@@ -356,7 +355,7 @@ def extract2():
 	    if isMC : changeSignOfHistogram(h_uperp_t1smear)
 	    changeSignOfHistogram(h_uperp_puppi)
             '''
-	    if isMC and weight!=1.: 
+	    if isMC : 
 		h_scale_rawmet.Scale(weight)
 		h_scale_rawpuppi.Scale(weight)
 		h_scale_t1.Scale(weight)
@@ -396,24 +395,23 @@ def extract2():
 	    scalecor_puppi = 1.0
 
 	    #print 'vspt_', scalecor_puppi, scalecor_rawmet, scalecor_rawpuppi, scalecor_t1, scalecor_t1smear
-            if weight!=1. : 
-		h_upara_rawmet.Scale(weight * scalecor_rawmet)
-		h_upara_rawpuppi.Scale(weight * scalecor_rawpuppi)
-		h_upara_t1.Scale(weight * scalecor_t1)
-		h_upara_puppi.Scale(weight * scalecor_puppi)
+	    h_upara_rawmet.Scale(weight * scalecor_rawmet)
+	    h_upara_rawpuppi.Scale(weight * scalecor_rawpuppi)
+	    h_upara_t1.Scale(weight * scalecor_t1)
+	    h_upara_puppi.Scale(weight * scalecor_puppi)
 
-		h_uperp_rawmet.Scale(weight * scalecor_rawmet)
-		h_uperp_rawpuppi.Scale(weight * scalecor_rawpuppi)
+	    h_uperp_rawmet.Scale(weight * scalecor_rawmet)
+	    h_uperp_rawpuppi.Scale(weight * scalecor_rawpuppi)
 
-		#print 'before....', h_uperp_t1.GetRMS(), h_uperp_puppi.GetRMS(), h_uperp_t1.GetMean(), h_uperp_puppi.GetMean()
+	    #print 'before....', h_uperp_t1.GetRMS(), h_uperp_puppi.GetRMS(), h_uperp_t1.GetMean(), h_uperp_puppi.GetMean()
 
-		h_uperp_t1.Scale(weight * scalecor_t1)
-		h_uperp_puppi.Scale(weight * scalecor_puppi)
+	    h_uperp_t1.Scale(weight * scalecor_t1)
+	    h_uperp_puppi.Scale(weight * scalecor_puppi)
 
-		#print 'after some....', h_uperp_t1.GetRMS(), h_uperp_puppi.GetRMS(), h_uperp_t1.GetMean(), h_uperp_puppi.GetMean(), isMC, weight, scalecor_t1, scalecor_puppi, weight * scalecor_puppi
-		if isMC : 
-		    h_upara_t1smear.Scale(weight * scalecor_t1smear)
-		    h_uperp_t1smear.Scale(weight * scalecor_t1smear)
+	    #print 'after some....', h_uperp_t1.GetRMS(), h_uperp_puppi.GetRMS(), h_uperp_t1.GetMean(), h_uperp_puppi.GetMean(), isMC, weight, scalecor_t1, scalecor_puppi, weight * scalecor_puppi
+	    if isMC : 
+		h_upara_t1smear.Scale(weight * scalecor_t1smear)
+		h_uperp_t1smear.Scale(weight * scalecor_t1smear)
 	   
 	    h_scale_rawmet_vspt.SetBinContent(i + 1, 1. * h_scale_rawmet.GetMean())
 	    h_scale_rawmet_vspt.SetBinError(i + 1, h_scale_rawmet.GetMeanError())
@@ -484,7 +482,6 @@ def extract2():
     # Loop over vspt directories and fill the histogram
     for i, cut in enumerate(cuts_npv):
 	
-        if str(i) == "0" : continue
 	folder_name = "Folder_%d_npv_%s" % (i, folder_names_npv[i])
 	folder = top_directory.GetDirectory(folder_name)
 	if folder:

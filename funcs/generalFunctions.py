@@ -91,9 +91,9 @@ def checkMETFlags(entry, year, isMC=False, proc="UL") :
 
 	#if not isMC and entry.Flag_eeBadScFilter == False : METfilter = True
     if proc=='UL' :
-        if '2016' in str(year)  and (entry.Flag_goodVertices  == False or entry.Flag_globalSuperTightHalo2016Filter == False or entry.Flag_HBHENoiseFilter  == False or entry.Flag_HBHENoiseIsoFilter  == False or entry.Flag_EcalDeadCellTriggerPrimitiveFilter  == False or  entry.Flag_BadPFMuonFilter == False  or entry.Flag_eeBadScFilter == False or entry.Flag_BadPFMuonDzFilter == False) : METfilter = True
+        if '2016' in str(year)  and (entry.Flag_goodVertices  == False or entry.Flag_globalSuperTightHalo2016Filter == False or entry.Flag_HBHENoiseFilter  == False or entry.Flag_HBHENoiseIsoFilter  == False or entry.Flag_EcalDeadCellTriggerPrimitiveFilter  == False or  entry.Flag_BadPFMuonFilter == False  or entry.Flag_eeBadScFilter == False ) : METfilter = True
 
-        if '2016' not in str(year)  and (entry.Flag_goodVertices  == False or entry.Flag_globalSuperTightHalo2016Filter == False or entry.Flag_HBHENoiseFilter  == False or entry.Flag_HBHENoiseIsoFilter  == False or entry.Flag_EcalDeadCellTriggerPrimitiveFilter  == False or  entry.Flag_BadPFMuonFilter == False  or entry.Flag_eeBadScFilter == False or entry.Flag_ecalBadCalibFilter == False or entry.Flag_BadPFMuonDzFilter== False) : METfilter = True
+        if '2016' not in str(year)  and (entry.Flag_goodVertices  == False or entry.Flag_globalSuperTightHalo2016Filter == False or entry.Flag_HBHENoiseFilter  == False or entry.Flag_HBHENoiseIsoFilter  == False or entry.Flag_EcalDeadCellTriggerPrimitiveFilter  == False or  entry.Flag_BadPFMuonFilter == False  or entry.Flag_eeBadScFilter == False or entry.Flag_ecalBadCalibFilter == False) : METfilter = True
 
     #print metdz, METfilter, 'filters', entry.Flag_goodVertices, entry.Flag_globalSuperTightHalo2016Filter, entry.Flag_HBHENoiseFilter,  entry.Flag_HBHENoiseIsoFilter,entry.Flag_EcalDeadCellTriggerPrimitiveFilter, entry.Flag_BadPFMuonFilter,  entry.Flag_eeBadScFilter,entry.Flag_ecalBadCalibFilter, entry.Flag_BadPFMuonDzFilter
     return METfilter

@@ -5,92 +5,49 @@ import math
 from array import array
 
 def correctedMET (originalMet, originalMet_phi, npv, runnb, isMC, yeara, isUL =True, ispuppi=False) :
-
   year=str(yeara)
-  #print 'some info=================================', isMC, year, isUL, ispuppi
+  #print 'some info=================================', isMC, year, isUL, ispuppi, runnb
   if(npv>100) :npv=100
   runera =-1
   usemetv2 =False
   year = year.replace("postVFP", "nonAPV")
   year = year.replace("preVFP", "APV")
+  if year=='2016' : year="2016nonAPV"
 
   if (isMC and year == "2016" and isUL) :  runera ="yUL2016MCnonAPV"
   elif(isMC and year == "2016APV" and isUL): runera = "yUL2016MCAPV"
   elif(isMC and year == "2016nonAPV" and isUL): runera = "yUL2016MCnonAPV"
   elif(isMC and year == "2017" and isUL) :runera = "yUL2017MC"
   elif(isMC and year == "2018" and isUL) :runera = "yUL2018MC"
+
   elif(not isMC and runnb >=315252 and runnb <=316995 and isUL): runera = "yUL2018A"
   elif(not isMC and runnb >=316998 and runnb <=319312 and isUL): runera = "yUL2018B"
   elif(not isMC and runnb >=319313 and runnb <=320393 and isUL): runera = "yUL2018C"
   elif(not isMC and runnb >=320394 and runnb <=325273 and isUL): runera = "yUL2018D"
 
-  elif(not isMC and runnb >=297020 and runnb <=299329 and isUL):
-      runera = "yUL2017B"
-      usemetv2 =False
-  elif(not isMC and runnb >=299337 and runnb <=302029 and isUL):
-      runera = "yUL2017C"
-      usemetv2 =False
-  elif(not isMC and runnb >=302030 and runnb <=303434 and isUL):
-      runera = "yUL2017D"
-      usemetv2 =False
-  elif(not isMC and runnb >=303435 and runnb <=304826 and isUL):
-      runera = "yUL2017E"
-      usemetv2 =False
-  elif(not isMC and runnb >=304911 and runnb <=306462 and isUL):
-      runera = "yUL2017F"
-      usemetv2 =False
+  elif(not isMC and runnb >=297020 and runnb <=299329 and isUL): runera = "yUL2017B"
+  elif(not isMC and runnb >=299337 and runnb <=302029 and isUL): runera = "yUL2017C"
+  elif(not isMC and runnb >=302030 and runnb <=303434 and isUL): runera = "yUL2017D"
+  elif(not isMC and runnb >=303435 and runnb <=304826 and isUL): runera = "yUL2017E"
+  elif(not isMC and runnb >=304911 and runnb <=306462 and isUL): runera = "yUL2017F"
 
   elif(not isMC and runnb >=272007 and runnb <=275376 and isUL): runera = "yUL2016B"
   elif(not isMC and runnb >=275657 and runnb <=276283 and isUL): runera = "yUL2016C"
   elif(not isMC and runnb >=276315 and runnb <=276811 and isUL): runera = "yUL2016D"
   elif(not isMC and runnb >=276831 and runnb <=277420 and isUL): runera = "yUL2016E"
+
   elif(not isMC and ((runnb >=277772 and runnb <=278768) or runnb==278770) and isUL): runera = "yUL2016F"
   elif(not isMC and ((runnb >=278801 and runnb <=278808) or runnb==278769) and isUL): runera = "yUL2016Flate"
   elif(not isMC and runnb >=278820 and runnb <=280385 and isUL): runera = "yUL2016G"
   elif(not isMC and runnb >=280919 and runnb <=284044 and isUL): runera = "yUL2016H"
 
+
   else :   
       print 'failed, ============================================>', year, runera, isMC
-      return [1, 1, originalMet, originalMet_phi]
+      return [1, 1, 0., 0.]
   #print 'info', runera, isMC
  
   #print '============================================>', year, runera, isMC
-  
-  ''' 
-  if(isMC and year == "2016" and !isUL) :runera = "y2016MC"
-  elif(isMC and year == "2017" and !isUL) : 
-      runera = "y2017MC"
-      usemetv2 =True
-  elif(isMC and year == "2018" and !isUL): runera = "y2018MC"
-  elif(not isMC and runnb >=272007 and runnb <=275376 and !isUL): runera = "y2016B"
-  elif(not isMC and runnb >=275657 and runnb <=276283 and !isUL): runera = "y2016C"
-  elif(not isMC and runnb >=276315 and runnb <=276811 and !isUL): runera = "y2016D"
-  elif(not isMC and runnb >=276831 and runnb <=277420 and !isUL): runera = "y2016E"
-  elif(not isMC and runnb >=277772 and runnb <=278808 and !isUL): runera = "y2016F"
-  elif(not isMC and runnb >=278820 and runnb <=280385 and !isUL): runera = "y2016G"
-  elif(not isMC and runnb >=280919 and runnb <=284044 and !isUL): runera = "y2016H"
-  
-  elif(not isMC and runnb >=297020 and runnb <=299329 and !isUL): 
-      runera = "y2017B"
-      usemetv2 =True
-  elif(not isMC and runnb >=299337 and runnb <=302029 and !isUL):
-      runera = "y2017C"
-      usemetv2 =True
-  elif(not isMC and runnb >=302030 and runnb <=303434 and !isUL):
-      runera = "y2017D"
-      usemetv2 =True
-  elif(not isMC and runnb >=303435 and runnb <=304826 and !isUL):
-      runera = "y2017E"
-      usemetv2 =True
-  elif(not isMC and runnb >=304911 and runnb <=306462 and !isUL):
-      runera = "y2017F"
-      usemetv2 =True
-  elif(not isMC and runnb >=315252 and runnb <=316995 and !isUL): runera = "y2018A"
-  elif(not isMC and runnb >=316998 and runnb <=319312 and !isUL): runera = "y2018B"
-  elif(not isMC and runnb >=319313 and runnb <=320393 and !isUL): runera = "y2018C"
-  elif(not isMC and runnb >=320394 and runnb <=325273 and !isUL): runera = "y2018D"
-  '''
-
   
   
   METxcorr,METycorr=0.,0.

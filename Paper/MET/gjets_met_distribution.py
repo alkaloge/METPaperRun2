@@ -113,11 +113,13 @@ if __name__ == "__main__":
             ewnloDatasets = ['WGToLNuG', 'ZGTo2NuG', 'ZNuNuGJets_PtG-130', 'ZLLGJets_PtG-15to130', 'ZLLGJets_PtG-130']
             ewDatasets = ['WG_PtG-130', 'WG_PtG-40To130', 'WGToLNuG', 'ZGTo2NuG', 'ZNuNuGJets_PtG-130', 'ZLLGJets_PtG-15to130', 'ZLLGJets_PtG-130']
             ewDatasets = ['WG_PtG-130', 'WG_PtG-40To130', 'ZGTo2NuG', 'ZNuNuGJets_PtG-130', 'ZLLGJets_PtG-15to130', 'ZLLGJets_PtG-130']
-            if '2018' not in run : ewDatasets = ['WWG', 'WG_PtG-130', 'WG_PtG-40To130',  'ZGTo2NuG', 'ZNuNuGJets_PtG-130', 'ZLLGJets_PtG-15to130', 'ZLLGJets_PtG-130']
+            ewDatasets = ['WG_PtG-130', 'WG_PtG-40To130',  'ZGTo2NuG', 'ZNuNuGJets_PtG-130', 'ZLLGJets_PtG-15to130', 'ZLLGJets_PtG-130']
+            #if '2018' not in run : ewDatasets = ['WWG', 'WG_PtG-130', 'WG_PtG-40To130',  'ZGTo2NuG', 'ZNuNuGJets_PtG-130', 'ZLLGJets_PtG-15to130', 'ZLLGJets_PtG-130']
               
             gjetsDatasets = ['GJets_HT-40To100','GJets_HT-100To200', 'GJets_HT-200To400', 'GJets_HT-400To600', 'GJets_HT-600ToInf']
 
             qcdDatasets = ['QCD_HT50to100', 'QCD_HT100to200', 'QCD_HT200to300', 'QCD_HT300to500', 'QCD_HT500to700',  'QCD_HT700to1000','QCD_HT1000to1500', 'QCD_HT1500to2000', 'QCD_HT2000toInf']
+            qcdmgDatasets = ['QCD_HT50to100MG', 'QCD_HT100to200MG', 'QCD_HT200to300MG', 'QCD_HT300to500MG', 'QCD_HT500to700MG',  'QCD_HT700to1000MG','QCD_HT1000to1500MG', 'QCD_HT1500to2000MG', 'QCD_HT2000toInfMG']
 
 
             #qcdDatasetsPt = [ 'QCD_Pt-20_MuEn']
@@ -161,6 +163,7 @@ if __name__ == "__main__":
         treeEWNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewnloDatasets, 'EWNLO'), 'EWNLO'  , 0, channel, isLocal)
         treeEWKNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWKNLO'), 'EWKNLO'  , 0, channel, isLocal)
         treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasets, 'QCD'), 'QCD'  , 0, channel, isLocal)
+        treeQCDMG = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdmgDatasets, 'QCDMG'), 'QCDMG'  , 0, channel, isLocal)
         treeGjets = Sample.Tree(helper.selectSamples(opts.sampleFile, gjetsDatasets, 'GJets'), 'GJets'  , 0, channel, isLocal)
         #treeQCDPt = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPt, 'QCD'), 'QCD'  , 0, channel, isLocal)
         #treeQCDPtBins = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPtBins, 'QCD'), 'QCD'  , 0, channel, isLocal)
@@ -176,7 +179,8 @@ if __name__ == "__main__":
         if 'data' not in inn : treeDA =[]
         mcTrees = []
         if 'tx' in inn  : mcTrees = [treeTX]
-        if 'qcd' in inn  : mcTrees = [treeQCD]
+        if 'qcd' in inn and 'mg' not in inn  : mcTrees = [treeQCD]
+        if 'qcdmg' in inn   : mcTrees = [treeQCDMG]
         if 'gjets' in inn  : mcTrees = [treeGjets]
         if 'ewknlo' in inn  : mcTrees = [treeEWKNLO]
         if 'ew' in inn and 'ewk' not in inn : mcTrees = [treeEW]
@@ -322,7 +326,11 @@ if __name__ == "__main__":
             if 'btagm' in tagname : btagcut="M"
             if 'btagt' in tagname : btagcut="T"
             #if 'nobtag' in tagname : btagcut="T"
-
+            drcutstr = "dRMETCorGood_T1J1"+extracut  
+            if 'puppi' in givein.lower() :drcutstr = "dRPuppiMETCorGood_J1"+extracut
+            drcut= "0.0"
+            if 'dr' in tagname : drcut = ">=0.5"
+            if 'both' in tagname : drcut = ">=0.5 && "+drcutstr + "<=3.5"
             photonr9='0.9'
             if 'photon_r9_1' in givein.lower() : photonr9='0.8'
 
@@ -331,14 +339,14 @@ if __name__ == "__main__":
 
             if 'nobtag' in tagname :
 	        #jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>=0.9 && Photon_r9_1[0]<=1. ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
-	        jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>={5:s} && Photon_r9_1[0]<=1. ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, photonr9)
+	        jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>={5:s} && Photon_r9_1[0]<=1. && {6:s}{7:s}".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, photonr9, drcutstr, drcut)
             else :
 	        #jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>=0.9 && Photon_r9_1[0]<=1. && nbtagL[0]==0.0".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
-	        jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>={5:s} && Photon_r9_1[0]<=1. && nbtagL[0]==0.0".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, photonr9)
+	        jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>={5:s} && Photon_r9_1[0]<=1. && nbtagL[0]==0.0 && {6:s}{7:s}".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, photonr9, drcutstr, drcut)
 
 	    jetCutInvIso = " (  pt_1[0] >=50 && nPhoton[0]==1 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>=0.9 && iso_1[0]>0.1 && nbtagL[0]==0.0 && cat==1 ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
-
-
+  
+            if 'qcd' in inn : jetCut = jetCut + " && Photon_genPartFlav_1[0] !=1"
 
             if doQCD : jetCut = jetCutInvIso
 
@@ -501,6 +509,9 @@ if __name__ == "__main__":
                             tmp_full.SetTitle("#gamma + jets")
                         if treename == 'qcd':
                             tmp_full.SetTitle("QCD multijet")
+                            tmp_full.Scale(kfactor)
+                        if treename == 'qcdmg':
+                            tmp_full.SetTitle("QCD MG multijet")
                             tmp_full.Scale(kfactor)
                         if treename == 'wjets':
                             tmp_full.SetTitle("W + jets")
