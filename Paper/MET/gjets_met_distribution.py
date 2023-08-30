@@ -69,8 +69,10 @@ if __name__ == "__main__":
     era = str(opts.Year)
     eras = str(opts.Year)
     ee = era
-    
-    opts.sampleFile = 'samples_{0:s}_gjets.dat'.format(era[:4], channel)
+    inn = str(opts.ExtraTag).lower()
+    IDWP = 'mvaID'
+    if 'cutbased' in inn : IDWP = 'cutBased'
+    #opts.sampleFile = 'samples_{0:s}_gjets.dat'.format(era[:4], channel)
      
     if '2016' in era and 'pre' in era : 
         eras ='2016preVFP'
@@ -79,7 +81,7 @@ if __name__ == "__main__":
     if '2016' in era and 'post' not in era  and 'pre' not in era: 
         eras ='2016postVFP'
 
-    opts.sampleFile = 'samples_{0:s}_gjets.dat'.format(eras)
+    opts.sampleFile = 'samples_{0:s}_gjets_{1:s}.dat'.format(eras,IDWP)
     print 'will read Datasets from ', opts.sampleFile
 
     lumis={'2016':35.93, '2017':41.48, '2018':59.83}
@@ -158,24 +160,23 @@ if __name__ == "__main__":
         print 'the lumito be used is ',lumi
         isLocal = True
         if str(opts.Local) == '0' or str(opts.Local).lower() == 'false' or str(opts.Local).lower() == 'no': isLocal = False
-        treeTX = Sample.Tree(helper.selectSamples(opts.sampleFile, txDatasets, 'TX'), 'TX'  , 0, channel, isLocal)
-        treeEW = Sample.Tree(helper.selectSamples(opts.sampleFile, ewDatasets, 'EW'), 'EW'  , 0, channel, isLocal)
-        treeEWNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewnloDatasets, 'EWNLO'), 'EWNLO'  , 0, channel, isLocal)
-        treeEWKNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWKNLO'), 'EWKNLO'  , 0, channel, isLocal)
-        treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasets, 'QCD'), 'QCD'  , 0, channel, isLocal)
-        treeQCDMG = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdmgDatasets, 'QCDMG'), 'QCDMG'  , 0, channel, isLocal)
-        treeGjets = Sample.Tree(helper.selectSamples(opts.sampleFile, gjetsDatasets, 'GJets'), 'GJets'  , 0, channel, isLocal)
-        #treeQCDPt = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPt, 'QCD'), 'QCD'  , 0, channel, isLocal)
-        #treeQCDPtBins = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPtBins, 'QCD'), 'QCD'  , 0, channel, isLocal)
+        treeTX = Sample.Tree(helper.selectSamples(opts.sampleFile, txDatasets, 'TX'), 'TX'  , 0, channel, isLocal, IDWP)
+        treeEW = Sample.Tree(helper.selectSamples(opts.sampleFile, ewDatasets, 'EW'), 'EW'  , 0, channel, isLocal, IDWP)
+        treeEWNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewnloDatasets, 'EWNLO'), 'EWNLO'  , 0, channel, isLocal, IDWP)
+        treeEWKNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWKNLO'), 'EWKNLO'  , 0, channel, isLocal, IDWP)
+        #treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasets, 'QCD'), 'QCD'  , 0, channel, isLocal, IDWP)
+        treeQCDMG = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdmgDatasets, 'QCDMG'), 'QCDMG'  , 0, channel, isLocal, IDWP)
+        treeGjets = Sample.Tree(helper.selectSamples(opts.sampleFile, gjetsDatasets, 'GJets'), 'GJets'  , 0, channel, isLocal, IDWP)
+        #treeQCDPt = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPt, 'QCD'), 'QCD'  , 0, channel, isLocal, IDWP)
+        #treeQCDPtBins = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPtBins, 'QCD'), 'QCD'  , 0, channel, isLocal, IDWP)
 
-        treeDA = Sample.Tree(helper.selectSamples(opts.sampleFile, daDatasets, 'DA'), 'DATA', 1, channel, isLocal)
+        treeDA = Sample.Tree(helper.selectSamples(opts.sampleFile, daDatasets, 'DA'), 'DATA', 1, channel, isLocal, IDWP)
         #mcTrees = [  treeTT, treeEWK,  treeDY, treeEWK]   
         #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK, treeEWK1, treeEWK2, treeEWK3, treeEWK4]   
         #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK]   
-        mcTrees = [ treeQCD, treeEWKNLO, treeTX, treeEW, treeGjets]   
+        mcTrees = [ treeQCDMG, treeEWKNLO, treeTX, treeEW, treeGjets]   
 
         #mcTrees = [ treeDY]   
-        inn = str(opts.ExtraTag).lower()
         if 'data' not in inn : treeDA =[]
         mcTrees = []
         if 'tx' in inn  : mcTrees = [treeTX]
@@ -185,7 +186,7 @@ if __name__ == "__main__":
         if 'ewknlo' in inn  : mcTrees = [treeEWKNLO]
         if 'ew' in inn and 'ewk' not in inn : mcTrees = [treeEW]
         if 'ewnlo' in inn  : mcTrees = [treeEWNLO]
-        if 'allmc' in inn : mcTrees = [ treeEWKNLO, treeQCD, treeTX, treeEW, treeGjets]
+        if 'allmc' in inn : mcTrees = [ treeEWKNLO, treeQCDMG, treeTX, treeEW, treeGjets]
         boson = 'boson_pt'
         boson_phi = 'boson_phi'
         print '================================================================================================================checkkkkkkkkkkkkkkkkkkkkk', str(opts.ExtraTag).lower(), treeDA, mcTrees
@@ -273,6 +274,7 @@ if __name__ == "__main__":
             else:
                 leg = [0.65, 0.6, 0.81, 0.9]
             givein ='{0:s}'.format(str(opts.varr))
+            option=givein
             newname = givein
             newname = str(givein).replace(":", "_vs_")
             if 'Smear' in givein and 'data' in inn  : 
@@ -293,7 +295,10 @@ if __name__ == "__main__":
             losthits="1"
             njetsSyst=''
             tagname = str(opts.ExtraTag).lower()
-
+            
+            PUw='nom'
+            if 'puup' in tagname : PUw = 'up'
+            if 'pudown' in tagname : PUw = 'down'
             if 'njet' in givein.lower() : jetcut='-1'
             if 'njetsgeq' in str(opts.ExtraTag).lower() : jetcut='-1'
             if 'hitslt1' in str(opts.ExtraTag).lower() : losthits='1'
@@ -328,7 +333,7 @@ if __name__ == "__main__":
             #if 'nobtag' in tagname : btagcut="T"
             drcutstr = "dRMETCorGood_T1J1"+extracut  
             if 'puppi' in givein.lower() :drcutstr = "dRPuppiMETCorGood_J1"+extracut
-            drcut= "0.0"
+            drcut= ">=0.0"
             if 'dr' in tagname : drcut = ">=0.5"
             if 'both' in tagname : drcut = ">=0.5 && "+drcutstr + "<=3.5"
             photonr9='0.9'
@@ -339,15 +344,22 @@ if __name__ == "__main__":
 
             if 'nobtag' in tagname :
 	        #jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>=0.9 && Photon_r9_1[0]<=1. ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
-	        jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>={5:s} && Photon_r9_1[0]<=1. && {6:s}{7:s}".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, photonr9, drcutstr, drcut)
+	        jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>={5:s} && Photon_r9_1[0]<=1. ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, photonr9)
             else :
 	        #jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>=0.9 && Photon_r9_1[0]<=1. && nbtagL[0]==0.0".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
-	        jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>={5:s} && Photon_r9_1[0]<=1. && nbtagL[0]==0.0 && {6:s}{7:s}".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, photonr9, drcutstr, drcut)
+	        jetCut = " (  pt_1[0]>=50 && fabs(eta_1[0])<1.44 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>={5:s} && Photon_r9_1[0]<=1. && nbtagL[0]==0.0 ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, photonr9)
 
 	    jetCutInvIso = " (  pt_1[0] >=50 && nPhoton[0]==1 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>=0.9 && iso_1[0]>0.1 && nbtagL[0]==0.0 && cat==1 ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
   
-            if 'qcd' in inn : jetCut = jetCut + " && Photon_genPartFlav_1[0] !=1"
-
+            #if 'qcd' in inn : jetCut = jetCut + " && Photon_genPartFlav_1[0] !=1"
+            if 'hoe' in tagname : jetCut = jetCut + " && Photon_hoe_1[0] <=0.04"
+            if 'dr' in tagname : jetCut = jetCut + " && {0:s}{1:s}".format(drcutstr, drcut)
+            if 'pult10' in tagname : jetCut  = jetCut + " && nPVGood[0]<10"
+            if 'pu10to20' in tagname : jetCut  = jetCut + " && nPVGood[0]<20 && nPVGood>=10"
+            if 'pu20to30' in tagname : jetCut  = jetCut + " && nPVGood[0]<30 && nPVGood>=20"
+            if 'pu30to40' in tagname : jetCut  = jetCut + " && nPVGood[0]<40 && nPVGood>=30"
+            if 'pu40to50' in tagname : jetCut  = jetCut + " && nPVGood[0]<50 && nPVGood>=40"
+            if 'pugeq50' in tagname : jetCut  = jetCut + " && nPVGood[0]>=50 "
             if doQCD : jetCut = jetCutInvIso
 
             print color.blue+'************************************************************************************************'+color.end
@@ -425,6 +437,7 @@ if __name__ == "__main__":
                     varData = var
                     #if 'Up' in var or 'Down' in var : var.replace("_T1","")
                     print 'this is for data', var, 'bins', reg.bins[reg.rvars.index(var)]
+                    
                     print '------------------------------------------->', lumi, var, Variable, reg.bins[reg.rvars.index(var)], "", varTitle, doNPV, isLog
                     if ":" not in Variable : data_hist = treeDA.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , inn, varTitle, doNPV, isLog)
                     else : data_hist= treeDA.getTH2F(lumi, var,  Variable, 20, 0,200, 20, 0, 200, cuts.Add(cut, jetCut) , "", "qT (GeV)", varTitle)
@@ -548,8 +561,9 @@ if __name__ == "__main__":
 
                         fOut.cd()
 			mnew = m.replace(":", "_vs_")
-                        print 'should have the correct name ????????????????????????????', tmp_full.GetName(), mnew, m
+                        print 'should have the correct name ????????????????????????????', tmp_full.GetName(), mnew, m, treename, tmp_histo.GetName()
                         tmp_histo.Write('histo_'+treename+'_'+mnew)
+                        print 'should have the correct name ????????????????????????????', tmp_full.GetName(), mnew, m, treename, tmp_histo.GetName()
 
                         for i in range(1,tmp_histo.GetNbinsX()+1) : print 'bin i', i, tmp_histo.GetBinContent(i), tmp_histo.GetName(), tmp_histo.Integral()
                         tmp_histo.GetXaxis().SetTitle(varTitle)
@@ -686,7 +700,8 @@ if __name__ == "__main__":
 		    #for i in range(1, mc_histo.GetNbinsX()+1) : 
 		    #	mc_histo.SetBinError(i, mc_histo.GetBinError(i)*0.25)
 		    #mc_jerup=mc_histo; mc_jerdown = mc_histo; mc_jesup = mc_histo; mc_jesdown = mc_histo;mc_unclUp = mc_histo; mc_unclDown = mc_histo
-		    mc_jerup=mc_histo; mc_jerdown = mc_histo; 
+		    #mc_jerup=mc_histo; mc_jerdown = mc_histo; 
+                    print ' will plot with=======================>', varTitle , option, run_str
 		    plot_var.saveRatio(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclUp, mc_unclDown, varTitle , option, run_str)
 		    #plot_var.saveRatio(1,1, isLog, lumi, data_hist, mc_histo, mc_up, mc_down, mc_jesup, mc_jesdown, mc_unclUp, mc_unclDown, varTitle+"Int data"+str(data_hist.Integral()) , option, run_str)
             del plot_var
