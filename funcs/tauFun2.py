@@ -1271,11 +1271,9 @@ def goodElectron(entry, j) :
     ee = selections['ee'] # selections for Z->ee
     if entry.Electron_pt[j] < ee['ele_pt']: return False
     if abs(entry.Electron_eta[j]) > ee['ele_eta']: return False
+    if abs(entry.Electron_eta[j]) >  1.44 and abs(entry.Electron_eta[j]) < 1.57 : return False
     if abs(entry.Electron_dxy[j]) > ee['ele_dxy']: return False
     if abs(entry.Electron_dz[j]) > ee['ele_dz']: return False
-
-    #if entry.luminosityBlock==159 and entry.run==320853 and entry.event==197659973: print entry.nElectron, j, 'pt: ', entry.Electron_pt[j], 'eta :', abs(entry.Electron_eta[j]), 'hits: ', ord(entry.Electron_lostHits[j]), 'iso :', entry.Electron_pfRelIso03_all[j], 'veto: ',entry.Electron_convVeto[j], 'iD: ', entry.Electron_mvaFall17V2noIso_WP90[j], entry.event
-
     if ord(entry.Electron_lostHits[j]) > ee['ele_lostHits']: return False
     if ee['ele_iso_f'] and entry.Electron_pfRelIso03_all[j] >  ee['ele_iso']: return False
     if ee['ele_convVeto']:
@@ -1814,7 +1812,7 @@ def findW(goodElectronList, goodMuonList, entry) :
 
 
 def findZ(goodElectronList, goodMuonList, entry) :
-    mm = selections['mm'] # H->tau(mu)+tau(h) selections
+    mm = selections['mm'] 
     selpair,pairList, mZ, bestDiff = [],[], 91.19, 99999. 
     nElectron = len(goodElectronList)
     #print 'going in tauFun', goodElectronList, nElectron, entry.event, entry.luminosityBlock, entry.run, bestDiff

@@ -37,6 +37,17 @@ class outTuple2Lep() :
 
         #lines above with .root files, lines below with correction lib
 
+        self.evaluatorPU=''
+	self.fnamePU = "./puWeights_{0:s}.json.gz".format(str(era))
+	if self.fnamePU.endswith(".json.gz"):
+	    import gzip
+	    with gzip.open(self.fnamePU,'rt') as file:
+		self.datasfPU = file.read().strip()
+		self.evaluatorPU = _core.CorrectionSet.from_string(self.datasfPU)
+	else:
+	    self.evaluatorPU = _core.CorrectionSet.from_file(self.fnamePU)
+		# Tau Decay types
+
         self.evaluator=''
 	self.fname = "./muon_Z_{0:s}.json.gz".format(str(era))
 	if self.fname.endswith(".json.gz"):
@@ -188,6 +199,9 @@ class outTuple2Lep() :
         self.weight           = array('f',[0])
         self.weightPU           = array('f',[0])
         self.weightPUtrue           = array('f',[0])
+        self.weightPUtruejson           = array('f',[0])
+        self.weightPUtruejson_up           = array('f',[0])
+        self.weightPUtruejson_down           = array('f',[0])
         self.LHEweight        = array('f',[0])
         self.Generator_weight = array('f',[0])
         self.LHE_Njets        = array('i',[-1])
@@ -237,11 +251,23 @@ class outTuple2Lep() :
         self.mll       = array('f',[0])
 
         self.IDSF1      = array('f',[0])
+	self.IDSF1_up  = array('f',[0])
+	self.IDSF1_down  = array('f',[0])
         self.IsoSF1      = array('f',[0])
+        self.IsoSF1_up      = array('f',[0])
+        self.IsoSF1_down      = array('f',[0])
         self.TrigSF1      = array('f',[0])
+        self.TrigSF1_up      = array('f',[0])
+        self.TrigSF1_down      = array('f',[0])
         self.IDSF2      = array('f',[0])
+	self.IDSF2_up  = array('f',[0])
+	self.IDSF2_down  = array('f',[0])
         self.IsoSF2      = array('f',[0])
+        self.IsoSF2_up      = array('f',[0])
+        self.IsoSF2_down      = array('f',[0])
         self.TrigSF2      = array('f',[0])
+        self.TrigSF2_up      = array('f',[0])
+        self.TrigSF2_down      = array('f',[0])
         self.IDSF      = array('f',[0])
         self.IsoSF      = array('f',[0])
         self.TrigSF      = array('f',[0])
@@ -459,6 +485,9 @@ class outTuple2Lep() :
         self.t.Branch('weight',           self.weight,            'weight/F' )
         self.t.Branch('weightPU',           self.weightPU,            'weightPU/F' )
         self.t.Branch('weightPUtrue',           self.weightPUtrue,            'weightPUtrue/F' )
+        self.t.Branch('weightPUtruejson',           self.weightPUtruejson,            'weightPUtruejson/F' )
+        self.t.Branch('weightPUtruejson_up',           self.weightPUtruejson_up,            'weightPUtruejson_up/F' )
+        self.t.Branch('weightPUtruejson_down',           self.weightPUtruejson_down,            'weightPUtruejson_down/F' )
         self.t.Branch('LHEweight',        self.LHEweight,         'LHEweight/F' )
         self.t.Branch('LHE_Njets',        self.LHE_Njets,         'LHE_Njets/i' )
         self.t.Branch('LHEScaleWeights',        self.LHEScaleWeights,         'LHEScaleWeights[9]/F' )
@@ -488,9 +517,23 @@ class outTuple2Lep() :
         self.t.Branch('IDSF1',        self.IDSF1,        'IDSF1/F')
         self.t.Branch('TrigSF1',        self.TrigSF1,        'TrigSF1/F')
         self.t.Branch('IsoSF1',        self.IsoSF1,        'IsoSF1/F')
+        self.t.Branch('IDSF1_up',        self.IDSF1_up,        'IDSF1_up/F')
+        self.t.Branch('TrigSF1_up',        self.TrigSF1_up,        'TrigSF1_up/F')
+        self.t.Branch('IsoSF1_up',        self.IsoSF1_up,        'IsoSF1_up/F')
+        self.t.Branch('IDSF1_down',        self.IDSF1_down,        'IDSF1_down/F')
+        self.t.Branch('TrigSF1_down',        self.TrigSF1_down,        'TrigSF1_down/F')
+        self.t.Branch('IsoSF1_down',        self.IsoSF1_down,        'IsoSF1_down/F')
+
         self.t.Branch('IDSF2',        self.IDSF2,        'IDSF2/F')
         self.t.Branch('TrigSF2',        self.TrigSF2,        'TrigSF2/F')
         self.t.Branch('IsoSF2',        self.IsoSF2,        'IsoSF2/F')
+        self.t.Branch('IDSF2_up',        self.IDSF2_up,        'IDSF2_up/F')
+        self.t.Branch('TrigSF2_up',        self.TrigSF2_up,        'TrigSF2_up/F')
+        self.t.Branch('IsoSF2_up',        self.IsoSF2_up,        'IsoSF2_up/F')
+        self.t.Branch('IDSF2_down',        self.IDSF2_down,        'IDSF2_down/F')
+        self.t.Branch('TrigSF2_down',        self.TrigSF2_down,        'TrigSF2_down/F')
+        self.t.Branch('IsoSF2_down',        self.IsoSF2_down,        'IsoSF2_down/F')
+
         self.t.Branch('IDSF',        self.IDSF,        'IDSF/F')
         self.t.Branch('TrigSF',        self.TrigSF,        'TrigSF/F')
         self.t.Branch('IsoSF',        self.IsoSF,        'IsoSF/F')
@@ -944,7 +987,7 @@ class outTuple2Lep() :
 		    if '2016' in str(era) and  entry.Jet_puId[j]  > 4  : continue #inverted working points https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetIDUL
 
 		#if str(era) == '2017'  and jpt[j] > 20 and jpt[j] < 50 and abs(entry.Jet_eta[j]) > 2.65 and abs(entry.Jet_eta[j]) < 3.139 : continue  #remove noisy jets
-		if abs(entry.Jet_eta[j]) > 4.7 : continue
+		if abs(entry.Jet_eta[j]) > 2.4 : continue
 
 		#for iv, lepv in enumerate(LepList) : 
 		for iv, lv  in  enumerate(LepList) :
@@ -974,7 +1017,7 @@ class outTuple2Lep() :
 
                 jetList.append(jj) 
 
-		if abs(entry.Jet_eta[jj]) < 2.5 : 
+		if abs(entry.Jet_eta[jj]) < 2.4 : 
                     #print entry.Jet_btagDeepB[jj],  bjet_discrL,  bjet_discrM ,  bjet_discrT
 		    if entry.Jet_btagDeepB[jj] > bjet_discrL : bJetListL.append(jj)
 		    if entry.Jet_btagDeepB[jj] > bjet_discrM : bJetListM.append(jj)
@@ -1039,6 +1082,7 @@ class outTuple2Lep() :
         #if SystIndex >0 : doUncertainties=False
         leadL, subL =  TLorentzVector(), TLorentzVector()
 
+        
         if LepP.Pt()>LepM.Pt() : 
             leadL=LepP
             subL=LepM
@@ -1282,37 +1326,91 @@ class outTuple2Lep() :
 	self.IDSF[0]  = 1.
 	self.IsoSF[0]  = 1.
 	self.TrigSF[0]  = 1.
+
 	self.IDSF1[0]  = 1.
 	self.IsoSF1[0]  = 1.
 	self.TrigSF1[0]  = 1.
+	self.IDSF1_up[0]  = 1.
+	self.IsoSF1_up[0]  = 1.
+	self.TrigSF1_up[0]  = 1.
+	self.IDSF1_down[0]  = 1.
+	self.IsoSF1_down[0]  = 1.
+	self.TrigSF1_down[0]  = 1.
+
 	self.IDSF2[0]  = 1.
 	self.IsoSF2[0]  = 1.
 	self.TrigSF2[0]  = 1.
+	self.IDSF2_up[0]  = 1.
+	self.IsoSF2_up[0]  = 1.
+	self.TrigSF2_up[0]  = 1.
+	self.IDSF2_down[0]  = 1.
+	self.IsoSF2_down[0]  = 1.
+	self.TrigSF2_down[0]  = 1.
+
 	yearin=era
         #print leadL.Pt(), subL.Pt(), channel_ll, LepP.Pt(), LepM.Pt(), era, is_trig_1
         if isMC :
 	    if '2016' in era and 'pre' in era : yearin='2016preVFP'
 	    if '2016' in era and 'pre' not in era : yearin='2016postVFP'
+	    hlt_pu = "Collisions18_UltraLegacy_goldenJSON"
+	    if '2016' in era : hlt_pu='Collisions16_UltraLegacy_goldenJSON'
+	    if '2017' in era : hlt_pu='Collisions17_UltraLegacy_goldenJSON'
+            self.weightPUtruejson[0] = self.evaluatorPU[hlt_pu].evaluate(entry.Pileup_nTrueInt, "nominal" )
+	    self.weightPUtruejson_up[0] = self.evaluatorPU[hlt_pu].evaluate(entry.Pileup_nTrueInt, "up" )
+	    self.weightPUtruejson_down[0] = self.evaluatorPU[hlt_pu].evaluate(entry.Pileup_nTrueInt, "down" )
 
 	    if channel_ll == 'mm' : 
 		  
-		if LepP.Pt()> 15 : muoneff1 = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "sf")
-		if LepM.Pt()> 15 : muoneff2 = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "sf")
-		if LepP.Pt()> 15 : muoniso1 = self.evaluator["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate("{0:s}_UL".format(str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "sf")
-		if LepM.Pt()> 15 : muoniso2 = self.evaluator["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate("{0:s}_UL".format(str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "sf")
+		if LepP.Pt()> 15 : 
+                    muoneff1 = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "sf")
+                    self.IDSF1_up[0] = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "systup")
+                    self.IDSF1_down[0] = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "systdown")
+
+		if LepM.Pt()> 15 : 
+                    muoneff2 = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "sf")
+                    self.IDSF2_up[0] = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "systup")
+                    self.IDSF1_down[0] = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "systdown")
+		if LepP.Pt()> 15 : 
+                    muoniso1 = self.evaluator["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate("{0:s}_UL".format(str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "sf")
+                    self.IsoSF1_up[0] = self.evaluator["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate("{0:s}_UL".format(str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "systup")
+                    self.IsoSF1_down[0] = self.evaluator["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate("{0:s}_UL".format(str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "systdown")
+
+		if LepM.Pt()> 15 : 
+                    muoniso2 = self.evaluator["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate("{0:s}_UL".format(str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "sf")
+                    self.IsoSF2_up[0] = self.evaluator["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate("{0:s}_UL".format(str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "systup")
+                    self.IsoSF2_down[0] = self.evaluator["NUM_TightRelIso_DEN_TightIDandIPCut"].evaluate("{0:s}_UL".format(str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "systdown")
 
 		if era == '2016' : 
-                    if leadL.Pt() > 26  : muontrig1 = self.evaluator["NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(yearin)), fabs(leadL.Eta()), leadL.Pt(), "sf")
-                    if subL.Pt() > 26 : muontrig2 = self.evaluator["NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(yearin)), fabs(subL.Eta()), subL.Pt(), "sf")
+                    if leadL.Pt() > 26  : 
+                        muontrig1 = self.evaluator["NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(yearin)), fabs(leadL.Eta()), leadL.Pt(), "sf")
+                        self.TrigSF1_up[0] = self.evaluator["NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(yearin)), fabs(leadL.Eta()), leadL.Pt(), "systup")
+                        self.TrigSF1_down[0] = self.evaluator["NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(yearin)), fabs(leadL.Eta()), leadL.Pt(), "systdown")
+
+                    if subL.Pt() > 26 : 
+                        muontrig2 = self.evaluator["NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(yearin)), fabs(subL.Eta()), subL.Pt(), "sf")
+                        self.TrigSF2_up[0] = self.evaluator["NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(yearin)), fabs(subL.Eta()), subL.Pt(), "systup")
+                        self.TrigSF2_down[0] = self.evaluator["NUM_IsoMu24_or_IsoTkMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(yearin)), fabs(subL.Eta()), subL.Pt(), "systdown")
                 #NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight  
 		if era =='2017' :  
 
-                    if leadL.Pt() > 29 : muontrig1 = self.evaluator["NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(leadL.Eta()), leadL.Pt(), "sf")
-                    if subL.Pt()>29 :muontrig2 = self.evaluator["NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(subL.Eta()), subL.Pt(), "sf")
+                    if leadL.Pt() > 29 : 
+                        muontrig1 = self.evaluator["NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(leadL.Eta()), leadL.Pt(), "sf")
+                        self.TrigSF1_up[0] = self.evaluator["NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(leadL.Eta()), leadL.Pt(), "systup")
+                        self.TrigSF1_down[0] = self.evaluator["NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(leadL.Eta()), leadL.Pt(), "systdown")
+                    if subL.Pt()>29 :
+                        muontrig2 = self.evaluator["NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(subL.Eta()), subL.Pt(), "sf")
+                        self.TrigSF2_up[0] = self.evaluator["NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(subL.Eta()), subL.Pt(), "systup")
+                        self.TrigSF2_down[0] = self.evaluator["NUM_IsoMu27_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(subL.Eta()), subL.Pt(), "systdown")
 		if era =='2018' :  
 
-                    if leadL.Pt() > 26 : muontrig1 = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(leadL.Eta()), leadL.Pt(), "sf")  ### for 2018 the json Veto only 24 SF..but we have used the HLT27
-                    if subL.Pt() > 26 : muontrig2 = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(subL.Eta()), subL.Pt(), "sf")  ### fora 2018 the json Veto only 24 SF..but we have used the HLT27
+                    if leadL.Pt() > 26 : 
+                        muontrig1 = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(leadL.Eta()), leadL.Pt(), "sf")  ### for 2018 the json Veto only 24 SF..but we have used the HLT27
+                        self.TrigSF1_up[0] = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(leadL.Eta()), leadL.Pt(), "systup")  ### for 2018 the json Veto only 24 SF..but we have used the HLT27
+                        self.TrigSF1_down[0] = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(leadL.Eta()), leadL.Pt(), "systdown")  ### for 2018 the json Veto only 24 SF..but we have used the HLT27
+                    if subL.Pt() > 26 : 
+                        muontrig2 = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(subL.Eta()), subL.Pt(), "sf")  ### fora 2018 the json Veto only 24 SF..but we have used the HLT27
+                        self.TrigSF2_up[0] = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(subL.Eta()), subL.Pt(), "systup") 
+                        self.TrigSF2_down[0] = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(subL.Eta()), subL.Pt(), "systdown") 
 
 		#print 'sfs are', muoneff , muoniso, muontrig
 
@@ -1335,10 +1433,25 @@ class outTuple2Lep() :
                 eleeff2=1.
                 eleiso1=1.
                 eleiso2=1.
-		if LepP.Pt()> 20 : eleeff1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "RecoAbove20", LepP.Eta(), LepP.Pt() )
-		if LepM.Pt() > 20 : eleeff2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "RecoAbove20", LepM.Eta(), LepM.Pt() )
-		if LepP.Pt()>20 : eleiso1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "wp90iso", LepP.Eta(), LepP.Pt() )
-		if LepM.Pt() > 20 : eleiso2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "wp90iso", LepM.Eta(), LepM.Pt() )
+		if LepP.Pt()> 20 : 
+                    eleeff1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "RecoAbove20", LepP.Eta(), LepP.Pt() )
+                    self.IDSF1_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfup" , "RecoAbove20", LepP.Eta(), LepP.Pt() )
+                    self.IDSF1_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfdown" , "RecoAbove20", LepP.Eta(), LepP.Pt() )
+
+		if LepM.Pt() > 20 : 
+                    eleeff2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "RecoAbove20", LepM.Eta(), LepM.Pt() )
+                    self.IDSF2_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfup" , "RecoAbove20", LepM.Eta(), LepM.Pt() )
+                    self.IDSF2_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfdown" , "RecoAbove20", LepM.Eta(), LepM.Pt() )
+
+		if LepP.Pt()>20 : 
+                    eleiso1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "wp90iso", LepP.Eta(), LepP.Pt() )
+                    self.IsoSF1_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfup" , "wp90iso", LepP.Eta(), LepP.Pt() )
+                    self.IsoSF1_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfdown" , "wp90iso", LepP.Eta(), LepP.Pt() )
+
+		if LepM.Pt() > 20 : 
+                    eleiso2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "wp90iso", LepM.Eta(), LepM.Pt() )
+                    self.IsoSF2_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfup" , "wp90iso", LepM.Eta(), LepM.Pt() )
+                    self.IsoSF2_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfdown" , "wp90iso", LepM.Eta(), LepM.Pt() )
 
 		self.IDSF[0]  = eleeff1*eleeff2
                 self.IsoSF[0]  = eleiso1*eleiso2
@@ -1360,13 +1473,17 @@ class outTuple2Lep() :
                 if eff_trig_mc_1 !=0 :    self.TrigSF1[0] = float(eff_trig_d_1/eff_trig_mc_1)
                 if eff_trig_mc_2 !=0 :    self.TrigSF2[0] = float(eff_trig_d_2/eff_trig_mc_2)
 		else : self.TrigSF[0]  = 1.
-		if is_trig_1 == 2 : self.TrigSF[0]  = self.TrigSF1[0]*self.TrigSF2[0]
-		if is_trig_1 == 1 : self.TrigSF[0]  = self.TrigSF1[0]
-		if is_trig_1 == -1 : self.TrigSF[0]  = self.TrigSF2[0]
+		if is_trig_1 == 2 : 
+                    self.TrigSF[0]  = self.TrigSF1[0]*self.TrigSF2[0]
+		if is_trig_1 == 1 : 
+                    self.TrigSF[0]  = self.TrigSF1[0]
+		if is_trig_1 == -1 : 
+                    self.TrigSF[0]  = self.TrigSF2[0]
 
 
 	lep_index_1 = lepList[0]
 	lep_index_2 = lepList[1]
+        
         # trig
         if SystIndex ==0 : 
 	    self.isTrig_1[0]   = is_trig_1

@@ -7,6 +7,7 @@ class Canvas:
 
    def __init__(self, name, format, x1, y1, x2, y2):
       self.name = name
+      print 'all CANVAS ======================>', name, format, x1, y1, x2, y2
       self.format = format
       self.plotNames = [name + "." + i for i in format.split(',')]
       if ":" in self.plotNames : plotNAmes = plotNames.replace(":","_vs_")
@@ -18,11 +19,31 @@ class Canvas:
       self.arrows= []
       self.latexs= []
       self.extra=[]
+      extraa = ''
       if 'Mu' in name : self.extra = 'W #rightarrow #mu#nu'
       if 'El' in name : self.extra = 'W #rightarrow e#nu'
       if 'dy' in name and  'Mu' in name : self.extra = 'Z #rightarrow #mu#mu'
       if 'dy' in name and 'El' in name : self.extra = 'Z #rightarrow ee'
       if 'gjets' in name  : self.extra = '\gamma + jets'
+      #if 'njetsgt0' in name : self.extra += 'N_{jets}>0'
+      #allpv=['_pult10', '_pu10to20', '_pu20to30', '_pu30to40', '_pu40to50', '_pugeq50']
+      if 'njetsgt0' in name : 
+          if '_pu' not in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0}"
+          if '_pult10' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0 - nVtx<10}"
+          if '_pu10to20' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0 - 10<nVtx<20}"
+          if '_pu20to30' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0 - 20<nVtx<30}"
+          if '_pu30to40' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0 - 30<nVtx<40}"
+          if '_pu40to50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0 - 40<nVtx<50}"
+          if '_pugeq50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0 - nVtx>50}"
+
+      if 'njetsgeq0' in name : 
+          if '_pu' not in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0}"
+          if '_pult10' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - nVtx<10}"
+          if '_pu10to20' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - 10<nVtx<20}"
+          if '_pu20to30' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - 20<nVtx<30}"
+          if '_pu30to40' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - 30<nVtx<40}"
+          if '_pu40to50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - 40<nVtx<50}"
+          if '_pugeq50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - nVtx>50}"
       self.bands = []
       self.options = []
       self.labels = []      
@@ -74,8 +95,8 @@ class Canvas:
       latexb.SetTextColor(r.kBlack);
       latexb.SetTextFont(42);
       latexb.SetTextAlign(31);
-      latexb.SetTextSize(0.055);
-      #latexb.DrawLatex(0.35, 0.76, "#it{Preliminary}")
+      latexb.SetTextSize(0.045);
+      latexb.DrawLatex(0.44, 0.82, "#it{Preliminary}")
  
       #if(isData):
           #if isnVert:
@@ -86,7 +107,12 @@ class Canvas:
       #  latexb.DrawLatex(0.42, 0.93, "#it{Simulation}")
 
       text_lumi = "35.9 fb^{-1} (13 TeV)"
-      text_lumi = str(lumi)+" fb^{-1} (13 TeV)"
+      year = '2018 - '
+      if '41' in str(lumi) : year = '2017 - '
+      if '16.15' in str(lumi) : year = '2016postVFP - '
+      if '19' in str(lumi) : year = '2016preVFP - '
+      if '35' in str(lumi) : year = '2016 - '
+      text_lumi = str(year) + str(lumi)+" fb^{-1} (13 TeV)"
       #text_lumi = str(lumi)+" fb^{-1} (13 TeV, "+ run + ")"
       latexc = TLatex()
       latexc.SetNDC();
@@ -107,7 +133,8 @@ class Canvas:
       if event == 0:
           latexd.DrawLatex(0.059, 0.93, "Events / GeV")          
       else:
-          latexd.DrawLatex(0.059, 0.93, "Events / " +str(event) + " GeV")          
+          #latexd.DrawLatex(0.059, 0.93, "Events / " +str(event) + " GeV")          
+          latexd.DrawLatex(0.059, 0.93, "Events ")          
 
       latexe = TLatex()
       latexe.SetNDC();
@@ -858,6 +885,7 @@ class Canvas:
     lTex2 = TLatex()
     lTex2.SetNDC()
     lTex2.SetTextSize(0.045)
+    #lTex2.SetTextFont(12)
     lTex2.DrawLatex(0.28, 0.75, '{0:s}'.format(self.extra))
 
     for band in self.bands:
@@ -1331,7 +1359,7 @@ class Canvas:
 	hMC.SetBinError(km, math.sqrt(binE**2 + lumiErr**2 + puErr**2 + idErr**2+leptErr**2 + trigErr**2))
 	#hMC.SetBinError(km, math.sqrt(binE*binE + lumiErr*lumiErr ))#+ leptErr*leptErr + trigErr*trigErr))
 
-    if 'boson_pt' in option : 
+    if 'boson_pt' in option or 'iso_' in option or 'Photon_' in option: 
 	doAllErrors = 0
 	statOnly = 1
     
@@ -1380,6 +1408,7 @@ class Canvas:
     lTex2 = TLatex()
     lTex2.SetNDC()
     lTex2.SetTextSize(0.045)
+    #lTex2.SetTextFont(12)
     lTex2.DrawLatex(0.28, 0.75, '{0:s}'.format(self.extra))
 
     for band in self.bands:
@@ -1438,7 +1467,7 @@ class Canvas:
     ymax = 2.                                                                                                                                                              
     
 
-    #make tot tot errors 
+    #make tot tot / JER, JES/ Uncl/ errors 
     for km in range(0, hMC.GetNbinsX()+1):
 
         mc_bin_error = hMC.GetBinError(km)
@@ -1448,24 +1477,25 @@ class Canvas:
 	uncl_diff_down = hMC.GetBinContent(km) - hunclDown.GetBinContent(km)
 	jer_diff_up = hjerUp.GetBinContent(km) - hMC.GetBinContent(km)
 	jer_diff_down = hMC.GetBinContent(km) - hjerDown.GetBinContent(km)
-       
-	#conte1tottot = math.sqrt(mc_bin_error**2 + jes_diff_up**2 + uncl_diff_up**2 + jer_diff_up**2 + pu_diff_up**2)
-	#conte2tottot = math.sqrt(mc_bin_error**2 + jes_diff_down**2 + uncl_diff_down**2 + jer_diff_down**2 + pu_diff_down**2)
+        #print 'diffs',  jes_diff_up,  jes_diff_down, jer_diff_up,  jer_diff_down, uncl_diff_up, uncl_diff_down
 	conte1tottot = math.sqrt(mc_bin_error**2 + jes_diff_up**2 + uncl_diff_up**2 + jer_diff_up**2 )
 	conte2tottot = math.sqrt(mc_bin_error**2 + jes_diff_down**2 + uncl_diff_down**2 + jer_diff_down**2 )
-	if conte1tottot > conte2tottot:
+
+        if conte1tottot > conte2tottot:
 	    den1tottot.SetBinContent (km, hMC.GetBinContent (km) + conte1tottot);                                                                                            
 	    den2tottot.SetBinContent (km, hMC.GetBinContent (km) - conte1tottot);                                                                                                                           
+	    ymax = hMC.GetBinContent(km) + conte1tottot;           
+	    eyltottot[km] = conte2tottot;                                                                                                                                                           
+	    eyhtottot[km] = conte1tottot;                                                                                                                         
 	else:
 	    den1tottot.SetBinContent (km, hMC.GetBinContent (km) + conte2tottot);  
 	    den2tottot.SetBinContent (km, hMC.GetBinContent (km) - conte2tottot);
-	    #print 'in the else will add errors tottot', km, hMC.GetBinContent (km), conte2tottot
+	    ymax = hMC.GetBinContent(km) + conte2tottot;           
+	    eyltottot[km] = conte1tottot;                                                                                                                                                           
+	    eyhtottot[km] = conte2tottot;                                                                                                                         
 
-	ymax = hMC.GetBinContent(km) + conte1tottot;           
 	exl[km] = hMC.GetBinWidth (km) / 2;                                                                                                                                 
 	exh[km] = hMC.GetBinWidth (km) / 2;                                                                                                                                 
-	eyltottot[km] = conte2tottot;                                                                                                                                                           
-	eyhtottot[km] = conte1tottot;                                                                                                                         
     
     ratiouptottot.Divide(den1tottot);                                                                                                                                                         
     ratiodowntottot.Divide(den2tottot);                   
@@ -1492,33 +1522,31 @@ class Canvas:
 
 
 
-    #make tot tot errors 
+    #make syst + jes errors 
     for km in range(0, hMC.GetNbinsX()+1):
 
         mc_bin_error = hMC.GetBinError(km)
 	jes_diff_up = hjesUp.GetBinContent(km) - hMC.GetBinContent(km)
 	jes_diff_down = hjesDown.GetBinContent(km) - hMC.GetBinContent(km)
-	uncl_diff_up = hunclUp.GetBinContent(km) - hMC.GetBinContent(km)
-	uncl_diff_down = hMC.GetBinContent(km) - hunclDown.GetBinContent(km)
-	jer_diff_up = hjerUp.GetBinContent(km) - hMC.GetBinContent(km)
-	jer_diff_down = hMC.GetBinContent(km) - hjerDown.GetBinContent(km)
 
 	conte1tottot = math.sqrt(mc_bin_error**2 + jes_diff_up**2 )
 	conte2tottot = math.sqrt(mc_bin_error**2 + jes_diff_down**2 )
-
+	#den1tottot.SetBinContent (km, hMC.GetBinContent (km) + conte1tottot)
+        #den2tottot.SetBinContent (km, hMC.GetBinContent (km) - conte2tottot)
 	if conte1tottot > conte2tottot:
 	    den1tottot.SetBinContent (km, hMC.GetBinContent (km) + conte1tottot);                                                                                            
 	    den2tottot.SetBinContent (km, hMC.GetBinContent (km) - conte1tottot);                                                                                                                           
+	    ymax = hMC.GetBinContent(km) + conte1tottot;           
+	    eyltottot[km] = conte2tottot;                                                                                                                                                           
+	    eyhtottot[km] = conte1tottot;                                                                                                                         
 	else:
 	    den1tottot.SetBinContent (km, hMC.GetBinContent (km) + conte2tottot);  
 	    den2tottot.SetBinContent (km, hMC.GetBinContent (km) - conte2tottot);
-	    #print 'in the else will add errors tottot', km, hMC.GetBinContent (km), conte2tottot
-	ymax = hMC.GetBinContent(km) + conte1tottot;           
+	    ymax = hMC.GetBinContent(km) + conte2tottot;           
+	    eyltottot[km] = conte1tottot;                                                                                                                                                           
+	    eyhtottot[km] = conte2tottot;                                                                                                                         
 	exl[km] = hMC.GetBinWidth (km) / 2;                                                                                                                                 
 	exh[km] = hMC.GetBinWidth (km) / 2;                                                                                                                                 
-	eyltottot[km] = conte2tottot;                                                                                                                                                           
-	eyhtottot[km] = conte1tottot;                                                                                                                         
-    
     ratiouptottot.Divide(den1tottot);                                                                                                                                                         
     ratiodowntottot.Divide(den2tottot);                   
     ratiodata = copy.deepcopy(hdata.Clone("ratiodata"))
@@ -1544,12 +1572,6 @@ class Canvas:
 
 
 
-
-
-
-
-
-
     #make tot errors
     den1tot = copy.deepcopy(hMC.Clone("bkgden1"))
     den2tot = copy.deepcopy(hMC.Clone("bkgden2"))
@@ -1564,7 +1586,7 @@ class Canvas:
     ratiouptot = copy.deepcopy(hMC.Clone("ratiouptot"))
     ratiodowntot = copy.deepcopy(hMC.Clone("ratiodowntot"))      
     
-    
+    # make syst + jes + uncl   
     for km in range(0, hMC.GetNbinsX()+1):
 
 	#conte1tot =  math.sqrt( hMC.GetBinError (km) **2  + (hjesUp.GetBinContent (km) - hMC.GetBinContent   (km))**2 + (hunclUp.GetBinContent (km) - hMC.GetBinContent(km))**2 )       
@@ -1575,35 +1597,25 @@ class Canvas:
 	jes_diff_down = hjesDown.GetBinContent(km) - hMC.GetBinContent(km)
 	uncl_diff_up = hunclUp.GetBinContent(km) - hMC.GetBinContent(km)
 	uncl_diff_down = hMC.GetBinContent(km) - hunclDown.GetBinContent(km)
-	jer_diff_up = hjerUp.GetBinContent(km) - hMC.GetBinContent(km)
-	jer_diff_down = hMC.GetBinContent(km) - hjerDown.GetBinContent(km)
 
 	conte1tot = math.sqrt(mc_bin_error**2 + jes_diff_up**2 + uncl_diff_up**2 )
 	conte2tot = math.sqrt(mc_bin_error**2 + jes_diff_down**2 + uncl_diff_down**2 )
-
-	if not (conte1tot+conte2tot)>0 : continue
-	if (abs(conte1tot-conte2tot)/(conte1tot+conte2tot) <1) and (conte1tot+conte2tot)>0 :
-	    if conte1tot > conte2tot:
-		den1tot.SetBinContent (km, hMC.GetBinContent (km) + conte1tot);
-		den2tot.SetBinContent (km, hMC.GetBinContent (km) - conte1tot);                                                                                           
-	    else:
-		den1tot.SetBinContent (km, hMC.GetBinContent (km) + conte2tot);  
-		den2tot.SetBinContent (km, hMC.GetBinContent (km) - conte2tot);
-	else : 
-	    if conte1tot > conte2tot:
-		den1tot.SetBinContent (km, hMC.GetBinContent (km) + conte2tot);  
-		den2tot.SetBinContent (km, hMC.GetBinContent (km) - conte2tot);
-	    else : 
-		den1tot.SetBinContent (km, hMC.GetBinContent (km) + conte1tot);  
-		den2tot.SetBinContent (km, hMC.GetBinContent (km) - conte1tot);
+        if conte1tot > conte2tot:
+	    den1tot.SetBinContent (km, hMC.GetBinContent (km) + conte1tot)
+            den2tot.SetBinContent (km, hMC.GetBinContent (km) - conte1tot)
+	    ymax = hMC.GetBinContent(km) + conte1tot;           
+	    eyltot[km] = conte2tot;                                                                                                                                                           
+	    eyhtot[km] = conte1tot;                                                                                   
+        else:
+	    den1tot.SetBinContent (km, hMC.GetBinContent (km) + conte2tot)
+            den2tot.SetBinContent (km, hMC.GetBinContent (km) - conte2tot)
+	    ymax = hMC.GetBinContent(km) + conte2tot;           
+	    eyltot[km] = conte1tot;                                                                                                                                                           
+	    eyhtot[km] = conte2tot;                                                                                   
 
 
-
-	ymax = hMC.GetBinContent(km) + conte1tot;           
 	exl[km] = hMC.GetBinWidth (km) / 2;                                                                                                                                 
 	exh[km] = hMC.GetBinWidth (km) / 2;                                                                                                                                 
-	eyltot[km] = conte2tot;                                                                                                                                                           
-	eyhtot[km] = conte1tot;                                                                                   
     
     ratiouptot.Divide(den1tot);                                                                                                                                                         
     ratiodowntot.Divide(den2tot);                   
@@ -1641,23 +1653,29 @@ class Canvas:
     ratiodown = copy.deepcopy(hMC.Clone("ratiodown")) 
     
     for km in range(0, hMC.GetNbinsX()+1):
+        mc_bin_error = hMC.GetBinError(km)
+	jes_diff_up = hjesUp.GetBinContent(km) - hMC.GetBinContent(km)
+	jes_diff_down = hjesDown.GetBinContent(km) - hMC.GetBinContent(km)
 
-	conte1 =  math.sqrt(hMC.GetBinError (km)**2 + (hjesUp.GetBinContent (km) - hMC.GetBinContent   (km))**2) 
-    
-	conte2 =  math.sqrt(hMC.GetBinError (km)**2 + (hMC.GetBinContent (km) - hjesDown.GetBinContent (km))**2)   
-
-	#conte1 =  math.sqrt( (hjesUp.GetBinContent (km) - hMC.GetBinContent   (km))*(hjesUp.GetBinContent (km) -  hMC.GetBinContent (km)));       
-	#conte2 =  math.sqrt((hMC.GetBinContent (km) - hjesDown.GetBinContent (km))*(hMC.GetBinContent (km) -  hjesDown.GetBinContent (km)));   
-
+	conte1 = math.sqrt(mc_bin_error**2 + jes_diff_up**2 )
+	conte2 = math.sqrt(mc_bin_error**2 + jes_diff_down**2 )
+       
+        '''
+	den1.SetBinContent (km, hMC.GetBinContent (km) + conte1);                                                                                                                           
+	den2.SetBinContent (km, hMC.GetBinContent (km) - conte2);                                                                                                                           
+        '''
 	if conte1 > conte2:
 	    den1.SetBinContent (km, hMC.GetBinContent (km) + conte1);                                                                                                                           
 	    den2.SetBinContent (km, hMC.GetBinContent (km) - conte1);                                                                                                                           
+	    ymax = hMC.GetBinContent(km) + conte1;           
+	    eyl[km] = conte2;                                                                                                                                                           
+	    eyh[km] = conte1;                                                                                                                                                                        
 	else:
 	    den1.SetBinContent (km, hMC.GetBinContent (km) + conte2);  
 	    den2.SetBinContent (km, hMC.GetBinContent (km) - conte2);
-	ymax = hMC.GetBinContent(km) + conte1;           
-	eyl[km] = conte2;                                                                                                                                                           
-	eyh[km] = conte1;                                                                                                                                                                        
+	    ymax = hMC.GetBinContent(km) + conte2;           
+	    eyl[km] = conte1;                                                                                                                                                           
+	    eyh[km] = conte2;                                                                                                                                                                        
     
     ratioup.Divide(den1);                                                                                                                                                         
     ratiodown.Divide(den2);                   
@@ -1667,7 +1685,6 @@ class Canvas:
 	    eyh[km] = (1. / ratioup.GetBinContent (km) - 1)*ratiodata.GetBinContent (km);                                                                                                   
 	else:                                                                                                                                                                       
 	    eyh[km] = 0;                                                                                                                                                                 
-																						       
 	if (ratiodown.GetBinContent (km) != 0):
 	    eyl[km] = (1 - 1. / ratiodown.GetBinContent (km))*ratiodata.GetBinContent (km);                                                                                                   
 	else:                                                                                                                                                                       

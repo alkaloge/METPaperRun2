@@ -149,7 +149,7 @@ class Sample:
 
    # this is the correct one!!!
    def getTH1F(self, lumi, name, var, nbin, xmin, xmax, cut, options, xlabel, doNPV):
-      print 'inside the correct one....'
+      print 'inside the correct one....', name, var, options
       if(xmin == xmax):
         h = TH1F(name, "", len(nbin)-1, array('d', nbin))
         #h = TH1F(name, "", 10,0.,500.)
@@ -178,9 +178,10 @@ class Sample:
           if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName(): cut = cut +  " && LHE_Njets[0]<1 "
           cut =  cut    + ")" 
           #cut =  cut    + "* ( " + "weight[0] " +  " )"  + "* ( " + "L1PreFiringWeight_Nom[0] " +  " )"  + "* ( " + "IDSF " +  " )"+ "* ( " + "TrigSF" +  " )"+ "* ( " + "IsoSF " +  " )"
-          cut =  cut    + "* ( " + "weight[0] " +  " )"  + "* ( " + "L1PreFiringWeight_Nom[0] " +  " )"  + "* ( " + "TrigSF" +  " )"+ "* ( " + "IsoSF " +  " )"
+          cut =  cut    + "* ( " + "weight[0] " +  " )"  + "* ( " + "L1PreFiringWeight_Nom[0] " +  " )"  + "* ( " + "TrigSF" +  " )"
           if 'puup'not in var.lower() and 'pudown' not in var.lower() : 
-              cut =  cut    + "* fabs( " + "weightPUtruejson[0] " +  " )"  
+              #cut =  cut    + "* fabs( " + "weightPUtruejson[0] " +  " )"  
+              cut =  cut    + "* fabs( " + "weightPUtrue[0] " +  " )"  
           if 'puup' in var.lower(): 
               cut =  cut    + "* fabs( " + "weightPUtruejson_up[0] " +  " )"  
               var = var.replace('PUUp', '')
@@ -190,16 +191,42 @@ class Sample:
               var = var.replace('PUDown', '')
               var = var.replace('PUdown', '')
 
-          if 'idup' not in var.lower() and 'iddown' not in var.lower() :
-              cut =  cut    + "* ( " + "IDSF[0] " +  " )"  
-          if 'idup' in var.lower() :
-              cut =  cut    + "* ( " + "IDSF_up[0] " +  " )"  
-              var = var.replace('IDUp', '')
-              var = var.replace('IDup', '')
-          if 'iddown' in var.lower() :
-              cut =  cut    + "* ( " + "IDSF_down[0] " +  " )"  
-              var = var.replace('IDDown', '')
-              var = var.replace('IDdown', '')
+          if 'dy_' in options : 
+	      if 'isoup' not in var.lower() and 'isodown' not in var.lower() :
+		  cut =  cut    + "* ( " + "IsoSF1[0] " +  " )"  + "* ( " + "IsoSF2[0] " +  " )"
+	      if 'isoup' in var.lower() :
+		  cut =  cut    + "* ( " + "IsoSF1_up[0] " +  " )"  + "* ( " + "IsoSF2_up[0] " +  " )"
+		  var = var.replace('ISoUp', '')
+		  var = var.replace('ISoup', '')
+	      if 'isodown' in var.lower() :
+		  cut =  cut    + "* ( " + "IsoSF1_down[0] " +  " )"   + "* ( " + "IsoSF2_down[0] " +  " )"
+		  var = var.replace('ISoDown', '')
+		  var = var.replace('ISodown', '')
+
+	      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+		  cut =  cut    + "* ( " + "IDSF1[0] " +  " )"  + "* ( " + "IDSF2[0] " +  " )"
+	      if 'idup' in var.lower() :
+		  cut =  cut    + "* ( " + "IDSF1_up[0] " +  " )"  + "* ( " + "IDSF2_up[0] " +  " )"
+		  var = var.replace('IDUp', '')
+		  var = var.replace('IDup', '')
+	      if 'iddown' in var.lower() :
+		  cut =  cut    + "* ( " + "IDSF1_down[0] " +  " )"   + "* ( " + "IDSF2_down[0] " +  " )"
+		  var = var.replace('IDDown', '')
+		  var = var.replace('IDdown', '')
+
+          if 'gjets' in options or 'wjets' in options: 
+	      if '' not in var.lower() and 'iddown' not in var.lower() :
+              cut =  cut    + "* ( " + "IDSF[0] " +  " )"
+	      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+		  cut =  cut    + "* ( " + "IDSF[0] " +  " )"  
+	      if 'idup' in var.lower() :
+		  cut =  cut    + "* ( " + "IDSF_up[0] " +  " )"  
+		  var = var.replace('IDUp', '')
+		  var = var.replace('IDup', '')
+	      if 'iddown' in var.lower() :
+		  cut =  cut    + "* ( " + "IDSF_down[0] " +  " )"  
+		  var = var.replace('IDDown', '')
+		  var = var.replace('IDdown', '')
           
           if 'WJets' in h.GetName() and 'NLO' not in h.GetName() :
                cut = cut +  "&& ( " + "weight[0] " +  " ) < 10"
@@ -472,13 +499,18 @@ class Tree:
 		 if 'varbin' in options : nbin = [50, 60, 70, 80, 90, 100, 120, 150, 200]
 		 if 'onebin' in options  : nbin=range(50,200,1)
 
-     if 'Photon_r9_1' in var : 
-         nbin = arange(0.8, 1.05, 0.05)
-     if 'Photon_hoe_1' in var : 
+     if 'Photon_r9' in var : 
+         nbin = arange(0.8, 1.05, 0.01)
+     if 'Photon_hoe' in var : 
          nbin = arange(0.0, 0.2, 0.01)
+     if 'jetIdx' in var : 
+         nbin = arange(-1, 23,1)
 
      if 'iso' in var : 
-         nbin = arange( 0., 0.15, 0.025)
+         nbin = arange( 0., 0.10, 0.005)
+
+     if 'sieie' in var : 
+         nbin = arange( 0., 0.016, 0.002)
 
      if 'WTmass' in var or 'Wmass' in var : 
          islog  = False 
@@ -493,7 +525,7 @@ class Tree:
          nbin = arange(0,4.2,.2)
          #if 'onebin' in options  : nbin=range(-3,3,1)
 
-     if 'tight' in var or 'high' in var or 'is' in var: nbin = range(-1,2)
+     if 'tight' in var or 'high' in var or 'is' in var and 'iso' not in var: nbin = range(-1,2)
      if 'PV' in var : 
          nbin = arange(0,100,0.5)
      if 'ip3d' in var : 

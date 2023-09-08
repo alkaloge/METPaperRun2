@@ -7,6 +7,7 @@ class Canvas:
 
    def __init__(self, name, format, x1, y1, x2, y2):
       self.name = name
+      print 'all CANVAS ======================>', name, format, x1, y1, x2, y2
       self.format = format
       self.plotNames = [name + "." + i for i in format.split(',')]
       if ":" in self.plotNames : plotNAmes = plotNames.replace(":","_vs_")
@@ -18,11 +19,15 @@ class Canvas:
       self.arrows= []
       self.latexs= []
       self.extra=[]
+      extraa = ''
       if 'Mu' in name : self.extra = 'W #rightarrow #mu#nu'
       if 'El' in name : self.extra = 'W #rightarrow e#nu'
       if 'dy' in name and  'Mu' in name : self.extra = 'Z #rightarrow #mu#mu'
       if 'dy' in name and 'El' in name : self.extra = 'Z #rightarrow ee'
       if 'gjets' in name  : self.extra = '\gamma + jets'
+      #if 'njetsgt0' in name : self.extra += 'N_{jets}>0'
+      if 'njetsgt0' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0}"
+      if 'njetsgeq0' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0}"
       self.bands = []
       self.options = []
       self.labels = []      
@@ -74,8 +79,8 @@ class Canvas:
       latexb.SetTextColor(r.kBlack);
       latexb.SetTextFont(42);
       latexb.SetTextAlign(31);
-      latexb.SetTextSize(0.055);
-      #latexb.DrawLatex(0.35, 0.76, "#it{Preliminary}")
+      latexb.SetTextSize(0.045);
+      latexb.DrawLatex(0.44, 0.82, "#it{Preliminary}")
  
       #if(isData):
           #if isnVert:
@@ -86,7 +91,12 @@ class Canvas:
       #  latexb.DrawLatex(0.42, 0.93, "#it{Simulation}")
 
       text_lumi = "35.9 fb^{-1} (13 TeV)"
-      text_lumi = str(lumi)+" fb^{-1} (13 TeV)"
+      year = '2018 - '
+      if '41' in str(lumi) : year = '2017 - '
+      if '16.15' in str(lumi) : year = '2016postVFP - '
+      if '19' in str(lumi) : year = '2016preVFP - '
+      if '35' in str(lumi) : year = '2016 - '
+      text_lumi = str(year) + str(lumi)+" fb^{-1} (13 TeV)"
       #text_lumi = str(lumi)+" fb^{-1} (13 TeV, "+ run + ")"
       latexc = TLatex()
       latexc.SetNDC();
@@ -107,7 +117,8 @@ class Canvas:
       if event == 0:
           latexd.DrawLatex(0.059, 0.93, "Events / GeV")          
       else:
-          latexd.DrawLatex(0.059, 0.93, "Events / " +str(event) + " GeV")          
+          #latexd.DrawLatex(0.059, 0.93, "Events / " +str(event) + " GeV")          
+          latexd.DrawLatex(0.059, 0.93, "Events ")          
 
       latexe = TLatex()
       latexe.SetNDC();
@@ -858,6 +869,7 @@ class Canvas:
     lTex2 = TLatex()
     lTex2.SetNDC()
     lTex2.SetTextSize(0.045)
+    #lTex2.SetTextFont(12)
     lTex2.DrawLatex(0.28, 0.75, '{0:s}'.format(self.extra))
 
     for band in self.bands:
@@ -1283,6 +1295,535 @@ class Canvas:
 	path = 'plots/'+plotName
 	self.ensurePath(path)
 	self.myCanvas.SaveAs(path)
+
+
+   def saveRatioGjets(self, legend, isData, log,  lumi, hdata, hMC, hjerUp, hjerDown ,  hjesUp, hjesDown ,hunclUp, hunclDown, hpuUp, hpuDown, hidUp, hidDown,title,  option, run = '2016',  r_ymin=0, r_ymax=2):
+
+      
+    print '=============>======', option, run, title, lumi
+    #plot_var.saveRatio(1,1, isLog, lumi, data_hist, mc_histo, mc_up, mc_down, mc_jesup, mc_jesdown, mc_unclUp, mc_unclDown, varTitle , option, run_str)
+    #print 'inside Canvas' 'hdata, hMC, hjerUp, hjerDown ,  hjesUp, hjesDown ,hunclUp, hunclDown', hdata.GetSumOfWeights(), hMC.GetSumOfWeights(), hjerUp.GetSumOfWeights(), hjerDown.GetSumOfWeights(), hjesUp.GetSumOfWeights(), hjesDown.GetSumOfWeights(), hunclUp.GetSumOfWeights(), hunclDown.GetSumOfWeights()
+    events = 5  
+    events = hdata.GetBinWidth(1)
+    setUpAxis = 1 
+    setLowAxis = 1 
+    #log = 1
+    doAllErrors = 1
+    isNVert = 0
+    puppi = 0
+    statOnly = 0
+    tightRatio = 0
+    isSig1jet = 0
+    tightRatio = 1
+    lowAxis = 0
+    makeQCDuncert = 0
+    doZ = 0
+    lumiSys  = 0.012
+    if '41' in run : lumiSys = 0.023
+    if '59' in run : 
+        print 'change of lumiSyst' 
+        lumiSys = 0.016
+    leptSys  = 0.02
+    trigSys  = 0.02
+    if 'phi' in title.lower() : 
+	hMC.SetMaximum(hMC.GetMaximum()*15)
+	hdata.SetMaximum(hMC.GetMaximum())
+
+    for km in range(0, hMC.GetNbinsX()+1):
+
+	binC = hMC.GetBinContent(km)
+	binE = hMC.GetBinError(km)
+	lumiErr = binC*lumiSys
+	leptErr = binC*leptSys
+	trigErr = binC*trigSys
+
+        puErr = max( math.fabs(hpuUp.GetBinContent(km) - hMC.GetBinContent(km)), math.fabs(hpuDown.GetBinContent(km) - hMC.GetBinContent(km)))
+        idErr = max( math.fabs(hidUp.GetBinContent(km) - hMC.GetBinContent(km)), math.fabs(hidDown.GetBinContent(km) - hMC.GetBinContent(km)))
+
+	hMC.SetBinError(km, math.sqrt(binE**2 + lumiErr**2 + puErr**2 + idErr**2+leptErr**2 + trigErr**2))
+	#hMC.SetBinError(km, math.sqrt(binE*binE + lumiErr*lumiErr ))#+ leptErr*leptErr + trigErr*trigErr))
+
+    if 'boson_pt' in option : 
+	doAllErrors = 0
+	statOnly = 1
+    
+    self.myCanvas.cd()
+    pad1 = TPad("pad1", "pad1", 0, 0.3, 1, 1.0) 
+    pad1.SetBottomMargin(0.01)
+    pad1.Draw()
+    pad2 = TPad("pad2", "pad2", 0, 0.0, 1, 0.3)
+    pad2.SetTopMargin(0.1);
+    pad2.SetBottomMargin(0.3);
+    pad2.Draw();
+
+    pad1.cd()
+    if(log):
+	pad1.SetLogy(1)
+   
+    for i in range(0, len(self.histos)):
+	if(self.ToDraw[i] != 0):
+	    if lowAxis: 
+		self.histos[i].SetMinimum(0.00001)
+	    if setLowAxis:
+		self.histos[i].SetMinimum(100.)
+	    if setUpAxis and not log:    
+		self.histos[i].SetMaximum(hMC.Integral()*10)
+		
+	    #self.histos[i].SetMaximum(200)
+	    #self.histos[i].SetMaximum(hMC.Integral()*2)
+	    #self.histos[i].SetMaximum(hMC.Integral()*2)
+	    if log : self.histos[i].SetMaximum(hMC.GetMaximum()*100)
+	    else :  self.histos[i].SetMaximum(hMC.GetMaximum()*2)
+	    #self.histos[i].SetMinimum(0.001)
+	    if log : self.histos[i].SetMinimum(10.)
+	    else : self.histos[i].SetMinimum(0.1)
+	    if 'boson' in title.lower() : 
+	        self.histos[i].SetMaximum(hMC.GetMaximum()*500)
+	    #print '----------------------------========================= histo i', i, hMC.GetName(), hMC.GetMaximum(), 'histos name', self.histos[i].GetName(), self.histos[i].GetMaximum(), log, lowAxis, setLowAxis, setUpAxis 
+
+	    self.histos[i].Draw(self.options[i])
+    #print '----------------------------=========================', hMC.GetMaximum(), log, lowAxis, setLowAxis, setUpAxis 
+    if(legend):
+	self.makeLegend(log)
+	self.myLegend.Draw()
+
+    #lTex2 = TLatex(hMC.GetBinLowEdge(2), hMC.GetMaximum()*0.85,'{0:s}'.format(self.extra))
+    #lTex2 = TLatex(0.28, 0.75,'{0:s}'.format(self.extra))
+    lTex2 = TLatex()
+    lTex2.SetNDC()
+    lTex2.SetTextSize(0.045)
+    #lTex2.SetTextFont(12)
+    lTex2.DrawLatex(0.28, 0.75, '{0:s}'.format(self.extra))
+
+    for band in self.bands:
+	band.Draw('f')
+
+    for line in self.lines:
+	line.Draw()
+
+    for arrow in self.arrows:
+	arrow.Draw()
+
+    for latex in self.latexs:
+	lat = TLatex()
+	lat.SetNDC()
+	lat.SetTextSize(latex[-1])
+	lat.SetTextFont(latex[-2])
+	lat.DrawLatex(latex[0], latex[1], latex[2])
+
+    hdata.Sumw2()
+    hMC.Sumw2()
+    ratio = copy.deepcopy(hdata.Clone("ratio"))
+    ratio.Divide(hMC)  #here we make the ratio INFO
+    #ratio = self.ratioHist(hdata, hMC, hMC.GetName())
+
+    if tightRatio:
+	ratio.GetYaxis().SetRangeUser(0., 2.);
+    else:
+	ratio.GetYaxis().SetRangeUser(r_ymin, r_ymax);
+    if option == "test":
+	ratio.GetYaxis().SetTitle("postfix/prefix")
+    else:
+	ratio.GetYaxis().SetTitle("Data / MC")
+    ratio.GetYaxis().CenterTitle();
+    ratio.GetYaxis().SetLabelSize(0.12);
+    ratio.GetXaxis().SetLabelSize(0.12);
+    ratio.GetXaxis().SetTitleOffset(0.91);
+    ratio.GetYaxis().SetNdivisions(4);
+    ratio.GetYaxis().SetTitleSize(0.13);
+    ratio.GetXaxis().SetTitleSize(0.135);
+    ratio.GetYaxis().SetTitleOffset(0.41);
+    ratio.SetMarkerSize(0.6*ratio.GetMarkerSize());
+    ratio.GetXaxis().SetTitle(title)
+    
+    den1tottot = copy.deepcopy(hMC.Clone("bkgden1"))
+    den2tottot = copy.deepcopy(hMC.Clone("bkgden2"))
+																						       
+    nvar = hMC.GetNbinsX()+1                                                                                                                                                           
+    x = array.array('f', range(0, hMC.GetNbinsX()+1))
+    y = array.array('f', range(0, hMC.GetNbinsX()+1))
+    exl = array.array('f', range(0, hMC.GetNbinsX()+1))
+    eyltottot = array.array('f', range(0, hMC.GetNbinsX()+1))
+    exh = array.array('f', range(0, hMC.GetNbinsX()+1))
+    eyhtottot = array.array('f', range(0, hMC.GetNbinsX()+1))
+    ratiouptottot = copy.deepcopy(hMC.Clone("ratiouptottot"))
+    ratiodowntottot = copy.deepcopy(hMC.Clone("ratiodowntottot"))      
+    ymax = 2.                                                                                                                                                              
+    
+
+    #make tot tot errors 
+    for km in range(0, hMC.GetNbinsX()+1):
+
+        mc_bin_error = hMC.GetBinError(km)
+	jes_diff_up = hjesUp.GetBinContent(km) - hMC.GetBinContent(km)
+	jes_diff_down = hjesDown.GetBinContent(km) - hMC.GetBinContent(km)
+	uncl_diff_up = hunclUp.GetBinContent(km) - hMC.GetBinContent(km)
+	uncl_diff_down = hMC.GetBinContent(km) - hunclDown.GetBinContent(km)
+	jer_diff_up = hjerUp.GetBinContent(km) - hMC.GetBinContent(km)
+	jer_diff_down = hMC.GetBinContent(km) - hjerDown.GetBinContent(km)
+       
+	#conte1tottot = math.sqrt(mc_bin_error**2 + jes_diff_up**2 + uncl_diff_up**2 + jer_diff_up**2 + pu_diff_up**2)
+	#conte2tottot = math.sqrt(mc_bin_error**2 + jes_diff_down**2 + uncl_diff_down**2 + jer_diff_down**2 + pu_diff_down**2)
+	conte1tottot = math.sqrt(mc_bin_error**2 + jes_diff_up**2 + uncl_diff_up**2 + jer_diff_up**2 )
+	conte2tottot = math.sqrt(mc_bin_error**2 + jes_diff_down**2 + uncl_diff_down**2 + jer_diff_down**2 )
+	if conte1tottot > conte2tottot:
+	    den1tottot.SetBinContent (km, hMC.GetBinContent (km) + conte1tottot);                                                                                            
+	    den2tottot.SetBinContent (km, hMC.GetBinContent (km) - conte1tottot);                                                                                                                           
+	else:
+	    den1tottot.SetBinContent (km, hMC.GetBinContent (km) + conte2tottot);  
+	    den2tottot.SetBinContent (km, hMC.GetBinContent (km) - conte2tottot);
+	    #print 'in the else will add errors tottot', km, hMC.GetBinContent (km), conte2tottot
+
+	ymax = hMC.GetBinContent(km) + conte1tottot;           
+	exl[km] = hMC.GetBinWidth (km) / 2;                                                                                                                                 
+	exh[km] = hMC.GetBinWidth (km) / 2;                                                                                                                                 
+	eyltottot[km] = conte2tottot;                                                                                                                                                           
+	eyhtottot[km] = conte1tottot;                                                                                                                         
+    
+    ratiouptottot.Divide(den1tottot);                                                                                                                                                         
+    ratiodowntottot.Divide(den2tottot);                   
+    ratiodata = copy.deepcopy(hdata.Clone("ratiodata"))
+    ratiodata.Divide (hMC);                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+    for km in range(0, ratiodata.GetNbinsX()+1):
+	if (ratiodata.GetBinContent (km) > ymax):
+	    ymax = ratiodata.GetBinContent (km) + ratiodata.GetBinError (km);                                                                                                              
+	x[km] = ratiodata.GetBinCenter (km);                                                                                                                                          
+	y[km] = 1;	                                                                                                                                                             
+	exl[km] = ratiodata.GetBinWidth (km) / 2;                                                                                                                                     
+	exh[km] = ratiodata.GetBinWidth (km) / 2;                                                                                                                                     
+																						       
+	if (ratiouptottot.GetBinContent (km) != 0):
+	    eyhtottot[km] = (1. / ratiouptottot.GetBinContent (km) - 1)*ratiodata.GetBinContent (km);                                                                    
+	else:                                                                                                                                                                       
+	    eyhtottot[km] = 0;                                                                                                                                                                 
+																						       
+	if (ratiodowntottot.GetBinContent (km) != 0):
+	    eyltottot[km] = (1 - 1. / ratiodowntottot.GetBinContent (km))*ratiodata.GetBinContent (km);                                                              
+	else:                                                                                                                                                                       
+	    eyltottot[km] = 0.                                                                                                                        
+    errtottot = TGraphAsymmErrors(nvar, x, y, exl, exh, eyltottot, eyhtottot);                                
+
+
+
+    #make tot tot errors 
+    for km in range(0, hMC.GetNbinsX()+1):
+
+        mc_bin_error = hMC.GetBinError(km)
+	jes_diff_up = hjesUp.GetBinContent(km) - hMC.GetBinContent(km)
+	jes_diff_down = hjesDown.GetBinContent(km) - hMC.GetBinContent(km)
+	uncl_diff_up = hunclUp.GetBinContent(km) - hMC.GetBinContent(km)
+	uncl_diff_down = hMC.GetBinContent(km) - hunclDown.GetBinContent(km)
+	jer_diff_up = hjerUp.GetBinContent(km) - hMC.GetBinContent(km)
+	jer_diff_down = hMC.GetBinContent(km) - hjerDown.GetBinContent(km)
+
+	conte1tottot = math.sqrt(mc_bin_error**2 + jes_diff_up**2 )
+	conte2tottot = math.sqrt(mc_bin_error**2 + jes_diff_down**2 )
+
+	if conte1tottot > conte2tottot:
+	    den1tottot.SetBinContent (km, hMC.GetBinContent (km) + conte1tottot);                                                                                            
+	    den2tottot.SetBinContent (km, hMC.GetBinContent (km) - conte1tottot);                                                                                                                           
+	else:
+	    den1tottot.SetBinContent (km, hMC.GetBinContent (km) + conte2tottot);  
+	    den2tottot.SetBinContent (km, hMC.GetBinContent (km) - conte2tottot);
+	    #print 'in the else will add errors tottot', km, hMC.GetBinContent (km), conte2tottot
+	ymax = hMC.GetBinContent(km) + conte1tottot;           
+	exl[km] = hMC.GetBinWidth (km) / 2;                                                                                                                                 
+	exh[km] = hMC.GetBinWidth (km) / 2;                                                                                                                                 
+	eyltottot[km] = conte2tottot;                                                                                                                                                           
+	eyhtottot[km] = conte1tottot;                                                                                                                         
+    
+    ratiouptottot.Divide(den1tottot);                                                                                                                                                         
+    ratiodowntottot.Divide(den2tottot);                   
+    ratiodata = copy.deepcopy(hdata.Clone("ratiodata"))
+    ratiodata.Divide (hMC);                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+    for km in range(0, ratiodata.GetNbinsX()+1):
+	if (ratiodata.GetBinContent (km) > ymax):
+	    ymax = ratiodata.GetBinContent (km) + ratiodata.GetBinError (km);                                                                                                              
+	x[km] = ratiodata.GetBinCenter (km);                                                                                                                                          
+	y[km] = 1;	                                                                                                                                                             
+	exl[km] = ratiodata.GetBinWidth (km) / 2;                                                                                                                                     
+	exh[km] = ratiodata.GetBinWidth (km) / 2;                                                                                                                                     
+																						       
+	if (ratiouptottot.GetBinContent (km) != 0):
+	    eyhtottot[km] = (1. / ratiouptottot.GetBinContent (km) - 1)*ratiodata.GetBinContent (km);                                                                    
+	else:                                                                                                                                                                       
+	    eyhtottot[km] = 0;                                                                                                                                                                 
+																						       
+	if (ratiodowntottot.GetBinContent (km) != 0):
+	    eyltottot[km] = (1 - 1. / ratiodowntottot.GetBinContent (km))*ratiodata.GetBinContent (km);                                                              
+	else:                                                                                                                                                                       
+	    eyltottot[km] = 0.                                                                                                                        
+    err = TGraphAsymmErrors(nvar, x, y, exl, exh, eyltottot, eyhtottot);                                
+
+
+
+
+
+
+
+
+
+    #make tot errors
+    den1tot = copy.deepcopy(hMC.Clone("bkgden1"))
+    den2tot = copy.deepcopy(hMC.Clone("bkgden2"))
+								 
+    nvar = hMC.GetNbinsX()+1                                       
+    x = array.array('f', range(0, hMC.GetNbinsX()+1))
+    y = array.array('f', range(0, hMC.GetNbinsX()+1))
+    exl = array.array('f', range(0, hMC.GetNbinsX()+1))
+    eyltot = array.array('f', range(0, hMC.GetNbinsX()+1))
+    exh = array.array('f', range(0, hMC.GetNbinsX()+1))
+    eyhtot = array.array('f', range(0, hMC.GetNbinsX()+1))
+    ratiouptot = copy.deepcopy(hMC.Clone("ratiouptot"))
+    ratiodowntot = copy.deepcopy(hMC.Clone("ratiodowntot"))      
+    
+    
+    for km in range(0, hMC.GetNbinsX()+1):
+
+	#conte1tot =  math.sqrt( hMC.GetBinError (km) **2  + (hjesUp.GetBinContent (km) - hMC.GetBinContent   (km))**2 + (hunclUp.GetBinContent (km) - hMC.GetBinContent(km))**2 )       
+	
+	#conte2tot =  math.sqrt(hMC.GetBinError (km) **2 + (hMC.GetBinContent (km) - hjesDown.GetBinContent (km))**2 + (-hunclDown.GetBinContent (km) + hMC.GetBinContent(km))**2 )  
+        mc_bin_error = hMC.GetBinError(km)
+	jes_diff_up = hjesUp.GetBinContent(km) - hMC.GetBinContent(km)
+	jes_diff_down = hjesDown.GetBinContent(km) - hMC.GetBinContent(km)
+	uncl_diff_up = hunclUp.GetBinContent(km) - hMC.GetBinContent(km)
+	uncl_diff_down = hMC.GetBinContent(km) - hunclDown.GetBinContent(km)
+	jer_diff_up = hjerUp.GetBinContent(km) - hMC.GetBinContent(km)
+	jer_diff_down = hMC.GetBinContent(km) - hjerDown.GetBinContent(km)
+
+	conte1tot = math.sqrt(mc_bin_error**2 + jes_diff_up**2 + uncl_diff_up**2 )
+	conte2tot = math.sqrt(mc_bin_error**2 + jes_diff_down**2 + uncl_diff_down**2 )
+
+	if not (conte1tot+conte2tot)>0 : continue
+	if (abs(conte1tot-conte2tot)/(conte1tot+conte2tot) <1) and (conte1tot+conte2tot)>0 :
+	    if conte1tot > conte2tot:
+		den1tot.SetBinContent (km, hMC.GetBinContent (km) + conte1tot);
+		den2tot.SetBinContent (km, hMC.GetBinContent (km) - conte1tot);                                                                                           
+	    else:
+		den1tot.SetBinContent (km, hMC.GetBinContent (km) + conte2tot);  
+		den2tot.SetBinContent (km, hMC.GetBinContent (km) - conte2tot);
+	else : 
+	    if conte1tot > conte2tot:
+		den1tot.SetBinContent (km, hMC.GetBinContent (km) + conte2tot);  
+		den2tot.SetBinContent (km, hMC.GetBinContent (km) - conte2tot);
+	    else : 
+		den1tot.SetBinContent (km, hMC.GetBinContent (km) + conte1tot);  
+		den2tot.SetBinContent (km, hMC.GetBinContent (km) - conte1tot);
+
+
+
+	ymax = hMC.GetBinContent(km) + conte1tot;           
+	exl[km] = hMC.GetBinWidth (km) / 2;                                                                                                                                 
+	exh[km] = hMC.GetBinWidth (km) / 2;                                                                                                                                 
+	eyltot[km] = conte2tot;                                                                                                                                                           
+	eyhtot[km] = conte1tot;                                                                                   
+    
+    ratiouptot.Divide(den1tot);                                                                                                                                                         
+    ratiodowntot.Divide(den2tot);                   
+    ratiodata = copy.deepcopy(hdata.Clone("ratiodata"))
+    ratiodata.Divide (hMC);                                                                                                                                                    
+    #ratiodata = self.ratioHist(ratiodata, hMC, hMC.GetName())
+																						       
+    for km in range(0, ratiodata.GetNbinsX()+1):
+	if (ratiodata.GetBinContent (km) > ymax):
+	    ymax = ratiodata.GetBinContent (km) + ratiodata.GetBinError (km);                                                                                                              
+	x[km] = ratiodata.GetBinCenter (km);                                                                                                                                          
+	y[km] = 1;	                                                                                                                                                             
+	exl[km] = ratiodata.GetBinWidth (km) / 2;                                                                                                                                     
+	exh[km] = ratiodata.GetBinWidth (km) / 2;                                                                                                                                     
+																						       
+	if (ratiouptot.GetBinContent (km) != 0):
+	    eyhtot[km] = (1. / ratiouptot.GetBinContent (km) - 1)*ratiodata.GetBinContent (km);                                                                                                   
+	else:                                                                                                                                                                       
+	    eyhtot[km] = 0;                                                                                                                                                                 
+																						       
+	if (ratiodowntot.GetBinContent (km) != 0):
+	    eyltot[km] = (1 - 1. / ratiodowntot.GetBinContent (km))*ratiodata.GetBinContent (km);                                                                                                   
+	else:                                                                                                                                                                       
+	    eyltot[km] = 0.                                                                                                                        
+    errtot = TGraphAsymmErrors(nvar, x, y, exl, exh, eyltot, eyhtot);                                                                                 
+    
+    #make some jec + stat errors     
+    den1 = copy.deepcopy(hMC.Clone("bkgden1"))
+    den2 = copy.deepcopy(hMC.Clone("bkgden2"))
+																						       
+    nvar = hMC.GetNbinsX()+1                                                                                                                                                           
+    eyl = array.array('f', range(0, hMC.GetNbinsX()+1))
+    eyh = array.array('f', range(0, hMC.GetNbinsX()+1))
+    ratioup = copy.deepcopy(hMC.Clone("ratioup"))
+    ratiodown = copy.deepcopy(hMC.Clone("ratiodown")) 
+    
+    for km in range(0, hMC.GetNbinsX()+1):
+
+	conte1 =  math.sqrt(hMC.GetBinError (km)**2 + (hjesUp.GetBinContent (km) - hMC.GetBinContent   (km))**2) 
+    
+	conte2 =  math.sqrt(hMC.GetBinError (km)**2 + (hMC.GetBinContent (km) - hjesDown.GetBinContent (km))**2)   
+
+	#conte1 =  math.sqrt( (hjesUp.GetBinContent (km) - hMC.GetBinContent   (km))*(hjesUp.GetBinContent (km) -  hMC.GetBinContent (km)));       
+	#conte2 =  math.sqrt((hMC.GetBinContent (km) - hjesDown.GetBinContent (km))*(hMC.GetBinContent (km) -  hjesDown.GetBinContent (km)));   
+
+	if conte1 > conte2:
+	    den1.SetBinContent (km, hMC.GetBinContent (km) + conte1);                                                                                                                           
+	    den2.SetBinContent (km, hMC.GetBinContent (km) - conte1);                                                                                                                           
+	else:
+	    den1.SetBinContent (km, hMC.GetBinContent (km) + conte2);  
+	    den2.SetBinContent (km, hMC.GetBinContent (km) - conte2);
+	ymax = hMC.GetBinContent(km) + conte1;           
+	eyl[km] = conte2;                                                                                                                                                           
+	eyh[km] = conte1;                                                                                                                                                                        
+    
+    ratioup.Divide(den1);                                                                                                                                                         
+    ratiodown.Divide(den2);                   
+																						       
+    for km in range(0, ratiodata.GetNbinsX()+1):
+	if (ratioup.GetBinContent (km) != 0):
+	    eyh[km] = (1. / ratioup.GetBinContent (km) - 1)*ratiodata.GetBinContent (km);                                                                                                   
+	else:                                                                                                                                                                       
+	    eyh[km] = 0;                                                                                                                                                                 
+																						       
+	if (ratiodown.GetBinContent (km) != 0):
+	    eyl[km] = (1 - 1. / ratiodown.GetBinContent (km))*ratiodata.GetBinContent (km);                                                                                                   
+	else:                                                                                                                                                                       
+	    eyl[km] = 0.                                                                                                                        
+    err = TGraphAsymmErrors(nvar, x, y, exl, exh, eyl, eyh);                                                                                                                                         
+
+    #make some stat errors
+    dens1 = copy.deepcopy(hMC.Clone("bkgdens1"))
+    dens2 = copy.deepcopy(hMC.Clone("bkgdens2"))
+    eyls = array.array('f', range(0, hMC.GetNbinsX()+1))
+    eyhs = array.array('f', range(0, hMC.GetNbinsX()+1))
+    ratioups = copy.deepcopy(hMC.Clone("ratioups"))
+    ratiodowns = copy.deepcopy(hMC.Clone("ratiodowns"))
+    ymaxs = 2.                                                     
+    
+    for km in range(0, hMC.GetNbinsX()+1):
+	contes1 =  hMC.GetBinError(km);      
+	contes2 =  hMC.GetBinError(km);      
+	dens1.SetBinContent (km, hMC.GetBinContent (km) + contes1);                                                                                                                           
+	dens2.SetBinContent (km, hMC.GetBinContent (km) - contes2);                                                                                                                           
+	ymaxs = hMC.GetBinContent(km) + contes1;                                                                                                                         
+	eyls[km] = conte2;                                                                                                                                                           
+	eyhs[km] = conte1;
+
+    ratioups.Divide(dens1);                                           
+    ratiodowns.Divide(dens2);                                             
+
+    for km in range(0, ratiodata.GetNbinsX()+1):                                                       
+	if (ratioups.GetBinContent (km) != 0):
+	    eyhs[km] = (1. / ratioups.GetBinContent (km) - 1)*ratiodata.GetBinContent (km);            
+	else:                                                                                       
+	    eyhs[km] = 0;                                                                            
+												    
+	if (ratiodowns.GetBinContent (km) != 0):
+	    eyls[km] = (1 - 1. / ratiodowns.GetBinContent (km))*ratiodata.GetBinContent (km);            
+	else:                                                                                       
+	    eyls[km] = 0.                                                                            
+   
+    staterr = TGraphAsymmErrors(nvar, x, y, exl, exh, eyls, eyhs);
+
+
+
+ 
+    errtottot.SetFillColor (r.kYellow-10);
+    errtottot.SetFillStyle (1001);   
+    errtot.SetFillColor(r.kBlue-10);
+    errtot.SetFillStyle (1001);   
+    err.SetFillColor (r.kGreen-10);
+    err.SetFillStyle (1001);   
+    staterr.SetFillColor (r.kRed-10);
+    staterr.SetFillStyle (1001);   
+    pad2.cd()
+
+    line = TLine(ratio.GetBinLowEdge(1), 1, ratio.GetBinLowEdge(ratio.GetNbinsX()+1), 1)
+    line.SetLineColor(r.kRed)
+    #for iB in range(1, ratio.GetNbinsX()+1):
+    #	ratio.SetBinError(iB,hdata.GetBinError(iB))
+    ratio.Draw()
+    print 'will I do the errors????', doAllErrors
+    if doAllErrors:
+	legratio2 = TLegend(0.125,0.8,0.9,0.9);
+	legratio2.SetFillColor(0);
+	legratio2.SetFillStyle(0);
+	legratio2.SetBorderSize(0);
+	legratio2.SetNColumns(4);
+	legratio2.SetTextSize(0.065)
+	legratio2.SetTextFont(42)
+	legratio2.AddEntry(errtottot, "JER+Uncl+JES+Stat/Other","f");
+	legratio2.AddEntry(errtot, "Uncl+JES+Stat/Other","f");
+	legratio2.AddEntry(err, "JES+Stat/Other","f");
+	legratio2.AddEntry(staterr, "Stat/Other","f");                                         
+	ratio.Draw();                                                      
+	errtottot.Draw("E2 same")
+	errtot.Draw("E2 same")
+	err.Draw("2 same")
+	staterr.Draw("2 same")
+
+	line.Draw("same")
+	ratio.Draw("same");                                                      
+	legratio2.Draw("same")
+	gPad.RedrawAxis()
+
+    if puppi: 
+	legratio = TLegend(0.14,0.31,0.4,0.45);                                   
+	legratio.SetFillColor(0);
+	legratio.SetBorderSize(0);
+	legratio.SetNColumns(2);
+	legratio.AddEntry(err, "JES + Stat","f");
+	legratio.AddEntry(staterr, "Stat","f");                                  
+	err.Draw("e2")
+	staterr.Draw("2 same")
+	legratio.Draw("same")
+	line.Draw("same")
+	ratio.Draw("same");      
+    if statOnly:
+	#legratio = TLegend(0.14,0.32,0.43,0.5);
+	#legratio.SetFillColor(0);
+	#legratio.SetBorderSize(0);
+	#legratio.AddEntry(staterr, " ","f");                                  
+	#errtottot.Draw("2 same")
+	#staterr.Draw("2 same")
+	#legratio.Draw("same")
+	#line.Draw("same")
+	#ratio.Draw("same");                                                      
+	legratio2 = TLegend(0.45,0.8,0.9,0.9);
+	legratio2.SetFillColor(0);
+	legratio2.SetFillStyle(0);
+	legratio2.SetBorderSize(0);
+	legratio2.SetNColumns(4);
+	legratio2.SetTextSize(0.065)
+	legratio2.SetTextFont(42)
+	legratio2.AddEntry(staterr, "Stat/Other","f");                                         
+	ratio.Draw();                                                      
+	errtottot.Draw("E2 same")
+	errtot.Draw("E2 same")
+	err.Draw("2 same")
+	staterr.Draw("2 same")
+
+	line.Draw("same")
+	ratio.Draw("same");                                                      
+	legratio2.Draw("same")
+	gPad.RedrawAxis()
+       
+
+    pad1.cd()
+    legratio = TLegend(0.6,0.53,0.8,0.6);
+    #legratio = TLegend(0.698,0.53,0.88,0.6);
+    legratio.SetFillColor(r.kWhite);
+    legratio.SetFillStyle(0)
+    legratio.SetBorderSize(0)
+    legratio.SetTextSize(0.045)
+    legratio.SetTextFont(42)
+    #legratio.AddEntry(errtottot, "Uncertainty","f");
+    #legratio.Draw("same")
+    #errtottot.Draw("hist same")
+    #errtottot.Draw("2 same")
+    self.banner(isData, lumi, log, events, isNVert, isSig1jet, run)
+    for plotName in self.plotNames:
+	path = 'plots/'+plotName
+	self.ensurePath(path)
+	self.myCanvas.SaveAs(path)
+
+
 
 
 
