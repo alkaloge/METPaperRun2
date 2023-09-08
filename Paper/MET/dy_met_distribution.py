@@ -398,9 +398,17 @@ if __name__ == "__main__":
             puppicut=''
             losthits="1"
             njetsSyst=''
+            tagname = str(opts.ExtraTag).lower()
+            PUw='nom'
+            if 'puup' in tagname : PUw = 'up'
+            if 'pudown' in tagname : PUw = 'down'
 
             if 'njet' in givein.lower() : jetcut='-1'
-            if 'njetsgeq' in str(opts.ExtraTag).lower() : jetcut='-1'
+            if 'njetsgeq0' in str(opts.ExtraTag).lower() : jetcut='>=0'
+            if 'njetsgeq1' in str(opts.ExtraTag).lower() : jetcut='>=1'
+            if 'njetsgincl' in str(opts.ExtraTag).lower() : jetcut='>=0'
+            if 'njetsgt1' in str(opts.ExtraTag).lower() : jetcut='>1'
+            if 'njetsgt0' in str(opts.ExtraTag).lower() : jetcut='>0'
             if 'hitslt1' in str(opts.ExtraTag).lower() : losthits='1'
             if 'metwmass' in givein.lower() : wtmasscut='0'
              
@@ -420,6 +428,17 @@ if __name__ == "__main__":
             if 'jerdown' in givein.lower() : 
                 extracut = 'JERDown'
                 njetsSyst = '_jerDown'
+            if 'puppi' in tagname : puppicut='Puppi'
+            if 'btagm' in tagname : btagcut="M"
+            if 'btagt' in tagname : btagcut="T"
+            #if 'nobtag' in tagname : btagcut="T"
+            drcutstr = "dRMETCorGood_T1J1"+extracut  
+            if 'puppi' in givein.lower() :drcutstr = "dRPuppiMETCorGood_J1"+extracut
+            drcut= ">=0.0"
+            if 'dr' in tagname : drcut = ">=0.5"
+            if 'both' in tagname : drcut = ">=0.5 && "+drcutstr + "<=3.5"
+            photonr9='0.9'
+            if 'photon_r9_1' in givein.lower() : photonr9='0.8'
 
 
 
@@ -432,9 +451,9 @@ if __name__ == "__main__":
 
 	    #jetCutEl = " (nElectron[0]==2 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(q_1[0])==1 && iso_1[0] <= .15 &&  fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPV[0]>2 && cat=={0:s} &&njets[0]> {1:s}   && nbtagL[0]==0.0 && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits)
 
-	    jetCutMu = " (nMuon[0]==2 && Flag_BadPFMuonDzFilter[0]==1 && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 && fabs(q_1[0])==1 && iso_1[0] <= .15  && fabs(d0_2[0])<0.045 && fabs(dZ_2[0])<0.2 && fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && nbtagL[0]==0.0 && cat=={0:s} ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
+	    jetCutMu = " (nMuon[0]==2 && Flag_BadPFMuonDzFilter[0]==1 && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 && fabs(q_1[0])==1 && iso_1[0] <= .15  && fabs(d0_2[0])<0.045 && fabs(dZ_2[0])<0.2 && fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0] {1:s}  && nbtagL[0]==0.0 && cat=={0:s} ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
 
-	    jetCutEl = " ( nElectron[0]==2 && Flag_BadPFMuonDzFilter[0]==1  &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 && fabs(q_1[0])==1 && iso_1[0] <= .15 &&   !(fabs(eta_2[0])>1.4442 &&  fabs(eta_2[0])<1.5660) && fabs(d0_2[0])<0.045 && fabs(dZ_2[0])<0.2 &&  fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} &&njets{3:s}[0]> {1:s}   && nbtagL[0]==0.0 && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, losthits)
+	    jetCutEl = " ( nElectron[0]==2 && Flag_BadPFMuonDzFilter[0]==1  &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 && fabs(q_1[0])==1 && iso_1[0] <= .15 &&   !(fabs(eta_2[0])>1.4442 &&  fabs(eta_2[0])<1.5660) && fabs(d0_2[0])<0.045 && fabs(dZ_2[0])<0.2 &&  fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{3:s}[0] {1:s}   && nbtagL[0]==0.0 && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, losthits)
 
 
             jetCut= jetCutMu
@@ -445,6 +464,16 @@ if __name__ == "__main__":
             jetCutInvIso = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && nbtagL[0]==0".format(docat)
 
             #jetCut +=  "  && pt_2> 29 && (isGlobal_2>0 || isTracker_2>0) && fabs(eta_2)<2.4 && fabs(dZ_2)<0.2 && fabs(d0_2)<0.045 &&  tightId_2 >0   &&  iso_2 <= 0.10"
+
+            if 'pult10' in tagname : jetCut  = jetCut + " && nPVGood[0]<10"
+            if 'pu10to20' in tagname : jetCut  = jetCut + " && nPVGood[0]<20 && nPVGood>=10"
+            if 'pu20to30' in tagname : jetCut  = jetCut + " && nPVGood[0]<30 && nPVGood>=20"
+            if 'pu30to40' in tagname : jetCut  = jetCut + " && nPVGood[0]<40 && nPVGood>=30"
+            if 'pu40to50' in tagname : jetCut  = jetCut + " && nPVGood[0]<50 && nPVGood>=40"
+            if 'pugeq50' in tagname : jetCut  = jetCut + " && nPVGood[0]>=50 "
+            if 'pugeq40' in tagname : jetCut  = jetCut + " && nPVGood[0]>=40 "
+            if 'isocut' in tagname :  jetCut  = jetCut + " && iso_1 <=0.01"
+            if 'isocuttight' in tagname :  jetCut  = jetCut + " && iso_1 <=0.005"
 
             print color.blue+'************************************************************************************************'+color.end
             print 'jetCut', jetCut
@@ -604,12 +633,12 @@ if __name__ == "__main__":
                             tmp_full.SetTitle("QCD multijet")
                             tmp_full.Scale(kfactor)
                         if treename == 'wjets':
-                            tmp_full.SetTitle("W + jets")
+                            tmp_full.SetTitle("W+jets")
                         if treename == 'ewk':
-                            tmp_full.SetTitle("W + jets (LO)")
+                            tmp_full.SetTitle("W+jets (LO)")
 
                         if treename == 'ewknlo':
-                            tmp_full.SetTitle("W + jets (NLO)")
+                            tmp_full.SetTitle("W+jets (NLO)")
 
                         if treename == 'dy':
                             if doee:
