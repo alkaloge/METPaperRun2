@@ -1309,17 +1309,17 @@ class outTuple2Lep() :
         self.pt_2[0]   = LepM.Pt()
         self.phi_2[0]  = LepM.Phi()
         self.eta_2[0]  = LepM.Eta()
-        muoneff1=1.
+        muonid1=1.
         muoniso1=1.
         muontrig1=1.
-        eleeff1=1.
+        eleid1=1.
         eleiso1=1.
         eletrig1=1.
 
-        muoneff2=1.
+        muonid2=1.
         muoniso2=1.
         muontrig2=1.
-        eleeff=1.
+        eleid=1.
         eleiso=1.
         eletrig=1.
 
@@ -1362,12 +1362,12 @@ class outTuple2Lep() :
 	    if channel_ll == 'mm' : 
 		  
 		if LepP.Pt()> 15 : 
-                    muoneff1 = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "sf")
+                    muonid1 = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "sf")
                     self.IDSF1_up[0] = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "systup")
                     self.IDSF1_down[0] = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepP.Eta()), LepP.Pt(), "systdown")
 
 		if LepM.Pt()> 15 : 
-                    muoneff2 = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "sf")
+                    muonid2 = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "sf")
                     self.IDSF2_up[0] = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "systup")
                     self.IDSF1_down[0] = self.evaluator["NUM_TightID_DEN_TrackerMuons"].evaluate("{0:s}_UL".format( str(yearin)), fabs(LepM.Eta()), LepM.Pt(), "systdown")
 		if LepP.Pt()> 15 : 
@@ -1412,16 +1412,16 @@ class outTuple2Lep() :
                         self.TrigSF2_up[0] = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(subL.Eta()), subL.Pt(), "systup") 
                         self.TrigSF2_down[0] = self.evaluator["NUM_IsoMu24_DEN_CutBasedIdTight_and_PFIsoTight"].evaluate("{0:s}_UL".format(str(era)), fabs(subL.Eta()), subL.Pt(), "systdown") 
 
-		#print 'sfs are', muoneff , muoniso, muontrig
+		#print 'sfs are', muonid , muoniso, muontrig
 
-		self.IDSF[0]  = muoneff1*muoneff2
+		self.IDSF[0]  = muonid1*muonid2
 		self.IsoSF[0]  = muoniso1*muoniso2
 
-		self.IDSF1[0]  = muoneff1
+		self.IDSF1[0]  = muonid1
 		self.IsoSF1[0]  = muoniso1
 		self.TrigSF1[0]  = muontrig1
 
-		self.IDSF2[0]  = muoneff2
+		self.IDSF2[0]  = muonid2
 		self.IsoSF2[0]  = muoniso2
 		self.TrigSF2[0]  = muontrig2
 		if is_trig_1 == 2 : self.TrigSF[0]  = muontrig1*muontrig2
@@ -1429,17 +1429,17 @@ class outTuple2Lep() :
 		if is_trig_1 == -1 : self.TrigSF[0]  = muontrig2
 
 	    if channel_ll == 'ee' : 
-                eleeff1=1.
-                eleeff2=1.
+                eleid1=1.
+                eleid2=1.
                 eleiso1=1.
                 eleiso2=1.
 		if LepP.Pt()> 20 : 
-                    eleeff1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "RecoAbove20", LepP.Eta(), LepP.Pt() )
+                    eleid1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "RecoAbove20", LepP.Eta(), LepP.Pt() )
                     self.IDSF1_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfup" , "RecoAbove20", LepP.Eta(), LepP.Pt() )
                     self.IDSF1_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfdown" , "RecoAbove20", LepP.Eta(), LepP.Pt() )
 
 		if LepM.Pt() > 20 : 
-                    eleeff2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "RecoAbove20", LepM.Eta(), LepM.Pt() )
+                    eleid2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sf" , "RecoAbove20", LepM.Eta(), LepM.Pt() )
                     self.IDSF2_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfup" , "RecoAbove20", LepM.Eta(), LepM.Pt() )
                     self.IDSF2_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfdown" , "RecoAbove20", LepM.Eta(), LepM.Pt() )
 
@@ -1453,11 +1453,11 @@ class outTuple2Lep() :
                     self.IsoSF2_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfup" , "wp90iso", LepM.Eta(), LepM.Pt() )
                     self.IsoSF2_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfdown" , "wp90iso", LepM.Eta(), LepM.Pt() )
 
-		self.IDSF[0]  = eleeff1*eleeff2
+		self.IDSF[0]  = eleid1*eleid2
                 self.IsoSF[0]  = eleiso1*eleiso2
-		self.IDSF1[0]  = eleeff1
+		self.IDSF1[0]  = eleid1
                 self.IsoSF1[0]  = eleiso1
-		self.IDSF2[0]  = eleeff2
+		self.IDSF2[0]  = eleid2
                 self.IsoSF2[0]  = eleiso2
 
                 self.TrigSF[0] = 1.

@@ -438,8 +438,8 @@ if __name__ == "__main__":
                     #if 'Up' in var or 'Down' in var : var.replace("_T1","")
                     print 'this is for data', var, 'bins', reg.bins[reg.rvars.index(var)]
                     
-                    print '------------------------------------------->', lumi, var, Variable, reg.bins[reg.rvars.index(var)], "", varTitle, doNPV, isLog
-                    if ":" not in Variable : data_hist = treeDA.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , inn, varTitle, doNPV, isLog)
+                    print '------------------------------------------->', lumi, var, Variable, reg.bins[reg.rvars.index(var)], "", varTitle, channel, isLog
+                    if ":" not in Variable : data_hist = treeDA.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , inn, varTitle, channel, isLog)
                     else : data_hist= treeDA.getTH2F(lumi, var,  Variable, 20, 0,200, 20, 0, 200, cuts.Add(cut, jetCut) , "", "qT (GeV)", varTitle)
 		    d={'{0:s} tmp_full'.format(data_hist.GetName()):data_hist.Integral()}
 		    yields.update(d)
@@ -458,7 +458,7 @@ if __name__ == "__main__":
                 kfactor=1
                 '''
                 if doQCD and met.index(m) == 0: 
-                    data_histInvIso = treeDA.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , "", varTitle, doNPV, isLog)
+                    data_histInvIso = treeDA.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , "", varTitle, channel, isLog)
 		    fOut.cd()
                     data_histInvIso.SetName('histo_data_QCD_inv')
                     data_histInvIso.Write('histo_data_QCD_inv')
@@ -470,13 +470,13 @@ if __name__ == "__main__":
 			print 'var to get', var+"_"+reg.name+treename+str(met.index(m)), ' or', var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , "", varTitle, doNPV
 			
 			if 'qcd' not in treename : 
-                            tmp_fullMCInvIso= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , "", varTitle, doNPV, isLog)
+                            tmp_fullMCInvIso= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , "", varTitle, channel, isLog)
 		            fOut.cd()
                             tmp_fullMCInvIso.SetName(tmp_fullMCInvIso.GetName() + 'MC_inv')
                             tmp_fullMCInvIso.Write(tmp_fullMCInvIso.GetName() + 'MC_inv')
 
 			if 'qcd' in treename :     
-                            tmp_fullQCDInvIso= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , "", varTitle, doNPV, isLog)
+                            tmp_fullQCDInvIso= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso) , "", varTitle, channel, isLog)
 		            fOut.cd()
                             tmp_fullQCDInvIso.SetName(tmp_fullQCDInvIso.GetName() + 'QCD_inv')
                             tmp_fullQCDInvIso.Write(tmp_fullQCDInvIso.GetName() + 'QCD_inv')
@@ -500,9 +500,9 @@ if __name__ == "__main__":
                     attr =  var+''
                     if met.index(m) == 0:
                         # this option here treats the first variable in the list met, which is either just the regular met, or the only element in a list, for nvert, pt eta, etc. This should get the TH1 for data and mc. For mc, both a full histo and a stack is made. 
-                        print 'var to get', var+"_"+reg.name+treename+str(met.index(m)), ' or', var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , "", varTitle, doNPV, 'from treename', treename
+                        print 'var to get', var+"_"+reg.name+treename+str(met.index(m)), ' or', var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , "", varTitle, channel, 'from treename', treename
                         #tmp_full= tree.getTH1F(lumi, var+"_"+reg.name+treename+str(met.index(m)),  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , "", varTitle, doNPV)
-                        if ":" not in Variable : tmp_full= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , inn, varTitle, doNPV, isLog)
+                        if ":" not in Variable : tmp_full= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , inn, varTitle, channel, isLog)
                         if ":" in Variable : 
                             print 'will try to read a TH2 histo.....'
                             tmp_full= tree.getTH2F(lumi, var,  Variable, 20, 0,200, 20, 0, 200, cuts.Add(cut, jetCut) , "", "qT (GeV)", varTitle)
@@ -603,7 +603,7 @@ if __name__ == "__main__":
                         if met.index(m) > 0:
                             #histo_err= tree.getTH1F(lumi, var+"_"+reg.name+treename+str(met.index(m)),  Variable,  110, -1.7, -0.3, cuts.Add(cut, jetCut) , "", varTitle, doNPV)
                             #histo_err= tree.getTH1F(lumi, var+"_"+reg.name+treename+str(met.index(m)),  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , "", varTitle, doNPV)
-                            histo_err= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , "", varTitle, doNPV, isLog)
+                            histo_err= tree.getTH1F(lumi, var,  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , "", varTitle, channel, isLog)
                             fOut.cd()
                             histo_err.Write('histo_'+treename+"_"+m)
                             #if (option == 'qt' or option == 'qtZ' or option == 'qtG 'or option == 'qtgamma'): 
