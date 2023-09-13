@@ -1,0 +1,11 @@
+universe = vanilla
+Executable = EXECHERE
+Output = EXECHERE.out
+Error = EXECHERE.err
+Log = EXECHERE.log
+transfer_input_files = /uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/include.tar.gz, /uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/met_distribution_single.py, /uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/samples_YEARHERE_v2.dat, /uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/samples_YEARHERE_2l.dat, /uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/samples_YEARHERE_gjets.dat, /uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/samples_2016postVFP_gjets.dat, /uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/samples_2016preVFP_gjets.dat,/uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/dy_met_distribution.py, /uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/gjets_met_distribution.py,/uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/samples_2016postVFP_gjets_cutBased.dat,/uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/samples_2016postVFP_gjets_mvaID.dat, /uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/samples_2016preVFP_gjets_cutBased.dat,/uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/samples_2016preVFP_gjets_mvaID.dat, /uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/samples_YEARHERE_gjets_cutBased.dat,  /uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET/samples_YEARHERE_gjets_mvaID.dat
+priority = 10
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+x509userproxy = $ENV(X509_USER_PROXY)
+Queue 1

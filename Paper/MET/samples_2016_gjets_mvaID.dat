@@ -1,0 +1,101 @@
+#-----------------------------------------------------------
+#----------------- data samples ----------------------------
+#-----------------------------------------------------------
+# BLOCK                 COLOR      NAME                  LABEL                     LOCATION OF TREES                                               XSEC     ISDATA               
+#
+TOP     r.kBlue  ST_s-channel ST_s-channel   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/ST_s-channel_2016  3.74        0    1   0  0  2016
+TOP     r.kBlue  ST_t-channel_top ST_t-channel_top   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/ST_t-channel_top_2016  115.3        0    1   0  0  2016
+TOP     r.kBlue  ST_t-channel_antitop ST_t-channel_antitop   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/ST_t-channel_antitop_2016  69.09        0    1   0  0  2016
+TOP     r.kBlue  ST_tW_antitop ST_tW_antitop   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/ST_tW_antitop_2016  35.85       0    1   0  0  2016
+TOP     r.kBlue  ST_tW_top ST_tW_top   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/ST_tW_top_2016  35.85       0    1   0  0  2016
+TOP     r.kBlue  TTTo2L2Nu TTTo2L2Nu   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/TTTo2L2Nu_2016  88.2870       0    1   0  0  2016
+TOP     r.kBlue  TTToSemiLeptonic TTToSemiLeptonic    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/TTToSemiLeptonic_2016 365.35 0 1 0 0 2016
+TOP     r.kBlue  TTToHadronic TTToHadronic   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/TTToHadronic_2016  377.96  0    1   0  0  2016
+TOP     r.kBlue  ttWJets ttWJets  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/ttWJets_2016  0.4611   0    1   0  0  2016
+#
+#EWK        r.kCyan    W1JetsToLNu    W1JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/W1JetsToLNu_2016 8104     0    1   0  0 2016
+#EWK        r.kCyan    W2JetsToLNu    W2JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/W2JetsToLNu_2016 2793     0    1   0  0 2016
+#EWK        r.kCyan    W3JetsToLNu    W3JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/W3JetsToLNu_2016 992.5     0    1   0  0 2016
+#EWK        r.kCyan    W4JetsToLNu    W4JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/W4JetsToLNu_2016 604     0    1   0  0 2016
+#
+#EWKNLO        r.kCyan    WJetsToLNu_NLO    WJetsToLNu_NLO    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/WJetsToLNu_NLO_2016 67350.7     0    1   0  0 2016
+#
+EWKNLO        r.kCyan    WJetsToLNu_NLO    WJetsToLNu_NLO    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/WJetsToLNu_NLO_2016 67350.7     0    1   0  0 2016
+#EWK        r.kCyan    WJetsToLNu_NLO    WJetsToLNu_NLO    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/WJetsToLNu_NLO_2016 61526.7     0    1   0  0 2016
+#
+#
+GJets    r.kCyan       GJets_HT-40To100   GJets_HT-40To100  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/GJets_HT-40To100_2016 19000 0     1   0  0 2016
+GJets    r.kCyan       GJets_HT-100To200   GJets_HT-100To200  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/GJets_HT-100To200_2016 8644.0 0     1   0  0 2016
+GJets    r.kCyan       GJets_HT-200To400   GJets_HT-200To400  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/GJets_HT-200To400_2016 2200 0     1   0  0 2016
+GJets    r.kCyan       GJets_HT-400To600   GJets_HT-400To600  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/GJets_HT-400To600_2016 260 0     1   0  0 2016
+GJets    r.kCyan       GJets_HT-600ToInf   GJets_HT-600ToInf  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/GJets_HT-600ToInf_2016 41 0     1   0  0 2016
+#
+TX       r.kBlue     TGjets  TGjets  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/TGjets_2016 2.967 0      1   0  0 2016
+TX       r.kBlue     TTGjets  TTGjets  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/TTGjets_2016 4.322 0      1   0  0 2016
+TX       r.kBlue     TTGjets_ext1  TTGjets_ext1  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/TTGjets_ext1_2016 4.322 0      1   0  0 2016
+#EW       r.kGreen+2   WG_PtG-130 WG_PtG-130 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/WG_PtG-130_2016 0.65  0  1   0  0 2016
+EW       r.kGreen+2   WG_PtG-130 WG_PtG-130 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/WG_PtG-130_2016 0.8099  0  1   0  0 2016
+#EW       r.kGreen+2   WG_PtG-40To130 WG_PtG-40To130 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/WG_PtG-40To130_2016 12.68 0    1   0  0 2016
+EW       r.kGreen+2   WG_PtG-40To130 WG_PtG-40To130 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/WG_PtG-40To130_2016 19.81 0    1   0  0 2016
+EW       r.kGreen+2    WGToLNuG  WGToLNuG /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/WGToLNuG_2016 489 0    1   0  0 2016
+EW       r.kGreen+2    WWG  WWG /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/WWG_2016 0.33 0    1   0  0 2016
+EW       r.kGreen+2    ZGTo2NuG  ZGTo2NuG /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/ZGTo2NuG_2016 30.11 0    1   0  0 2016
+EW       r.kGreen+2    ZLLGJets_PtG-130 ZLLGJets_PtG-130 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/ZLLGJets_PtG-130_2016 0.206 0    1   0  0 2016
+EW       r.kGreen+2    ZLLGJets_PtG-15to130  ZLLGJets_PtG-15to130 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/ZLLGJets_PtG-15to130_2016 96.34 0    1   0  0 2016
+EW       r.kGreen+2    ZNuNuGJets_PtG-130  ZNuNuGJets_PtG-130 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/ZNuNuGJets_PtG-130_2016  0.3036 0    1   0  0 2016
+#QCD      r.kMagenta     QCD_HT50to100 QCD_HT50to100 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT50to100_2016 188800000     0    1   0  0 2016
+#QCD      r.kMagenta     QCD_HT100to200 QCD_HT100to200 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT100to200_2016 19380000    0    1   0  0 2016
+#QCD      r.kMagenta     QCD_HT200to300 QCD_HT200to300 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT200to300_2016 15590000    0    1   0  0 2016
+#QCD      r.kMagenta     QCD_HT300to500 QCD_HT300to500 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT300to500_2016 311900    0    1   0  0 2016
+#QCD      r.kMagenta     QCD_HT500to700 QCD_HT500to700 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT500to700_2016 29070    0    1   0  0 2016
+#QCD      r.kMagenta     QCD_HT700to1000 QCD_HT700to1000 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT700to1000_2016 5962    0    1   0  0 2016
+#QCD      r.kMagenta     QCD_HT1000to1500 QCD_HT1000to1500 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT1000to1500_2016 1005    0    1   0  0 2016
+#QCD      r.kMagenta     QCD_HT1500to2000 QCD_HT1500to2000 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT1500to2000_2016 101.8    0    1   0  0 2016
+#QCD      r.kMagenta     QCD_HT2000toInf QCD_HT2000toInf /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT2000toInf_2016 20.54    0    1   0  0 2016
+QCD      r.kMagenta     QCD_HT50to100 QCD_HT50to100 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT50to100_2016 186100000     0    1   0  0 2016
+QCD      r.kMagenta     QCD_HT100to200 QCD_HT100to200 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT100to200_2016 27849880    0    1   0  0 2016
+QCD      r.kMagenta     QCD_HT200to300 QCD_HT200to300 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT200to300_2016 1716997    0    1   0  0 2016
+QCD      r.kMagenta     QCD_HT300to500 QCD_HT300to500 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT300to500_2016 351302    0    1   0  0 2016
+QCD      r.kMagenta     QCD_HT500to700 QCD_HT500to700 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT500to700_2016 31630    0    1   0  0 2016
+QCD      r.kMagenta     QCD_HT700to1000 QCD_HT700to1000 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT700to1000_2016 6802    0    1   0  0 2016
+QCD      r.kMagenta     QCD_HT1000to1500 QCD_HT1000to1500 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT1000to1500_2016 1206    0    1   0  0 2016
+QCD      r.kMagenta     QCD_HT1500to2000 QCD_HT1500to2000 /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT1500to2000_2016 98.71    0    1   0  0 2016
+QCD      r.kMagenta     QCD_HT2000toInf QCD_HT2000toInf /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_HT2000toInf_2016 20.2    0    1   0  0 2016
+#
+#
+#QCD      r.kMagenta    QCD_Pt-15To20_MuEn QCD_Pt-15To20_MuEn /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-15To20_MuEn_2016 847500000   0    1   0  0 2016
+#QCD      r.kMagenta    QCD_Pt-20To30_MuEn QCD_Pt-20To50_MuEn  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-20To30_MuEn_2016 562700000.  0    1   0  0 2016
+#QCD      r.kMagenta    QCD_Pt-30To50_MuEn QCD_Pt-30To50_MuEn  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-30To50_MuEn_2016 106900000.  0    1   0  0 2016
+#QCD      r.kMagenta    QCD_Pt-50To80_MuEn QCD_Pt-50To80_MuEn  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-50To80_MuEn_2016 15710000.   0    1   0  0 2016
+#QCD      r.kMagenta    QCD_Pt-80To120_MuEn  QCD_Pt-80To120_MuEn /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-80To120_MuEn_2016 2336000.  0    1   0  0 2016
+#QCD      r.kMagenta    QCD_Pt-120To170_MuEn QCD_Pt-120To170_MuEn /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-120To170_MuEn_2016 410800   0    1   0  0 2016
+#QCD      r.kMagenta    QCD_Pt-170To300_MuEn QCD_Pt-170To300_MuEn /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-170To300_MuEn_2016 103500   0    1   0  0 2016
+#QCD      r.kMagenta    QCD_Pt-600To800_MuEn QCD_Pt-600To800_MuEn  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-600To800_MuEn_2016 187.109   0    1   0  0 2016
+#QCD      r.kMagenta    QCD_Pt-800To1000_MuEn QCD_Pt-800To1000_MuEn  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-800To1000_MuEn_2016 32.35   0    1   0  0 2016
+#QCD      r.kMagenta    QCD_Pt-1000_MuEn  QCD_Pt-1000_MuEn /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-1000_MuEn_2016 10.4305    0    1   0  0 2016
+#QCD      r.kMagenta    QCD_Pt-300To470_MuEn QCD_Pt-300To470_MuEn  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-300To470_MuEn_2016 6830.  0   1   0  0 2016
+#QCD      r.kMagenta    QCD_Pt-470To600_MuEn QCD_Pt-470To600_MuEn  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-470To600_MuEn_2016 552.1  0    1   0  0 2016
+#
+#
+#QCD      r.kMagenta  QCD_Pt-20_MuEn QCD_Pt-20_MuEn /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/QCD_Pt-20_MuEn_2016 239000    0    1   0  0 2016
+#
+#-----------------------------------------------------------
+#-----------------------------------------------------------
+# BLOCK                COLOR      NAME                  LABEL                     LOCATION OF TREES                                               XSEC     ISDATA
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#WZ, Other, 27.6, 1, 1, ,,/WZ_TuneCP5_13TeV-pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2016_realistic_v16_L1v1-v1/NANOAODSIM
+#WZTo3LNu, WZ, 5.052, 1, 1, ,,/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2016_realistic_v16_L1v1-v2/NANOAODSIM
+#WZZ, Other, 0.05565, 1, 1, ,,/WZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2016_realistic_v16_L1v1-v1/NANOAODSIM
+#ZZTo4L, ZZ, 1.325, 1, 1, ,,/ZZTo4L_TuneCP5_13TeV_powheg_pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2016_realistic_v16_L1v1-v2/NANOAODSIM
+#ZZTo2L2Nu, ZZ, 1.325, 1, 1, ,,/ZZTo2L2Nu_TuneCP5_13TeV_powheg_pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2016_realistic_v16_L1v1-v1/NANOAODSIM
+#ZZZ, Other, 0.01398, 1, 1, ,,/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2016_realistic_v16_L1v1-v1/NANOAODSIM
+#
+DA  r.kBlack    SinglePhoton_Run2016Bv1_preVFP SinglePhoton_Run2016Bv1_preVFP  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/SinglePhoton_Run2016Bv1_preVFP  1   1  0  0  1 2016
+DA  r.kBlack    SinglePhoton_Run2016Bv2_preVFP SinglePhoton_Run2016Bv2_preVFP  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/SinglePhoton_Run2016Bv2_preVFP  1   1  0  0  1 2016
+DA  r.kBlack    SinglePhoton_Run2016C_preVFP SinglePhoton_Run2016C_preVFP  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/SinglePhoton_Run2016C_preVFP  1   1  0  0  1 2016
+DA  r.kBlack    SinglePhoton_Run2016D_preVFP SinglePhoton_Run2016D_preVFP  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/SinglePhoton_Run2016D_preVFP  1   1  0  0  1 2016
+DA  r.kBlack    SinglePhoton_Run2016E_preVFP SinglePhoton_Run2016E_preVFP  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/SinglePhoton_Run2016E_preVFP  1   1  0  0  1 2016
+DA  r.kBlack    SinglePhoton_Run2016Fv2_preVFP SinglePhoton_Run2016Fv2_preVFP  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/SinglePhoton_Run2016Fv2_preVFP  1   1  0  0  1 2016
+DA  r.kBlack    SinglePhoton_Run2016Fv1 SinglePhoton_Run2016Fv1  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/SinglePhoton_Run2016Fv1  1   1  0  0  1 2016
+DA  r.kBlack    SinglePhoton_Run2016G SinglePhoton_Run2016G  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/SinglePhoton_Run2016G  1   1  0  0  1 2016
+DA  r.kBlack    SinglePhoton_Run2016H SinglePhoton_Run2016H  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/SinglePhoton_Run2016H  1   1  0  0  1 2016

@@ -1,0 +1,46 @@
+#-----------------------------------------------------------
+#----------------- data samples ----------------------------
+#-----------------------------------------------------------
+# BLOCK                 COLOR      NAME                  LABEL                     LOCATION OF TREES                                               XSEC     ISDATA               
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#-SAMPLES-FOR-Z+JETS----------------------------------------------------------
+#TT       r.kRed      TTJets         TTJets                             /eos/uscms/store/group/lpcsusyhiggs/ntuples/MetStudies/2018/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/crab_TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/211101_225233/0000/               88287.0        0    1   0  0 
+#TT      r.kRed     TTJets  TTJets   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/WZ_2018              88287.0        0    1   0  0  2018
+#EW      r.kBlue     WZ    WZ    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/WZ_2018 27.6     0    1   0  0
+EWK        r.kCyan    WJetsToLNu    WJetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/WJetsToLNu_2018 61526     0    1   0  0 2018
+DY             r.kYellow   DYJetsToLLM50    DYJetsToLLM50   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/DYJetsToLLM50_2018/            6225.42        0    1   0  0  2018
+DY             r.kYellow   DYJetsToLLM10to50 DYJetsToLLM10to50   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/DYJetsToLLM10to50_2018/     18610        0    1   0  0  2018
+#
+TOP              r.kBlue  ST_s-channel_antitop ST_s-channel_antitop   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/ST_s-channel_antitop_2018  3.74        0    1   0  0  2018
+TOP              r.kBlue  ST_t-channel_top ST_t-channel_top   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/ST_t-channel_top_2018  115.3        0    1   0  0  2018
+TOP              r.kBlue  ST_t-channel_antitop ST_s-channel_antitop   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/ST_s-channel_antitop_2018  69.09        0    1   0  0  2018
+TOP              r.kBlue  ST_tW_antitop ST_tW_antitop   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/ST_tW_antitop_2018  35.85       0    1   0  0  2018
+TOP              r.kBlue  ST_tW_top ST_tW_top   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/ST_tW_top_2018  35.85       0    1   0  0  2018
+TOP              r.kBlue  TTTo2L2Nu TTTo2L2Nu   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/TTTo2L2Nu_2018  88.2870       0    1   0  0  2018
+TOP              r.kBlue  TTToHadronic TTToHadronic    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/TTToHadronic_2018  377.96       0    1   0  0  2018
+TOP              r.kBlue  TTToSemiLeptonic  TTToSemiLeptonic   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/TTToSemiLeptonic_2018  365.35       0    1   0  0  2018
+TOP              r.kBlue  ttWJets ttWJets  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/ttWJets_2018  0.2043       0    1   0  0  2018
+#
+#EWK        r.kCyan    W1JetsToLNu    W1JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/W1JetsToLNu_2018 8104     0    1   0  0 2018
+#EWK        r.kCyan    W2JetsToLNu    W2JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/W2JetsToLNu_2018 2793     0    1   0  0 2018
+#EWK        r.kCyan    W3JetsToLNu    W3JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/W3JetsToLNu_2018 992.5     0    1   0  0 2018
+#EWK        r.kCyan    W4JetsToLNu    W4JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/W4JetsToLNu_2018 604     0    1   0  0 2018
+#
+EW       r.kGreen+2    WW WW     /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/WW_2018 75.8     0    1   0  0 2018
+EW       r.kGreen+2    WWW WWW     /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/WWW_2018 0.2086     0    1   0  0 2018
+EW       r.kGreen+2    WZ WZ     /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/WZ_2018 27.6     0    1   0  0 2018
+EW       r.kGreen+2    WZZ WZZ     /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/WZZ_2018 0.05565     0    1   0  0 2018
+#-----------------------------------------------------------
+#-----------------------------------------------------------
+# BLOCK                COLOR      NAME                  LABEL                     LOCATION OF TREES                                               XSEC     ISDATA
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#WZ, Other, 27.6, 1, 1, ,,/WZ_TuneCP5_13TeV-pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v1/NANOAODSIM
+#WZTo3LNu, WZ, 5.052, 1, 1, ,,/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v2/NANOAODSIM
+#WZZ, Other, 0.05565, 1, 1, ,,/WZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v1/NANOAODSIM
+#ZZTo4L, ZZ, 1.325, 1, 1, ,,/ZZTo4L_TuneCP5_13TeV_powheg_pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v2/NANOAODSIM
+#ZZTo2L2Nu, ZZ, 1.325, 1, 1, ,,/ZZTo2L2Nu_TuneCP5_13TeV_powheg_pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v1/NANOAODSIM
+#ZZZ, Other, 0.01398, 1, 1, ,,/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v1/NANOAODSIM
+DA  r.kBlack    SingleMuon_Run2018A SingleMuon_Run2018A  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/SingleMuon_Run2018A_2018  1   1  0  0  1 2018
+DA  r.kBlack    SingleMuon_Run2018B SingleMuon_Run2018B  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/SingleMuon_Run2018B_2018  1   1  0  0  1 2018
+DA  r.kBlack    SingleMuon_Run2018C SingleMuon_Run2018C  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/SingleMuon_Run2018C_2018  1   1  0  0  1 2018
+DA  r.kBlack    SingleMuon_Run2018D SingleMuon_Run2018D  /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets/SingleMuon_Run2018D_2018  1   1  0  0  1 2018
