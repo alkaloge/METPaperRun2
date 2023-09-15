@@ -86,7 +86,7 @@ if __name__ == "__main__":
     doQCD = int(opts.DoQCD)
     doStat = True
     doSyst = True
-    if 'boson_pt' in givein or 'Raw' in givein or 'mll' in givein: doSyst = False
+    if 'boson_pt' in givein or 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein: doSyst = False
     print 'varbs and systeamatic', varbs, doSyst
     #doSyst = False
     channel='gjets'

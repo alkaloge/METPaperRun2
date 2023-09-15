@@ -3,8 +3,8 @@ import os
 years = ["2018"]
 
 channels = ["Gjets"]
-vars = ["RawMET_pt", "RawPuppiMET_pt", "METCorGood_T1_pt", "PuppiMETCorGood_pt", "METCorGood_T1Smear_pt", "boon_pt", "u_parboson_RawMET", "u_parboson_RawPuppiMET", "u_perp_RawMET", "u_perp_RawPuppiMET", "u_parboson_METCorGood_T1Smear", "u_parboson_METCorGood_T1", "u_perp_METCorGood_T1Smear", "u_perp_METCorGood_T1", "u_parboson_PuppiMETCorGood", "u_perp_PuppiMETCorGood"]
-#vars=["RawMET_pt"]
+vars = ["RawMET_pt", "RawPuppiMET_pt", "METCorGood_T1_pt", "PuppiMETCorGood_pt", "METCorGood_T1Smear_pt", "boon_pt", "u_parboson_RawMET", "u_parboson_RawPuppiMET", "u_perp_RawMET", "u_perp_RawPuppiMET", "u_parboson_METCorGood_T1Smear", "u_parboson_METCorGood_T1", "u_perp_METCorGood_T1Smear", "u_perp_METCorGood_T1", "u_parboson_PuppiMETCorGood", "u_perp_PuppiMETCorGood", "iso_1"]
+vars=["iso_1"]
 alljetcuts = ["njetsgeq0", "njetsgt0"]
 #alljetcuts = ["njetsgeq0"]
 #Jobs_gjets_cutbased/plotS_2017_gjets_njetsgt0_nbtagl_cutbased_varbins_isocuttight_hitslt1_u_perp_METCorGood_T1Smear_Gjets.root
@@ -25,7 +25,7 @@ for nj in alljetcuts:
 		patternID = " Jobs_gjets_{5:s}/plotS_{0:s}_*_{1:s}_hitslt{2:s}_{3:s}ID*_{4:s}.root".format(yr, njets, veto, var, ch, ID)
 
 		pattern =''
-		if 'Raw' in var or 'mll' in var or 'boson_pt' in var : pattern = patternNom + patternPU + patternID
+		if 'Raw' in var or 'mll' in var or 'boson_pt' in var or 'Photon' in var or 'iso_1' in var: pattern = patternNom + patternPU + patternID
 		else : pattern = patternNom + patternJE + patternUncl + patternPU + patternID
 		# Use the filename pattern in the hadd command
 		fileIn="plotS_{0:s}_{1:s}_hitslt{2:s}_{3:s}_{4:s}.root".format(yr, njets, veto, var, ch)
