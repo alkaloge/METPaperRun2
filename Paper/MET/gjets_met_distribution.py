@@ -351,6 +351,8 @@ if __name__ == "__main__":
 
 	    jetCutInvIso = " (  pt_1[0] >=50 && nPhoton[0]==1 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>=0.9 && iso_1[0]>0.1 && nbtagL[0]==0.0 && cat==1 ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
   
+            if 'isocut' in tagname and 'isocuttight' not in tagname: jetCut = jetCut + " && iso_1<=0.005 "
+            if 'isocuttight' in tagname : jetCut = jetCut + " && iso_1<=0.005 "
             #if 'qcd' in inn : jetCut = jetCut + " && Photon_genPartFlav_1[0] !=1"
             if 'hoe' in tagname : jetCut = jetCut + " && Photon_hoe_1[0] <=0.04"
             if 'dr' in tagname : jetCut = jetCut + " && {0:s}{1:s}".format(drcutstr, drcut)
@@ -360,6 +362,7 @@ if __name__ == "__main__":
             if 'pu30to40' in tagname : jetCut  = jetCut + " && nPVGood[0]<40 && nPVGood>=30"
             if 'pu40to50' in tagname : jetCut  = jetCut + " && nPVGood[0]<50 && nPVGood>=40"
             if 'pugeq50' in tagname : jetCut  = jetCut + " && nPVGood[0]>=50 "
+            if 'pugeq40' in tagname : jetCut  = jetCut + " && nPVGood[0]>=40 "
             if doQCD : jetCut = jetCutInvIso
 
             print color.blue+'************************************************************************************************'+color.end
@@ -657,7 +660,7 @@ if __name__ == "__main__":
             try :SetOwnership(mc_histo, 0 )
             except TypeError : continue
             logcase=[0,1]
-            
+            '''
             for ilog in logcase :
                 isLog = ilog
 		print 'plotting ', var
@@ -704,7 +707,8 @@ if __name__ == "__main__":
                     print ' will plot with=======================>', varTitle , option, run_str
 		    plot_var.saveRatio(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclUp, mc_unclDown, varTitle , option, run_str)
 		    #plot_var.saveRatio(1,1, isLog, lumi, data_hist, mc_histo, mc_up, mc_down, mc_jesup, mc_jesdown, mc_unclUp, mc_unclDown, varTitle+"Int data"+str(data_hist.Integral()) , option, run_str)
-            del plot_var
+            '''
+            #del plot_var
             del Variable
             print yields
             time.sleep(0.1)
