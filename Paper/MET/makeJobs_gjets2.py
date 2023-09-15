@@ -10,7 +10,7 @@ extra = ""
 vars = ["MET_T1_pt", "PuppiMET_pt", "boson_pt", "METWmass", "u_par_MET", "u_perp_MET", "PuppiMETWmass"]
 vars = ['RawMET_pt', 'RawPuppiMET_pt', 'METCorGood_T1_pt', 'PuppiMETCorGood_pt', 'METCorGood_T1Smear_pt', 'boson_pt', 'u_parboson_RawMET', 'u_parboson_RawPuppiMET', 'u_perp_RawMET', 'u_perp_RawPuppiMET', 'u_parboson_METCorGood_T1Smear', 'u_parboson_METCorGood_T1', 'u_perp_METCorGood_T1Smear', 'u_perp_METCorGood_T1', 'u_parboson_PuppiMETCorGood', 'u_perp_PuppiMETCorGood']
 
-vars = ["iso_1"]
+#vars = ["iso_1"]
 #vars = ["METCorGood_T1_pt", "PuppiMETCorGood_pt", "boson_pt", "METCorGood_T1Smear_pt"]
 IDWP = "_cutbased"
 

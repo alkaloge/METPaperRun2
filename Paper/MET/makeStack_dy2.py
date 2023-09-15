@@ -61,16 +61,18 @@ if __name__ == "__main__":
 
     #plotS_2018_data_njetsgeq0_hitslt2_METWmass_MuMu.root
     isLog = 1
+    fin = "plotS_{0:s}_njetsgt0_nbtagl_10bins_hitslt1_{1:s}_{2:s}.root".format(str(opts.Year), str(opts.varr), str(opts.Channel))
+    #plotS_2018_njetsgeq0_nbtagl_10bins_hitslt1_METCorGood_T1_pt_Gjets.root
     fin ='{0:s}'.format(str(opts.FileIn))
     fIn = TFile.Open(fin, 'read')
-    #fIn = TFile.Open('plotS.root'.format(str(opts.Year), str(opts.varr), str(opts.Channel)), 'read')
     print 'fIn is.......', fIn.GetName()
     fIn.ls()
-    tmp_histo=0;mc_histo = 0; histo_err = 0; mc_up = 0; mc_down = 0; mc_puup=0; mc_pudown=0; mc_idup=0; mc_iddown=0;mc_jerup=0; mc_jerdown=0;mc_jesup = 0; mc_jesdown = 0; mc_unclup = 0; mc_uncldown = 0; mc_stack = r.THStack()
+    tmp_histo=0;mc_histo = 0; histo_err = 0; mc_up = 0; mc_down = 0; mc_jerup=0; mc_jerdown=0;mc_jesup = 0; mc_jesdown = 0; mc_unclup = 0; mc_uncldown = 0; mc_stack = r.THStack()
     #histo_dy_MET_T1_pt
 
     samples=['tx', 'qcd', 'ewknlo', 'ew', 'gjets' ]
-    samples=['tx', 'ew', 'ewknlo',  'qcdmg', 'gjets' ]
+    samples=['ewknlo', 'tx', 'qcd','ew', 'gjets' ]
+    #samples=['tx', 'qcd', 'ew', 'gjets' ]
     givein ='{0:s}'.format(str(opts.varr))
 
     varbs=[]
@@ -78,17 +80,14 @@ if __name__ == "__main__":
         varbs.append(givein)
     print 'will do the following', varbs, fIn.GetName()
     systs =['JES', 'Unclustered', 'JER']
-    Othersysts =['ID', 'PU']
-
     dirs = ['Up', 'Down']
-    colors = {'gjets':kYellow, 'dynlo':kYellow+1, 'qcdmg':kMagenta, 'tx':kBlue, 'ew':kGreen+2, 'ewk':kCyan, 'ewknlo':kCyan}
+    colors = {'gjets':kYellow, 'dynlo':kYellow+1, 'qcd':kMagenta, 'tx':kBlue, 'ew':kGreen+2, 'ewk':kCyan, 'ewknlo':kCyan}
     channel=''
     doQCD = int(opts.DoQCD)
-    doStat = True
     doSyst = True
-    if 'boson_pt' in givein or 'Raw' in givein or 'mll' in givein: doSyst = False
-    print 'varbs and systeamatic', varbs, doSyst
+    if 'boson_pt' in varbs : doSyst = False
     #doSyst = False
+    doScaleToData = False
     channel='gjets'
     era = str(opts.Year)
     eras = str(opts.Year)
@@ -97,6 +96,7 @@ if __name__ == "__main__":
     puname=''
     data_hist = fIn.Get('histo_data')
     
+    #data_hist.Scale(0.5)
     varTitle    = 'p_{T}^{miss} [GeV]'
     if 'boson_pt' in givein.lower() : varTitle    = 'q_{T} [GeV]'
     if 'boson_phi' in givein : varTitle    = 'q_{#phi}'
@@ -188,42 +188,6 @@ if __name__ == "__main__":
             mc_stack.Add(histo)
             mc_stack.Draw()
             #if 'Cor' in v : v = v.replace("METCor","MET")
-            if doStat : 
-		for sy in Othersysts : 
-		    for d in dirs :
-			hname = "histo_"+s+"_"+v+sy+d
-			htemp=0
-			htemp = fIn.Get(hname)   
-                        print 'working on======================================>', hname
-                        if kFactor !=1. : htemp.Scale(kFactor)
-                        #htemp.Rebin(4)
-			if 'PUUp' in hname : 
-			    if not mc_puup : 
-				mc_puup = copy.deepcopy(htemp)
-				print 'should be puup integral', hname, mc_puup.Integral(), mc_puup.Integral()/mc_histo.Integral()
-			    else : mc_puup.Add(htemp)
-
-			if 'PUDown' in hname : 
-			    if not mc_pudown : 
-				mc_pudown = copy.deepcopy(htemp)
-				print 'should be pudown', htemp.GetName(), mc_pudown.Integral(), mc_pudown.Integral()/mc_histo.Integral()
-			    else : 
-				mc_pudown.Add(htemp)
-			if 'IDUp' in hname : 
-			    if not mc_idup : 
-				mc_idup = copy.deepcopy(htemp)
-				print 'should be idup integral', hname, mc_idup.Integral(), mc_idup.Integral()/mc_histo.Integral()
-			    else : mc_idup.Add(htemp)
-
-			if 'IDDown' in hname : 
-			    if not mc_iddown : 
-				mc_iddown = copy.deepcopy(htemp)
-				print 'should be iddown', htemp.GetName(), mc_iddown.Integral(), mc_iddown.Integral()/mc_histo.Integral()
-			    else : 
-				mc_iddown.Add(htemp)
-
-
-
             if doSyst : 
 		for sy in systs : 
 		    for d in dirs :
@@ -232,6 +196,7 @@ if __name__ == "__main__":
 			htemp = fIn.Get(hname)   
                         print 'working on======================================>', hname
                         if kFactor !=1. : htemp.Scale(kFactor)
+                        #htemp.Rebin(4)
 			if 'JESUp' in hname : 
 			    if not mc_jesup : 
 				mc_jesup = copy.deepcopy(htemp)
@@ -275,25 +240,27 @@ if __name__ == "__main__":
 	mc_uncldown = mc_histo
         mc_jerup = mc_histo
         mc_jerdown = mc_histo
-        mc_puup = mc_histo
-        mc_pudown = mc_histo
-        mc_idup = mc_histo
-        mc_iddown = mc_histo
     #print data_hist.Integral(), mc_histo.Integral(), mc_jesup.Integral(), mc_jesdown.Integral()
-    option=str(opts.varr)
+    option='met'
     run_str =str(lumi)
     logcase=[0,1]
     nscale=1
     nscale= ( data_hist.GetSumOfWeights()/mc_histo.GetSumOfWeights())
     print 'some testttttttttt', mc_histo.GetName(), mc_histo.GetSumOfWeights(), mc_histo.GetTitle(), data_hist.GetSumOfWeights(), nscale
     
+    if doScaleToData :
+	mc_histo.Scale( nscale)
+	mc_jesup.Scale( nscale)
+	mc_jesdown.Scale( nscale)
+	mc_unclup.Scale( nscale)
+	mc_uncldown.Scale( nscale)
     for ilog in logcase :
         isLog = ilog
 	plot_var = Canvas.Canvas("test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog"%(str(opts.varr),puname, channel, puname ,str(era), str(int(doQCD)), str(opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])               
 	plot_var.addStack(mc_stack  , "hist" , 1, 1)
 	plot_var.addHisto(data_hist, "E,SAME"   , "Data"  , "PL", r.kBlack , 1, 0)
 
-	plot_var.saveRatioGjets(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, mc_puup, mc_pudown, mc_idup, mc_iddown, varTitle , option, run_str)
+	plot_var.saveRatio(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, varTitle , option, run_str)
 
 
     print color.blue+'********************************************DONE***************************************************'+color.end

@@ -168,7 +168,7 @@ class Sample:
               
           #cut = "("+ cut + addTriggers + addDataFilters+ ")" + "* (" + addPrescale +")" 
       lumi *=1000.
-      print 'cross check, isdata=================>', self.isData, lumi, name, var
+      print 'cross check, isdata=================>', self.isData, lumi, name, var,channel
       if self.isData: cut =  cut    + ")"
       if not self.isData :
           print 'not data, will also apply weights'
@@ -192,6 +192,7 @@ class Sample:
               var = var.replace('PUdown', '')
 
           if 'ElEl' in channel or 'MuMu' in channel: 
+              print 'there you are', channel
               cut =  cut    + "* ( " + "TrigSF1[0] " +  " )"  + "* ( " + "TrigSF2[0] " +  " )"
 	      if 'isoup' not in var.lower() and 'isodown' not in var.lower() :
 		  cut =  cut    + "* ( " + "IsoSF1[0] " +  " )"  + "* ( " + "IsoSF2[0] " +  " )"
@@ -216,7 +217,7 @@ class Sample:
 		  var = var.replace('IDdown', '')
 
           if 'Gjets' in channel or 'ElNu' in channel or 'MuNu' in channel: 
-              cut =  cut    + "* ( " + "TrigSF1[0] " +  " )"  
+              if 'Gjets' not in channel : cut =  cut    + "* ( " + "TrigSF1[0] " +  " )"  
 	      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
 		  cut =  cut    + "* ( " + "IDSF[0] " +  " )"  
 	      if 'idup' in var.lower() :
@@ -478,7 +479,7 @@ class Tree:
      print 'options--------------------------->', options
      if 'njets' in var or 'nTau' in var or 'nMuon' in var: nbin=range(0,10,1)
      if 'mll' in var : 
-         nbin=arange(60,120,2.5)
+         nbin=arange(60,120,2)
      if '_pt' in var : 
          if 'Photon' not in cut :
 	     #if islog < 1 : nbin = range(0,140,10)

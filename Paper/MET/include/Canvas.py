@@ -385,7 +385,9 @@ class Canvas:
 	trigErr = binC*trigSys
 	hMC.SetBinError(km, math.sqrt(binE*binE + lumiErr*lumiErr + leptErr*leptErr + trigErr*trigErr))
 
-
+    if 'Raw' in option or 'boson_pt' in option or 'mll' in option : 
+        statOnly = 1
+        doAllErrors = 0
     if option == "test": 
 	doAllErrors = 0
 	statOnly = 1
@@ -1344,6 +1346,10 @@ class Canvas:
     if 'phi' in title.lower() : 
 	hMC.SetMaximum(hMC.GetMaximum()*15)
 	hdata.SetMaximum(hMC.GetMaximum())
+
+    if 'Raw' in option or 'boson_pt' in option or 'mll' in option : 
+        statOnly = 1
+        doAllErrors = 0
 
     for km in range(0, hMC.GetNbinsX()+1):
 
