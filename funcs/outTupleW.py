@@ -91,6 +91,7 @@ class outTupleW() :
         self.list_of_arrays_noES = []           
         self.list_of_arraysJetsPt = []           
         self.list_of_arraysJetsEta = []           
+        self.list_of_arraysJetsPhi = []           
         self.list_of_arraysJetsFlavour = []           
         self.list_of_arraysJetsNbtagDeep = []           
         self.list_of_arraysJetsNbtagL = []           
@@ -139,6 +140,7 @@ class outTupleW() :
 			self.list_of_arraysJetsFlavour.append( array('i',[-1]*15))
 			self.list_of_arraysJetsEta.append( array('f',[-9.99]*15))
 			self.list_of_arraysJetsPt.append( array('f',[-9.99]*15))
+			self.list_of_arraysJetsPhi.append( array('f',[-9.99]*15))
 			self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*15))
 		    else :   
 		        for var in varss :
@@ -147,10 +149,11 @@ class outTupleW() :
 			    self.list_of_arraysJetsNbtagL.append( array('i',[-1]))
 			    self.list_of_arraysJetsNbtagM.append( array('i',[-1]))
 			    self.list_of_arraysJetsNbtagT.append( array('i',[-1]))
-			    self.list_of_arraysJetsFlavour.append( array('i',[-1]*15))
-			    self.list_of_arraysJetsEta.append( array('f',[-9.99]*15))
-			    self.list_of_arraysJetsPt.append( array('f',[-9.99]*15))
-			    self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*15))
+			    self.list_of_arraysJetsFlavour.append( array('i',[-1]*12))
+			    self.list_of_arraysJetsEta.append( array('f',[-9.99]*12))
+			    self.list_of_arraysJetsPt.append( array('f',[-9.99]*12))
+			    self.list_of_arraysJetsPhi.append( array('f',[-9.99]*12))
+			    self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*12))
                      
                 
 	    #for i_ in self.allsystMET :  self.list_of_arrays.append(array('f', [ 0 ]))
@@ -284,6 +287,18 @@ class outTupleW() :
         self.pfIsoId_1       = array('f',[0])
         self.mediumPromptId_1       = array('f',[0])
         self.looseId_1       = array('f',[0])
+
+	branches = ['dPhiMETCorGood_T1J1','dPhiPuppiMETCorGood_J1', 'dPhiMETCorGood_T1J2','dPhiPuppiMETCorGood_J2', 'dRMETCorGood_T1J1','dRPuppiMETCorGood_J1', 'dRMETCorGood_T1J2','dRPuppiMETCorGood_J2']
+	attributes = []
+	variations = ['','UnclusteredUp', 'UnclusteredDown', 'JESUp', 'JESDown', 'JERUp', 'JERDown']
+	if not isMC: variations = [''] 
+
+	for branch in branches:
+	    for var in variations:
+		branch_name = "{}{}".format(branch,  var)
+		setattr(self, branch_name, array('f', [-999]))
+		self.t.Branch(branch_name, getattr(self, branch_name), '{}/F'.format(branch_name))
+		#print("Created branch:", branch_name)
         
         # MET variables
         self.metcov00    = array('f',[0])
@@ -590,6 +605,7 @@ class outTupleW() :
         self.jflavour     = array('i',[-1]*15)
         self.jeta     = array('f',[-9.99]*15)
         self.jpt     = array('f',[-9.99]*15)
+        self.jphi     = array('f',[-9.99]*12)
         self.btagDeep     = array('f',[-9.99]*15)
 
         self.bpt_1     = array('f',[0]*15)
@@ -1011,6 +1027,7 @@ class outTupleW() :
         self.t.Branch('jflavour',     self.jflavour,     'jflavour[15]/i' )
         self.t.Branch('jeta',     self.jeta,     'jeta[15]/F' )
         self.t.Branch('jpt',     self.jpt,     'jpt[15]/F' )
+        self.t.Branch('jphi',     self.jphi,     'jphi[12]/F' )
         self.t.Branch('btagDeep', self.btagDeep, 'btagDeep[15]/i')
 
         if doSyst : 
@@ -1031,6 +1048,7 @@ class outTupleW() :
 		    self.t.Branch('nbtagT{0:s}'.format(v), self.list_of_arraysJetsNbtagT[i], 'nbtagT{0:s}/i'.format(v))
 		    self.t.Branch('jflavour{0:s}'.format(v), self.list_of_arraysJetsFlavour[i], 'jflavour{0:s}[15]/i'.format(v))
 		    self.t.Branch('jpt{0:s}'.format(v), self.list_of_arraysJetsPt[i], 'jpt{0:s}[15]/F'.format(v))
+		    self.t.Branch('jphi{0:s}'.format(v), self.list_of_arraysJetsPhi[i], 'jphi{0:s}[12]/F'.format(v))
 		    self.t.Branch('jeta{0:s}'.format(v), self.list_of_arraysJetsEta[i], 'jeta{0:s}[15]/F'.format(v))
 		    self.t.Branch('btagDeep{0:s}'.format(v), self.list_of_arraysJetsNbtagDeep[i], 'bagDeep{0:s}[15]/i'.format(v))
 
@@ -1095,6 +1113,22 @@ class outTupleW() :
         arg = 2.*(pt1*met*(1. - cos(phi1-metphi)) + pt2*met*(1. - cos(phi2-metphi)) + pt1*pt2*(1. - cos(phi2-phi1)))
         return sqrt(arg)
 
+    def setTLV(self, entry, ptMiss, pptMiss, MET_pt, MET_phi, PuppiMET_pt, PuppiMET_phi):
+	ptMiss.SetPtEtaPhiM(MET_pt, 0., MET_phi, 0.)
+	ptMiss.SetPz(0.)
+	ptMiss.SetE(ptMiss.Pt())
+	pptMiss.SetPtEtaPhiM(PuppiMET_pt, 0., PuppiMET_phi, 0.)
+	pptMiss.SetPz(0.)
+	pptMiss.SetE(pptMiss.Pt())
+
+    def calculate_dPhi(self, phi1, phi2):
+	dPhi = phi1 - phi2
+	while dPhi > pi:
+	    dPhi -= 2 * pi
+	while dPhi < -pi:
+	    dPhi += 2 * pi
+	return dPhi
+
     def getDR(self,entry, v1,v2) :
 
         dPhi = min(abs(v2.Phi()-v1.Phi()),2.*pi-abs(v2.Phi()-v1.Phi()))
@@ -1145,7 +1179,7 @@ class outTupleW() :
 
 
     def getJetsJMEMV(self,entry,LepList,era, syst,proc) :
-	jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = [], [], [], [], [], [], [], [], []
+	jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = [], [], [], [], [], [], [], [], [], []
 	#print 'will try', len(LepList), 'syst', syst, 'proc', proc
 	#bjet_discrL = 0.2217
 	#bjet_discrM = 0.6321
@@ -1225,6 +1259,7 @@ class outTupleW() :
                 jetListFlav.append(entry.Jet_partonFlavour[jj])
             except AttributeError  : jetListFlav.append(0)
             jetListEta.append(entry.Jet_eta[jj])
+            jetListPhi.append(entry.Jet_phi[jj])
             jpt = getattr(entry, "Jet_pt{0:s}".format(str(syst)), None)
             jetListPt.append(jpt[jj])
             bTagListDeep.append(entry.Jet_btagDeepB[jj])
@@ -1249,7 +1284,8 @@ class outTupleW() :
         #print 'lets see', len(bJetListL), len(bJetListM), len(bJetListT), len(jetList)
         #print ''
         #print jetList, jetListEta, jetListPt
-        return jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
+        #return jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
+        return jetList, jetListFlav, jetListPhi, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
 
 
 
@@ -2271,7 +2307,8 @@ class outTupleW() :
 
 		    for i, v in enumerate(self.allsystJets) : 
 		    #njets_sys, nbtag_sys
-			jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,v) 
+			#jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,v) 
+		        jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist, era, str(v), proc) 
 			print 'jessyst===============!!!!!!!!!!!!', systematic, len(jetList), cat
 			try : 
 			    self.list_of_arraysJetsNjets[i][0] = len(jetList)
@@ -2293,7 +2330,8 @@ class outTupleW() :
 	    nom_=''
 	    sysj = ''
 	    if doUncertainties : sysj='nom'
-	    jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,sysj,proc) 
+	    #jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,sysj,proc) 
+	    jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,sysj,proc) 
             self.njets[0], self.nbtagL[0], self.nbtagM[0], self.nbtagT[0]= -1, -1, -1, 1
 	    self.njets[0] = len(jetList)
 	    self.nbtagL[0] = len(bJetListL)
@@ -2307,6 +2345,7 @@ class outTupleW() :
 		    self.jflavour[ifl]  = jetListFlav[ifl]
 		    self.jeta[ifl]  = jetListEta[ifl]
 		    self.jpt[ifl]  = jetListPt[ifl]
+		    self.jphi[ifl]  = jetListPhi[ifl]
 		    self.btagDeep[ifl] = bTagListDeep[ifl]
 		except IndexError : print 'we hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
 	    #print self.jpt[0], self.jeta[0]
@@ -2329,6 +2368,201 @@ class outTupleW() :
 	    #if  self.nbtag[0] == 0 : 
 
 	    #if self.nbtagL[0] == 0 :
+
+
+            ptMiss, pptMiss = TLorentzVector(), TLorentzVector()
+            if self.njets[0]>0 : 
+	        branches = ['dPhiMETCorGood_T1J1','dPhiPuppiMETCorGood_J1', 'dPhiMETCorGood_T1J2','dPhiPuppiMETCorGood_J2', 'dRMETCorGood_T1J1','dRPuppiMETCorGood_J1', 'dRMETCorGood_T1J2','dRPuppiMETCorGood_J2']
+		variations = ['','UnclusteredUp', 'UnclusteredDown', 'JESUp', 'JESDown', 'JERUp', 'JERDown']
+                #print self.njets[0],  self.list_of_arraysJetsNjets[1][0], self.list_of_arraysJetsNjets[2][0]
+		if not isMC: variations = [''] 
+                #starts here
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_pt[0],0.,self.METCorGood_T1_phi[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_pt[0],0.,self.PuppiMETCorGood_phi[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                if self.njets[0]>1 : 
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+
+                #ends here njets_jesTotalUp
+            #if self.njets_jesTotalUp>0 : 
+            if (isMC and self.list_of_arraysJetsNjets[1][0] > 0) or (not isMC and self.njets[0]>0):
+
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_ptJESUp[0],0.,self.METCorGood_T1_phiJESUp[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_ptJESUp[0],0.,self.PuppiMETCorGood_phiJESUp[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1JESUp[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1JESUp[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1JESUp[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1JESUp[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                #if self.list_of_arraysJetsNjets[1][0] >1: 
+                if (isMC and self.list_of_arraysJetsNjets[1][0] > 1) or (not isMC and self.njets[0]>1):
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2JESUp[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2JESUp[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2JESUp[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2JESUp[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+                #ends here
+
+            #if self.list_of_arraysJetsNjets[2][0] > 0:
+            if (isMC and self.list_of_arraysJetsNjets[2][0] > 0) or (not isMC and self.njets[0]>0):
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_ptJESDown[0],0.,self.METCorGood_T1_phiJESDown[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_ptJESDown[0],0.,self.PuppiMETCorGood_phiJESDown[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1JESDown[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1JESDown[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1JESDown[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1JESDown[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                #if self.list_of_arraysJetsNjets[2][0] > 1:
+                if (isMC and self.list_of_arraysJetsNjets[2][0] > 1) or (not isMC and self.njets[0]>1):
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2JESDown[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2JESDown[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2JESDown[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2JESDown[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+
+
+
+                #ends here
+
+            #if self.list_of_arraysJetsNjets[3][0] > 0:
+            if (isMC and self.list_of_arraysJetsNjets[3][0] > 0) or (not isMC and self.njets[0]>0):
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_ptJERUp[0],0.,self.METCorGood_T1_phiJERUp[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_ptJERUp[0],0.,self.PuppiMETCorGood_phiJERUp[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1JERUp[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1JERUp[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1JERUp[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1JERUp[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                #if self.list_of_arraysJetsNjets[3][0] > 1:
+                if (isMC and self.list_of_arraysJetsNjets[3][0] > 1) or (not isMC and self.njets[0]>1):
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2JERUp[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2JERUp[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2JERUp[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2JERUp[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+                #ends here
+
+            #if self.list_of_arraysJetsNjets[4][0] > 0:
+            if (isMC and self.list_of_arraysJetsNjets[4][0] > 0) or (not isMC and self.njets[0]>0):
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_ptJERDown[0],0.,self.METCorGood_T1_phiJERDown[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_ptJERDown[0],0.,self.PuppiMETCorGood_phiJERDown[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1JERDown[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1JERDown[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1JERDown[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1JERDown[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                #if self.list_of_arraysJetsNjets[4][0] > 1:
+                if (isMC and self.list_of_arraysJetsNjets[4][0] > 1) or (not isMC and self.njets[0]>1):
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2JERDown[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2JERDown[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2JERDown[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2JERDown[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+
+
+                #ends here unclustered follows
+            if self.njets[0]>0 : 
+
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_ptUnclusteredUp[0],0.,self.METCorGood_T1_phiUnclusteredUp[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_ptUnclusteredUp[0],0.,self.PuppiMETCorGood_phiUnclusteredUp[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1UnclusteredUp[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1UnclusteredUp[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1UnclusteredUp[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1UnclusteredUp[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                if self.njets[0]>1 : 
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2UnclusteredUp[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2UnclusteredUp[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2UnclusteredUp[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2UnclusteredUp[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+                #ends here
+
+		ptMiss.SetPtEtaPhiM(self.METCorGood_T1_ptUnclusteredDown[0],0.,self.METCorGood_T1_phiUnclusteredDown[0],0.)
+		ptMiss.SetPz(0.)
+		ptMiss.SetE(ptMiss.Pt())
+		pptMiss.SetPtEtaPhiM(self.PuppiMETCorGood_ptUnclusteredDown[0],0.,self.PuppiMETCorGood_phiUnclusteredDown[0],0.)
+		pptMiss.SetPz(0.)
+		pptMiss.SetE(pptMiss.Pt())
+
+                phim, etam = ptMiss.Phi(), ptMiss.Eta() 
+                pphim, petam = pptMiss.Phi(), pptMiss.Eta() 
+                phi1, eta1 = self.jeta[0], self.jphi[0]
+
+                self.dPhiMETCorGood_T1J1UnclusteredDown[0] = self.calculate_dPhi(phi1,phim)
+                self.dPhiPuppiMETCorGood_J1UnclusteredDown[0] = self.calculate_dPhi(phi1,pphim)
+                self.dRMETCorGood_T1J1UnclusteredDown[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
+                self.dRPuppiMETCorGood_J1UnclusteredDown[0] = self.getDRnV(entry,  self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
+                if self.njets[0]>1 : 
+                    phi2, eta2 = self.jeta[1], self.jphi[1]
+		    self.dPhiMETCorGood_T1J2UnclusteredDown[0] = self.calculate_dPhi(phi2,phim)
+		    self.dPhiPuppiMETCorGood_J2UnclusteredDown[0] = self.calculate_dPhi(phi2,pphim)
+		    self.dRMETCorGood_T1J2UnclusteredDown[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
+		    self.dRPuppiMETCorGood_J2UnclusteredDown[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
+
+
 
 	    if SystIndex == 0 : 
 		self.t.Fill()

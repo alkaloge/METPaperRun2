@@ -1343,11 +1343,12 @@ class Canvas:
         lumiSys = 0.016
     leptSys  = 0.02
     trigSys  = 0.02
+    #print 'some numbers mc, hdata{}, hMC{}, hjerUp{}, hjerDown{} ,  hjesUp{}, hjesDown{} ,hunclUp{}, hunclDown{}, hpuUp{}, hpuDown{}, hidUp{}, hidDown{}'.format(hdata.GetSumOfWeights(), hMC.GetSumOfWeights(), hjerUp.GetSumOfWeights(), hjerDown.GetSumOfWeights() ,  hjesUp.GetSumOfWeights(), hjesDown.GetSumOfWeights() ,hunclUp.GetSumOfWeights(), hunclDown.GetSumOfWeights(), hpuUp.GetSumOfWeights(), hpuDown.GetSumOfWeights(), hidUp.GetSumOfWeights(), hidDown.GetSumOfWeights())
     if 'phi' in title.lower() : 
 	hMC.SetMaximum(hMC.GetMaximum()*15)
 	hdata.SetMaximum(hMC.GetMaximum())
 
-    if 'Raw' in option or 'boson_pt' in option or 'mll' in option : 
+    if 'boson_pt' in option or 'iso_' in option or 'Photon_' in option or 'Raw' in option: 
         statOnly = 1
         doAllErrors = 0
 
@@ -1363,11 +1364,8 @@ class Canvas:
         idErr = max( math.fabs(hidUp.GetBinContent(km) - hMC.GetBinContent(km)), math.fabs(hidDown.GetBinContent(km) - hMC.GetBinContent(km)))
 
 	hMC.SetBinError(km, math.sqrt(binE**2 + lumiErr**2 + puErr**2 + idErr**2+leptErr**2 + trigErr**2))
+	#hMC.SetBinError(km, math.sqrt(binE**2 + lumiErr**2 + puErr**2 ))
 	#hMC.SetBinError(km, math.sqrt(binE*binE + lumiErr*lumiErr ))#+ leptErr*leptErr + trigErr*trigErr))
-
-    if 'boson_pt' in option or 'iso_' in option or 'Photon_' in option: 
-	doAllErrors = 0
-	statOnly = 1
     
     self.myCanvas.cd()
     pad1 = TPad("pad1", "pad1", 0, 0.3, 1, 1.0) 

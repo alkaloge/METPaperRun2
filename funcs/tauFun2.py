@@ -1174,7 +1174,8 @@ def goodPhoton(entry, j ):
     gj = selections['gjets'] # selections for Z->mumu
     if entry.Photon_pt[j] < gj['photon_pt']: return False
     if abs(entry.Photon_eta[j]) > gj['photon_eta']: return False
-    if entry.Photon_cutBased[j] !=  gj['photon_cutbased']: return False
+    #if entry.Photon_cutBased[j] !=  gj['photon_cutbased']: return False
+    if entry.Photon_cutBased[j] < 2 and entry.Photon_mvaID_WP80[j]<1 and entry.Photon_mvaID_WP90[j]<1: return False
     #if entry.Photon_mvaID_WP80[j] < 0.5 : return False
     if entry.Photon_r9[j] < 0.9 : return False
     if entry.Photon_electronVeto[j] == 0  : return False

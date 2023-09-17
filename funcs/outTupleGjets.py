@@ -67,16 +67,15 @@ class outTupleGjets() :
 	    self.evaluator = _core.CorrectionSet.from_file(self.fname)
 		# Tau Decay types
 
-        self.evaluatorEl=''
-	self.fnameEl = "./photon_{0:s}.json.gz".format(str(era))
-	if self.fnameEl.endswith(".json.gz"):
+        self.evaluatorPhoton=''
+	self.fnamePhoton = "./photon_{0:s}.json.gz".format(str(era))
+	if self.fnamePhoton.endswith(".json.gz"):
 	    import gzip
-	    with gzip.open(self.fnameEl,'rt') as file:
-		self.datasfEl = file.read().strip()
-		self.evaluatorEl = _core.CorrectionSet.from_string(self.datasfEl)
+	    with gzip.open(self.fnamePhoton,'rt') as file:
+		self.datasfPhoton = file.read().strip()
+		self.evaluatorPhoton = _core.CorrectionSet.from_string(self.datasfPhoton)
 	else:
-	    self.evaluatorEl = _core.CorrectionSet.from_file(self.fnameEl)
-		# Tau Decay types
+	    self.evaluatorPhoton = _core.CorrectionSet.from_file(self.fnamePhoton)
 
 
         self.evaluatorPresc=''
@@ -94,7 +93,7 @@ class outTupleGjets() :
 
 
 
-        print 'initialized the UL SF from', self.fname, self.fnameEl, self.fnamePresc
+        print 'initialized the UL SF from', self.fname, self.fnamePhoton, self.fnamePresc
 	# TrackerMuon Reconstruction UL scale factor
 	#self.valsf = self.evaluator["NUM_MediumID_DEN_TrackerMuons"].evaluate("2017_UL", 1.1, 30.0, "sf")
 	#print("sf 1 is: " + str(self.valsf))
@@ -209,8 +208,6 @@ class outTupleGjets() :
         self.Photon_r9_1            = array('f',[0])
         self.Photon_sieie_1            = array('f',[0])
         self.Photon_pdgid_1            = array('f',[0])
-        self.Photon_cutBased_1             = array('f',[0])
-        self.Photon_mvaID_WP90_1             = array('f',[0])
         self.Photon_pixelSeed_1             = array('f',[0])
         self.Photon_hoe_1             = array('f',[0])
         self.Photon_electronVeto_1             = array('f',[0])
@@ -269,8 +266,6 @@ class outTupleGjets() :
         self.L1PreFiringWeight_Nom        = array('f',[0])
         self.L1PreFiringWeight_Up        = array('f',[0])
         self.L1PreFiringWeight_Down        = array('f',[0])
-        self.Electron_convVeto        = array('f',[0])
-        self.Electron_lostHits        = array('I',[0])
 
         # di-lepton variables.   1 and 2 refer to plus and minus charge
         self.mll       = array('f',[0])
@@ -286,7 +281,9 @@ class outTupleGjets() :
         self.m_uncor_1        = array('f',[0])
         self.pt_uncor_2        = array('f',[0])
         self.m_uncor_2        = array('f',[0])
-
+        '''
+        self.Electron_convVeto        = array('f',[0])
+        self.Electron_lostHits        = array('I',[0])
         self.Electron_mvaFall17V2noIso_WP90_1 = array('f',[0])
         self.Electron_mvaFall17V2Iso_WP90_1 = array('f',[0])
         self.Electron_cutBased_1 = array('f',[0])
@@ -296,19 +293,32 @@ class outTupleGjets() :
         self.Electron_mvaFall17V2Iso_WP90_2 = array('f',[0])
         self.Electron_cutBased_2 = array('f',[0])
         self.gen_match_2 = array('l',[0])
+        '''
 
         # di-lepton variables.   1 and 2 refer to plus and minus charge
         self.mll       = array('f',[0])
 
-        self.IDSF1      = array('f',[0])
         self.IsoSF1      = array('f',[0])
         self.TrigSF1      = array('f',[0])
         self.IDSF2      = array('f',[0])
         self.IsoSF2      = array('f',[0])
         self.TrigSF2      = array('f',[0])
-        self.IDSF      = array('f',[0])
-        self.IDSF_up      = array('f',[0])
-        self.IDSF_down      = array('f',[0])
+
+        self.IDSFM      = array('f',[0])
+        self.IDSFM_up      = array('f',[0])
+        self.IDSFM_down      = array('f',[0])
+        self.IDSFT      = array('f',[0])
+        self.IDSFT_up      = array('f',[0])
+        self.IDSFT_down      = array('f',[0])
+
+        self.IDSFWP80      = array('f',[0])
+        self.IDSFWP80_up      = array('f',[0])
+        self.IDSFWP80_down      = array('f',[0])
+
+        self.IDSFWP90      = array('f',[0])
+        self.IDSFWP90_up      = array('f',[0])
+        self.IDSFWP90_down      = array('f',[0])
+
         self.IsoSF      = array('f',[0])
         self.TrigSF      = array('f',[0])
         #self.muonTightiDsf_1      = array('f',[0])
@@ -468,8 +478,9 @@ class outTupleGjets() :
         self.t.Branch('lumi',             self.lumi,              'lumi/l' )
         self.t.Branch('evnt',              self.evnt,               'evnt/l' )
         self.t.Branch('nElectron',              self.nElectron,               'nElectron/I' )
-        self.t.Branch('Electron_convVeto',              self.Electron_convVeto,               'Electron_convVeto/F' )
-        self.t.Branch('Electron_lostHits',              self.Electron_lostHits,               'Electron_lostHits/I' )
+
+        #self.t.Branch('Electron_convVeto',              self.Electron_convVeto,               'Electron_convVeto/F' )
+        #self.t.Branch('Electron_lostHits',              self.Electron_lostHits,               'Electron_lostHits/I' )
 
         self.t.Branch('nMuon',              self.nMuon,               'nMuon/I' )
         self.t.Branch('nTau',              self.nTau,               'nTau/I' )
@@ -477,8 +488,6 @@ class outTupleGjets() :
         self.t.Branch('Photon_r9_1',              self.Photon_r9_1,               'Photon_r9_1/F' )
         self.t.Branch('Photon_sieie_1',              self.Photon_sieie_1,               'Photon_sieie_1/F' )
         self.t.Branch('Photon_pdgid_1',              self.Photon_pdgid_1,               'Photon_pdgid_1/F' )
-        self.t.Branch('Photon_cutBased_1',              self.Photon_cutBased_1,               'Photon_cutBased_1/F' )
-        self.t.Branch('Photon_mvaID_WP90_1',              self.Photon_mvaID_WP90_1,               'Photon_mvaID_WP90_1/I' )
         self.t.Branch('Photon_pixelSeed_1',              self.Photon_pixelSeed_1,               'Photon_pixelSeed_1/F' )
         self.t.Branch('Photon_hoe_1',              self.Photon_hoe_1,               'Photon_hoe_1/F' )
         self.t.Branch('Photon_electronVeto_1',              self.Photon_electronVeto_1,               'Photon_electronVeto_1/F' )
@@ -547,16 +556,25 @@ class outTupleGjets() :
         self.t.Branch('GenPart_status_1',     self.GenPart_status_1,     'GenPart_status_1/I')
         self.t.Branch('pt_uncor_1',        self.pt_uncor_1,        'pt_uncor_1/F')
         self.t.Branch('m_uncor_1',        self.m_uncor_1,        'm_uncor_1/F')
-        self.t.Branch('gen_match_1', self.gen_match_1, 'gen_match_1/I')
         self.t.Branch('stations_1', self.stations_1, 'stations_1/I')
         self.t.Branch('TrackerL_1', self.TrackerL_1, 'TrackerL_1/I')
 
-        self.t.Branch('IDSF1',        self.IDSF1,        'IDSF1/F')
         self.t.Branch('TrigSF1',        self.TrigSF1,        'TrigSF1/F')
         self.t.Branch('IsoSF1',        self.IsoSF1,        'IsoSF1/F')
-        self.t.Branch('IDSF',        self.IDSF,        'IDSF/F')
-        self.t.Branch('IDSF_up',        self.IDSF_up,        'IDSF_up/F')
-        self.t.Branch('IDSF_down',        self.IDSF_down,        'IDSF_down/F')
+
+        self.t.Branch('IDSFM',        self.IDSFM,        'IDSFM/F')
+        self.t.Branch('IDSFM_up',        self.IDSFM_up,        'IDSFM_up/F')
+        self.t.Branch('IDSFM_down',        self.IDSFM_down,        'IDSFM_down/F')
+        self.t.Branch('IDSFT',        self.IDSFT,        'IDSFT/F')
+        self.t.Branch('IDSFT_up',        self.IDSFT_up,        'IDSFT_up/F')
+        self.t.Branch('IDSFT_down',        self.IDSFT_down,        'IDSFT_down/F')
+
+        self.t.Branch('IDSFWP80',        self.IDSFWP80,        'IDSFWP80/F')
+        self.t.Branch('IDSFWP80_up',        self.IDSFWP80_up,        'IDSFWP80_up/F')
+        self.t.Branch('IDSFWP80_down',        self.IDSFWP80_down,        'IDSFWP80_down/F')
+        self.t.Branch('IDSFWP90',        self.IDSFWP90,        'IDSFWP90/F')
+        self.t.Branch('IDSFWP90_up',        self.IDSFWP90_up,        'IDSFWP90_up/F')
+        self.t.Branch('IDSFWP90_down',        self.IDSFWP90_down,        'IDSFWP90_down/F')
         self.t.Branch('TrigSF',        self.TrigSF,        'TrigSF/F')
         self.t.Branch('IsoSF',        self.IsoSF,        'IsoSF/F')
 
@@ -585,9 +603,9 @@ class outTupleGjets() :
         self.t.Branch('looseId_1', self.looseId_1, 'looseId_1/F')
 
 
-        self.t.Branch('Electron_mvaFall17V2Iso_WP90_1',              self.Electron_mvaFall17V2Iso_WP90_1,               'Electron_mvaFall17V2Iso_WP90_1/F' )
-        self.t.Branch('Electron_mvaFall17V2noIso_WP90_1',              self.Electron_mvaFall17V2noIso_WP90_1,               'Electron_mvaFall17V2noIso_WP90_1/F' )
-        self.t.Branch('Electron_cutBased_1',              self.Electron_cutBased_1,               'Electron_cutBased_1/I' )
+        #self.t.Branch('Electron_mvaFall17V2Iso_WP90_1',              self.Electron_mvaFall17V2Iso_WP90_1,               'Electron_mvaFall17V2Iso_WP90_1/F' )
+        #self.t.Branch('Electron_mvaFall17V2noIso_WP90_1',              self.Electron_mvaFall17V2noIso_WP90_1,               'Electron_mvaFall17V2noIso_WP90_1/F' )
+        #self.t.Branch('Electron_cutBased_1',              self.Electron_cutBased_1,               'Electron_cutBased_1/I' )
 
 
         
@@ -1238,8 +1256,6 @@ class outTupleGjets() :
 	    self.isochg_1[0]  = entry.Photon_pfRelIso03_chg[photonindex]
             self.Photon_r9_1[0] = entry.Photon_r9[photonindex]
             self.Photon_sieie_1[0] = entry.Photon_sieie[photonindex]
-            self.Photon_cutBased_1[0] = entry.Photon_cutBased[photonindex]
-            self.Photon_mvaID_WP90_1[0] = entry.Photon_mvaID_WP90[photonindex]
             self.Photon_electronVeto_1[0] = entry.Photon_electronVeto[photonindex]
             self.Photon_pixelSeed_1[0] = entry.Photon_pixelSeed[photonindex]
             self.Photon_hoe_1[0] = entry.Photon_hoe[photonindex]
@@ -1320,12 +1336,21 @@ class outTupleGjets() :
         self.eta_1[0]  = entry.Photon_eta[photonindex]
 
         #print 'check', self.pt_1[0], leadL.Pt(), self.eta_1[0], leadL.Eta()
-	self.IDSF[0]  = 1.
-	self.IDSF_up[0]  = 1.
-	self.IDSF_down[0]  = 1.
+	self.IDSFT[0]  = 1.
+	self.IDSFT_up[0]  = 1.
+	self.IDSFT_down[0]  = 1.
+	self.IDSFM[0]  = 1.
+	self.IDSFM_up[0]  = 1.
+	self.IDSFM_down[0]  = 1.
+	self.IDSFWP80[0]  = 1.
+	self.IDSFWP80_up[0]  = 1.
+	self.IDSFWP80_down[0]  = 1.
+	self.IDSFWP90[0]  = 1.
+	self.IDSFWP90_up[0]  = 1.
+	self.IDSFWP90_down[0]  = 1.
+
 	self.IsoSF[0]  = 1.
 	self.TrigSF[0]  = 1.
-	self.IDSF1[0]  = 1.
 	self.IsoSF1[0]  = 1.
 	self.TrigSF1[0]  = 1.
         #print leadL.Pt(), subL.Pt(), channel_ll, LepP.Pt(), LepM.Pt(), era, is_trig_1
@@ -1338,18 +1363,23 @@ class outTupleGjets() :
                 eleeff1=1.
                 eleiso1=1.
 		if leadL.Pt()> 50 : 
-                    eleeff1 = self.evaluatorEl["UL-Photon-ID-SF"].evaluate(yearin, "sf" , "Tight", leadL.Eta(), leadL.Pt() )
-                    self.IDSF_up[0] = self.evaluatorEl["UL-Photon-ID-SF"].evaluate(yearin, "sfup" , "Tight", leadL.Eta(), leadL.Pt() )
-                    self.IDSF_down[0] = self.evaluatorEl["UL-Photon-ID-SF"].evaluate(yearin, "sfdown" , "Tight", leadL.Eta(), leadL.Pt() )
-                    #eleeff1 = self.evaluatorEl["UL-Photon-ID-SF"].evaluate(yearin, "sf" , "wp80", leadL.Eta(), leadL.Pt() )
-                    #self.IDSF_up[0] = self.evaluatorEl["UL-Photon-ID-SF"].evaluate(yearin, "sfup" , "wp80", leadL.Eta(), leadL.Pt() )
-                    #self.IDSF_down[0] = self.evaluatorEl["UL-Photon-ID-SF"].evaluate(yearin, "sfdown" , "wp80", leadL.Eta(), leadL.Pt() )
-		#if leadL.Pt()>= 50 : eleeff1 = self.evaluatorEl["UL-Photon-ID-SF"].evaluate(yearin, "sf" , "wp80", leadL.Eta(), leadL.Pt() )
+                    self.IDSFT[0] = self.evaluatorPhoton["UL-Photon-ID-SF"].evaluate(yearin, "sf" , "Tight", leadL.Eta(), leadL.Pt() )
+                    self.IDSFT_up[0] = self.evaluatorPhoton["UL-Photon-ID-SF"].evaluate(yearin, "sfup" , "Tight", leadL.Eta(), leadL.Pt() )
+                    self.IDSFT_down[0] = self.evaluatorPhoton["UL-Photon-ID-SF"].evaluate(yearin, "sfdown" , "Tight", leadL.Eta(), leadL.Pt() )
+                    self.IDSFM[0] = self.evaluatorPhoton["UL-Photon-ID-SF"].evaluate(yearin, "sf" , "Medium", leadL.Eta(), leadL.Pt() )
+                    self.IDSFM_up[0] = self.evaluatorPhoton["UL-Photon-ID-SF"].evaluate(yearin, "sfup" , "Medium", leadL.Eta(), leadL.Pt() )
+                    self.IDSFM_down[0] = self.evaluatorPhoton["UL-Photon-ID-SF"].evaluate(yearin, "sfdown" , "Medium", leadL.Eta(), leadL.Pt() )
+
+                    self.IDSFWP80[0] = self.evaluatorPhoton["UL-Photon-ID-SF"].evaluate(yearin, "sf" , "wp80", leadL.Eta(), leadL.Pt() )
+                    self.IDSFWP80_up[0] = self.evaluatorPhoton["UL-Photon-ID-SF"].evaluate(yearin, "sfup" , "wp80", leadL.Eta(), leadL.Pt() )
+                    self.IDSFWP80_down[0] = self.evaluatorPhoton["UL-Photon-ID-SF"].evaluate(yearin, "sfdown" , "wp80", leadL.Eta(), leadL.Pt() )
+                    self.IDSFWP90[0] = self.evaluatorPhoton["UL-Photon-ID-SF"].evaluate(yearin, "sf" , "wp90", leadL.Eta(), leadL.Pt() )
+                    self.IDSFWP90_up[0] = self.evaluatorPhoton["UL-Photon-ID-SF"].evaluate(yearin, "sfup" , "wp90", leadL.Eta(), leadL.Pt() )
+                    self.IDSFWP90_down[0] = self.evaluatorPhoton["UL-Photon-ID-SF"].evaluate(yearin, "sfdown" , "wp90", leadL.Eta(), leadL.Pt() )
 		self.weightPUtruejson[0] = self.evaluatorPU[hlt_pu].evaluate(entry.Pileup_nTrueInt, "nominal" )
 		self.weightPUtruejson_up[0] = self.evaluatorPU[hlt_pu].evaluate(entry.Pileup_nTrueInt, "up" )
 		self.weightPUtruejson_down[0] = self.evaluatorPU[hlt_pu].evaluate(entry.Pileup_nTrueInt, "down" )
-		self.IDSF[0]  = eleeff1
-		self.IDSF1[0]  = eleeff1
+		#self.IDSF[0]  = eleeff1
 
                 self.TrigSF[0] = 1.
                 self.TrigSF1[0] = 1.

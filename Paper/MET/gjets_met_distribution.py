@@ -82,6 +82,7 @@ if __name__ == "__main__":
         eras ='2016postVFP'
 
     opts.sampleFile = 'samples_{0:s}_gjets_{1:s}.dat'.format(eras,IDWP)
+    opts.sampleFile = 'samples_{0:s}_gjets.dat'.format(eras,IDWP)
     print 'will read Datasets from ', opts.sampleFile
 
     lumis={'2016':35.93, '2017':41.48, '2018':59.83}
@@ -351,10 +352,16 @@ if __name__ == "__main__":
 
 	    jetCutInvIso = " (  pt_1[0] >=50 && nPhoton[0]==1 && Flag_BadPFMuonDzFilter[0]==1 &&  nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets{3:s}[0]> {1:s}  && Photon_r9_1[0]>=0.9 && iso_1[0]>0.1 && nbtagL[0]==0.0 && cat==1 ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut)
   
+
+            if 'cutbasedtight' in inn : jectCut = jetCut + " && Photons_cutBased_1== 3 "
+            if 'mvaid80' in inn : jectCut = jetCut + " && Photons_mvaID_WP80_1 ==1 "
+            if 'mvaid90' in inn : jectCut = jetCut + " && Photons_mvaID_WP90_1 ==1 "
             if 'isocut' in tagname and 'isocuttight' not in tagname: jetCut = jetCut + " && iso_1<=0.005 "
             if 'isocuttight' in tagname : jetCut = jetCut + " && iso_1<=0.005 "
             #if 'qcd' in inn : jetCut = jetCut + " && Photon_genPartFlav_1[0] !=1"
             if 'hoe' in tagname : jetCut = jetCut + " && Photon_hoe_1[0] <=0.04"
+            if 'pixelseed' in tagname : jetCut = jetCut + " && Photon_pixelSeed_1[0] ==0"
+            if 'electronveto' in tagname : jetCut = jetCut + " && Photon_electronVeto_1[0] ==1"
             if 'dr' in tagname : jetCut = jetCut + " && {0:s}{1:s}".format(drcutstr, drcut)
             if 'pult10' in tagname : jetCut  = jetCut + " && nPVGood[0]<10"
             if 'pu10to20' in tagname : jetCut  = jetCut + " && nPVGood[0]<20 && nPVGood>=10"

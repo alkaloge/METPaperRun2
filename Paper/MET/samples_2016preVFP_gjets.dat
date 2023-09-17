@@ -64,7 +64,7 @@ QCDMG      r.kMagenta     QCD_HT50to100MG QCD_HT50to100MG /eos/uscms/store/group
 QCDMG      r.kMagenta     QCD_HT100to200MG QCD_HT100to200MG /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out/QCD_HT100to200MG_2016preVFP 27990000    0    1   0  0 2016
 QCDMG      r.kMagenta     QCD_HT200to300MG QCD_HT200to300MG /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out/QCD_HT200to300MG_2016preVFP 1735000    0    1   0  0 2016
 QCDMG      r.kMagenta     QCD_HT300to500MG QCD_HT300to500MG /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out/QCD_HT300to500MG_2016preVFP 366800    0    1   0  0 2016
-QCDMG      r.kMagenta     QCD_HT500to700MG QCD_HT500to700MG /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_outQCD_HT500to700MG_2016preVFP 31630    0    1   0  0 2016
+QCDMG      r.kMagenta     QCD_HT500to700MG QCD_HT500to700MG /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out/QCD_HT500to700MG_2016preVFP 31630    0    1   0  0 2016
 QCDMG      r.kMagenta     QCD_HT700to1000MG QCD_HT700to1000MG /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out/QCD_HT700to1000MG_2016preVFP 6802    0    1   0  0 2016
 QCDMG      r.kMagenta     QCD_HT1000to1500MG QCD_HT1000to1500MG /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out/QCD_HT1000to1500MG_2016preVFP 1206    0    1   0  0 2016
 QCDMG      r.kMagenta     QCD_HT1500to2000MG QCD_HT1500to2000MG /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Gjets_out/QCD_HT1500to2000MG_2016preVFP 119.9    0    1   0  0 2016

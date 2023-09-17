@@ -168,7 +168,7 @@ class Sample:
               
           #cut = "("+ cut + addTriggers + addDataFilters+ ")" + "* (" + addPrescale +")" 
       lumi *=1000.
-      print 'cross check, isdata=================>', self.isData, lumi, name, var,channel
+      print 'cross check, isdata=================>', self.isData, lumi, name, var,channel, options
       if self.isData: cut =  cut    + ")"
       if not self.isData :
           print 'not data, will also apply weights'
@@ -180,8 +180,8 @@ class Sample:
           #cut =  cut    + "* ( " + "weight[0] " +  " )"  + "* ( " + "L1PreFiringWeight_Nom[0] " +  " )"  + "* ( " + "IDSF " +  " )"+ "* ( " + "TrigSF" +  " )"+ "* ( " + "IsoSF " +  " )"
           cut =  cut    + "* ( " + "weight[0] " +  " )"  + "* ( " + "L1PreFiringWeight_Nom[0] " +  " )"  
           if 'puup'not in var.lower() and 'pudown' not in var.lower() : 
-              #cut =  cut    + "* fabs( " + "weightPUtruejson[0] " +  " )"  
-              cut =  cut    + "* fabs( " + "weightPUtrue[0] " +  " )"  
+              cut =  cut    + "* fabs( " + "weightPUtruejson[0] " +  " )"  
+              #cut =  cut    + "* fabs( " + "weightPUtrue[0] " +  " )"  
           if 'puup' in var.lower(): 
               cut =  cut    + "* fabs( " + "weightPUtruejson_up[0] " +  " )"  
               var = var.replace('PUUp', '')
@@ -216,18 +216,69 @@ class Sample:
 		  var = var.replace('IDDown', '')
 		  var = var.replace('IDdown', '')
 
+
           if 'Gjets' in channel or 'ElNu' in channel or 'MuNu' in channel: 
               if 'Gjets' not in channel : cut =  cut    + "* ( " + "TrigSF1[0] " +  " )"  
-	      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
-		  cut =  cut    + "* ( " + "IDSF[0] " +  " )"  
-	      if 'idup' in var.lower() :
-		  cut =  cut    + "* ( " + "IDSF_up[0] " +  " )"  
-		  var = var.replace('IDUp', '')
-		  var = var.replace('IDup', '')
-	      if 'iddown' in var.lower() :
-		  cut =  cut    + "* ( " + "IDSF_down[0] " +  " )"  
-		  var = var.replace('IDDown', '')
-		  var = var.replace('IDdown', '')
+              if 'Gjets'  in channel : 
+                  if 'cutbasedtight' in options :
+		      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFT[0] " +  " )"  
+		      if 'idup' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFT_up[0] " +  " )"  
+			  var = var.replace('IDUp', '')
+			  var = var.replace('IDp', '')
+		      if 'iddown' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFT_down[0] " +  " )"  
+			  var = var.replace('IDDown', '')
+			  var = var.replace('IDdown', '')
+
+                  if 'cutbasedmedium' in options :
+		      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFM[0] " +  " )"  
+		      if 'idup' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFM_up[0] " +  " )"  
+			  var = var.replace('IDUp', '')
+			  var = var.replace('IDup', '')
+		      if 'iddown' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFM_down[0] " +  " )"  
+			  var = var.replace('IDDown', '')
+			  var = var.replace('IDdown', '')
+
+                  if 'mvaidwp80' in options :
+		      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP80[0] " +  " )"  
+		      if 'idup' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP80_up[0] " +  " )"  
+			  var = var.replace('IDUp', '')
+			  var = var.replace('IDup', '')
+		      if 'iddown' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP80_down[0] " +  " )"  
+			  var = var.replace('IDDown', '')
+			  var = var.replace('IDdown', '')
+
+                  if 'mvaidwp90' in options :
+		      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP90[0] " +  " )"  
+		      if 'idup' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP90_up[0] " +  " )"  
+			  var = var.replace('IDUp', '')
+			  var = var.replace('IDup', '')
+		      if 'iddown' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP90_down[0] " +  " )"  
+			  var = var.replace('IDDown', '')
+			  var = var.replace('IDdown', '')
+
+              if 'Gjets' not  in channel : 
+		  if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+		      cut =  cut    + "* ( " + "IDSF[0] " +  " )"  
+		  if 'idup' in var.lower() :
+		      cut =  cut    + "* ( " + "IDSF_up[0] " +  " )"  
+		      var = var.replace('IDUp', '')
+		      var = var.replace('IDup', '')
+		  if 'iddown' in var.lower() :
+		      cut =  cut    + "* ( " + "IDSF_down[0] " +  " )"  
+		      var = var.replace('IDDown', '')
+		      var = var.replace('IDdown', '')
           
           if 'WJets' in h.GetName() and 'NLO' not in h.GetName() :
                cut = cut +  "&& ( " + "weight[0] " +  " ) < 10"
@@ -503,7 +554,7 @@ class Tree:
      if 'Photon_r9' in var : 
          nbin = arange(0.8, 1.05, 0.01)
      if 'Photon_hoe' in var : 
-         nbin = arange(0.0, 0.2, 0.01)
+         nbin = arange(0.0, 0.2, 0.005)
      if 'jetIdx' in var : 
          nbin = arange(-1, 23,1)
 
