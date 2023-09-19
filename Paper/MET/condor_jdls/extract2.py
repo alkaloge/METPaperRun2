@@ -41,63 +41,6 @@ def extract2():
     if year == "2016postVFP": lumi = 16.98
     if year == "2016preVFP": lumi = 19.35
 
-    xsecslist = {
-    "DYJets": 6077,
-    "DYJetsNLO": 6529,
-    'GJets_HT-100To200' : 9226.0,
-    'GJets_HT-200To400' : 2300.0,
-    'GJets_HT-400To600' : 277.0,
-    'GJets_HT-40To100' : 20730.0,
-    'GJets_HT-600ToInf' : 93.38,
-    'QCD_HT1000to1500' : 1206.0,
-    'QCD_HT1000to1500MG' : 1064.0,
-    'QCD_HT100to200' : 27990000.0,
-    'QCD_HT100to200MG' : 27990000.0,
-    'QCD_HT1500to2000' : 119.9,
-    'QCD_HT1500to2000MG' : 119.9,
-    'QCD_HT2000toInf' : 25.24,
-    'QCD_HT2000toInfMG' : 25.24,
-    'QCD_HT200to300' : 1735000.0,
-    'QCD_HT200to300MG' : 1735000.0,
-    'QCD_HT300to500' : 366800.0,
-    'QCD_HT300to500MG' : 366800.0,
-    'QCD_HT500to700' : 31630.0,
-    'QCD_HT500to700MG' : 29370.0,
-    'QCD_HT50to100' : 186100000.0,
-    'QCD_HT50to100MG' : 186100000.0,
-    'QCD_HT700to1000' : 6802.0,
-    'QCD_HT700to1000MG' : 6524.0,
-    'ST_s-channel' : 3.74,
-    'ST_t-channel_antitop' : 69.09,
-    'ST_t-channel_top' : 115.3,
-    'ST_tW_antitop' : 35.85,
-    'ST_tW_top' : 35.85,
-    'TGjets' : 2.967,
-    'TTGjets' : 4.322,
-    'TTGjets_ext1' : 4.322,
-    'TTTo2L2Nu' : 88.287,
-    'TTToHadronic' : 377.96,
-    'TTToSemiLeptonic' : 365.35,
-    'ttWJets' : 0.4611,
-    'WG_PtG-130' : 0.8099,
-    'WG_PtG-40To130' : 19.81,
-    'WGToLNuG' : 489.0,
-    'WJetsToLNu_NLO' : 67350.7,
-    'ZGTo2NuG' : 30.11,
-    'ZLLGJets_PtG-130' : 0.206,
-    'ZLLGJets_PtG-15to130' : 96.34,
-    'ZNuNuGJets_PtG-130' : 0.3036,
-    }
-
-
-    xsec = None
-    for sample, xsec in xsecslist.items():
-	if str(filename).lower() in sample.lower():
-	    selected_xsec = xsec
-	    break
-
-    if 'dy' in str(filename).lower() and 'nlo' not in str(filename).lower() : xsec = 6077
-    if 'dy' in str(filename).lower() and 'nlo' in str(filename).lower() : xsec = 6529
 
     print "year", year, "lumi", lumi, "isMC", isMC, "channel", channel, "channelDir", channelDir, "args", sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 
@@ -105,14 +48,11 @@ def extract2():
 
     # Open the ROOT file
     file = ROOT.TFile(filename, "READ")
-    hW = None
-    #if isMC :
-    #    hW = file.Get("hWeights") 
 
 
     # Define the cuts for vspt and npv
     cuts_vspt = [
-	"(0<=boson_pt",
+	#"(0<=boson_pt",
 	"(0<=boson_pt&&boson_pt<20)",
 	"(20<=boson_pt&&boson_pt<40)",
 	"(40<=boson_pt&&boson_pt<60)",
@@ -125,7 +65,7 @@ def extract2():
 	"(300<=boson_pt)"
     ]
     folder_names = {
-	"(0<=event.boson_pt)": "PtIncl",
+	#"(0<=event.boson_pt)": "PtIncl",
 	"(0<=event.boson_pt and event.boson_pt<20)": "PtLt20",
 	"(20<=event.boson_pt and event.boson_pt<40)": "PtGt20Lt40",
 	"(40<=event.boson_pt and event.boson_pt<60)": "PtGt40Lt60",
@@ -137,7 +77,7 @@ def extract2():
 	"(200<=event.boson_pt and event.boson_pt<300)": "PtGt200Lt300",
 	"(300<=event.boson_pt)": "PtGt300"
     }
-
+    '''
     folder_names = {
 	0: "PtIncl",
 	1: "PtLt20",
@@ -151,10 +91,22 @@ def extract2():
 	9: "PtGt200Lt300",
 	10: "PtGt300"
     }
-
+    '''
+    folder_names = {
+	0: "PtLt20",
+	1: "PtGt20Lt40",
+	2: "PtGt40Lt60",
+	3: "PtGt60Lt80",
+	4: "PtGt80Lt100",
+	5: "PtGt100Lt120",
+	6: "PtGt120Lt160",
+	7: "PtGt160Lt200",
+	8: "PtGt200Lt300",
+	9: "PtGt300"
+    }
 
     cuts_npv = [
-	"(0<=nPVGood)",
+	#"(0<=nPVGood)",
 	"(0<=nPVGood&&nPVGood<10)",
 	"(10<=nPVGood&&nPVGood<20)",
 	"(20<=nPVGood&&nPVGood<30)",
@@ -164,7 +116,7 @@ def extract2():
 	"(60<=nPVGood)"
     ]
     folder_names_npv = {
-	"(0<=event.nPVGood )": "nPVGoodIncl",
+	#"(0<=event.nPVGood )": "nPVGoodIncl",
 	"(0<=event.nPVGood  and  event.nPVGood<10)": "nPVGoodLt10",
 	"(10<=event.nPVGood  and  event.nPVGood<20)": "nPVGoodGt10Lt20",
 	"(20<=event.nPVGood  and  event.nPVGood<30)": "nPVGoodGt20Lt30",
@@ -173,16 +125,27 @@ def extract2():
 	"(50<=event.nPVGood  and  event.nPVGood<60)": "nPVGoodGt50Lt60",
 	"(60<=event.nPVGood)": "nPVGoodGt60"
     }
-
+    '''
     folder_names_npv = {
 	0: "nPVGoodIncl",
 	1: "nPVGoodLt10",
 	2: "nPVGoodGt10Lt20",
 	3: "nPVGoodGt20Lt30",
 	4: "nPVGoodGt30Lt40",
+	#5: "nPVGoodGt40",
 	5: "nPVGoodGt40Lt50",
 	6: "nPVGoodGt50Lt60",
 	7: "nPVGoodGt60"
+    }
+    '''
+    folder_names_npv = {
+	0: "nPVGoodLt10",
+	1: "nPVGoodGt10Lt20",
+	2: "nPVGoodGt20Lt30",
+	3: "nPVGoodGt30Lt40",
+	4: "nPVGoodGt40Lt50",
+	5: "nPVGoodGt50Lt60",
+	6: "nPVGoodGt60"
     }
 
 
@@ -191,6 +154,7 @@ def extract2():
 
 
     varbins_npv = array('d', [0., 10., 20., 30., 40., 50., 60., 70.])
+    #varbins_npv = array('d', [0., 10., 20., 30., 40., 100.])
     bins_npv = len(varbins_npv) - 1
 
 
@@ -296,28 +260,16 @@ def extract2():
     top_directory = file.GetDirectory("")
 
     weight = 1.
-    sumofw= 96233328.
-    isNLO=''
-    '''
-    if 'nlo' in str(filename).lower() : isNLO='NLO'
-    if '2016all' in year : year = "2016"
-    if channel != 'Gjets' : 
-	fileDY='/eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/2Lep/DYJetsToLLM50{2:s}_{0:s}/DYJetsToLLM50{2:s}_{0:s}_{1:s}.root'.format(year, channel, isNLO)
-	fDY = ROOT.TFile(fileDY, "READ")
-	hW = fDY.Get("hWeights")
-	print 'is MC and DY?', isMC, filename, isNLO, hW.GetSumOfWeights()
-	if isMC : weight *= 1000* lumi*xsec/hW.GetSumOfWeights()
-    #if isMC : weight *= 1000* lumi*xsec/sumofw
-    # Loop over vspt directories and fill the histogram
-    '''
-    weight = 1.
+    
     for i, cut in enumerate(cuts_vspt):
 	
         if str(i) == "0" : continue
 	folder_name = "Folder_%d_vspt_%s" % (i, folder_names[i])
 	print '......................', folder_name
 	folder = top_directory.GetDirectory(folder_name)
-
+        #file.ls()
+        #top_directory.ls()
+        
 	if folder:
 	    h_scale_rawmet = folder.Get("h_scale_rawmet_vspt_{}".format(i))
 	    h_scale_rawpuppi = folder.Get("h_scale_rawpuppi_vspt_{}".format(i))
