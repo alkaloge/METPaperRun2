@@ -98,11 +98,7 @@ xsecslist = {
 }
 
 
-weights_2018  = {
-    'GJets_HT-100To200' : 31722998.0,
-    'GJets_HT-200To400' : 62439148.0,
-    'GJets_HT-400To600' : 16896943.0,
-    'GJets_HT-40To100' : 30564375.0,
+weights_2018  = { 'GJets_HT-100To200' : 31722998.0, 'GJets_HT-200To400' : 62439148.0, 'GJets_HT-400To600' : 16896943.0, 'GJets_HT-40To100' : 30564375.0,
     'GJets_HT-600ToInf' : 16621072.0,
     'QCD_HT1000to1500MG' : 15230975.0,
     'QCD_HT100to200MG' : 79857456.0,
@@ -125,8 +121,6 @@ weights_2018  = {
     'ZLLGJets_PtG-15to130' : 7322772437.29,
     'ZNuNuGJets_PtG-130' : 989122.179502,
 }
-
-
 
 weights_2017={
     'GJets_HT-600ToInf' : 11425129.0,
