@@ -3,8 +3,9 @@ import sys
 
 years = ["2018", "2017", "2016", "2016pre"]
 years = ["2016" , "2016preVFP"]
-years = ["2017", "2018", "2016preVFP" ]
-years = ["2016preVFP"]
+years = ["2017", "2018", "2016preVFP" , "2016"]
+#years = ["2016preVFP", "2016"]
+#years = ["2016preVFP", "2016"]
 years = ["2018"]
 channels = ["MuMu" ,"ElEl"]
 channels = ["MuMu"]
@@ -73,8 +74,9 @@ if command.lower() == "subtract" or command.lower() == 'step2':
 
 		if channel == "Gjets" : 
 		    if year == "2018" :
-                        print " weighted_scales_EGamma_Run{0}_{1}_Njet{2}.root scales_EGamma_Run{0}_{1}_Njet{2}.root weighted_mc_scales_QCD_HT*_{0:s}_{1}_Njet{2}.root weighted_mc_scales_WJetsToLNu_NLO*_{0:s}_{1}_Njet{2}.root".format(year, channel, njet)
+                        #print " weighted_scales_EGamma_Run{0}_{1}_Njet{2}.root scales_EGamma_Run{0}_{1}_Njet{2}.root weighted_mc_scales_QCD_HT*_{0:s}_{1}_Njet{2}.root weighted_mc_scales_WJetsToLNu_NLO*_{0:s}_{1}_Njet{2}.root".format(year, channel, njet)
                         #os.system("hadd -f weighted_scales_EGamma_Run{0}_{1}_Njet{2}.root scales_EGamma_Run{0}_{1}_Njet{2}.root weighted_mc_scales_QCD_HT*_{0:s}_{1}_Njet{2}.root weighted_mc_scales_WJetsToLNu_NLO*_{0:s}_{1}_Njet{2}.root".format(year, channel, njet))
+
                         os.system("hadd -f weighted_scales_EGamma_Run{0}_{1}_Njet{2}.root scales_EGamma_Run{0}_{1}_Njet{2}.root weighted_mc_scales_QCD_HT*_{0:s}_{1}_Njet{2}.root".format(year, channel, njet))
                     if year != "2018" :
                         #os.system("hadd -f weighted_scales_SinglePhoton_Run{0}_{1}_Njet{2}.root scales_SinglePhoton_Run{0}_{1}_Njet{2}.root weighted_mc_scales_QCD_HT*_{0:s}_{1}_Njet{2}.root weighted_mc_scales_WJetsToLNu_NLO*_{0:s}_{1}_Njet{2}.root".format(year, channel, njet))

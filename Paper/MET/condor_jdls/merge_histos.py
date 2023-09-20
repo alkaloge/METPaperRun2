@@ -40,7 +40,7 @@ def scale_histos( mc_fileName, weight):
     mc_file.Close()
 
 # Example usage:
-lumis={'2016':35.93, '2017':41.48, '2018':59.83}
+lumis={'2016':16.15, '2017':41.48, '2018':59.83, '2016preVFP':19.72}
 #MC = ['GJets_HT-40To100', 'GJets_HT-100To200', 'GJets_HT-200To400','GJets_HT-400To600','GJets_HT-600ToInf', 'QCD_HT1000to1500',    'QCD_HT100to200' ,     'QCD_HT1500to2000',    'QCD_HT2000toInf' ,    'QCD_HT200to300',    'QCD_HT300to500' ,    'QCD_HT500to700' ,    'QCD_HT50to100' ,    'QCD_HT700to1000' , 'WJetsToLNu_NLO']
 MC = ['GJets_HT-40To100', 'GJets_HT-100To200', 'GJets_HT-200To400','GJets_HT-400To600','GJets_HT-600ToInf', 'QCD_HT1000to1500MG',    'QCD_HT100to200MG' ,     'QCD_HT1500to2000MG',    'QCD_HT2000toInfMG' ,    'QCD_HT200to300MG',    'QCD_HT300to500MG' ,    'QCD_HT500to700MG' ,    'QCD_HT50to100MG' ,    'QCD_HT700to1000MG' , 'WJetsToLNu_NLO']
 
@@ -178,8 +178,6 @@ weights_2016={
     'WJetsToLNu_NLO' : 4.87296446076e+12,
 
 
-
-
 }
 
 weights_2016preVFP={
@@ -219,7 +217,7 @@ njet=str(sys.argv[3])
 weights_ =weights_2018
 if year=='2017' : weights_ = weights_2017
 if year=='2016' : weights_ = weights_2016
-if year=='2016preVFP' : weights_ = weights_2016preVFP
+if '2016preVFP' in year: weights_ = weights_2016preVFP
 #for sample, xsec in xsecslist.items():
 #    if 'QCD' in sample : 
 #        print sample, xsec

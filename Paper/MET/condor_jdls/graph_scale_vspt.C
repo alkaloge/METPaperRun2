@@ -34,6 +34,7 @@ void updateHistogram2(ifstream& f, TH1* h1, TH1* h2, TH1* h3) {
     h2->SetBinError(bin2, yerr2);
     h3->SetBinContent(bin3, yvalue3); 
     h3->SetBinError(bin3, yerr3);
+    
 }
 
 
@@ -100,8 +101,7 @@ void addCanvasName(TCanvas* canvas) {
 void graph_scale_vspt(const std::string& vs="_vspt_", const std::string& year="2018", const std::string& channelDir="Gjets_mc_sub", const std::string& channel="MuMu", const std::string& mc_="Gjets", const std::string& njet_="eq0"){
   //setTDRStyle();
   gROOT->SetBatch(kTRUE);
-  Float_t minX = 0.;
-  if (channel == "Gjets" || channelDir== "Gjets_mc_sub") minX=50;
+  std::string extraTag="_cutbased_isocuttight";
   TCanvas *c1 =new TCanvas("c1", " ", 0, 0, 700, 800);
 
   c1->Range(0,0,1,1);
@@ -116,7 +116,6 @@ void graph_scale_vspt(const std::string& vs="_vspt_", const std::string& year="2
   line->SetLineWidth(1.);
   line->SetLineStyle(3);
   //rawmet_2018_alldata"+vs+"njetsgeq0_MuMu.txt
-  //ifstream frawd, frawpd, ft1d, fpuppid, fpuppinomcd;
   //ifstream frawmc, frawpmc, ft1mc, ft1smc, fpuppimc;
 
   //std::string year = "2018_";
@@ -132,7 +131,6 @@ void graph_scale_vspt(const std::string& vs="_vspt_", const std::string& year="2
   std::ifstream frawpd("txt_"+channelDir+"/rawpuppi_" + year + common_part + channel + ".txt");
   std::ifstream ft1d("txt_"+channelDir+"/t1_" + year + common_part + channel + ".txt");
   std::ifstream fpuppid("txt_"+channelDir+"/puppi_" + year + common_part + channel + ".txt");
-  std::ifstream fpuppinomcd("txt_"+channelDir+"/puppi_" + year + common_part + channel + "_noMC.txt");
 
   std::ifstream frawmc("txt_"+channelDir+"/rawmet_" + year+  common_partmc + channel + ".txt");
   std::ifstream frawpmc("txt_"+channelDir+"/rawpuppi_" + year + common_partmc + channel + ".txt");
@@ -141,9 +139,9 @@ void graph_scale_vspt(const std::string& vs="_vspt_", const std::string& year="2
   std::ifstream fpuppimc("txt_"+channelDir+"/puppi_" + year+ common_partmc + channel + ".txt");
 
   cout <<"working on vspt ..." <<"txt_"+channelDir+"/puppi_" + year + common_part + channel + ".txt"<<endl;
-  TString saveName ="scale_"+ year +mc_+"_"+ "njets"+njet_ +vs+channelDir+".pdf";
-  TString saveNamepar ="res_par_"+ year +mc_+ "_" + "njets"+njet_ +vs+channelDir+".pdf";
-  TString saveNameperp ="res_perp_"+ year +mc_+ "_" + "njets"+njet_ +vs+channelDir+".pdf";
+  TString saveName ="scale_"+ year +mc_+"_"+ "njets"+njet_ +vs+channelDir+extraTag+".pdf";
+  TString saveNamepar ="res_par_"+ year +mc_+ "_" + "njets"+njet_ +vs+channelDir+extraTag+".pdf";
+  TString saveNameperp ="res_perp_"+ year +mc_+ "_" + "njets"+njet_ +vs+channelDir+extraTag+".pdf";
 
   string s1;
   float yvalue1, yerr1,yvalue2, yerr2,yvalue3,yerr3;
@@ -160,11 +158,14 @@ if (vs == "_npv_")
 */
 //std::vector<Double_t> bins;
 
- Float_t bins[12]; // Maximum size of the array
-
+ Float_t bins[10]; // Maximum size of the array
+//0., 20., 40., 60., 80., 100., 120., 160., 200., 300., 500
     if (vs == "_vspt_")
     {
-        Float_t vspt_bins[] = {0., 20., 40., 60., 80., 100., 120., 160., 200., 300., 500.};
+        //Float_t vspt_bins[] = {0., 20., 40., 60., 80., 100., 120., 160., 200., 300., 500.};
+
+        //this is for Gjets, for DY that should start lower
+        Float_t vspt_bins[] = {40., 60., 80., 100., 120., 160., 200., 300., 500.};
         std::copy(vspt_bins, vspt_bins + sizeof(vspt_bins) / sizeof(Float_t), bins);
     }
     if (vs == "_npv_")
@@ -176,9 +177,8 @@ if (vs == "_npv_")
 
 
 
-//Int_t binnum = bins.size() - 1;
   Int_t  binnum = sizeof(bins)/sizeof(Float_t) -1;
-//Int_t binnum = bins.size() - 1;
+  //Int_t binnum = bins.size() - 1;
 
   TH1F* hrawd = new TH1F("hrawd", "hrawd", binnum, bins);
   hrawd->GetXaxis()->SetNdivisions(1000 + binnum, kTRUE);  
@@ -187,7 +187,6 @@ if (vs == "_npv_")
   TH1F* hrawpd = new TH1F("hrawpd","hrawpd", binnum, bins);
   TH1F* ht1d = new TH1F("ht1d","ht1d", binnum, bins);
   TH1F* hpuppid = new TH1F("hpuppid","hpuppid", binnum, bins);
-  TH1F* hpuppinomcd = new TH1F("hpuppinomcd","hpuppinomcd", binnum, bins);
 
   TH1F* hrawmc = new TH1F("hrawmc","hrawmc", binnum, bins);
   TH1F* hrawpmc = new TH1F("hrawpmc","hrawpmc", binnum, bins);
@@ -200,7 +199,6 @@ if (vs == "_npv_")
   TH1F* hrawpdpar =new TH1F("hrawpdpar","hrawpdpar", binnum, bins);
   TH1F* ht1dpar =new TH1F("ht1dpar","ht1dpar", binnum, bins);
   TH1F* hpuppidpar =new TH1F("hpuppidpar","hpuppidpar", binnum, bins);
-  TH1F* hpuppinomcdpar =new TH1F("hpuppinomcdpar","hpuppinomcdpar", binnum, bins);
 
   TH1F* hrawmcpar =new TH1F("hrawmcpar","hrawmcpar", binnum, bins);
   TH1F* hrawpmcpar =new TH1F("hrawpmcpar","hrawpmcpar", binnum, bins);
@@ -212,7 +210,6 @@ if (vs == "_npv_")
   TH1F* hrawpdperp =new TH1F("hrawpdperp","hrawpdperp", binnum, bins);
   TH1F* ht1dperp =new TH1F("ht1dperp","ht1dperp", binnum, bins);
   TH1F* hpuppidperp =new TH1F("hpuppidperp","hpuppidperp", binnum, bins);
-  TH1F* hpuppinomcdperp =new TH1F("hpuppinomcdperp","hpuppinomcdperp", binnum, bins);
 
   TH1F* hrawmcperp =new TH1F("hrawmcperp","hrawmcperp", binnum, bins);
   TH1F* hrawpmcperp =new TH1F("hrawpmcperp","hrawpmcperp", binnum, bins);
@@ -232,7 +229,6 @@ for(int i = 0; i < binnum+1; i++){
     updateHistogram2(frawpd, hrawpd,hrawpdpar,hrawpdperp);
     updateHistogram2(ft1d, ht1d,ht1dpar,ht1dperp);
     updateHistogram2(fpuppid, hpuppid,hpuppidpar,hpuppidperp);
-    updateHistogram2(fpuppinomcd, hpuppinomcd,hpuppinomcdpar,hpuppinomcdperp);
 
     updateHistogram2(frawmc, hrawmc,hrawmcpar,hrawmcperp);
     updateHistogram2(frawpmc, hrawpmc,hrawpmcpar,hrawpmcperp);
@@ -245,7 +241,6 @@ for(int i = 0; i < binnum+1; i++){
     updateHistogrampar(frawpd, hrawpdpar);
     updateHistogrampar(ft1d, ht1dpar);
     updateHistogrampar(fpuppid, hpuppidpar);
-    updateHistogrampar(fpuppinomcd, hpuppinomcdpar);
 
     updateHistogrampar(frawmc, hrawmcpar);
     updateHistogrampar(frawpmc, hrawpmcpar);
@@ -257,7 +252,6 @@ for(int i = 0; i < binnum+1; i++){
     updateHistogramperp(frawpd, hrawpdperp);
     updateHistogramperp(ft1d, ht1dperp);
     updateHistogramperp(fpuppid, hpuppidperp);
-    updateHistogramperp(fpuppinomcd, hpuppinomcdperp);
 
     updateHistogramperp(frawmc, hrawmcperp);
     updateHistogramperp(frawpmc, hrawpmcperp);
@@ -266,20 +260,19 @@ for(int i = 0; i < binnum+1; i++){
     updateHistogramperp(fpuppimc, hpuppimcperp);
 */
 }
-
-
+  TGraphErrors* grrawmc = new TGraphErrors(hrawmc);
   TGraphErrors* grrawd = new TGraphErrors(hrawd);
+
+  TGraphErrors* grrawpmc = new TGraphErrors(hrawpmc);
   TGraphErrors* grrawpd = new TGraphErrors(hrawpd);
 
-  TGraphErrors* grt1d = new TGraphErrors(ht1d);
-  TGraphErrors* grpuppid = new TGraphErrors(hpuppid);
-  TGraphErrors* grpuppinomcd = new TGraphErrors(hpuppinomcd);
-
-  TGraphErrors* grrawmc = new TGraphErrors(hrawmc);
-  TGraphErrors* grrawpmc = new TGraphErrors(hrawpmc);
   TGraphErrors* grt1mc = new TGraphErrors(ht1mc);
-  TGraphErrors* grt1smc = new TGraphErrors(ht1smc);
+  TGraphErrors* grt1d = new TGraphErrors(ht1d);
+
   TGraphErrors* grpuppimc = new TGraphErrors(hpuppimc);
+  TGraphErrors* grpuppid = new TGraphErrors(hpuppid);
+
+  TGraphErrors* grt1smc = new TGraphErrors(ht1smc);
 
 //par
   TGraphErrors* grrawdpar = new TGraphErrors(hrawdpar);
@@ -287,7 +280,6 @@ for(int i = 0; i < binnum+1; i++){
 
   TGraphErrors* grt1dpar = new TGraphErrors(ht1dpar);
   TGraphErrors* grpuppidpar = new TGraphErrors(hpuppidpar);
-  TGraphErrors* grpuppinomcdpar = new TGraphErrors(hpuppinomcdpar);
 
   TGraphErrors* grrawmcpar = new TGraphErrors(hrawmcpar);
   TGraphErrors* grrawpmcpar = new TGraphErrors(hrawpmcpar);
@@ -300,13 +292,13 @@ for(int i = 0; i < binnum+1; i++){
 
   TGraphErrors* grt1dperp = new TGraphErrors(ht1dperp);
   TGraphErrors* grpuppidperp = new TGraphErrors(hpuppidperp);
-  TGraphErrors* grpuppinomcdperp = new TGraphErrors(hpuppinomcdperp);
 
   TGraphErrors* grrawmcperp = new TGraphErrors(hrawmcperp);
   TGraphErrors* grrawpmcperp = new TGraphErrors(hrawpmcperp);
   TGraphErrors* grt1mcperp = new TGraphErrors(ht1mcperp);
   TGraphErrors* grt1smcperp = new TGraphErrors(ht1smcperp);
   TGraphErrors* grpuppimcperp = new TGraphErrors(hpuppimcperp);
+
 
 
   //response
@@ -326,7 +318,8 @@ for(int i = 0; i < binnum+1; i++){
   grrawd->SetLineStyle(2);
 
   grrawd->GetXaxis()->SetTitle("q_{T} [GeV]");
-  grrawd->GetXaxis()->SetRangeUser(minX, 500);
+  grrawd->GetXaxis()->SetRangeUser(0, 500);
+  //if (mc_=="Gjets") { grrawd->GetXaxis()->SetRangeUser(40, 300);}
   if (vs =="_npv_") { 
         grrawd->GetXaxis()->SetRangeUser(0, 70);
         grrawd->GetXaxis()->SetTitle("Nvtx ");
@@ -334,9 +327,24 @@ for(int i = 0; i < binnum+1; i++){
   grrawd->GetXaxis()->SetTitleSize(0.04);
 
   grrawd->GetYaxis()->SetTitle("- <u_{||}>/<q_{T}>");
-  grrawd->GetYaxis()->SetRangeUser(0., 1.4);
+  grrawd->GetYaxis()->SetRangeUser(0.0, 1.4);
   grrawd->GetYaxis()->SetTitleSize(0.04);
   grrawd->GetYaxis()->SetTitleOffset(1.2);
+
+  grrawpd->SetTitle("");
+  grrawpd->SetMarkerStyle(8);
+  grrawpd->SetMarkerSize(0.8);
+  grrawpd->SetMarkerColor(kTeal);
+  grrawpd->SetLineColor(kTeal);
+  grrawpd->SetLineWidth(2);
+  grrawpd->SetLineStyle(2);
+
+  grrawpmc->SetTitle("");
+  grrawpmc->SetMarkerStyle(8);
+  grrawpmc->SetMarkerSize(0.8);
+  grrawpmc->SetMarkerColor(kTeal-2);
+  grrawpmc->SetLineColor(kTeal-2);
+  grrawpmc->SetLineWidth(2);
 
 
   grt1mc->SetTitle("");
@@ -346,11 +354,12 @@ for(int i = 0; i < binnum+1; i++){
   grt1mc->SetLineColor(kRed);
   grt1mc->SetLineWidth(2);
   grt1smc->SetTitle("");
-  grt1smc->SetMarkerStyle(8);
+
+  grt1smc->SetMarkerStyle(3);
   grt1smc->SetMarkerSize(0.8);
   grt1smc->SetMarkerColor(kRed-2);
   grt1smc->SetLineColor(kRed-2);
-  grt1smc->SetLineWidth(2);
+  grt1smc->SetLineWidth(1);
 
   grt1d->SetTitle("");
   grt1d->SetMarkerStyle(9);
@@ -376,63 +385,67 @@ for(int i = 0; i < binnum+1; i++){
   grpuppid->SetLineStyle(2);
 
 
-  grpuppinomcd->SetTitle("");
-  grpuppinomcd->SetMarkerStyle(9);
-  grpuppinomcd->SetMarkerSize(0.8);
-  grpuppinomcd->SetMarkerColor(kGreen-2);
-  grpuppinomcd->SetLineColor(kGreen-2);
-  grpuppinomcd->SetLineWidth(2);
-  grpuppinomcd->SetLineStyle(2);
-
 
   grrawd->Draw("apz");
-  grrawmc->Draw("pez same");
-  grt1d->Draw("pez same");
   grt1mc->Draw("pez same");
+  grrawmc->Draw("pez same");
+  grrawpmc->Draw("pez same");
+  grrawpd->Draw("pez same");
+  grt1d->Draw("pez same");
   grt1smc->Draw("pez same");
   grpuppid->Draw("pez same");
-  //grpuppinomcd->Draw("pez same");
   grpuppimc->Draw("pez same");
-
   //line->Draw("same");
 
-  TLegend *legend1 = new TLegend(0.4, 0.2, 0.85, 0.4);
+
+  TLegend *legend1 = new TLegend(0.35, 0.2, 0.85, 0.4);
   legend1->SetTextFont(42);
   legend1->SetLineColor(0);
-  legend1->SetTextSize(0.025);
+  legend1->SetTextSize(0.028);
   legend1->SetFillColor(0);
   legend1->SetNColumns(2);
 
   if (mc_ == "dy" || mc_=="Gjets") {
-  legend1->AddEntry(grrawmc, "raw MC", "lp");
-  legend1->AddEntry(grt1mc, "T1 MC", "lp");
-  legend1->AddEntry(grt1smc, "T1Smear MC", "lp");
-  legend1->AddEntry(grpuppimc, "Puppi MC", "lp");
+  legend1->AddEntry(grrawmc, "Raw PF MC", "lp");
+  legend1->AddEntry(grrawd, "Raw PF Data", "lp");
+  legend1->AddEntry(grrawpmc, "Raw PUPPI MC", "lp");
+  legend1->AddEntry(grrawpd, "Raw PUPPI Data", "lp");
+  legend1->AddEntry(grt1mc, "PF T1 MC", "lp");
+  legend1->AddEntry(grt1d, "PF T1 Data", "lp");
+  legend1->AddEntry(grpuppimc, "PUPPI MC", "lp");
+  legend1->AddEntry(grpuppid, "PUPPI Data", "lp");
+  legend1->AddEntry(grt1smc, "PF T1Smear MC", "lp");
 }
+/*
   if (mc_ == "dynlo" ) {
-  legend1->AddEntry(grrawmc, "raw MC@nlo", "lp");
+  legend1->AddEntry(grrawmc, "Raw MC@nlo", "lp");
   legend1->AddEntry(grt1mc, "T1 MC@nlo", "lp");
   legend1->AddEntry(grt1smc, "T1Smear MC@nlo", "lp");
   legend1->AddEntry(grpuppimc, "Puppi MC@nlo", "lp");
 }
-  legend1->AddEntry(grrawd, "raw Data", "lp");
-  legend1->AddEntry(grt1d, "T1 Data", "lp");
-  legend1->AddEntry(grpuppid, "Puppi Data", "lp");
- //legend1->AddEntry(grpuppinomcd, "Puppi Data/noMC", "lp");
+*/
   legend1->Draw("same");
 
   //TLatex *t2a = new TLatex(0.5,0.9," #bf{CMS} #it{Preliminary}          16.97 fb^{-1} (13 TeV, 2016postFVP) ");
   TLatex *t2a ;//
-  if (year =="2018") { t2a= new TLatex(0.5,0.9," #bf{CMS} #it{Preliminary}          59.7 fb^{-1} (13 TeV, 2018) ");}
-  if (year=="2017") {t2a = new TLatex(0.5,0.9," #bf{CMS} #it{Preliminary}          41.9 fb^{-1} (13 TeV, 2017) ");}
-  if (year=="2016") {t2a = new TLatex(0.5,0.9," #bf{CMS} #it{Preliminary}          16.98 fb^{-1} (13 TeV, 2016postFVP) ");}
-  if (year=="2016all") {t2a = new TLatex(0.5,0.9," #bf{CMS} #it{Preliminary}          19.35+16.98 fb^{-1} (13 TeV, 2016) ");}
-  if (year=="2016preVFP") {t2a = new TLatex(0.5,0.9," #bf{CMS} #it{Preliminary}          19.35 fb^{-1} (13 TeV, 2016preFVP) ");}
+  TLatex *t2b ;//
+  if (year =="2018") { t2a= new TLatex(0.7,0.9,"2018 - 59.83 fb^{-1} (13 TeV) ");}
+  if (year=="2017") {t2a = new TLatex(0.7,0.9,"2017 - 41.48 fb^{-1} (13 TeV) ");}
+  if (year=="2016") {t2a = new TLatex(0.7,0.9,"2016postVFP - 16.15 fb^{-1} (13 TeV) ");}
+  if (year=="2016all") {t2a = new TLatex(0.7,0.9,"2016 - 35.93 fb^{-1} (13 TeV) ");}
+  if (year=="2016preVFP") {t2a = new TLatex(0.7,0.9,"2016preVFP - 19.72 fb^{-1} (13 TeV) ");}
+  t2b = new TLatex(0.3,0.8," #bf{CMS} #it{Preliminary}");
   t2a->SetNDC();
   t2a->SetTextFont(42);
-  t2a->SetTextSize(0.04);
+  t2a->SetTextSize(0.035);
   t2a->SetTextAlign(20);
+  //t2a->SetTextAlign(31+32);
   t2a->Draw("same");
+  t2b->SetNDC();
+  t2b->SetTextFont(42);
+  t2b->SetTextSize(0.04);
+  t2b->SetTextAlign(20);
+  t2b->Draw("same");
 
   c1->SetName(saveName);
   addCanvasName(c1);
@@ -464,7 +477,7 @@ for(int i = 0; i < binnum+1; i++){
   grrawdpar->SetLineStyle(2);
 
   grrawdpar->GetXaxis()->SetTitle("q_{T} [GeV]");
-  grrawdpar->GetXaxis()->SetRangeUser(minX, 500);
+  //grrawdpar->GetXaxis()->SetRangeUser(0, 300);
   if (vs =="_npv_") { grrawdpar->GetXaxis()->SetRangeUser(0, 70);
         grrawdpar->GetXaxis()->SetTitle("Nvtx ");
 
@@ -514,14 +527,6 @@ for(int i = 0; i < binnum+1; i++){
   grpuppidpar->SetLineStyle(2);
 
 
-  grpuppinomcdpar->SetTitle("");
-  grpuppinomcdpar->SetMarkerStyle(9);
-  grpuppinomcdpar->SetMarkerSize(0.8);
-  grpuppinomcdpar->SetMarkerColor(kGreen-2);
-  grpuppinomcdpar->SetLineColor(kGreen-2);
-  grpuppinomcdpar->SetLineWidth(2);
-  grpuppinomcdpar->SetLineStyle(2);
-
 
   grrawdpar->Draw("apz");
   grrawmcpar->Draw("pez same");
@@ -529,7 +534,6 @@ for(int i = 0; i < binnum+1; i++){
   grt1mcpar->Draw("pez same");
   grt1smcpar->Draw("pez same");
   grpuppidpar->Draw("pez same");
-  //grpuppinomcdpar->Draw("pez same");
   grpuppimcpar->Draw("pez same");
 
   line->Draw("same");
@@ -573,7 +577,7 @@ for(int i = 0; i < binnum+1; i++){
   grrawdperp->SetLineStyle(2);
 
   grrawdperp->GetXaxis()->SetTitle("q_{T} [GeV]");
-  grrawdperp->GetXaxis()->SetRangeUser(minX, 500);
+  //grrawdperp->GetXaxis()->SetRangeUser(0, 300);
   if (vs =="_npv_") { grrawdperp->GetXaxis()->SetRangeUser(0, 70);
 
         grrawdperp->GetXaxis()->SetTitle("Nvtx ");
@@ -624,13 +628,6 @@ for(int i = 0; i < binnum+1; i++){
   grpuppidperp->SetLineStyle(2);
 
 
-  grpuppinomcdperp->SetTitle("");
-  grpuppinomcdperp->SetMarkerStyle(9);
-  grpuppinomcdperp->SetMarkerSize(0.8);
-  grpuppinomcdperp->SetMarkerColor(kGreen-2);
-  grpuppinomcdperp->SetLineColor(kGreen-2);
-  grpuppinomcdperp->SetLineWidth(2);
-  grpuppinomcdperp->SetLineStyle(2);
 
 
   grrawdperp->Draw("apz");
@@ -639,7 +636,6 @@ for(int i = 0; i < binnum+1; i++){
   grt1mcperp->Draw("pez same");
   grt1smcperp->Draw("pez same");
   grpuppidperp->Draw("pez same");
-  //grpuppinomcdperp->Draw("pez same");
   grpuppimcperp->Draw("pez same");
 
   line->Draw("same");
@@ -655,6 +651,14 @@ for(int i = 0; i < binnum+1; i++){
   c3->SetName(saveNameperp);
   addCanvasName(c3);
   c3->SaveAs(saveNameperp);
+
+
+
+
+
+
+
+
 
 
 

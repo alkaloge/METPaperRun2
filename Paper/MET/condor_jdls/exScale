@@ -2,7 +2,7 @@
 
 
 years=("2018" "2017" "2016" "2016preVFP")
-years=("2017")
+years=("2016preVFP")
 channels=("MuMu" "ElEl")
 channels=("Gjets")
 modes=("dynlo" "dy")
@@ -12,8 +12,8 @@ njets=("eq1" "geq1" "incl")
 #njets=("incl")
 cp txt_Gjets_mc_sub/*_Gjets_npv*txt txt_Gjets_mc_sub/*_Gjets_vspt*txt txt_Gjets/
 channelDir="Gjets_mc_sub"
-channelDir="Gjets"
-
+#channelDir="Gjets"
+extra="cutbased_isocuttight"
 
 for year in "${years[@]}"; do
     for channel in "${channels[@]}"; do
@@ -24,13 +24,13 @@ for year in "${years[@]}"; do
         done
     done
 
-montage -tile 4x2 -geometry +10+5 -density 150 -resize 50% -quality 90 res_perp_*${year}*_${channelDir}.pdf plots_res_perp_${year}_${channelDir}.pdf
-montage -tile 4x2 -geometry +10+5 -density 150 -resize 50% -quality 90 scale_*${year}*_${channelDir}.pdf plots_scale_${year}_${channelDir}.pdf
-montage -tile 4x2 -geometry +10+5 -density 150 -resize 50% -quality 90 res_par_*${year}*_${channelDir}.pdf plots_res_par_${year}_${channelDir}.pdf
+montage -tile 4x2 -geometry +10+5 -density 150 -resize 50% -quality 90 res_perp_*${year}*_${channelDir}_${extra}.pdf plots_res_perp_${year}_${channelDir}_${extra}.pdf
+montage -tile 4x2 -geometry +10+5 -density 150 -resize 50% -quality 90 scale_*${year}*_${channelDir}_${extra}.pdf plots_scale_${year}_${channelDir}_${extra}.pdf
+montage -tile 4x2 -geometry +10+5 -density 150 -resize 50% -quality 90 res_par_*${year}*_${channelDir}_${extra}.pdf plots_res_par_${year}_${channelDir}_${extra}.pdf
 done
 done
 
 
 ls plots_*pdf
-cp scale_*${year}*_${channelDir}.pdf res_perp_*${year}*_${channelDir}.pdf res_par_*${year}*_${channelDir}.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/Scales/
-cp plots_res_perp_${year}_${channelDir}.pdf plots_scale_${year}_${channelDir}.pdf  plots_res_par_${year}_${channelDir}.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/Scales/
+cp scale_*${year}*_${channelDir}_${extra}.pdf res_perp_*${year}*_${channelDir}_${extra}.pdf res_par_*${year}*_${channelDir}_${extra}.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/Scales/
+cp plots_res_perp_${year}_${channelDir}_${extra}.pdf plots_scale_${year}_${channelDir}_${extra}.pdf  plots_res_par_${year}_${channelDir}_${extra}.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/Scales/

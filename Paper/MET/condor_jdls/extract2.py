@@ -274,6 +274,7 @@ def extract2():
     for i, cut in enumerate(cuts_vspt):
 	
         if str(i) == "0" : continue
+        if str(i) == "1" : continue
 	folder_name = "Folder_%d_vspt_%s" % (i, folder_names[i])
 	print '......................', folder_name
 	folder = top_directory.GetDirectory(folder_name)
@@ -456,20 +457,27 @@ def extract2():
 
 
 
+	    outrawmetd.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_rawmet.GetMean(), h_scale_rawmet.GetMeanError(), h_uparaboson_rawmet.GetRMS(), h_uparaboson_rawmet.GetRMSError(), h_uperp_rawmet.GetRMS(), h_uperp_rawmet.GetRMSError(), h_scale_perp_rawmet.GetMean(), h_scale_perp_rawmet.GetMeanError()))
+
+	    outrawpuppid.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_rawpuppi.GetMean(), h_scale_rawpuppi.GetMeanError(), h_uparaboson_rawpuppi.GetRMS(), h_uparaboson_rawpuppi.GetRMSError(), h_uperp_rawpuppi.GetRMS(), h_uperp_rawpuppi.GetRMSError(), h_scale_perp_rawpuppi.GetMean(), h_scale_perp_rawpuppi.GetMeanError()))
+
+	    outt1d.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_t1.GetMean(), h_scale_t1.GetMeanError(), h_uparaboson_t1.GetRMS(), h_uparaboson_t1.GetRMSError(), h_uperp_t1.GetRMS(), h_uperp_t1.GetRMSError(), h_scale_perp_t1.GetMean(), h_scale_perp_t1.GetMeanError()))
+	    if isMC: 
+		outt1smeard.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_t1smear.GetMean(), h_scale_t1smear.GetMeanError(), h_uparaboson_t1smear.GetRMS(), h_uparaboson_t1smear.GetRMSError(), h_uperp_t1smear.GetRMS(), h_uperp_t1smear.GetRMSError(), h_scale_perp_t1smear.GetMean(), h_scale_perp_t1smear.GetMeanError()))
+
+	    outpuppid.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_puppi.GetMean(), h_scale_puppi.GetMeanError(), h_uparaboson_puppi.GetRMS(), h_uparaboson_puppi.GetRMSError(), h_uperp_puppi.GetRMS(), h_uperp_puppi.GetRMSError(), h_scale_perp_puppi.GetMean(), h_scale_perp_puppi.GetMeanError()))
+            '''
+            #u_para
 	    outrawmetd.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_rawmet.GetMean(), h_scale_rawmet.GetMeanError(), h_upara_rawmet.GetRMS(), h_upara_rawmet.GetRMSError(), h_uperp_rawmet.GetRMS(), h_uperp_rawmet.GetRMSError(), h_scale_perp_rawmet.GetMean(), h_scale_perp_rawmet.GetMeanError()))
-	    #outrawmetd.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_rawmet.GetMean(), h_scale_rawmet.GetMeanError(), h_uparaboson_rawmet.GetRMS(), h_uparaboson_rawmet.GetRMSError(), h_uperp_rawmet.GetRMS(), h_uperp_rawmet.GetRMSError(), h_scale_perp_rawmet.GetMean(), h_scale_perp_rawmet.GetMeanError()))
 
 	    outrawpuppid.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_rawpuppi.GetMean(), h_scale_rawpuppi.GetMeanError(), h_upara_rawpuppi.GetRMS(), h_upara_rawpuppi.GetRMSError(), h_uperp_rawpuppi.GetRMS(), h_uperp_rawpuppi.GetRMSError(), h_scale_perp_rawpuppi.GetMean(), h_scale_perp_rawpuppi.GetMeanError()))
-	    #outrawpuppid.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_rawpuppi.GetMean(), h_scale_rawpuppi.GetMeanError(), h_uparaboson_rawpuppi.GetRMS(), h_uparaboson_rawpuppi.GetRMSError(), h_uperp_rawpuppi.GetRMS(), h_uperp_rawpuppi.GetRMSError(), h_scale_perp_rawpuppi.GetMean(), h_scale_perp_rawpuppi.GetMeanError()))
 
 	    outt1d.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_t1.GetMean(), h_scale_t1.GetMeanError(), h_upara_t1.GetRMS(), h_upara_t1.GetRMSError(), h_uperp_t1.GetRMS(), h_uperp_t1.GetRMSError(), h_scale_perp_t1.GetMean(), h_scale_perp_t1.GetMeanError()))
-	    #outt1d.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_t1.GetMean(), h_scale_t1.GetMeanError(), h_uparaboson_t1.GetRMS(), h_uparaboson_t1.GetRMSError(), h_uperp_t1.GetRMS(), h_uperp_t1.GetRMSError(), h_scale_perp_t1.GetMean(), h_scale_perp_t1.GetMeanError()))
 	    if isMC: 
 		outt1smeard.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_t1smear.GetMean(), h_scale_t1smear.GetMeanError(), h_upara_t1smear.GetRMS(), h_upara_t1smear.GetRMSError(), h_uperp_t1smear.GetRMS(), h_uperp_t1smear.GetRMSError(), h_scale_perp_t1smear.GetMean(), h_scale_perp_t1smear.GetMeanError()))
-		#outt1smeard.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_t1smear.GetMean(), h_scale_t1smear.GetMeanError(), h_uparaboson_t1smear.GetRMS(), h_uparaboson_t1smear.GetRMSError(), h_uperp_t1smear.GetRMS(), h_uperp_t1smear.GetRMSError(), h_scale_perp_t1smear.GetMean(), h_scale_perp_t1smear.GetMeanError()))
 
-	    #outpuppid.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_puppi.GetMean(), h_scale_puppi.GetMeanError(), h_upara_puppi.GetRMS(), h_upara_puppi.GetRMSError(), h_uperp_puppi.GetRMS(), h_uperp_puppi.GetRMSError(), h_scale_perp_puppi.GetMean(), h_scale_perp_puppi.GetMeanError()))
-	    outpuppid.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_puppi.GetMean(), h_scale_puppi.GetMeanError(), h_uparaboson_puppi.GetRMS(), h_uparaboson_puppi.GetRMSError(), h_uperp_puppi.GetRMS(), h_uperp_puppi.GetRMSError(), h_scale_perp_puppi.GetMean(), h_scale_perp_puppi.GetMeanError()))
+	    outpuppid.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_vspt[i], h_scale_puppi.GetMean(), h_scale_puppi.GetMeanError(), h_upara_puppi.GetRMS(), h_upara_puppi.GetRMSError(), h_uperp_puppi.GetRMS(), h_uperp_puppi.GetRMSError(), h_scale_perp_puppi.GetMean(), h_scale_perp_puppi.GetMeanError()))
+            '''
 
 
 
@@ -682,23 +690,29 @@ def extract2():
 	    h_scale_perp_puppi_npv.SetBinError(i + 1, h_scale_perp_puppi.GetMeanError())
 
 
-
+            '''
 	    outrawmetdn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_rawmet.GetMean(), h_scale_rawmet.GetMeanError(), h_upara_rawmet.GetRMS(), h_upara_rawmet.GetRMSError(), h_uperp_rawmet.GetRMS(), h_uperp_rawmet.GetRMSError(), h_scale_perp_rawmet.GetMean(), h_scale_perp_rawmet.GetMeanError()))
-	    #outrawmetdn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_rawmet.GetMean(), h_scale_rawmet.GetMeanError(), h_uparaboson_rawmet.GetRMS(), h_uparaboson_rawmet.GetRMSError(), h_uperp_rawmet.GetRMS(), h_uperp_rawmet.GetRMSError(), h_scale_perp_rawmet.GetMean(), h_scale_perp_rawmet.GetMeanError()))
 
 	    outrawpuppidn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_rawpuppi.GetMean(), h_scale_rawpuppi.GetMeanError(), h_upara_rawpuppi.GetRMS(), h_upara_rawpuppi.GetRMSError(), h_uperp_rawpuppi.GetRMS(), h_uperp_rawpuppi.GetRMSError(), h_scale_perp_rawpuppi.GetMean(), h_scale_perp_rawpuppi.GetMeanError()))
-	    #outrawpuppidn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_rawpuppi.GetMean(), h_scale_rawpuppi.GetMeanError(), h_uparaboson_rawpuppi.GetRMS(), h_uparaboson_rawpuppi.GetRMSError(), h_uperp_rawpuppi.GetRMS(), h_uperp_rawpuppi.GetRMSError(), h_scale_perp_rawpuppi.GetMean(), h_scale_perp_rawpuppi.GetMeanError()))
 
 	    outt1dn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_t1.GetMean(), h_scale_t1.GetMeanError(), h_upara_t1.GetRMS(), h_upara_t1.GetRMSError(), h_uperp_t1.GetRMS(), h_uperp_t1.GetRMSError(), h_scale_perp_t1.GetMean(), h_scale_perp_t1.GetMeanError()))
-	    #outt1dn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_t1.GetMean(), h_scale_t1.GetMeanError(), h_uparaboson_t1.GetRMS(), h_uparaboson_t1.GetRMSError(), h_uperp_t1.GetRMS(), h_uperp_t1.GetRMSError(), h_scale_perp_t1.GetMean(), h_scale_perp_t1.GetMeanError()))
 	    if isMC:
 		outt1smeardn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_t1smear.GetMean(), h_scale_t1smear.GetMeanError(), h_upara_t1smear.GetRMS(), h_upara_t1smear.GetRMSError(), h_uperp_t1smear.GetRMS(), h_uperp_t1smear.GetRMSError(), h_scale_perp_t1smear.GetMean(), h_scale_perp_t1smear.GetMeanError()))
-		#outt1smeardn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_t1smear.GetMean(), h_scale_t1smear.GetMeanError(), h_uparaboson_t1smear.GetRMS(), h_uparaboson_t1smear.GetRMSError(), h_uperp_t1smear.GetRMS(), h_uperp_t1smear.GetRMSError(), h_scale_perp_t1smear.GetMean(), h_scale_perp_t1smear.GetMeanError()))
 
-	    #outpuppidn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_puppi.GetMean(), h_scale_puppi.GetMeanError(), h_upara_puppi.GetRMS(), h_upara_puppi.GetRMSError(), h_uperp_puppi.GetRMS(), h_uperp_puppi.GetRMSError(), h_scale_perp_puppi.GetMean(), h_scale_perp_puppi.GetMeanError()))
+	    outpuppidn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_puppi.GetMean(), h_scale_puppi.GetMeanError(), h_upara_puppi.GetRMS(), h_upara_puppi.GetRMSError(), h_uperp_puppi.GetRMS(), h_uperp_puppi.GetRMSError(), h_scale_perp_puppi.GetMean(), h_scale_perp_puppi.GetMeanError()))
+            '''
+
+
+
+	    outrawmetdn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_rawmet.GetMean(), h_scale_rawmet.GetMeanError(), h_uparaboson_rawmet.GetRMS(), h_uparaboson_rawmet.GetRMSError(), h_uperp_rawmet.GetRMS(), h_uperp_rawmet.GetRMSError(), h_scale_perp_rawmet.GetMean(), h_scale_perp_rawmet.GetMeanError()))
+
+	    outrawpuppidn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_rawpuppi.GetMean(), h_scale_rawpuppi.GetMeanError(), h_uparaboson_rawpuppi.GetRMS(), h_uparaboson_rawpuppi.GetRMSError(), h_uperp_rawpuppi.GetRMS(), h_uperp_rawpuppi.GetRMSError(), h_scale_perp_rawpuppi.GetMean(), h_scale_perp_rawpuppi.GetMeanError()))
+
+	    outt1dn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_t1.GetMean(), h_scale_t1.GetMeanError(), h_uparaboson_t1.GetRMS(), h_uparaboson_t1.GetRMSError(), h_uperp_t1.GetRMS(), h_uperp_t1.GetRMSError(), h_scale_perp_t1.GetMean(), h_scale_perp_t1.GetMeanError()))
+	    if isMC:
+		outt1smeardn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_t1smear.GetMean(), h_scale_t1smear.GetMeanError(), h_uparaboson_t1smear.GetRMS(), h_uparaboson_t1smear.GetRMSError(), h_uperp_t1smear.GetRMS(), h_uperp_t1smear.GetRMSError(), h_scale_perp_t1smear.GetMean(), h_scale_perp_t1smear.GetMeanError()))
+
 	    outpuppidn.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(cuts_npv[i], h_scale_puppi.GetMean(), h_scale_puppi.GetMeanError(), h_uparaboson_puppi.GetRMS(), h_uparaboson_puppi.GetRMSError(), h_uperp_puppi.GetRMS(), h_uperp_puppi.GetRMSError(), h_scale_perp_puppi.GetMean(), h_scale_perp_puppi.GetMeanError()))
-
-
 
 
 
