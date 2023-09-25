@@ -192,8 +192,8 @@ class Sample:
               var = var.replace('PUdown', '')
 
           if 'ElEl' in channel or 'MuMu' in channel: 
-              print 'there you are', channel
-              cut =  cut    + "* ( " + "TrigSF1[0] " +  " )"  + "* ( " + "TrigSF2[0] " +  " )"
+              #print 'there you are', channel
+              if 'MuMu' in channel : cut =  cut    + "* ( " + "TrigSF1[0] " +  " )"  + "* ( " + "TrigSF2[0] " +  " )"
 	      if 'isoup' not in var.lower() and 'isodown' not in var.lower() :
 		  cut =  cut    + "* ( " + "IsoSF1[0] " +  " )"  + "* ( " + "IsoSF2[0] " +  " )"
 	      if 'isoup' in var.lower() :
@@ -241,6 +241,30 @@ class Sample:
 			  var = var.replace('IDup', '')
 		      if 'iddown' in var.lower() :
 			  cut =  cut    + "* ( " + "IDSFM_down[0] " +  " )"  
+			  var = var.replace('IDDown', '')
+			  var = var.replace('IDdown', '')
+
+                  if 'mvaid80' in options :
+		      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP80[0] " +  " )"  
+		      if 'idup' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP80_up[0] " +  " )"  
+			  var = var.replace('IDUp', '')
+			  var = var.replace('IDup', '')
+		      if 'iddown' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP80_down[0] " +  " )"  
+			  var = var.replace('IDDown', '')
+			  var = var.replace('IDdown', '')
+
+                  if 'mvaid90' in options :
+		      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP90[0] " +  " )"  
+		      if 'idup' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP90_up[0] " +  " )"  
+			  var = var.replace('IDUp', '')
+			  var = var.replace('IDup', '')
+		      if 'iddown' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP90_down[0] " +  " )"  
 			  var = var.replace('IDDown', '')
 			  var = var.replace('IDdown', '')
 

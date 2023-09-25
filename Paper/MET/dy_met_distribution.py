@@ -472,8 +472,8 @@ if __name__ == "__main__":
             if 'pu40to50' in tagname : jetCut  = jetCut + " && nPVGood[0]<50 && nPVGood>=40"
             if 'pugeq50' in tagname : jetCut  = jetCut + " && nPVGood[0]>=50 "
             if 'pugeq40' in tagname : jetCut  = jetCut + " && nPVGood[0]>=40 "
-            if 'isocut' in tagname :  jetCut  = jetCut + " && iso_1 <=0.01"
-            if 'isocuttight' in tagname :  jetCut  = jetCut + " && iso_1 <=0.005"
+            #if 'isocut' in tagname :  jetCut  = jetCut + " && iso_1 <=0.01"
+            if 'isocuttight' in tagname :  jetCut  = jetCut + " && iso_1 <=0.1 && iso_2 <=0.1"
 
             print color.blue+'************************************************************************************************'+color.end
             print 'jetCut', jetCut

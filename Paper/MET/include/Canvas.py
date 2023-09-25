@@ -35,6 +35,7 @@ class Canvas:
           if '_pu30to40' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0 - 30<nVtx<40}"
           if '_pu40to50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0 - 40<nVtx<50}"
           if '_pugeq50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0 - nVtx>50}"
+          if '_pugeq40' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0 - nVtx>40}"
 
       if 'njetsgeq0' in name : 
           if '_pu' not in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0}"
@@ -44,6 +45,7 @@ class Canvas:
           if '_pu30to40' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - 30<nVtx<40}"
           if '_pu40to50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - 40<nVtx<50}"
           if '_pugeq50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - nVtx>50}"
+          if '_pugeq40' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - nVtx>40}"
       self.bands = []
       self.options = []
       self.labels = []      
@@ -1343,7 +1345,7 @@ class Canvas:
         lumiSys = 0.016
     leptSys  = 0.02
     trigSys  = 0.02
-    #print 'some numbers mc, hdata{}, hMC{}, hjerUp{}, hjerDown{} ,  hjesUp{}, hjesDown{} ,hunclUp{}, hunclDown{}, hpuUp{}, hpuDown{}, hidUp{}, hidDown{}'.format(hdata.GetSumOfWeights(), hMC.GetSumOfWeights(), hjerUp.GetSumOfWeights(), hjerDown.GetSumOfWeights() ,  hjesUp.GetSumOfWeights(), hjesDown.GetSumOfWeights() ,hunclUp.GetSumOfWeights(), hunclDown.GetSumOfWeights(), hpuUp.GetSumOfWeights(), hpuDown.GetSumOfWeights(), hidUp.GetSumOfWeights(), hidDown.GetSumOfWeights())
+    print 'some numbers mc, hdata{}, hMC{}, hjerUp{}, hjerDown{} ,  hjesUp{}, hjesDown{} ,hunclUp{}, hunclDown{}, hpuUp{}, hpuDown{}, hidUp{}, hidDown{}'.format(hdata.GetSumOfWeights(), hMC.GetSumOfWeights(), hjerUp.GetSumOfWeights(), hjerDown.GetSumOfWeights() ,  hjesUp.GetSumOfWeights(), hjesDown.GetSumOfWeights() ,hunclUp.GetSumOfWeights(), hunclDown.GetSumOfWeights(), hpuUp.GetSumOfWeights(), hpuDown.GetSumOfWeights(), hidUp.GetSumOfWeights(), hidDown.GetSumOfWeights())
     if 'phi' in title.lower() : 
 	hMC.SetMaximum(hMC.GetMaximum()*15)
 	hdata.SetMaximum(hMC.GetMaximum())

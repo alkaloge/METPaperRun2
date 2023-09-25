@@ -36,7 +36,7 @@ H  = H_ref
 # Updated by:   Dinko Ferencek (Rutgers)
 #
 
-iPeriod = 9
+
 
 # references for T, B, L, R
 T = 0.08*H_ref
@@ -45,6 +45,7 @@ L = 0.12*W_ref
 R = 0.04*W_ref
 
 
+iPeriod = 9
 filenameData = sys.argv[1]
 filenameBkg = sys.argv[2]
 #python extract.py filename ismc MuMu 2018 dy
@@ -55,9 +56,9 @@ year = str(sys.argv[3])
 channel = str(sys.argv[4])
 channelDir = str(sys.argv[5])
 
+
 lumi=1.
 if year == "2017 ": lumi = 41.48
-
 if year == "2018":  lumi = 59.83
 if year == "2016":  lumi = 19.35
 if year == "2016all":  lumi = 19.35+16.98
@@ -540,7 +541,7 @@ for ih in range(len(h_data)):
 
 		pulls_graph.Draw("AP")  # Draw the pulls as a TGraphErrors
 
-		iPeriod="2018"
+		iPeriod=str(year)
 		CMS_lumi.CMS_lumi(canvas, iPeriod, iPos)
 
 		canvas.cd()
