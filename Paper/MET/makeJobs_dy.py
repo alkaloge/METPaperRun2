@@ -3,23 +3,25 @@ import os
 allsyst = ["Nominal", "JESUp", "JESDown", "JERUp", "JERDown", "UnclusteredUp", "UnclusteredDown", "PUUp", "PUDown", "IDUp", "IDDown"]
 samples = ["data", "dy", "dynlo", "top", "ew"]
 channels = ["MuMu","ElEl"]
-years = ["2016preVFP", "2016postVFP", "2017", "2018"]
 #years = ["2016preVFP", "2016postVFP"]
 years = ["2017", "2016preVFP", "2016postVFP"]
+#years = ["2018"]
 extra = ""
 vars = ["MET_T1_pt", "PuppiMET_pt", "boson_pt", "METWmass", "u_par_MET", "u_perp_MET", "PuppiMETWmass"]
 vars = ['RawMET_pt', 'RawPuppiMET_pt', 'METCorGood_T1_pt', 'PuppiMETCorGood_pt', 'METCorGood_T1Smear_pt', 'boson_pt', 'u_parboson_RawMET', 'u_parboson_RawPuppiMET', 'u_perp_RawMET', 'u_perp_RawPuppiMET', 'u_parboson_METCorGood_T1Smear', 'u_parboson_METCorGood_T1', 'u_perp_METCorGood_T1Smear', 'u_perp_METCorGood_T1', 'u_parboson_PuppiMETCorGood', 'u_perp_PuppiMETCorGood']
 
 #vars = ["METCorGood_T1_pt", "PuppiMETCorGood_pt", "boson_pt", "METCorGood_T1Smear_pt"]
-#vars = ["mll"]
+vars = ["METCorGood_T1_pt"]
 IDWP = "_cutbased"
 
 #IDWP = "_mvaid"
 alljetcuts = ["njetsgeq0", "njetsgt0"]
 btag = "nbtagl" + IDWP + "_varbins_isocut"
-btag = "nbtagl" + IDWP + "_varbins"
+
+#btag = "nbtagl" + IDWP + "_varbins"
+
 #btag = "nbtagl" + IDWP + "_varbins_isocuttight"
-allpv= ['lt10' ] 
+
 allpv=['_pult10', '_pu10to20', '_pu20to30', '_pu30to40', '_pu40to50', '_pugeq50']
 allpv=['_pugeq40']
 #allpv=[]
@@ -69,10 +71,10 @@ if len(tosend) > 0 :
     for i in tosend:
         #i = i.replace('jdl','sh')
         #command = 'cd {0:s} ;condor_submit {1:s}; touch {1:s}.submitted ; cd ..;'.format('Jobs_dy' + IDWP, i)
-        command = 'cd {0:s}; condor_submit {1:s}; touch {1:s}.submitted '.format('Jobs_dy' + IDWP, i)
         #command = 'cp {0:s}/{1:s} . ; cd /uscms_data/d3/alkaloge/MetStudies/nAOD/CMSSW_10_6_5/src/Paper/MET; . {1:s}; '.format('Jobs_dy' + IDWP, i)
-        #print command
+        command = 'cd {0:s}; condor_submit {1:s}; touch {1:s}.submitted '.format('Jobs_dy' + IDWP, i)
+        print command
         if not os.path.isfile('{0:s}.submitted'.format(i)) :
-           #print 'should send', command
+           print 'should send', command
            os.system(command)
 
