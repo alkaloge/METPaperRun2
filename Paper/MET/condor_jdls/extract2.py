@@ -226,7 +226,7 @@ def extract2():
     if 'geq1' in filename : sjets = 'njetsgeq1'
     if 'incl' in filename : sjets = 'njetsincl'
     #channel='MuMu'
-    
+    #txt_ElEl/puppi_2018_alldata_npv_njetsincl_ElEl.txt   
     #year='2018'
     dataVsPtFileName = "alldata_vspt_"+sjets+"_"+channel+".txt"
     dataVsNvtxFileName = "alldata_npv_"+sjets+"_"+channel+".txt"
@@ -248,7 +248,6 @@ def extract2():
 	    dataVsNvtxFileName = dataVsNvtxFileName.replace("alldata", "Gjets")
 	    mcVsPtFileName = mcVsPtFileName.replace("dy", "Gjets")
 	    mcVsNvtxFileName = mcVsNvtxFileName.replace("dy", "Gjets")
-
 
     outrawmetd = open("txt_"+channelDir+"/rawmet_" + year + "_" + dataVsPtFileName, "w")
     outrawpuppid = open("txt_"+channelDir+"/rawpuppi_" + year + "_" + dataVsPtFileName, "w")
@@ -273,8 +272,9 @@ def extract2():
     
     for i, cut in enumerate(cuts_vspt):
 	
-        if str(i) == "0" : continue
-        if str(i) == "1" : continue
+        if channel == 'Gjets' :
+	    if str(i) == "0" : continue
+	    if str(i) == "1" : continue
 	folder_name = "Folder_%d_vspt_%s" % (i, folder_names[i])
 	print '......................', folder_name
 	folder = top_directory.GetDirectory(folder_name)
