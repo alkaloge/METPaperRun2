@@ -97,7 +97,7 @@ def get_scales():
         print  ' sorry, you must define Njet from eq0, eq1 or incl'
         sys.exit(1)
 
-    print "year", year,  "isMC", "channel", channel
+    print "year", year,  "isMC", isMC, "channel", channel
     #sys.exit(1)
 
     gROOT.SetBatch(False)
@@ -179,25 +179,30 @@ def get_scales():
     if channel == "MuMu":
 
         jcut = '(event.nMuon==2  and  event.Flag_BadPFMuonDzFilter==1  and  math.fabs(event.d0_1)<0.045  and  math.fabs(event.dZ_1)<0.2  and  math.fabs(event.q_1)==1  and  math.fabs(event.iso_1) <= .15  and  math.fabs(event.d0_2)<0.045  and  math.fabs(event.dZ_2)<0.2  and  math.fabs(event.q_2)==1  and  math.fabs(event.iso_2) <= .15  and  event.nPVndof>4  and  math.fabs(event.PVz)<26  and  (event.PVy*event.PVy + event.PVx*event.PVx)<3  and  event.nPVGood>2  and  event.njets{0:s}  and  event.nbtagL==0.0  and  event.cat==2 )'.format(str(sjets))
+        jcut = '(event.nMuon==2  and  event.Flag_BadPFMuonDzFilter==1  and  math.fabs(event.d0_1)<0.045  and  math.fabs(event.dZ_1)<0.2  and  math.fabs(event.q_1)==1  and  math.fabs(event.iso_1) <= .15  and  math.fabs(event.d0_2)<0.045  and  math.fabs(event.dZ_2)<0.2  and  math.fabs(event.q_2)==1  and  math.fabs(event.iso_2) <= .15  and  event.nPVGood>2  and  event.njets{0:s}  and  event.cat==2 )'.format(str(sjets))
 
     if channel == "ElEl":
         jcut = " ( event.nElectron==2  and  event.Flag_BadPFMuonDzFilter==1  and   ( math.fabs(event.eta_1)<=1.4442 or math.fabs(event.eta_1)>=1.5660) and math.fabs(event.d0_1)<0.045  and  math.fabs(event.dZ_1)<0.2 and  event.q_1==1  and  event.iso_1 <= .15  and   (math.fabs(event.eta_2)<=1.4442 or math.fabs(event.eta_2)>=1.5660)   and  math.fabs(event.d0_2)<0.045  and  math.fabs(event.dZ_2)<0.2  and   math.fabs(event.q_2)==1  and  event.iso_2 <= .15  and  event.nPVndof>4  and  math.fabs(event.PVz)<26  and  (event.PVy*event.PVy + event.PVx*event.PVx)<3  and  event.nPVGood>2  and  event.cat==1   and event.njets{0:s}    and  event.nbtagL==0.0  and  event.Electron_convVeto > 0  and  event.Electron_lostHits<1 )".format(str(sjets))
 
+        jcut = " ( event.nElectron==2  and  event.Flag_BadPFMuonDzFilter==1  and   ( math.fabs(event.eta_1)<=1.4442 or math.fabs(event.eta_1)>=1.5660) and math.fabs(event.d0_1)<0.045  and  math.fabs(event.dZ_1)<0.2 and  event.q_1==1  and  event.iso_1 <= .15  and   (math.fabs(event.eta_2)<=1.4442 or math.fabs(event.eta_2)>=1.5660)   and  math.fabs(event.d0_2)<0.045  and  math.fabs(event.dZ_2)<0.2  and   math.fabs(event.q_2)==1  and  event.iso_2 <= .15  and event.nPVGood>2  and  event.cat==1   and event.njets{0:s}    and  event.Electron_convVeto > 0  and  event.Electron_lostHits<1 )".format(str(sjets))
+
     if channel == "Gjets" : 
         #jcut = " (  event.Flag_BadPFMuonDzFilter==1 and  event.nPVndof>4 and math.fabs(event.PVz)<26 and (event.PVy*event.PVy + event.PVx*event.PVx)<3 and event.nPVGood>2 and event.njets{0:s}  and event.Photon_r9_1>=0.9 and event.Photon_r9_1<=1. and event.nbtagL==0.0)".format(str(sjets))
-        jcut = " (   event.pt_1>=50 and math.fabs(event.eta_1)<1.44 and event.Flag_BadPFMuonDzFilter==1 and event.nPVGood>2 and event.njets{0:s}  and event.Photon_r9_1>=0.9 and event.Photon_r9_1<=1. and event.nbtagL==0.0)".format(str(sjets))
+        jcut = " (   event.pt_1>=50 and math.fabs(event.eta_1)<1.44 and event.Flag_BadPFMuonDzFilter==1 and event.nPVGood>2 and event.njets{0:s}  and event.Photon_r9_1>=0.9 and event.Photon_r9_1<=1. and event.nbtagL==0.0 and event.iso_1<=0.005 and event.Photon_cutBased_1 ==3 )".format(str(sjets))
 
 
+    extra_conditions =''
     
-    if not isMC : 
-        #jcut = jcut + " * min( event.weightpsjson, event.weightps2 )" 
-        jcut = jcut + " * ( event.weightpsjson)" 
-
-    extra_conditions = "( event.weight  * math.fabs(event.weightPUtruejson) * event.L1PreFiringWeight_Nom * event.IDSF * event.TrigSF * event.IsoSF)"
- 
-    jcutmc = jcut + " * " + extra_conditions
+    if not isMC and channel =='Gjets': 
+        #jcut = jcut + " * ( event.weightpsjson)" 
+        extra_conditions =  "  ( event.weightpsjson)" 
+    if isMC :
+	if channel != 'Gjets' : extra_conditions = "( event.weight  * math.fabs(event.weightPUtruejson) * event.L1PreFiringWeight_Nom * event.IDSF1 * event.IDSF2 * event.IsoSF1 * event.IsoSF2 * event.TrigSF1 * event.TrigSF2)"
+	else : extra_conditions = "( event.weight  * math.fabs(event.weightPUtruejson) * event.L1PreFiringWeight_Nom * event.IDSFT )"
+    
+    #jcutmc = jcut + " * " + extra_conditions
     weight = 1.
-    if isMC : jcut = jcutmc
+    #if isMC : jcut = jcutmc
     print 'Cut ', isMC, jcut
     # Open the input root file
     #fileOut = TFile("output_vsptvspu_{}.root".format(str(year)), "RECREATE")
@@ -206,52 +211,62 @@ def get_scales():
     h_scale_rawmet_list_vspt = []
     h_scale_perp_rawmet_list_vspt = []
     h_upara_rawmet_list_vspt = []
+    h_uparaboson_rawmet_list_vspt = []
     h_uperp_rawmet_list_vspt = []
 
     h_scale_rawpuppi_list_vspt = []
     h_scale_perp_rawpuppi_list_vspt = []
     h_upara_rawpuppi_list_vspt = []
+    h_uparaboson_rawpuppi_list_vspt = []
     h_uperp_rawpuppi_list_vspt = []
 
     h_scale_t1_list_vspt = []
     h_scale_perp_t1_list_vspt = []
     h_upara_t1_list_vspt = []
+    h_uparaboson_t1_list_vspt = []
     h_uperp_t1_list_vspt = []
 
     h_scale_t1smear_list_vspt = []
     h_scale_perp_t1smear_list_vspt = []
     h_upara_t1smear_list_vspt = []
+    h_uparaboson_t1smear_list_vspt = []
     h_uperp_t1smear_list_vspt = []
 
     h_scale_puppi_list_vspt = []
     h_scale_perp_puppi_list_vspt = []
     h_upara_puppi_list_vspt = []
+    h_uparaboson_puppi_list_vspt = []
     h_uperp_puppi_list_vspt = []
 
 
     h_scale_rawmet_list_npv = []
     h_scale_perp_rawmet_list_npv = []
     h_upara_rawmet_list_npv = []
+    h_uparaboson_rawmet_list_npv = []
     h_uperp_rawmet_list_npv = []
 
     h_scale_rawpuppi_list_npv = []
     h_scale_perp_rawpuppi_list_npv = []
     h_upara_rawpuppi_list_npv = []
+    h_uparaboson_rawpuppi_list_npv = []
     h_uperp_rawpuppi_list_npv = []
 
     h_scale_t1_list_npv = []
     h_scale_perp_t1_list_npv = []
     h_upara_t1_list_npv = []
+    h_uparaboson_t1_list_npv = []
     h_uperp_t1_list_npv = []
 
     h_scale_t1smear_list_npv = []
     h_scale_perp_t1smear_list_npv = []
     h_upara_t1smear_list_npv = []
+    h_uparaboson_t1smear_list_npv = []
     h_uperp_t1smear_list_npv = []
 
     h_scale_puppi_list_npv = []
     h_scale_perp_puppi_list_npv = []
     h_upara_puppi_list_npv = []
+    h_uparaboson_puppi_list_npv = []
     h_uperp_puppi_list_npv = []
 
     for i0 in xrange(len(cuts)):
@@ -259,54 +274,64 @@ def get_scales():
 	h_scale_rawmet_vspt = ROOT.TH1F("h_scale_rawmet_vspt_%d" % i0, "h_scale_rawmet_vspt_%d" % i0, 400, -20., 20.)
 	h_scale_perp_rawmet_vspt = ROOT.TH1F("h_scale_perp_rawmet_vspt_%d" % i0, "h_scale_perp_rawmet_vspt_%d" % i0, 400, -20., 20.)
 	h_upara_rawmet_vspt = ROOT.TH1F("h_upara_rawmet_vspt_%d" % i0, "h_upara_rawmet_vspt_%d" % i0, 100,-200.,200.)
+	h_uparaboson_rawmet_vspt = ROOT.TH1F("h_uparaboson_rawmet_vspt_%d" % i0, "h_uparaboson_rawmet_vspt_%d" % i0, 100,-200.,200.)
 	h_uperp_rawmet_vspt = ROOT.TH1F("h_uperp_rawmet_vspt_%d" % i0, "h_perp_rawmet_vspt_%d" % i0, 100,-200.,200.)
 
 	h_scale_rawmet_list_vspt.append(h_scale_rawmet_vspt)
 	h_scale_perp_rawmet_list_vspt.append(h_scale_perp_rawmet_vspt)
 	h_upara_rawmet_list_vspt.append(h_upara_rawmet_vspt)
+	h_uparaboson_rawmet_list_vspt.append(h_uparaboson_rawmet_vspt)
 	h_uperp_rawmet_list_vspt.append(h_uperp_rawmet_vspt)
 
 	h_scale_rawpuppi_vspt = ROOT.TH1F("h_scale_rawpuppi_vspt_%d" % i0, "h_scale_rawpuppi_vspt_%d" % i0, 400, -20., 20.)
 	h_scale_perp_rawpuppi_vspt = ROOT.TH1F("h_scale_perp_rawpuppi_vspt_%d" % i0, "h_scale_perp_rawpuppi_vspt_%d" % i0, 400, -20., 20.)
 	h_upara_rawpuppi_vspt = ROOT.TH1F("h_upara_rawpuppi_vspt_%d" % i0, "h_upara_rawpuppi_vspt_%d" % i0, 100,-200.,200.)
+	h_uparaboson_rawpuppi_vspt = ROOT.TH1F("h_uparaboson_rawpuppi_vspt_%d" % i0, "h_uparaboson_rawpuppi_vspt_%d" % i0, 100,-200.,200.)
 	h_uperp_rawpuppi_vspt = ROOT.TH1F("h_uperp_rawpuppi_vspt_%d" % i0, "h_perp_rawpuppi_vspt_%d" % i0, 100,-200.,200.)
 
 	h_scale_rawpuppi_list_vspt.append(h_scale_rawpuppi_vspt)
 	h_scale_perp_rawpuppi_list_vspt.append(h_scale_perp_rawpuppi_vspt)
 	h_upara_rawpuppi_list_vspt.append(h_upara_rawpuppi_vspt)
+	h_uparaboson_rawpuppi_list_vspt.append(h_uparaboson_rawpuppi_vspt)
 	h_uperp_rawpuppi_list_vspt.append(h_uperp_rawpuppi_vspt)
 
 
 	h_scale_t1_vspt = ROOT.TH1F("h_scale_t1_vspt_%d" % i0, "h_scale_t1_vspt_%d" % i0, 400, -20., 20.)
 	h_scale_perp_t1_vspt = ROOT.TH1F("h_scale_perp_t1_vspt_%d" % i0, "h_scale_perp_t1_vspt_%d" % i0, 400, -20., 20.)
 	h_upara_t1_vspt = ROOT.TH1F("h_upara_t1_vspt_%d" % i0, "h_upara_t1_vspt_%d" % i0, 100,-200.,200.)
+	h_uparaboson_t1_vspt = ROOT.TH1F("h_uparaboson_t1_vspt_%d" % i0, "h_uparaboson_t1_vspt_%d" % i0, 100,-200.,200.)
 	h_uperp_t1_vspt = ROOT.TH1F("h_uperp_t1_vspt_%d" % i0, "h_perp_t1_vspt_%d" % i0, 100,-200.,200.)
 
 	h_scale_t1_list_vspt.append(h_scale_t1_vspt)
 	h_scale_perp_t1_list_vspt.append(h_scale_perp_t1_vspt)
 	h_upara_t1_list_vspt.append(h_upara_t1_vspt)
+	h_uparaboson_t1_list_vspt.append(h_uparaboson_t1_vspt)
 	h_uperp_t1_list_vspt.append(h_uperp_t1_vspt)
 
         if isMC : 
 	    h_scale_t1smear_vspt = ROOT.TH1F("h_scale_t1smear_vspt_%d" % i0, "h_scale_t1smear_vspt_%d" % i0, 400, -20., 20.)
 	    h_scale_perp_t1smear_vspt = ROOT.TH1F("h_scale_perp_t1smear_vspt_%d" % i0, "h_scale_perp_t1smear_vspt_%d" % i0, 400, -20., 20.)
 	    h_upara_t1smear_vspt = ROOT.TH1F("h_upara_t1smear_vspt_%d" % i0, "h_upara_t1smear_vspt_%d" % i0, 100,-200.,200.)
+	    h_uparaboson_t1smear_vspt = ROOT.TH1F("h_uparaboson_t1smear_vspt_%d" % i0, "h_uparaboson_t1smear_vspt_%d" % i0, 100,-200.,200.)
 	    h_uperp_t1smear_vspt = ROOT.TH1F("h_uperp_t1smear_vspt_%d" % i0, "h_perp_t1smear_vspt_%d" % i0, 100,-200.,200.)
 
 	    h_scale_t1smear_list_vspt.append(h_scale_t1smear_vspt)
 	    h_scale_perp_t1smear_list_vspt.append(h_scale_perp_t1smear_vspt)
 	    h_upara_t1smear_list_vspt.append(h_upara_t1smear_vspt)
+	    h_uparaboson_t1smear_list_vspt.append(h_uparaboson_t1smear_vspt)
 	    h_uperp_t1smear_list_vspt.append(h_uperp_t1smear_vspt)
 
 
 	h_scale_puppi_vspt = ROOT.TH1F("h_scale_puppi_vspt_%d" % i0, "h_scale_puppi_vspt_%d" % i0, 400, -20., 20.)
 	h_scale_perp_puppi_vspt = ROOT.TH1F("h_scale_perp_puppi_vspt_%d" % i0, "h_scale_perp_puppi_vspt_%d" % i0, 400, -20., 20.)
 	h_upara_puppi_vspt = ROOT.TH1F("h_upara_puppi_vspt_%d" % i0, "h_upara_puppi_vspt_%d" % i0, 100,-200.,200.)
+	h_uparaboson_puppi_vspt = ROOT.TH1F("h_uparaboson_puppi_vspt_%d" % i0, "h_uparaboson_puppi_vspt_%d" % i0, 100,-200.,200.)
 	h_uperp_puppi_vspt = ROOT.TH1F("h_uperp_puppi_vspt_%d" % i0, "h_perp_puppi_vspt_%d" % i0, 100,-200.,200.)
 
 	h_scale_puppi_list_vspt.append(h_scale_puppi_vspt)
 	h_scale_perp_puppi_list_vspt.append(h_scale_perp_puppi_vspt)
 	h_upara_puppi_list_vspt.append(h_upara_puppi_vspt)
+	h_uparaboson_puppi_list_vspt.append(h_uparaboson_puppi_vspt)
 	h_uperp_puppi_list_vspt.append(h_uperp_puppi_vspt)
 
 
@@ -315,54 +340,64 @@ def get_scales():
 	h_scale_rawmet_npv = ROOT.TH1F("h_scale_rawmet_npv_%d" % i0, "h_scale_rawmet_npv_%d" % i0, 400, -20., 20.)
 	h_scale_perp_rawmet_npv = ROOT.TH1F("h_scale_perp_rawmet_npv_%d" % i0, "h_scale_perp_rawmet_npv_%d" % i0, 400, -20., 20.)
 	h_upara_rawmet_npv = ROOT.TH1F("h_upara_rawmet_npv_%d" % i0, "h_upara_rawmet_npv_%d" % i0, 100,-200.,200.)
+	h_uparaboson_rawmet_npv = ROOT.TH1F("h_uparaboson_rawmet_npv_%d" % i0, "h_uparaboson_rawmet_npv_%d" % i0, 100,-200.,200.)
 	h_uperp_rawmet_npv = ROOT.TH1F("h_uperp_rawmet_npv_%d" % i0, "h_perp_rawmet_npv_%d" % i0, 100,-200.,200.)
 
 	h_scale_rawmet_list_npv.append(h_scale_rawmet_npv)
 	h_scale_perp_rawmet_list_npv.append(h_scale_perp_rawmet_npv)
 	h_upara_rawmet_list_npv.append(h_upara_rawmet_npv)
+	h_uparaboson_rawmet_list_npv.append(h_uparaboson_rawmet_npv)
 	h_uperp_rawmet_list_npv.append(h_uperp_rawmet_npv)
 
 	h_scale_rawpuppi_npv = ROOT.TH1F("h_scale_rawpuppi_npv_%d" % i0, "h_scale_rawpuppi_npv_%d" % i0, 400, -20., 20.)
 	h_scale_perp_rawpuppi_npv = ROOT.TH1F("h_scale_perp_rawpuppi_npv_%d" % i0, "h_scale_perp_rawpuppi_npv_%d" % i0, 400, -20., 20.)
 	h_upara_rawpuppi_npv = ROOT.TH1F("h_upara_rawpuppi_npv_%d" % i0, "h_upara_rawpuppi_npv_%d" % i0, 100,-200.,200.)
+	h_uparaboson_rawpuppi_npv = ROOT.TH1F("h_uparaboson_rawpuppi_npv_%d" % i0, "h_uparaboson_rawpuppi_npv_%d" % i0, 100,-200.,200.)
 	h_uperp_rawpuppi_npv = ROOT.TH1F("h_uperp_rawpuppi_npv_%d" % i0, "h_perp_rawpuppi_npv_%d" % i0, 100,-200.,200.)
 
 	h_scale_rawpuppi_list_npv.append(h_scale_rawpuppi_npv)
 	h_scale_perp_rawpuppi_list_npv.append(h_scale_perp_rawpuppi_npv)
 	h_upara_rawpuppi_list_npv.append(h_upara_rawpuppi_npv)
+	h_uparaboson_rawpuppi_list_npv.append(h_uparaboson_rawpuppi_npv)
 	h_uperp_rawpuppi_list_npv.append(h_uperp_rawpuppi_npv)
 
 
 	h_scale_t1_npv = ROOT.TH1F("h_scale_t1_npv_%d" % i0, "h_scale_t1_npv_%d" % i0, 400, -20., 20.)
 	h_scale_perp_t1_npv = ROOT.TH1F("h_scale_perp_t1_npv_%d" % i0, "h_scale_perp_t1_npv_%d" % i0, 400, -20., 20.)
 	h_upara_t1_npv = ROOT.TH1F("h_upara_t1_npv_%d" % i0, "h_upara_t1_npv_%d" % i0, 100,-200.,200.)
+	h_uparaboson_t1_npv = ROOT.TH1F("h_uparaboson_t1_npv_%d" % i0, "h_uparaboson_t1_npv_%d" % i0, 100,-200.,200.)
 	h_uperp_t1_npv = ROOT.TH1F("h_uperp_t1_npv_%d" % i0, "h_perp_t1_npv_%d" % i0, 100,-200.,200.)
 
 	h_scale_t1_list_npv.append(h_scale_t1_npv)
 	h_scale_perp_t1_list_npv.append(h_scale_perp_t1_npv)
 	h_upara_t1_list_npv.append(h_upara_t1_npv)
+	h_uparaboson_t1_list_npv.append(h_uparaboson_t1_npv)
 	h_uperp_t1_list_npv.append(h_uperp_t1_npv)
 
         if isMC : 
 	    h_scale_t1smear_npv = ROOT.TH1F("h_scale_t1smear_npv_%d" % i0, "h_scale_t1smear_npv_%d" % i0, 400, -20., 20.)
 	    h_scale_perp_t1smear_npv = ROOT.TH1F("h_scale_perp_t1smear_npv_%d" % i0, "h_scale_perp_t1smear_npv_%d" % i0, 400, -20., 20.)
 	    h_upara_t1smear_npv = ROOT.TH1F("h_upara_t1smear_npv_%d" % i0, "h_upara_t1smear_npv_%d" % i0, 100,-200.,200.)
+	    h_uparaboson_t1smear_npv = ROOT.TH1F("h_uparaboson_t1smear_npv_%d" % i0, "h_uparaboson_t1smear_npv_%d" % i0, 100,-200.,200.)
 	    h_uperp_t1smear_npv = ROOT.TH1F("h_uperp_t1smear_npv_%d" % i0, "h_perp_t1smear_npv_%d" % i0, 100,-200.,200.)
 
 	    h_scale_t1smear_list_npv.append(h_scale_t1smear_npv)
 	    h_scale_perp_t1smear_list_npv.append(h_scale_perp_t1smear_npv)
 	    h_upara_t1smear_list_npv.append(h_upara_t1smear_npv)
+	    h_uparaboson_t1smear_list_npv.append(h_uparaboson_t1smear_npv)
 	    h_uperp_t1smear_list_npv.append(h_uperp_t1smear_npv)
 
 
 	h_scale_puppi_npv = ROOT.TH1F("h_scale_puppi_npv_%d" % i0, "h_scale_puppi_npv_%d" % i0, 400, -20., 20.)
 	h_scale_perp_puppi_npv = ROOT.TH1F("h_scale_perp_puppi_npv_%d" % i0, "h_scale_perp_puppi_npv_%d" % i0, 400, -20., 20.)
 	h_upara_puppi_npv = ROOT.TH1F("h_upara_puppi_npv_%d" % i0, "h_upara_puppi_npv_%d" % i0, 100,-200.,200.)
+	h_uparaboson_puppi_npv = ROOT.TH1F("h_uparaboson_puppi_npv_%d" % i0, "h_uparaboson_puppi_npv_%d" % i0, 100,-200.,200.)
 	h_uperp_puppi_npv = ROOT.TH1F("h_uperp_puppi_npv_%d" % i0, "h_perp_puppi_npv_%d" % i0, 100,-200.,200.)
 
 	h_scale_puppi_list_npv.append(h_scale_puppi_npv)
 	h_scale_perp_puppi_list_npv.append(h_scale_perp_puppi_npv)
 	h_upara_puppi_list_npv.append(h_upara_puppi_npv)
+	h_uparaboson_puppi_list_npv.append(h_uparaboson_puppi_npv)
 	h_uperp_puppi_list_npv.append(h_uperp_puppi_npv)
 
 
@@ -370,7 +405,7 @@ def get_scales():
 
 
     for count, event in enumerate(t_):
-        if count % 10000==0 : print 'looping....', count
+        if count % 10000==0 : print 'looping.... isMC', isMC, count, extra_conditions
         #if count == 5000 : break
 
 	if eval(jcut):
@@ -380,32 +415,38 @@ def get_scales():
 		if eval(cuts[i0]):
 		#if eval(jcut ):
 		#if jcut + " and " + cuts[i0] :
-		    if isMC : weight = eval(extra_conditions)
+		    if len(extra_conditions)>0 : weight = eval(extra_conditions)
+                    #print 'weight is', weight
 		    #print jcut, cuts[i0], event.MET_T1_pt, count, event.boson_pt, math.fabs(-event.weightPUtrue), weight
 		    h_scale_rawmet_list_vspt[i0].Fill((-event.u_par_RawMET) / event.boson_pt, weight)
 		    h_scale_perp_rawmet_list_vspt[i0].Fill((-event.u_perp_RawMET) / (event.boson_pt*event.boson_pt), weight) # probably I should do /boson_pt^2
 		    h_upara_rawmet_list_vspt[i0].Fill(-event.u_par_RawMET, weight)
+		    h_uparaboson_rawmet_list_vspt[i0].Fill(event.u_par_RawMET+event.boson_pt, weight)
 		    h_uperp_rawmet_list_vspt[i0].Fill(-event.u_perp_RawMET/event.boson_pt, weight)
 
 		    h_scale_rawpuppi_list_vspt[i0].Fill((-event.u_par_RawPuppiMET) / event.boson_pt, weight)
 		    h_scale_perp_rawpuppi_list_vspt[i0].Fill((-event.u_perp_RawPuppiMET) / (event.boson_pt*event.boson_pt), weight)
 		    h_upara_rawpuppi_list_vspt[i0].Fill(-event.u_par_RawPuppiMET, weight)
+		    h_uparaboson_rawpuppi_list_vspt[i0].Fill(event.u_par_RawPuppiMET+event.boson_pt, weight)
 		    h_uperp_rawpuppi_list_vspt[i0].Fill(-event.u_perp_RawPuppiMET/event.boson_pt, weight)
 
 		    h_scale_t1_list_vspt[i0].Fill((-event.u_par_METCorGood_T1) / event.boson_pt, weight)
 		    h_scale_perp_t1_list_vspt[i0].Fill((-event.u_perp_METCorGood_T1) / (event.boson_pt*event.boson_pt), weight)
 		    h_upara_t1_list_vspt[i0].Fill(-event.u_par_METCorGood_T1, weight)
+		    h_uparaboson_t1_list_vspt[i0].Fill(event.u_par_METCorGood_T1+event.boson_pt, weight)
 		    h_uperp_t1_list_vspt[i0].Fill(-event.u_perp_METCorGood_T1/event.boson_pt, weight)
 
 		    if isMC : 
 			h_scale_t1smear_list_vspt[i0].Fill((-event.u_par_METCorGood_T1Smear) / event.boson_pt, weight)
 			h_scale_perp_t1smear_list_vspt[i0].Fill((-event.u_perp_METCorGood_T1Smear) / (event.boson_pt*event.boson_pt), weight)
 			h_upara_t1smear_list_vspt[i0].Fill(-event.u_par_METCorGood_T1Smear, weight)
+			h_uparaboson_t1smear_list_vspt[i0].Fill(event.u_par_METCorGood_T1Smear+event.boson_pt, weight)
 			h_uperp_t1smear_list_vspt[i0].Fill(-event.u_perp_METCorGood_T1Smear/event.boson_pt, weight)
 
 		    h_scale_puppi_list_vspt[i0].Fill((-event.u_par_PuppiMETCorGood) / event.boson_pt, weight)
 		    h_scale_perp_puppi_list_vspt[i0].Fill((-event.u_perp_PuppiMETCorGood) / (event.boson_pt*event.boson_pt), weight)
 		    h_upara_puppi_list_vspt[i0].Fill(-event.u_par_PuppiMETCorGood, weight)
+		    h_uparaboson_puppi_list_vspt[i0].Fill(event.u_par_PuppiMETCorGood+event.boson_pt, weight)
 		    h_uperp_puppi_list_vspt[i0].Fill(-event.u_perp_PuppiMETCorGood/event.boson_pt, weight)
 
 		######
@@ -414,34 +455,39 @@ def get_scales():
 		    #if eval(jcut + " and " + cuts_npv[i0]):
 		    #if eval(jcut ):
 		    #if jcut + " and " + cuts_npv[i0] :
-		    if isMC : weight = eval(extra_conditions)
+		    if len(extra_conditions): weight = eval(extra_conditions)
 		    #print jcut, cuts_npv[i0], event.MET_T1_pt, count, event.boson_pt, math.fabs(-event.weightPUtrue), weight
 
 
 		    h_scale_rawmet_list_npv[i0].Fill((-event.u_par_RawMET) / event.boson_pt, weight)
 		    h_scale_perp_rawmet_list_npv[i0].Fill((-event.u_perp_RawMET) / (event.boson_pt*event.boson_pt), weight)
 		    h_upara_rawmet_list_npv[i0].Fill(-event.u_par_RawMET, weight)
+		    h_uparaboson_rawmet_list_npv[i0].Fill(event.u_par_RawMET+event.boson_pt, weight)
 		    h_uperp_rawmet_list_npv[i0].Fill(-event.u_perp_RawMET/event.boson_pt, weight)
 
 		    h_scale_rawpuppi_list_npv[i0].Fill((-event.u_par_RawPuppiMET) / event.boson_pt, weight)
 		    h_scale_perp_rawpuppi_list_npv[i0].Fill((-event.u_perp_RawPuppiMET) / (event.boson_pt*event.boson_pt), weight)
 		    h_upara_rawpuppi_list_npv[i0].Fill(-event.u_par_RawPuppiMET, weight)
+		    h_uparaboson_rawpuppi_list_npv[i0].Fill(event.u_par_RawPuppiMET+event.boson_pt, weight)
 		    h_uperp_rawpuppi_list_npv[i0].Fill(-event.u_perp_RawPuppiMET/event.boson_pt, weight)
 
 		    h_scale_t1_list_npv[i0].Fill((-event.u_par_METCorGood_T1) / event.boson_pt, weight)
 		    h_scale_perp_t1_list_npv[i0].Fill((-event.u_perp_METCorGood_T1) / (event.boson_pt*event.boson_pt), weight)
 		    h_upara_t1_list_npv[i0].Fill(-event.u_par_METCorGood_T1, weight)
+		    h_uparaboson_t1_list_npv[i0].Fill(event.u_par_METCorGood_T1+event.boson_pt, weight)
 		    h_uperp_t1_list_npv[i0].Fill(-event.u_perp_METCorGood_T1/event.boson_pt, weight)
 
 		    if isMC : 
 			h_scale_t1smear_list_npv[i0].Fill((-event.u_par_METCorGood_T1Smear) / event.boson_pt, weight)
 			h_scale_perp_t1smear_list_npv[i0].Fill((-event.u_perp_METCorGood_T1Smear) / (event.boson_pt*event.boson_pt), weight)
 			h_upara_t1smear_list_npv[i0].Fill(-event.u_par_METCorGood_T1Smear, weight)
+			h_uparaboson_t1smear_list_npv[i0].Fill(event.u_par_METCorGood_T1Smear+event.boson_pt, weight)
 			h_uperp_t1smear_list_npv[i0].Fill(-event.u_perp_METCorGood_T1Smear/event.boson_pt, weight)
 
 		    h_scale_puppi_list_npv[i0].Fill((-event.u_par_PuppiMETCorGood) / event.boson_pt, weight)
 		    h_scale_perp_puppi_list_npv[i0].Fill((-event.u_perp_PuppiMETCorGood) / (event.boson_pt*event.boson_pt), weight)
 		    h_upara_puppi_list_npv[i0].Fill(-event.u_par_PuppiMETCorGood, weight)
+		    h_uparaboson_puppi_list_npv[i0].Fill(event.u_par_PuppiMETCorGood+event.boson_pt, weight)
 		    h_uperp_puppi_list_npv[i0].Fill(-event.u_perp_PuppiMETCorGood/event.boson_pt, weight)
 
     # done with event
@@ -466,11 +512,13 @@ def get_scales():
 	h_scale_rawmet_list_vspt[i0].Write()
 	h_scale_perp_rawmet_list_vspt[i0].Write()
 	h_upara_rawmet_list_vspt[i0].Write()
+	h_uparaboson_rawmet_list_vspt[i0].Write()
 	h_uperp_rawmet_list_vspt[i0].Write()
 
 	h_scale_rawpuppi_list_vspt[i0].Write()
 	h_scale_perp_rawpuppi_list_vspt[i0].Write()
 	h_upara_rawpuppi_list_vspt[i0].Write()
+	h_uparaboson_rawpuppi_list_vspt[i0].Write()
 	h_uperp_rawpuppi_list_vspt[i0].Write()
 
 
@@ -478,17 +526,20 @@ def get_scales():
 	h_scale_t1_list_vspt[i0].Write()
 	h_scale_perp_t1_list_vspt[i0].Write()
 	h_upara_t1_list_vspt[i0].Write()
+	h_uparaboson_t1_list_vspt[i0].Write()
 	h_uperp_t1_list_vspt[i0].Write()
         if isMC : 
 
 	    h_scale_t1smear_list_vspt[i0].Write()
 	    h_scale_perp_t1smear_list_vspt[i0].Write()
 	    h_upara_t1smear_list_vspt[i0].Write()
+	    h_uparaboson_t1smear_list_vspt[i0].Write()
 	    h_uperp_t1smear_list_vspt[i0].Write()
 
 	h_scale_puppi_list_vspt[i0].Write()
 	h_scale_perp_puppi_list_vspt[i0].Write()
 	h_upara_puppi_list_vspt[i0].Write()
+	h_uparaboson_puppi_list_vspt[i0].Write()
 	h_uperp_puppi_list_vspt[i0].Write()
 
     for i0 in xrange(len(cuts_npv)):
@@ -506,6 +557,7 @@ def get_scales():
 	h_scale_rawmet_list_npv[i0].Write()
 	h_scale_perp_rawmet_list_npv[i0].Write()
 	h_upara_rawmet_list_npv[i0].Write()
+	h_uparaboson_rawmet_list_npv[i0].Write()
 	h_uperp_rawmet_list_npv[i0].Write()
 
 
@@ -513,6 +565,7 @@ def get_scales():
 	h_scale_rawpuppi_list_npv[i0].Write()
 	h_scale_perp_rawpuppi_list_npv[i0].Write()
 	h_upara_rawpuppi_list_npv[i0].Write()
+	h_uparaboson_rawpuppi_list_npv[i0].Write()
 	h_uperp_rawpuppi_list_npv[i0].Write()
 
 
@@ -521,6 +574,7 @@ def get_scales():
 	h_scale_t1_list_npv[i0].Write()
 	h_scale_perp_t1_list_npv[i0].Write()
 	h_upara_t1_list_npv[i0].Write()
+	h_uparaboson_t1_list_npv[i0].Write()
 	h_uperp_t1_list_npv[i0].Write()
         if isMC : 
 
@@ -528,6 +582,7 @@ def get_scales():
 	    h_scale_t1smear_list_npv[i0].Write()
 	    h_scale_perp_t1smear_list_npv[i0].Write()
 	    h_upara_t1smear_list_npv[i0].Write()
+	    h_uparaboson_t1smear_list_npv[i0].Write()
 	    h_uperp_t1smear_list_npv[i0].Write()
 
 
@@ -536,6 +591,7 @@ def get_scales():
 	h_scale_puppi_list_npv[i0].Write()
 	h_scale_perp_puppi_list_npv[i0].Write()
 	h_upara_puppi_list_npv[i0].Write()
+	h_uparaboson_puppi_list_npv[i0].Write()
 	h_uperp_puppi_list_npv[i0].Write()
 
 

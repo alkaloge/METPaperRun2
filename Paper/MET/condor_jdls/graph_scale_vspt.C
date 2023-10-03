@@ -93,7 +93,7 @@ void addCanvasName(TCanvas* canvas) {
     TString name = TString(canvas->GetName());
     name.ReplaceAll(".pdf", "");
     canvasName->AddText(name.Data());
-    canvasName->Draw();
+    //canvasName->Draw();
 }
 
 
@@ -158,7 +158,9 @@ if (vs == "_npv_")
 */
 //std::vector<Double_t> bins;
 
- Float_t bins[10]; // Maximum size of the array
+ Float_t bins[10]; // Maximum size of the array //for Gjets
+// Float_t bins[12]; // Maximum size of the array //for Gjets
+
 //0., 20., 40., 60., 80., 100., 120., 160., 200., 300., 500
     if (vs == "_vspt_")
     {
@@ -166,6 +168,7 @@ if (vs == "_npv_")
 
         //this is for Gjets, for DY that should start lower
         Float_t vspt_bins[] = {40., 60., 80., 100., 120., 160., 200., 300., 500.};
+
         std::copy(vspt_bins, vspt_bins + sizeof(vspt_bins) / sizeof(Float_t), bins);
     }
     if (vs == "_npv_")
@@ -405,7 +408,7 @@ for(int i = 0; i < binnum+1; i++){
   legend1->SetFillColor(0);
   legend1->SetNColumns(2);
 
-  if (mc_ == "dy" || mc_=="Gjets") {
+  if (mc_== "dynlo" || mc_ == "MuMu" || mc_ == "ElEl" || mc_=="Gjets") {
   legend1->AddEntry(grrawmc, "Raw PF MC", "lp");
   legend1->AddEntry(grrawd, "Raw PF Data", "lp");
   legend1->AddEntry(grrawpmc, "Raw PUPPI MC", "lp");
@@ -429,6 +432,8 @@ for(int i = 0; i < binnum+1; i++){
   //TLatex *t2a = new TLatex(0.5,0.9," #bf{CMS} #it{Preliminary}          16.97 fb^{-1} (13 TeV, 2016postFVP) ");
   TLatex *t2a ;//
   TLatex *t2b ;//
+  TLatex *t2c ;//
+  TLatex *t2d ;//
   if (year =="2018") { t2a= new TLatex(0.7,0.9,"2018 - 59.83 fb^{-1} (13 TeV) ");}
   if (year=="2017") {t2a = new TLatex(0.7,0.9,"2017 - 41.48 fb^{-1} (13 TeV) ");}
   if (year=="2016") {t2a = new TLatex(0.7,0.9,"2016postVFP - 16.15 fb^{-1} (13 TeV) ");}
@@ -446,6 +451,26 @@ for(int i = 0; i < binnum+1; i++){
   t2b->SetTextSize(0.04);
   t2b->SetTextAlign(20);
   t2b->Draw("same");
+
+  if (channel == "MuMu" ) { t2c = new TLatex(0.25,0.76," Z #rightarrow #mu#mu");}
+  if (channel == "ElEl" ) { t2c = new TLatex(0.25,0.76," Z #rightarrow ee");}
+  if (channel == "Gjets" ) { t2c = new TLatex(0.25,0.76," #gamma + jets ");}
+  t2c->SetNDC();
+  t2c->SetTextFont(42);
+  t2c->SetTextSize(0.04);
+  t2c->SetTextAlign(20);
+  t2c->Draw("same");
+  //  8 njets = ["eq0", "eq1", "geq1", "incl"]
+  if (njet_=="eq0") { t2d = new TLatex(0.25,0.71," N_{jets}=0");}
+  if (njet_=="eq1") { t2d = new TLatex(0.25,0.71," N_{jets}=1");}
+  if (njet_=="geq1") { t2d = new TLatex(0.25,0.71," N_{jets}#geq1");}
+  if (njet_=="incl") { t2d = new TLatex(0.25,0.71," N_{jets}#geq0");}
+  t2d->SetNDC();
+  t2d->SetTextFont(42);
+  t2d->SetTextSize(0.04);
+  t2d->SetTextAlign(20);
+  t2d->Draw("same");
+
 
   c1->SetName(saveName);
   addCanvasName(c1);
@@ -545,6 +570,7 @@ for(int i = 0; i < binnum+1; i++){
   legend1->Draw("same");
 
   t2a->Draw("same");
+  t2c->Draw("same");
   c2->SetName(saveNamepar);
   addCanvasName(c2);
   c2->SaveAs(saveNamepar);
