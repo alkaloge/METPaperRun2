@@ -75,8 +75,7 @@ class outTupleW() :
         self.jessyst=['_nom']
 	self.listsyst=['MET_T1_pt', 'MET_T1_phi', 'MET_pt', 'MET_phi', 'PuppiMET_pt', 'PuppiMET_phi', 'MET_T1Smear_pt', 'MET_T1Smear_phi']
         if doSyst :
-	    #self.jessyst=['_nom', '_jesTotal', '_jer','_jesHEMIssue']  
-	    self.jessyst=['_nom', '_jesTotal', '_jer']  
+	    self.jessyst=['_nom', '_jesTotal', '_jer','_jesHEMIssue']  
 
         if onlyNom :
 	    self.jessyst=['_nom']
@@ -142,7 +141,7 @@ class outTupleW() :
 			self.list_of_arraysJetsEta.append( array('f',[-9.99]*15))
 			self.list_of_arraysJetsPt.append( array('f',[-9.99]*15))
 			self.list_of_arraysJetsPhi.append( array('f',[-9.99]*15))
-			#self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*15))
+			self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*15))
 		    else :   
 		        for var in varss :
 			    self.allsystJets.append(jes+var)
@@ -154,7 +153,7 @@ class outTupleW() :
 			    self.list_of_arraysJetsEta.append( array('f',[-9.99]*12))
 			    self.list_of_arraysJetsPt.append( array('f',[-9.99]*12))
 			    self.list_of_arraysJetsPhi.append( array('f',[-9.99]*12))
-			    #self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*12))
+			    self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*12))
                      
                 
 	    #for i_ in self.allsystMET :  self.list_of_arrays.append(array('f', [ 0 ]))
@@ -289,6 +288,18 @@ class outTupleW() :
         self.mediumPromptId_1       = array('f',[0])
         self.looseId_1       = array('f',[0])
 
+	branches = ['dPhiMETCorGood_T1J1','dPhiPuppiMETCorGood_J1', 'dPhiMETCorGood_T1J2','dPhiPuppiMETCorGood_J2', 'dRMETCorGood_T1J1','dRPuppiMETCorGood_J1', 'dRMETCorGood_T1J2','dRPuppiMETCorGood_J2']
+	attributes = []
+	variations = ['','UnclusteredUp', 'UnclusteredDown', 'JESUp', 'JESDown', 'JERUp', 'JERDown']
+	if not isMC: variations = [''] 
+
+	for branch in branches:
+	    for var in variations:
+		branch_name = "{}{}".format(branch,  var)
+		setattr(self, branch_name, array('f', [-999]))
+		self.t.Branch(branch_name, getattr(self, branch_name), '{}/F'.format(branch_name))
+		#print("Created branch:", branch_name)
+        
         # MET variables
         self.metcov00    = array('f',[0])
         self.metcov01    = array('f',[0])
@@ -299,79 +310,286 @@ class outTupleW() :
 	self.MET_phi = array('f',[0])
 	self.MET_significance = array('f',[0])
 
-	self.MET_pt = array('f',[-99])
-	self.MET_phi = array('f',[-99])
-	self.MET_phi = array('f',[-99])
-	self.RawMET_pt = array('f',[-99])
-	self.RawMET_phi = array('f',[-99])
-	self.RawPuppiMET_pt = array('f',[-99])
-	self.RawPuppiMET_phi = array('f',[-99])
-	self.boson_pt = array('f',[-99])
-	self.boson_phi = array('f',[-999])
+	self.RawMET_pt = array('f',[0])
+	self.RawMET_phi = array('f',[0])
+	self.RawPuppiMET_pt = array('f',[0])
+	self.RawPuppiMET_phi = array('f',[0])
+
+	self.PuppiMET_pt = array('f',[0])
+	self.PuppiMET_phi = array('f',[0])
+
+        if doSyst :
+	    self.PuppiMET_ptJESUp = array('f',[0])
+	    self.PuppiMET_ptJESDown = array('f',[0])
+	    self.PuppiMET_ptJERUp = array('f',[0])
+	    self.PuppiMET_ptJERDown = array('f',[0])
+	    self.PuppiMET_ptUnclusteredUp = array('f',[0])
+	    self.PuppiMET_ptUnclusteredDown = array('f',[0])
+
+	    self.PuppiMET_phiJESUp = array('f',[0])
+	    self.PuppiMET_phiJESDown = array('f',[0])
+	    self.PuppiMET_phiJERUp = array('f',[0])
+	    self.PuppiMET_phiJERDown = array('f',[0])
+	    self.PuppiMET_phiUnclusteredUp = array('f',[0])
+	    self.PuppiMET_phiUnclusteredDown = array('f',[0])
+
+	    #does not exist in nAOV9, make it from DeltaX,Y
+	    self.MET_ptUnclusteredUp = array('f',[0])
+	    self.MET_ptUnclusteredDown = array('f',[0])
+	    self.MET_phiUnclusteredUp = array('f',[0])
+	    self.MET_phiUnclusteredDown = array('f',[0])
+
+	    self.MET_ptJESUp = array('f',[0])
+	    self.MET_ptJESDown = array('f',[0])
+	    self.MET_ptJERUp = array('f',[0])
+	    self.MET_ptJERDown = array('f',[0])
+
+	    self.MET_phiJESUp = array('f',[0])
+	    self.MET_phiJESDown = array('f',[0])
+	    self.MET_phiJERUp = array('f',[0])
+	    self.MET_phiJERDown = array('f',[0])
+
+	    self.MET_T1_pt = array('f',[0])
+	    self.MET_T1_phi = array('f',[0])
+	    self.MET_T1_ptJESUp = array('f',[0])
+	    self.MET_T1_phiJESUp = array('f',[0])
+	    self.MET_T1_ptJESDown = array('f',[0])
+	    self.MET_T1_phiJESDown = array('f',[0])
+	    self.MET_T1_ptJERUp = array('f',[0])
+	    self.MET_T1_phiJERUp = array('f',[0])
+	    self.MET_T1_ptJERDown = array('f',[0])
+	    self.MET_T1_phiJERDown = array('f',[0])
+
+	    self.METCor_T1_pt = array('f',[0])
+	    self.METCor_T1_phi = array('f',[0])
+	    self.METCorGood_T1_pt = array('f',[0])
+	    self.METCorGood_T1_phi = array('f',[0])
+	    self.PuppiMETCor_pt = array('f',[0])
+	    self.PuppiMETCor_phi = array('f',[0])
+	    self.PuppiMETCorGood_pt = array('f',[0])
+	    self.PuppiMETCorGood_phi = array('f',[0])
+
+	    self.MET_T1_ptUnclusteredUp = array('f',[0])
+	    self.MET_T1_ptUnclusteredDown = array('f',[0])
+	    self.MET_T1_phiUnclusteredUp = array('f',[0])
+	    self.MET_T1_phiUnclusteredDown = array('f',[0])
+
+	    self.METCor_T1_ptJESUp = array('f',[0])
+	    self.METCor_T1_phiJESUp = array('f',[0])
+	    self.METCor_T1_ptJESDown = array('f',[0])
+	    self.METCor_T1_phiJESDown = array('f',[0])
+	    self.METCor_T1_ptJERUp = array('f',[0])
+	    self.METCor_T1_phiJERUp = array('f',[0])
+	    self.METCor_T1_ptJERDown = array('f',[0])
+	    self.METCor_T1_phiJERDown = array('f',[0])
+	    self.METCor_T1_ptUnclusteredUp = array('f',[0])
+	    self.METCor_T1_ptUnclusteredDown = array('f',[0])
+	    self.METCor_T1_phiUnclusteredUp = array('f',[0])
+	    self.METCor_T1_phiUnclusteredDown = array('f',[0])
+
+	    self.METCorGood_T1_ptJESUp = array('f',[0])
+	    self.METCorGood_T1_phiJESUp = array('f',[0])
+	    self.METCorGood_T1_ptJESDown = array('f',[0])
+	    self.METCorGood_T1_phiJESDown = array('f',[0])
+	    self.METCorGood_T1_ptJERUp = array('f',[0])
+	    self.METCorGood_T1_phiJERUp = array('f',[0])
+	    self.METCorGood_T1_ptJERDown = array('f',[0])
+	    self.METCorGood_T1_phiJERDown = array('f',[0])
+	    self.METCorGood_T1_ptUnclusteredUp = array('f',[0])
+	    self.METCorGood_T1_ptUnclusteredDown = array('f',[0])
+	    self.METCorGood_T1_phiUnclusteredUp = array('f',[0])
+	    self.METCorGood_T1_phiUnclusteredDown = array('f',[0])
+
+	    self.PuppiMETCor_ptJESUp = array('f',[0])
+	    self.PuppiMETCor_phiJESUp = array('f',[0])
+	    self.PuppiMETCor_ptJESDown = array('f',[0])
+	    self.PuppiMETCor_phiJESDown = array('f',[0])
+	    self.PuppiMETCor_ptJERUp = array('f',[0])
+	    self.PuppiMETCor_phiJERUp = array('f',[0])
+	    self.PuppiMETCor_ptJERDown = array('f',[0])
+	    self.PuppiMETCor_phiJERDown = array('f',[0])
+	    self.PuppiMETCor_ptUnclusteredUp = array('f',[0])
+	    self.PuppiMETCor_ptUnclusteredDown = array('f',[0])
+	    self.PuppiMETCor_phiUnclusteredUp = array('f',[0])
+	    self.PuppiMETCor_phiUnclusteredDown = array('f',[0])
+
+	    self.PuppiMETCorGood_ptJESUp = array('f',[0])
+	    self.PuppiMETCorGood_phiJESUp = array('f',[0])
+	    self.PuppiMETCorGood_ptJESDown = array('f',[0])
+	    self.PuppiMETCorGood_phiJESDown = array('f',[0])
+	    self.PuppiMETCorGood_ptJERUp = array('f',[0])
+	    self.PuppiMETCorGood_phiJERUp = array('f',[0])
+	    self.PuppiMETCorGood_ptJERDown = array('f',[0])
+	    self.PuppiMETCorGood_phiJERDown = array('f',[0])
+	    self.PuppiMETCorGood_ptUnclusteredUp = array('f',[0])
+	    self.PuppiMETCorGood_ptUnclusteredDown = array('f',[0])
+	    self.PuppiMETCorGood_phiUnclusteredUp = array('f',[0])
+	    self.PuppiMETCorGood_phiUnclusteredDown = array('f',[0])
 
 
-	self.u_par_RawMET = array('f',[-999])
-	self.u_perp_RawMET = array('f',[-999])
-	self.u_par_RawPuppiMET = array('f',[-999])
-	self.u_perp_RawPuppiMET = array('f',[-999])
 
-	self.u_par_MET = array('f',[-999])
-	self.u_perp_MET = array('f',[-999])
+	self.METWmass = array('f',[0])
+	self.boson_pt = array('f',[0])
+	self.boson_phi = array('f',[0])
+	self.Puppiboson_pt = array('f',[0])
+	self.Puppiboson_phi = array('f',[0])
+
+	self.METWTmass = array('f',[0])
+	self.METCorWTmass = array('f',[0])
+	self.METCorGoodWTmass = array('f',[0])
+
+	self.PuppiMETWmass = array('f',[0])
+	self.PuppiMETCorWTmass = array('f',[0])
+	self.PuppiMETCorGoodWTmass = array('f',[0])
+
+	self.PuppiMETWTmass = array('f',[0])
+	self.METmTmass = array('f',[0])
+	self.PuppiMETmTmass = array('f',[0])
+
+	self.DphiWMET = array('f',[0])
+	self.DphiWPuppiMET = array('f',[0])
+	self.DphilMET = array('f',[0])
+	self.DphilPuppiMET = array('f',[0])
+
+	self.u_par_MET = array('f',[-99])
+	self.u_perp_MET = array('f',[-99])
+	self.u_par_PuppiMET = array('f',[-99])
+	self.u_perp_PuppiMET = array('f',[-99])
+
+        if doSyst :
+	    #systematics
+	    self.METWmassUnclusteredUp = array('f',[0])
+	    self.boson_ptUnclusteredUp = array('f',[0])
+	    self.boson_phiUnclusteredUp = array('f',[0])
+	    self.Puppiboson_ptUnclusteredUp = array('f',[0])
+	    self.Puppiboson_phiUnclusteredUp = array('f',[0])
+	    self.METWTmassUnclusteredUp = array('f',[0])
+	    self.PuppiMETWmassUnclusteredUp = array('f',[0])
+	    self.PuppiMETWTmassUnclusteredUp = array('f',[0])
+	    self.METmTmassUnclusteredUp = array('f',[0])
+	    self.PuppiMETmTmassUnclusteredUp = array('f',[0])
+
+	    self.DphiWMETUnclusteredUp = array('f',[0])
+	    self.DphiWPuppiMETUnclusteredUp = array('f',[0])
+	    self.DphilMETUnclusteredUp = array('f',[0])
+	    self.DphilPuppiMETUnclusteredUp = array('f',[0])
+
+	    self.u_par_METUnclusteredUp = array('f',[-99])
+	    self.u_perp_METUnclusteredUp = array('f',[-99])
+	    self.u_par_PuppiMETUnclusteredUp = array('f',[-99])
+	    self.u_perp_PuppiMETUnclusteredUp = array('f',[-99])
 
 
-	variations = ['']
-	if doSyst :
-	    variations = ['', 'JESUp', 'JESDown', 'JERUp', 'JERDown', 'UnclusteredUp', 'UnclusteredDown']
-	if not isMC: variations = [''] 
+	    self.METWmassUnclusteredDown = array('f',[0])
+	    self.boson_ptUnclusteredDown = array('f',[0])
+	    self.boson_phiUnclusteredDown = array('f',[0])
+	    self.Puppiboson_ptUnclusteredDown = array('f',[0])
+	    self.Puppiboson_phiUnclusteredDown = array('f',[0])
+	    self.METWTmassUnclusteredDown = array('f',[0])
+	    self.PuppiMETWmassUnclusteredDown = array('f',[0])
+	    self.PuppiMETWTmassUnclusteredDown = array('f',[0])
+	    self.METmTmassUnclusteredDown = array('f',[0])
+	    self.PuppiMETmTmassUnclusteredDown = array('f',[0])
+
+	    self.DphiWMETUnclusteredDown = array('f',[0])
+	    self.DphiWPuppiMETUnclusteredDown = array('f',[0])
+	    self.DphilMETUnclusteredDown = array('f',[0])
+	    self.DphilPuppiMETUnclusteredDown = array('f',[0])
+
+	    self.u_par_METUnclusteredDown = array('f',[-99])
+	    self.u_perp_METUnclusteredDown = array('f',[-99])
+	    self.u_par_PuppiMETUnclusteredDown = array('f',[-99])
+	    self.u_perp_PuppiMETUnclusteredDown = array('f',[-99])
+
+            #JES
+	    self.METWmassJESUp = array('f',[0])
+	    self.boson_ptJESUp = array('f',[0])
+	    self.boson_phiJESUp = array('f',[0])
+	    self.Puppiboson_ptJESUp = array('f',[0])
+	    self.Puppiboson_phiJESUp = array('f',[0])
+	    self.METWTmassJESUp = array('f',[0])
+	    self.PuppiMETWmassJESUp = array('f',[0])
+	    self.PuppiMETWTmassJESUp = array('f',[0])
+	    self.METmTmassJESUp = array('f',[0])
+	    self.PuppiMETmTmassJESUp = array('f',[0])
+
+	    self.DphiWMETJESUp = array('f',[0])
+	    self.DphiWPuppiMETJESUp = array('f',[0])
+	    self.DphilMETJESUp = array('f',[0])
+	    self.DphilPuppiMETJESUp = array('f',[0])
+
+	    self.u_par_METJESUp = array('f',[-99])
+	    self.u_perp_METJESUp = array('f',[-99])
+	    self.u_par_PuppiMETJESUp = array('f',[-99])
+	    self.u_perp_PuppiMETJESUp = array('f',[-99])
 
 
-	branches = ['dPhiMETCorGood_T1J1','dPhiPuppiMETCorGood_J1', 'dPhiMETCorGood_T1J2','dPhiPuppiMETCorGood_J2', 'dRMETCorGood_T1J1','dRPuppiMETCorGood_J1', 'dRMETCorGood_T1J2','dRPuppiMETCorGood_J2']
-	for branch in branches:
-	    for var in variations:
-		branch_name = "{}{}".format(branch,  var)
-		setattr(self, branch_name, array('f', [-999]))
-		self.t.Branch(branch_name, getattr(self, branch_name), '{}/F'.format(branch_name))
-		#print("Created branch:", branch_name)
+	    self.METWmassJESDown = array('f',[0])
+	    self.boson_ptJESDown = array('f',[0])
+	    self.boson_phiJESDown = array('f',[0])
+	    self.Puppiboson_ptJESDown = array('f',[0])
+	    self.Puppiboson_phiJESDown = array('f',[0])
+	    self.METWTmassJESDown = array('f',[0])
+	    self.PuppiMETWmassJESDown = array('f',[0])
+	    self.PuppiMETWTmassJESDown = array('f',[0])
+	    self.METmTmassJESDown = array('f',[0])
+	    self.PuppiMETmTmassJESDown = array('f',[0])
 
-	branches = ['MET', 'MET_T1',  'METCorGood_T1', 'PuppiMET',  'PuppiMETCorGood', 'MET_T1Smear',  'METCorGood_T1Smear']
-	if not isMC:  branches = ['MET', 'MET_T1',  'METCorGood_T1', 'PuppiMET',  'PuppiMETCorGood']
+	    self.DphiWMETJESDown = array('f',[0])
+	    self.DphiWPuppiMETJESDown = array('f',[0])
+	    self.DphilMETJESDown = array('f',[0])
+	    self.DphilPuppiMETJESDown = array('f',[0])
 
-	attributes = ['pt', 'phi']
+	    self.u_par_METJESDown = array('f',[-99])
+	    self.u_perp_METJESDown = array('f',[-99])
+	    self.u_par_PuppiMETJESDown = array('f',[-99])
+	    self.u_perp_PuppiMETJESDown = array('f',[-99])
 
-	for branch in branches:
-	    for attr in attributes:
-		for var in variations:
-		    #if (branch == 'MET' or branch == 'MET_T1') and var == '':
-		    if (branch == 'MET' ) and var == '':
-			continue
-		    branch_name = "{}_{}{}".format(branch, attr, var)
-		    setattr(self, branch_name, array('f', [-99]))
-		    self.t.Branch(branch_name, getattr(self, branch_name), '{}/F'.format(branch_name))
-		    #print("Created branch--->:", branch_name)
 
-	branches = ['METboson', 'PuppiMETboson', 'METCorGoodboson', 'PuppiMETCorGoodboson']
-        branches = ['METboson', 'METSmearboson', 'PuppiMETboson','METCorGoodboson', 'METCorGoodSmearboson','PuppiMETCorGoodboson']
+	    #JER
+	    self.METWmassJERUp = array('f',[0])
+	    self.boson_ptJERUp = array('f',[0])
+	    self.boson_phiJERUp = array('f',[0])
+	    self.Puppiboson_ptJERUp = array('f',[0])
+	    self.Puppiboson_phiJERUp = array('f',[0])
+	    self.METWTmassJERUp = array('f',[0])
+	    self.PuppiMETWmassJERUp = array('f',[0])
+	    self.PuppiMETWTmassJERUp = array('f',[0])
+	    self.METmTmassJERUp = array('f',[0])
+	    self.PuppiMETmTmassJERUp = array('f',[0])
 
-	attributes = ['pt', 'phi', 'm', 'transm']
+	    self.DphiWMETJERUp = array('f',[0])
+	    self.DphiWPuppiMETJERUp = array('f',[0])
+	    self.DphilMETJERUp = array('f',[0])
+	    self.DphilPuppiMETJERUp = array('f',[0])
 
-	for branch in branches:
-	    for attr in attributes:
-		for var in variations:
-		    branch_name = "{}_{}{}".format(branch, attr, var)
-		    setattr(self, branch_name, array('f', [-99]))
-		    self.t.Branch(branch_name, getattr(self, branch_name), '{}/F'.format(branch_name))
+	    self.u_par_METJERUp = array('f',[-99])
+	    self.u_perp_METJERUp = array('f',[-99])
+	    self.u_par_PuppiMETJERUp = array('f',[-99])
+	    self.u_perp_PuppiMETJERUp = array('f',[-99])
 
-	branches = ['MET_T1', 'PuppiMET',   'METCorGood_T1', 'PuppiMETCorGood', 'MET_T1Smear',  'METCorGood_T1Smear']
-	if not isMC:   branches = ['MET_T1', 'PuppiMET', 'METCorGood_T1', 'PuppiMETCorGood' ]
-	attributes = ['u_par', 'u_perp']
 
-	for attr in attributes:
-	    for branch in branches:
-		for var in variations:
-		    branch_name = "{}_{}{}".format(attr,branch,  var)
-		    setattr(self, branch_name, array('f', [-999]))
-		    self.t.Branch(branch_name, getattr(self, branch_name), '{}/F'.format(branch_name))
-		    #print("Created branch:", branch_name)
+	    self.METWmassJERDown = array('f',[0])
+	    self.boson_ptJERDown = array('f',[0])
+	    self.boson_phiJERDown = array('f',[0])
+	    self.Puppiboson_ptJERDown = array('f',[0])
+	    self.Puppiboson_phiJERDown = array('f',[0])
+	    self.METWTmassJERDown = array('f',[0])
+	    self.PuppiMETWmassJERDown = array('f',[0])
+	    self.PuppiMETWTmassJERDown = array('f',[0])
+	    self.METmTmassJERDown = array('f',[0])
+	    self.PuppiMETmTmassJERDown = array('f',[0])
+
+	    self.DphiWMETJERDown = array('f',[0])
+	    self.DphiWPuppiMETJERDown = array('f',[0])
+	    self.DphilMETJERDown = array('f',[0])
+	    self.DphilPuppiMETJERDown = array('f',[0])
+
+	    self.u_par_METJERDown = array('f',[-99])
+	    self.u_perp_METJERDown = array('f',[-99])
+	    self.u_par_PuppiMETJERDown = array('f',[-99])
+	    self.u_perp_PuppiMETJERDown = array('f',[-99])
+
 
 
         self.isTrig_1   = array('f',[0])
@@ -388,7 +606,7 @@ class outTupleW() :
         self.jeta     = array('f',[-9.99]*15)
         self.jpt     = array('f',[-9.99]*15)
         self.jphi     = array('f',[-9.99]*12)
-        #self.btagDeep     = array('f',[-9.99]*15)
+        self.btagDeep     = array('f',[-9.99]*15)
 
         self.bpt_1     = array('f',[0]*15)
         self.bpt_1_tr  = array('f',[0]*15)
@@ -518,7 +736,279 @@ class outTupleW() :
         self.t.Branch('metcov10', self.metcov10, 'metcov10/F')
         self.t.Branch('metcov11', self.metcov11, 'metcov11/F')
 
-	self.t.Branch('MET_significance', self.MET_significance, 'MET_significance /F')
+
+	self.t.Branch('u_par_MET', self.u_par_MET, 'u_par_MET/F')
+	self.t.Branch('u_perp_MET', self.u_perp_MET, 'u_perp_MET/F')
+	self.t.Branch('u_par_PuppiMET', self.u_par_PuppiMET, 'u_par_PuppiMET/F')
+	self.t.Branch('u_perp_PuppiMET', self.u_perp_PuppiMET, 'u_perp_PuppiMET/F')
+
+	self.t.Branch('boson_pt', self.boson_pt, 'boson_pt/F')
+	self.t.Branch('boson_phi', self.boson_phi, 'boson_phi/F')
+	self.t.Branch('Puppiboson_pt', self.Puppiboson_pt, 'Puppiboson_pt/F')
+	self.t.Branch('Puppiboson_phi', self.Puppiboson_phi, 'Puppiboson_phi/F')
+	self.t.Branch('METWmass', self.METWmass, 'METWmass/F')
+	self.t.Branch('METWTmass', self.METWTmass, 'METWTmass/F')
+	self.t.Branch('METCorWTmass', self.METCorWTmass, 'METCorWTmass/F')
+	self.t.Branch('METCorGoodWTmass', self.METCorGoodWTmass, 'METCorGoodWTmass/F')
+
+	self.t.Branch('METmTmass', self.METmTmass, 'METmTmass/F')
+	self.t.Branch('PuppiMETWmass', self.PuppiMETWmass, 'PuppiMETWmass/F')
+	self.t.Branch('PuppiMETWTmass', self.PuppiMETWTmass, 'PuppiMETWTmass/F')
+	self.t.Branch('PuppiMETCorWTmass', self.PuppiMETCorWTmass, 'PuppiMETCorWTmass/F')
+	self.t.Branch('PuppiMETCorGoodWTmass', self.PuppiMETCorGoodWTmass, 'PuppiMETCorGoodWTmass/F')
+	self.t.Branch('PuppiMETmTmass', self.PuppiMETmTmass, 'PuppiMETmTmass/F')
+	self.t.Branch('DphiWMET', self.DphiWMET, 'DphiWMET/F')
+	self.t.Branch('DphiWPuppiMET', self.DphiWPuppiMET, 'DphiWPuppiMET/F')
+	self.t.Branch('DphilMET', self.DphilMET, 'DphilMET/F')
+	self.t.Branch('DphilPuppiMET', self.DphilPuppiMET, 'DphilPuppiMET/F')
+
+
+        if doSyst :
+	    self.t.Branch('u_par_METUnclusteredUp', self.u_par_METUnclusteredUp, 'u_par_METUnclusteredUp/F')
+	    self.t.Branch('u_perp_METUnclusteredUp', self.u_perp_METUnclusteredUp, 'u_perp_METUnclusteredUp/F')
+	    self.t.Branch('u_par_PuppiMETUnclusteredUp', self.u_par_PuppiMETUnclusteredUp, 'u_par_PuppiMETUnclusteredUp/F')
+	    self.t.Branch('u_perp_PuppiMETUnclusteredUp', self.u_perp_PuppiMETUnclusteredUp, 'u_perp_PuppiMETUnclusteredUp/F')
+
+	    self.t.Branch('boson_ptUnclusteredUp/F', self.boson_ptUnclusteredUp, 'boson_ptUnclusteredUp/F')
+	    self.t.Branch('boson_phiUnclusteredUp/F', self.boson_phiUnclusteredUp, 'boson_phiUnclusteredUp/F')
+	    self.t.Branch('Puppiboson_ptUnclusteredUp/F', self.Puppiboson_ptUnclusteredUp, 'Puppiboson_ptUnclusteredUp/F')
+	    self.t.Branch('Puppiboson_phiUnclusteredUp/F', self.Puppiboson_phiUnclusteredUp, 'Puppiboson_phiUnclusteredUp/F')
+	    self.t.Branch('METWmassUnclusteredUp/F', self.METWmassUnclusteredUp, 'METWmassUnclusteredUp/F')
+	    self.t.Branch('METWTmassUnclusteredUp/F', self.METWTmassUnclusteredUp, 'METWTmassUnclusteredUp/F')
+	    self.t.Branch('METmTmassUnclusteredUp/F', self.METmTmassUnclusteredUp, 'METmTmassUnclusteredUp/F')
+	    self.t.Branch('PuppiMETWmassUnclusteredUp/F', self.PuppiMETWmassUnclusteredUp, 'PuppiMETWmassUnclusteredUp/F')
+	    self.t.Branch('PuppiMETWTmassUnclusteredUp/F', self.PuppiMETWTmassUnclusteredUp, 'PuppiMETWTmassUnclusteredUp/F')
+	    self.t.Branch('PuppiMETmTmassUnclusteredUp/F', self.PuppiMETmTmassUnclusteredUp, 'PuppiMETmTmassUnclusteredUp/F')
+	    self.t.Branch('DphiWMETUnclusteredUp/F', self.DphiWMETUnclusteredUp, 'DphiWMETUnclusteredUp/F')
+	    self.t.Branch('DphiWPuppiMETUnclusteredUp/F', self.DphiWPuppiMETUnclusteredUp, 'DphiWPuppiMETUnclusteredUp/F')
+	    self.t.Branch('DphilMETUnclusteredUp/F', self.DphilMETUnclusteredUp, 'DphilMETUnclusteredUp/F')
+	    self.t.Branch('DphilPuppiMETUnclusteredUp/F', self.DphilPuppiMETUnclusteredUp, 'DphilPuppiMETUnclusteredUp/F')
+
+
+	    self.t.Branch('u_par_METUnclusteredDown', self.u_par_METUnclusteredDown, 'u_par_METUnclusteredDown/F')
+	    self.t.Branch('u_perp_METUnclusteredDown', self.u_perp_METUnclusteredDown, 'u_perp_METUnclusteredDown/F')
+	    self.t.Branch('u_par_PuppiMETUnclusteredDown', self.u_par_PuppiMETUnclusteredDown, 'u_par_PuppiMETUnclusteredDown/F')
+	    self.t.Branch('u_perp_PuppiMETUnclusteredDown', self.u_perp_PuppiMETUnclusteredDown, 'u_perp_PuppiMETUnclusteredDown/F')
+
+	    self.t.Branch('boson_ptUnclusteredDown/F', self.boson_ptUnclusteredDown, 'boson_ptUnclusteredDown/F')
+	    self.t.Branch('boson_phiUnclusteredDown/F', self.boson_phiUnclusteredDown, 'boson_phiUnclusteredDown/F')
+	    self.t.Branch('Puppiboson_ptUnclusteredDown/F', self.Puppiboson_ptUnclusteredDown, 'Puppiboson_ptUnclusteredDown/F')
+	    self.t.Branch('Puppiboson_phiUnclusteredDown/F', self.Puppiboson_phiUnclusteredDown, 'Puppiboson_phiUnclusteredDown/F')
+	    self.t.Branch('METWmassUnclusteredDown/F', self.METWmassUnclusteredDown, 'METWmassUnclusteredDown/F')
+	    self.t.Branch('METWTmassUnclusteredDown/F', self.METWTmassUnclusteredDown, 'METWTmassUnclusteredDown/F')
+	    self.t.Branch('METmTmassUnclusteredDown/F', self.METmTmassUnclusteredDown, 'METmTmassUnclusteredDown/F')
+	    self.t.Branch('PuppiMETWmassUnclusteredDown/F', self.PuppiMETWmassUnclusteredDown, 'PuppiMETWmassUnclusteredDown/F')
+	    self.t.Branch('PuppiMETWTmassUnclusteredDown/F', self.PuppiMETWTmassUnclusteredDown, 'PuppiMETWTmassUnclusteredDown/F')
+	    self.t.Branch('PuppiMETmTmassUnclusteredDown/F', self.PuppiMETmTmassUnclusteredDown, 'PuppiMETmTmassUnclusteredDown/F')
+	    self.t.Branch('DphiWMETUnclusteredDown/F', self.DphiWMETUnclusteredDown, 'DphiWMETUnclusteredDown/F')
+	    self.t.Branch('DphiWPuppiMETUnclusteredDown/F', self.DphiWPuppiMETUnclusteredDown, 'DphiWPuppiMETUnclusteredDown/F')
+	    self.t.Branch('DphilMETUnclusteredDown/F', self.DphilMETUnclusteredDown, 'DphilMETUnclusteredDown/F')
+	    self.t.Branch('DphilPuppiMETUnclusteredDown/F', self.DphilPuppiMETUnclusteredDown, 'DphilPuppiMETUnclusteredDown/F')
+
+
+	    self.t.Branch('u_par_METJESUp', self.u_par_METJESUp, 'u_par_METJESUp/F')
+	    self.t.Branch('u_perp_METJESUp', self.u_perp_METJESUp, 'u_perp_METJESUp/F')
+	    self.t.Branch('u_par_PuppiMETJESUp', self.u_par_PuppiMETJESUp, 'u_par_PuppiMETJESUp/F')
+	    self.t.Branch('u_perp_PuppiMETJESUp', self.u_perp_PuppiMETJESUp, 'u_perp_PuppiMETJESUp/F')
+
+	    self.t.Branch('boson_ptJESUp/F', self.boson_ptJESUp, 'boson_ptJESUp/F')
+	    self.t.Branch('boson_phiJESUp/F', self.boson_phiJESUp, 'boson_phiJESUp/F')
+	    self.t.Branch('Puppiboson_ptJESUp/F', self.Puppiboson_ptJESUp, 'Puppiboson_ptJESUp/F')
+	    self.t.Branch('Puppiboson_phiJESUp/F', self.Puppiboson_phiJESUp, 'Puppiboson_phiJESUp/F')
+	    self.t.Branch('METWmassJESUp/F', self.METWmassJESUp, 'METWmassJESUp/F')
+	    self.t.Branch('METWTmassJESUp/F', self.METWTmassJESUp, 'METWTmassJESUp/F')
+	    self.t.Branch('METmTmassJESUp/F', self.METmTmassJESUp, 'METmTmassJESUp/F')
+	    self.t.Branch('PuppiMETWmassJESUp/F', self.PuppiMETWmassJESUp, 'PuppiMETWmassJESUp/F')
+	    self.t.Branch('PuppiMETWTmassJESUp/F', self.PuppiMETWTmassJESUp, 'PuppiMETWTmassJESUp/F')
+	    self.t.Branch('PuppiMETmTmassJESUp/F', self.PuppiMETmTmassJESUp, 'PuppiMETmTmassJESUp/F')
+	    self.t.Branch('DphiWMETJESUp/F', self.DphiWMETJESUp, 'DphiWMETJESUp/F')
+	    self.t.Branch('DphiWPuppiMETJESUp/F', self.DphiWPuppiMETJESUp, 'DphiWPuppiMETJESUp/F')
+	    self.t.Branch('DphilMETJESUp/F', self.DphilMETJESUp, 'DphilMETJESUp/F')
+	    self.t.Branch('DphilPuppiMETJESUp/F', self.DphilPuppiMETJESUp, 'DphilPuppiMETJESUp/F')
+
+
+	    self.t.Branch('u_par_METJESDown', self.u_par_METJESDown, 'u_par_METJESDown/F')
+	    self.t.Branch('u_perp_METJESDown', self.u_perp_METJESDown, 'u_perp_METJESDown/F')
+	    self.t.Branch('u_par_PuppiMETJESDown', self.u_par_PuppiMETJESDown, 'u_par_PuppiMETJESDown/F')
+	    self.t.Branch('u_perp_PuppiMETJESDown', self.u_perp_PuppiMETJESDown, 'u_perp_PuppiMETJESDown/F')
+
+	    self.t.Branch('boson_ptJESDown/F', self.boson_ptJESDown, 'boson_ptJESDown/F')
+	    self.t.Branch('boson_phiJESDown/F', self.boson_phiJESDown, 'boson_phiJESDown/F')
+	    self.t.Branch('Puppiboson_ptJESDown/F', self.Puppiboson_ptJESDown, 'Puppiboson_ptJESDown/F')
+	    self.t.Branch('Puppiboson_phiJESDown/F', self.Puppiboson_phiJESDown, 'Puppiboson_phiJESDown/F')
+	    self.t.Branch('METWmassJESDown/F', self.METWmassJESDown, 'METWmassJESDown/F')
+	    self.t.Branch('METWTmassJESDown/F', self.METWTmassJESDown, 'METWTmassJESDown/F')
+	    self.t.Branch('METmTmassJESDown/F', self.METmTmassJESDown, 'METmTmassJESDown/F')
+	    self.t.Branch('PuppiMETWmassJESDown/F', self.PuppiMETWmassJESDown, 'PuppiMETWmassJESDown/F')
+	    self.t.Branch('PuppiMETWTmassJESDown/F', self.PuppiMETWTmassJESDown, 'PuppiMETWTmassJESDown/F')
+	    self.t.Branch('PuppiMETmTmassJESDown/F', self.PuppiMETmTmassJESDown, 'PuppiMETmTmassJESDown/F')
+	    self.t.Branch('DphiWMETJESDown/F', self.DphiWMETJESDown, 'DphiWMETJESDown/F')
+	    self.t.Branch('DphiWPuppiMETJESDown/F', self.DphiWPuppiMETJESDown, 'DphiWPuppiMETJESDown/F')
+	    self.t.Branch('DphilMETJESDown/F', self.DphilMETJESDown, 'DphilMETJESDown/F')
+	    self.t.Branch('DphilPuppiMETJESDown/F', self.DphilPuppiMETJESDown, 'DphilPuppiMETJESDown/F')
+
+
+	    self.t.Branch('u_par_METJERUp', self.u_par_METJERUp, 'u_par_METJERUp/F')
+	    self.t.Branch('u_perp_METJERUp', self.u_perp_METJERUp, 'u_perp_METJERUp/F')
+	    self.t.Branch('u_par_PuppiMETJERUp', self.u_par_PuppiMETJERUp, 'u_par_PuppiMETJERUp/F')
+	    self.t.Branch('u_perp_PuppiMETJERUp', self.u_perp_PuppiMETJERUp, 'u_perp_PuppiMETJERUp/F')
+
+	    self.t.Branch('boson_ptJERUp/F', self.boson_ptJERUp, 'boson_ptJERUp/F')
+	    self.t.Branch('boson_phiJERUp/F', self.boson_phiJERUp, 'boson_phiJERUp/F')
+	    self.t.Branch('Puppiboson_ptJERUp/F', self.Puppiboson_ptJERUp, 'Puppiboson_ptJERUp/F')
+	    self.t.Branch('Puppiboson_phiJERUp/F', self.Puppiboson_phiJERUp, 'Puppiboson_phiJERUp/F')
+	    self.t.Branch('METWmassJERUp/F', self.METWmassJERUp, 'METWmassJERUp/F')
+	    self.t.Branch('METWTmassJERUp/F', self.METWTmassJERUp, 'METWTmassJERUp/F')
+	    self.t.Branch('METmTmassJERUp/F', self.METmTmassJERUp, 'METmTmassJERUp/F')
+	    self.t.Branch('PuppiMETWmassJERUp/F', self.PuppiMETWmassJERUp, 'PuppiMETWmassJERUp/F')
+	    self.t.Branch('PuppiMETWTmassJERUp/F', self.PuppiMETWTmassJERUp, 'PuppiMETWTmassJERUp/F')
+	    self.t.Branch('PuppiMETmTmassJERUp/F', self.PuppiMETmTmassJERUp, 'PuppiMETmTmassJERUp/F')
+	    self.t.Branch('DphiWMETJERUp/F', self.DphiWMETJERUp, 'DphiWMETJERUp/F')
+	    self.t.Branch('DphiWPuppiMETJERUp/F', self.DphiWPuppiMETJERUp, 'DphiWPuppiMETJERUp/F')
+	    self.t.Branch('DphilMETJERUp/F', self.DphilMETJERUp, 'DphilMETJERUp/F')
+	    self.t.Branch('DphilPuppiMETJERUp/F', self.DphilPuppiMETJERUp, 'DphilPuppiMETJERUp/F')
+
+
+	    self.t.Branch('u_par_METJERDown', self.u_par_METJERDown, 'u_par_METJERDown/F')
+	    self.t.Branch('u_perp_METJERDown', self.u_perp_METJERDown, 'u_perp_METJERDown/F')
+	    self.t.Branch('u_par_PuppiMETJERDown', self.u_par_PuppiMETJERDown, 'u_par_PuppiMETJERDown/F')
+	    self.t.Branch('u_perp_PuppiMETJERDown', self.u_perp_PuppiMETJERDown, 'u_perp_PuppiMETJERDown/F')
+
+	    self.t.Branch('boson_ptJERDown/F', self.boson_ptJERDown, 'boson_ptJERDown/F')
+	    self.t.Branch('boson_phiJERDown/F', self.boson_phiJERDown, 'boson_phiJERDown/F')
+	    self.t.Branch('Puppiboson_ptJERDown/F', self.Puppiboson_ptJERDown, 'Puppiboson_ptJERDown/F')
+	    self.t.Branch('Puppiboson_phiJERDown/F', self.Puppiboson_phiJERDown, 'Puppiboson_phiJERDown/F')
+	    self.t.Branch('METWmassJERDown/F', self.METWmassJERDown, 'METWmassJERDown/F')
+	    self.t.Branch('METWTmassJERDown/F', self.METWTmassJERDown, 'METWTmassJERDown/F')
+	    self.t.Branch('METmTmassJERDown/F', self.METmTmassJERDown, 'METmTmassJERDown/F')
+	    self.t.Branch('PuppiMETWmassJERDown/F', self.PuppiMETWmassJERDown, 'PuppiMETWmassJERDown/F')
+	    self.t.Branch('PuppiMETWTmassJERDown/F', self.PuppiMETWTmassJERDown, 'PuppiMETWTmassJERDown/F')
+	    self.t.Branch('PuppiMETmTmassJERDown/F', self.PuppiMETmTmassJERDown, 'PuppiMETmTmassJERDown/F')
+	    self.t.Branch('DphiWMETJERDown/F', self.DphiWMETJERDown, 'DphiWMETJERDown/F')
+	    self.t.Branch('DphiWPuppiMETJERDown/F', self.DphiWPuppiMETJERDown, 'DphiWPuppiMETJERDown/F')
+	    self.t.Branch('DphilMETJERDown/F', self.DphilMETJERDown, 'DphilMETJERDown/F')
+	    self.t.Branch('DphilPuppiMETJERDown/F', self.DphilPuppiMETJERDown, 'DphilPuppiMETJERDown/F')
+
+
+
+
+        self.t.Branch('RawMET_pt', self.RawMET_pt, 'RawMET_pt /F')
+        self.t.Branch('RawMET_phi', self.RawMET_phi, 'RawMET_phi /F')
+        self.t.Branch('RawPuppiMET_pt', self.RawPuppiMET_pt, 'RawPuppiMET_pt /F')
+        self.t.Branch('RawPuppiMET_phi', self.RawPuppiMET_phi, 'RawPuppiMET_phi /F')
+
+        self.t.Branch('PuppiMET_pt', self.PuppiMET_pt, 'PuppiMET_pt /F')
+        self.t.Branch('PuppiMET_phi', self.PuppiMET_phi, 'PuppiMET_phi /F')
+
+        if doSyst :
+	    self.t.Branch('PuppiMET_ptJESUp', self.PuppiMET_ptJESUp, 'PuppiMET_ptJESUp /F')
+	    self.t.Branch('PuppiMET_ptJESDown', self.PuppiMET_ptJESDown, 'PuppiMET_ptJESDown /F')
+	    self.t.Branch('PuppiMET_ptJERUp', self.PuppiMET_ptJERUp, 'PuppiMET_ptJERUp /F')
+	    self.t.Branch('PuppiMET_ptJERDown', self.PuppiMET_ptJERDown, 'PuppiMET_ptJERDown /F')
+	    self.t.Branch('PuppiMET_ptUnclusteredUp', self.PuppiMET_ptUnclusteredUp, 'PuppiMET_ptUnclusteredUp /F')
+	    self.t.Branch('PuppiMET_ptUnclusteredDown', self.PuppiMET_ptUnclusteredDown, 'PuppiMET_ptUnclusteredDown /F')
+
+	    self.t.Branch('PuppiMET_phiJESUp', self.PuppiMET_phiJESUp, 'PuppiMET_phiJESUp /F')
+	    self.t.Branch('PuppiMET_phiJESDown', self.PuppiMET_phiJESDown, 'PuppiMET_phiJESDown /F')
+	    self.t.Branch('PuppiMET_phiJERUp', self.PuppiMET_phiJERUp, 'PuppiMET_phiJERUp /F')
+	    self.t.Branch('PuppiMET_phiJERDown', self.PuppiMET_phiJERDown, 'PuppiMET_phiJERDown /F')
+	    self.t.Branch('PuppiMET_phiUnclusteredUp', self.PuppiMET_phiUnclusteredUp, 'PuppiMET_phiUnclusteredUp /F')
+	    self.t.Branch('PuppiMET_phiUnclusteredDown', self.PuppiMET_phiUnclusteredDown, 'PuppiMET_phiUnclusteredDown /F')
+
+	    self.t.Branch('MET_ptJESUp', self.MET_ptJESUp, 'MET_ptJESUp /F')
+	    self.t.Branch('MET_ptJESDown', self.MET_ptJESDown, 'MET_ptJESDown /F')
+	    self.t.Branch('MET_ptJERUp', self.MET_ptJERUp, 'MET_ptJERUp /F')
+	    self.t.Branch('MET_ptJERDown', self.MET_ptJERDown, 'MET_ptJERDown /F')
+	    self.t.Branch('MET_ptUnclusteredUp', self.MET_ptUnclusteredUp, 'MET_ptUnclusteredUp /F')
+	    self.t.Branch('MET_ptUnclusteredDown', self.MET_ptUnclusteredDown, 'MET_ptUnclusteredDown /F')
+
+	    self.t.Branch('MET_phiJESUp', self.MET_phiJESUp, 'MET_phiJESUp /F')
+	    self.t.Branch('MET_phiJESDown', self.MET_phiJESDown, 'MET_phiJESDown /F')
+	    self.t.Branch('MET_phiJERUp', self.MET_phiJERUp, 'MET_phiJERUp /F')
+	    self.t.Branch('MET_phiJERDown', self.MET_phiJERDown, 'MET_phiJERDown /F')
+	    self.t.Branch('MET_phiUnclusteredUp', self.MET_phiUnclusteredUp, 'MET_phiUnclusteredUp /F')
+	    self.t.Branch('MET_phiUnclusteredDown', self.MET_phiUnclusteredDown, 'MET_phiUnclusteredDown /F')
+
+
+	    self.t.Branch('MET_phi', self.MET_phi, 'MET_phi /F')
+	    self.t.Branch('MET_pt', self.MET_pt, 'MET_pt /F')
+
+	    self.t.Branch('MET_significance', self.MET_significance, 'MET_significance /F')
+	    self.t.Branch('MET_T1_pt', self.MET_T1_pt, 'MET_T1_pt /F')
+	    self.t.Branch('MET_T1_phi', self.MET_T1_phi, 'MET_T1_phi /F')
+	    self.t.Branch('METCor_T1_pt', self.METCor_T1_pt, 'METCor_T1_pt /F')
+	    self.t.Branch('METCor_T1_phi', self.METCor_T1_phi, 'METCor_T1_phi /F')
+	    self.t.Branch('METCorGood_T1_pt', self.METCorGood_T1_pt, 'METCorGood_T1_pt /F')
+	    self.t.Branch('METCorGood_T1_phi', self.METCorGood_T1_phi, 'METCorGood_T1_phi /F')
+	    self.t.Branch('PuppiMETCor_pt', self.PuppiMETCor_pt, 'PuppiMETCor_pt /F')
+	    self.t.Branch('PuppiMETCor_phi', self.PuppiMETCor_phi, 'PuppiMETCor_phi /F')
+	    self.t.Branch('PuppiMETCorGood_pt', self.PuppiMETCorGood_pt, 'PuppiMETCorGood_pt /F')
+	    self.t.Branch('PuppiMETCorGood_phi', self.PuppiMETCorGood_phi, 'PuppiMETCorGood_phi /F')
+
+	    self.t.Branch('MET_T1_ptJESUp', self.MET_T1_ptJESUp, 'MET_T1_ptJESUp /F')
+	    self.t.Branch('MET_T1_phiJESUp', self.MET_T1_phiJESUp, 'MET_T1_phiJESUp /F')
+	    self.t.Branch('MET_T1_ptJESDown', self.MET_T1_ptJESDown, 'MET_T1_ptJESDown /F')
+	    self.t.Branch('MET_T1_phiJESDown', self.MET_T1_phiJESDown, 'MET_T1_phiJESDown /F')
+	    self.t.Branch('MET_T1_ptJERUp', self.MET_T1_ptJERUp, 'MET_T1_ptJERUp /F')
+	    self.t.Branch('MET_T1_phiJERUp', self.MET_T1_phiJERUp, 'MET_T1_phiJERUp /F')
+	    self.t.Branch('MET_T1_ptJERDown', self.MET_T1_ptJERDown, 'MET_T1_ptJERDown /F')
+	    self.t.Branch('MET_T1_phiJERDown', self.MET_T1_phiJERDown, 'MET_T1_phiJERDown /F')
+	    self.t.Branch('MET_T1_ptUnclusteredUp', self.MET_T1_ptUnclusteredUp, 'MET_T1_ptUnclusteredUp /F')
+	    self.t.Branch('MET_T1_ptUnclusteredDown', self.MET_T1_ptUnclusteredDown, 'MET_T1_ptUnclusteredDown /F')
+	    self.t.Branch('MET_T1_phiUnclusteredUp', self.MET_T1_phiUnclusteredUp, 'MET_T1_phiUnclusteredUp /F')
+	    self.t.Branch('MET_T1_phiUnclusteredDown', self.MET_T1_phiUnclusteredDown, 'MET_T1_phiUnclusteredDown /F')
+
+	    self.t.Branch('METCor_T1_ptJESUp', self.METCor_T1_ptJESUp, 'METCor_T1_ptJESUp/F')
+	    self.t.Branch('METCor_T1_phiJESUp', self.METCor_T1_phiJESUp, 'METCor_T1_phiJESUp /F')
+	    self.t.Branch('METCor_T1_ptJESDown', self.METCor_T1_ptJESDown, 'METCor_T1_ptJESDown /F')
+	    self.t.Branch('METCor_T1_phiJESDown', self.METCor_T1_phiJESDown, 'METCor_T1_phiJESDown /F')
+	    self.t.Branch('METCor_T1_ptJERUp', self.METCor_T1_ptJERUp, 'METCor_T1_ptJERUp /F')
+	    self.t.Branch('METCor_T1_phiJERUp', self.METCor_T1_phiJERUp, 'METCor_T1_phiJERUp /F')
+	    self.t.Branch('METCor_T1_ptJERDown', self.METCor_T1_ptJERDown, 'METCor_T1_ptJERDown /F')
+	    self.t.Branch('METCor_T1_phiJERDown', self.METCor_T1_phiJERDown, 'METCor_T1_phiJERDown /F')
+	    self.t.Branch('METCor_T1_ptUnclusteredUp', self.METCor_T1_ptUnclusteredUp, 'METCor_T1_ptUnclusteredUp /F')
+	    self.t.Branch('METCor_T1_ptUnclusteredDown', self.METCor_T1_ptUnclusteredDown, 'METCor_T1_ptUnclusteredDown /F')
+	    self.t.Branch('METCor_T1_phiUnclusteredUp', self.METCor_T1_phiUnclusteredUp, 'METCor_T1_phiUnclusteredUp /F')
+	    self.t.Branch('METCor_T1_phiUnclusteredDown', self.METCor_T1_phiUnclusteredDown, 'METCor_T1_phiUnclusteredDown /F')
+
+	    self.t.Branch('METCorGood_T1_ptJESUp', self.METCorGood_T1_ptJESUp, 'METCorGood_T1_ptJESUp /F')
+	    self.t.Branch('METCorGood_T1_phiJESUp', self.METCorGood_T1_phiJESUp, 'METCorGood_T1_phiJESUp /F')
+	    self.t.Branch('METCorGood_T1_ptJESDown', self.METCorGood_T1_ptJESDown, 'METCorGood_T1_ptJESDown /F')
+	    self.t.Branch('METCorGood_T1_phiJESDown', self.METCorGood_T1_phiJESDown, 'METCorGood_T1_phiJESDown /F')
+	    self.t.Branch('METCorGood_T1_ptJERUp', self.METCorGood_T1_ptJERUp, 'METCorGood_T1_ptJERUp /F')
+	    self.t.Branch('METCorGood_T1_phiJERUp', self.METCorGood_T1_phiJERUp, 'METCorGood_T1_phiJERUp /F')
+	    self.t.Branch('METCorGood_T1_ptJERDown', self.METCorGood_T1_ptJERDown, 'METCorGood_T1_ptJERDown /F')
+	    self.t.Branch('METCorGood_T1_phiJERDown', self.METCorGood_T1_phiJERDown, 'METCorGood_T1_phiJERDown /F')
+	    self.t.Branch('METCorGood_T1_ptUnclusteredUp', self.METCorGood_T1_ptUnclusteredUp, 'METCorGood_T1_ptUnclusteredUp /F')
+	    self.t.Branch('METCorGood_T1_ptUnclusteredDown', self.METCorGood_T1_ptUnclusteredDown, 'METCorGood_T1_ptUnclusteredDown /F')
+	    self.t.Branch('METCorGood_T1_phiUnclusteredUp', self.METCorGood_T1_phiUnclusteredUp, 'METCorGood_T1_phiUnclusteredUp /F')
+	    self.t.Branch('METCorGood_T1_phiUnclusteredDown', self.METCorGood_T1_phiUnclusteredDown, 'METCorGood_T1_phiUnclusteredDown /F')
+
+	    self.t.Branch('PuppiMETCor_ptJESUp', self.PuppiMETCor_ptJESUp, 'PuppiMETCor_ptJESUp /F')
+	    self.t.Branch('PuppiMETCor_phiJESUp', self.PuppiMETCor_phiJESUp, 'PuppiMETCor_phiJESUp /F')
+	    self.t.Branch('PuppiMETCor_ptJESDown', self.PuppiMETCor_ptJESDown, 'PuppiMETCor_ptJESDown /F')
+	    self.t.Branch('PuppiMETCor_phiJESDown', self.PuppiMETCor_phiJESDown, 'PuppiMETCor_phiJESDown /F')
+	    self.t.Branch('PuppiMETCor_ptJERUp', self.PuppiMETCor_ptJERUp, 'PuppiMETCor_ptJERUp /F')
+	    self.t.Branch('PuppiMETCor_phiJERUp', self.PuppiMETCor_phiJERUp, 'PuppiMETCor_phiJERUp /F')
+	    self.t.Branch('PuppiMETCor_ptJERDown', self.PuppiMETCor_ptJERDown, 'PuppiMETCor_ptJERDown /F')
+	    self.t.Branch('PuppiMETCor_phiJERDown', self.PuppiMETCor_phiJERDown, 'PuppiMETCor_phiJERDown /F')
+	    self.t.Branch('PuppiMETCor_ptUnclusteredUp', self.PuppiMETCor_ptUnclusteredUp, 'PuppiMETCor_ptUnclusteredUp /F')
+	    self.t.Branch('PuppiMETCor_ptUnclusteredDown', self.PuppiMETCor_ptUnclusteredDown, 'PuppiMETCor_ptUnclusteredDown /F')
+	    self.t.Branch('PuppiMETCor_phiUnclusteredUp', self.PuppiMETCor_phiUnclusteredUp, 'PuppiMETCor_phiUnclusteredUp /F')
+	    self.t.Branch('PuppiMETCor_phiUnclusteredDown', self.PuppiMETCor_phiUnclusteredDown, 'PuppiMETCor_phiUnclusteredDown /F')
+
+	    self.t.Branch('PuppiMETCorGood_ptJESUp', self.PuppiMETCorGood_ptJESUp, 'PuppiMETCorGood_ptJESUp /F')
+	    self.t.Branch('PuppiMETCorGood_phiJESUp', self.PuppiMETCorGood_phiJESUp, 'PuppiMETCorGood_phiJESUp /F')
+	    self.t.Branch('PuppiMETCorGood_ptJESDown', self.PuppiMETCorGood_ptJESDown, 'PuppiMETCorGood_ptJESDown /F')
+	    self.t.Branch('PuppiMETCorGood_phiJESDown', self.PuppiMETCorGood_phiJESDown, 'PuppiMETCorGood_phiJESDown /F')
+	    self.t.Branch('PuppiMETCorGood_ptJERUp', self.PuppiMETCorGood_ptJERUp, 'PuppiMETCorGood_ptJERUp /F')
+	    self.t.Branch('PuppiMETCorGood_phiJERUp', self.PuppiMETCorGood_phiJERUp, 'PuppiMETCorGood_phiJERUp /F')
+	    self.t.Branch('PuppiMETCorGood_ptJERDown', self.PuppiMETCorGood_ptJERDown, 'PuppiMETCorGood_ptJERDown /F')
+	    self.t.Branch('PuppiMETCorGood_phiJERDown', self.PuppiMETCorGood_phiJERDown, 'PuppiMETCorGood_phiJERDown /F')
+	    self.t.Branch('PuppiMETCorGood_ptUnclusteredUp', self.PuppiMETCorGood_ptUnclusteredUp, 'PuppiMETCorGood_ptUnclusteredUp /F')
+	    self.t.Branch('PuppiMETCorGood_ptUnclusteredDown', self.PuppiMETCorGood_ptUnclusteredDown, 'PuppiMETCorGood_ptUnclusteredDown /F')
+	    self.t.Branch('PuppiMETCorGood_phiUnclusteredUp', self.PuppiMETCorGood_phiUnclusteredUp, 'PuppiMETCorGood_phiUnclusteredUp /F')
+	    self.t.Branch('PuppiMETCorGood_phiUnclusteredDown', self.PuppiMETCorGood_phiUnclusteredDown, 'PuppiMETCorGood_phiUnclusteredDown /F')
 
 
         # trigger sf
@@ -538,7 +1028,7 @@ class outTupleW() :
         self.t.Branch('jeta',     self.jeta,     'jeta[15]/F' )
         self.t.Branch('jpt',     self.jpt,     'jpt[15]/F' )
         self.t.Branch('jphi',     self.jphi,     'jphi[12]/F' )
-        #self.t.Branch('btagDeep', self.btagDeep, 'btagDeep[15]/i')
+        self.t.Branch('btagDeep', self.btagDeep, 'btagDeep[15]/i')
 
         if doSyst : 
                 #Book the branches and the arrays needed to store variables
@@ -560,7 +1050,7 @@ class outTupleW() :
 		    self.t.Branch('jpt{0:s}'.format(v), self.list_of_arraysJetsPt[i], 'jpt{0:s}[15]/F'.format(v))
 		    self.t.Branch('jphi{0:s}'.format(v), self.list_of_arraysJetsPhi[i], 'jphi{0:s}[12]/F'.format(v))
 		    self.t.Branch('jeta{0:s}'.format(v), self.list_of_arraysJetsEta[i], 'jeta{0:s}[15]/F'.format(v))
-		    #self.t.Branch('btagDeep{0:s}'.format(v), self.list_of_arraysJetsNbtagDeep[i], 'bagDeep{0:s}[15]/i'.format(v))
+		    self.t.Branch('btagDeep{0:s}'.format(v), self.list_of_arraysJetsNbtagDeep[i], 'bagDeep{0:s}[15]/i'.format(v))
 
 
 
@@ -595,42 +1085,6 @@ class outTupleW() :
 	self.t.SetBranchStatus("*LHEScaleWeight*",1)
 	self.t.SetBranchStatus("*Up*",1)
 	self.t.SetBranchStatus("*Down*",1)
-
-
-    def calculate_variation_values(self, var_suffix):
-	ptMiss, pptMiss = TLorentzVector(), TLorentzVector()
-
-	met_pt_var = getattr(self, "METCorGood_T1_pt{}".format(var_suffix))[0]
-	met_phi_var = getattr(self, "METCorGood_T1_phi{}".format(var_suffix))[0]
-	puppi_met_pt_var = getattr(self, "PuppiMETCorGood_pt{}".format(var_suffix))[0]
-	puppi_met_phi_var = getattr(self, "PuppiMETCorGood_phi{}".format(var_suffix))[0]
-
-	ptMiss.SetPtEtaPhiM(met_pt_var, 0., met_phi_var, 0.)
-	ptMiss.SetPz(0.)
-	ptMiss.SetE(ptMiss.Pt())
-
-	pptMiss.SetPtEtaPhiM(puppi_met_pt_var, 0., puppi_met_phi_var, 0.)
-	pptMiss.SetPz(0.)
-	pptMiss.SetE(pptMiss.Pt())
-
-	phim, etam = ptMiss.Phi(), ptMiss.Eta()
-	pphim, petam = pptMiss.Phi(), pptMiss.Eta()
-
-	phi1, eta1 = self.jeta[0], self.jphi[0]
-	self.__dict__["dPhiMETCorGood_T1J1" + var_suffix][0] = min(abs(phi1 - phim), 2. * ROOT.TMath.Pi() - abs(phi1 - phim))
-	self.__dict__["dPhiPuppiMETCorGood_J1" + var_suffix][0] = min(abs(phi1 - pphim), 2. * ROOT.TMath.Pi() - abs(phi1 - pphim))
-	self.__dict__["dRMETCorGood_T1J1" + var_suffix][0] = self.getDRnV(entry, self.jeta[0], self.jphi[0], ptMiss.Eta(), ptMiss.Phi())
-	self.__dict__["dRPuppiMETCorGood_J1" + var_suffix][0] = self.getDRnV(entry, self.jeta[0], self.jphi[0], pptMiss.Eta(), pptMiss.Phi())
-
-	if self.njets[0] > 1:
-	    phi2, eta2 = self.jeta[1], self.jphi[1]
-	    self.__dict__["dPhiMETCorGood_T1J2" + var_suffix][0] = min(abs(phi2 - phim), 2. * ROOT.TMath.Pi() - abs(phi2 - phim))
-	    self.__dict__["dPhiPuppiMETCorGood_J2" + var_suffix][0] = min(abs(phi2 - pphim), 2. * ROOT.TMath.Pi() - abs(phi2 - pphim))
-	    self.__dict__["dRMETCorGood_T1J2" + var_suffix][0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
-	    self.__dict__["dRPuppiMETCorGood_J2" + var_suffix][0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
-
-
-
 
     def get_mt(self,METtype,entry,tau) :
         if METtype == 'MVAMet' :
@@ -694,47 +1148,6 @@ class outTupleW() :
     def getM_vis(self,entry,tau1,tau2) :
         return (tau1+tau2).M()
 
-
-    def getu_par_MET(self, entry, metx, mety, qx, qy, qt):
-
-	uX = - metx - qx
-	uY = - mety - qy
-	upara = (uX*qx + uY*qy)/qt
-	#uperp = (uX*qy - uY*qx)/qt
-	return upara
-
-
-        #uPara = (((-met*cos(phi) - boson*cos(boson_phi)) * boson*cos(boson_phi) +
-        #   (-met*sin(phi) - boson*sin(boson_phi)) * boson*sin(boson_phi)) / boson + boson)
-
-        #((-metx- qx )* qx + (-mety - qy)*qy)/boson + boson
-        #uX*qx + uY*qy
-
-    def getu_perp_MET(self, entry, metx, mety, qx, qy, qt):
-
-	uX = - metx - qx
-	uY = - mety - qy
-	#upara = (uX*qx + uY*qy)/qt
-	uperp = (uX*qy - uY*qx)
-
-	return uperp
-        #(((-metx - qx))*qy - (-mety-qy)qx
-        #uPerp = (((-met*cos(phi) - boson*cos(boson_phi)) * boson*sin(boson_phi) -
-        #  (-met*sin(phi) - boson*sin(boson_phi)) * boson*cos(boson_phi)) / boson)
-
-
-
-        '''
-        upar_puppi_TypeI = (vec_u_puppi_TypeI.x*vec_boson_unit.x) + (vec_u_puppi_TypeI.y*vec_boson_unit.y)
-        upar_puppi_plus_qt_TypeI = upar_puppi_TypeI + boson_pt
- 
-        upar_puppi_TypeI = -upar_puppi_TypeI
-        response_puppi_TypeI = upar_puppi_TypeI/boson_pt
-
-        uperp_puppi_TypeI = (vec_u_puppi_TypeI.y*vec_boson_unit.x) - (vec_u_puppi_TypeI.x*vec_boson_unit.y)
-        '''
-
-
     def getJets(self,entry,tau1,tau2,era) :
 	nJet30, jetList, bJetList, bJetListFlav = 0, [], [], []
         phi2_1, eta2_1 = tau1.Phi(), tau1.Eta() 
@@ -757,8 +1170,8 @@ class outTupleW() :
             DR = min(DR,sqrt(dPhi**2 + (eta2_2-eta1)**2))
             if DR < 0.5 : continue
             if entry.Jet_pt[j] > 30 :
-		#if abs(entry.Jet_eta[j]) < 2.4 and entry.Jet_btagDeepB[j] > bjet_discr : bJetList.append(j)
-		#if abs(entry.Jet_eta[j]) < 2.4 and entry.Jet_btagDeepFlavB[j] > bjet_discrFlav : bJetListFlav.append(j)
+		if abs(entry.Jet_eta[j]) < 2.4 and entry.Jet_btagDeepB[j] > bjet_discr : bJetList.append(j)
+		if abs(entry.Jet_eta[j]) < 2.4 and entry.Jet_btagDeepFlavB[j] > bjet_discrFlav : bJetListFlav.append(j)
                 jetList.append(j) 
 
         return jetList, bJetList,bJetListFlav
@@ -814,9 +1227,11 @@ class outTupleW() :
             try : 
 		jpt = getattr(entry, "Jet_pt{0:s}".format(str(syst)), None)
 
-		if jpt[j] < 30. : continue
+		if jpt[j] < 40. : continue
 		if entry.Jet_jetId[j]  < 6  : continue  #pass tight and tightLepVeto ID. 
-		if jpt[j] < 50  and  entry.Jet_puId[j]  != 7  : continue #loose jetPU_iD
+		if jpt[j] < 50  : #loose jetPU_iD
+		    if '2016' not in str(era) and  entry.Jet_puId[j]  != 7  : continue #loose jetPU_iD
+		    if '2016' in str(era) and  entry.Jet_puId[j]  != 1  : continue #inverted working points https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetIDUL
 
 		if abs(entry.Jet_eta[j]) > 2.4 : continue
 
@@ -841,10 +1256,10 @@ class outTupleW() :
             jetListPhi.append(entry.Jet_phi[jj])
             jpt = getattr(entry, "Jet_pt{0:s}".format(str(syst)), None)
             jetListPt.append(jpt[jj])
-            #bTagListDeep.append(entry.Jet_btagDeepB[jj])
+            bTagListDeep.append(entry.Jet_btagDeepB[jj])
 
             #print 'will check',  entry.luminosityBlock, entry.event, entry.run, goodJets, jj, jpt[jj], 'flav', entry.Jet_partonFlavour[jj]
-            if jpt[jj] > 30 : 
+            if jpt[jj] > 40 : 
 
                 jetList.append(jj) 
 
@@ -916,13 +1331,6 @@ class outTupleW() :
         #channel_ll = 'mm' or 'ee'
         channel_ll = cat
 	channel = cat
-
-        LepM =   TLorentzVector()
-        LepP =   TLorentzVector()
-        mass = muonMass
-        if cat == 'enu' : mass=electronMass
-        LepP.SetPtEtaPhiM(Lep.Pt(), Lep.Eta(), Lep.Phi(), mass)
-        LepM.SetPtEtaPhiM(0., 0., 0., 0.,) 
 
         if SystIndex ==0 : 
 
@@ -1287,14 +1695,13 @@ class outTupleW() :
 	SaveEventEl = False
 
 	if '2016' in era:  
-            SaveEventMu = cat=='mnu' and (self.nMuon[0] == 1 and self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>26 and self.tightId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and (self.iso_1[0] < 0.15 or self.PFiso_1[0]>2) #and fabs(self.PVz[0])<26 and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
-            SaveEventEl = cat=='enu' and self.nElectron[0] == 1 and self.pt_1[0]>27 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and not ( fabs(self.eta_1[0])>1.4442 and  fabs(self.eta_1[0])<1.5660) and fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.15 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+            SaveEventMu = cat=='mnu' and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>26 and self.tightId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and (self.iso_1[0] < 0.5 or self.PFiso_1[0]>2) # and fabs(self.PVz[0])<26 and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+            SaveEventEl = cat=='enu' and  self.pt_1[0]>27 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.5 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
             #print "self.isGlobal_1[0]>0", self.isGlobal_1[0]>0, "self.isTracker_1[0]>0", self.isTracker_1[0]>0, "self.pt_1[0]>26", self.pt_1[0]>26, "self.tightId_1[0]>0", self.tightId_1[0]>0, "fabs(self.eta_1[0])<2.4", fabs(self.eta_1[0])<2.4, "fabs(self.dZ_1[0])<0.2", fabs(self.dZ_1[0])<0.2, "self.iso_1[0] < 0.5 or self.PFiso_1[0]>2", self.iso_1[0] < 0.5 or self.PFiso_1[0]>2, era, "self.isTrig_1[0]>0", self.isTrig_1[0]>0
-            print 'ok....' 
-        else : 
-	    SaveEventMu = cat=='mnu' and self.nMuon[0] == 1 and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>29 and self.tightId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and (self.iso_1[0] < 0.15 or self.PFiso_1[0]>2)#and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
 
-	    SaveEventEl = cat=='enu' and self.nElectron[0] == 1 and self.pt_1[0]>37 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and not(fabs(self.eta_1[0])>1.4442 and  fabs(self.eta_1[0])<1.5660)    and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.15 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+        else : 
+	    SaveEventMu = cat=='mnu' and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>29 and self.tightId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and (self.iso_1[0] < 0.5 or self.PFiso_1[0]>2)#and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+	    SaveEventEl = cat=='enu' and  self.pt_1[0]>37 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.5 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
         #print 'saveeent', SaveEventMu, SaveEventEl, cat
         #if entry.genWeight > 10 : 
         #    SaveEventMu = False
@@ -1302,136 +1709,41 @@ class outTupleW() :
 
         if SaveEventMu or SaveEventEl:
 
+	#if True:  
 	    self.MET_significance[0]= entry.MET_significance
-	    pmetV, metV, metVT1, metVR, metUn, metVTest, metVSmear, metVTestSmear=  TLorentzVector(),TLorentzVector(),TLorentzVector(),TLorentzVector(),  TLorentzVector(), TLorentzVector(), TLorentzVector(), TLorentzVector()
+	    metV, metUn, metVTest =  TLorentzVector(), TLorentzVector(), TLorentzVector()
             self.Flag_hfNoisyHitsFilter[0] = 1
             self.Flag_BadPFMuonDzFilter[0] = 1
-
-	    if 'UL' in proc :
-
-		try:
-                    self.MET_pt[0]= entry.MET_pt
-		    self.MET_phi[0]= entry.MET_phi
-	            metV.SetPtEtaPhiM(entry.MET_pt,0, entry.MET_phi,0)
-		    metV.SetPz(0.)
-		    metV.SetE(metV.Pt())
-
-		    self.u_par_MET[0]= self.getu_par_MET( entry, metV.X(), metV.Y(), (LepP+LepM).X(), (LepP+LepM).Y(), (LepP+LepM).Pt() )
-		    self.u_perp_MET[0]= self.getu_perp_MET( entry, metV.X(), metV.Y(), (LepP+LepM).X(), (LepP+LepM).Y(), (LepP+LepM).Pt() )
-
-	            metUn.SetXYZT(entry.MET_MetUnclustEnUpDeltaX,entry.MET_MetUnclustEnUpDeltaY,0,0)
-		    metUn.SetPz(0.)
-		    metUn.SetE(metUn.Pt())
-		except AttributeError:
-		    self.MET_pt[0]= -1
-		    self.MET_phi[0]= -99
-	            metV.SetPtEtaPhiM(0,0,0,0)
-		    metV.SetPz(0.)
-	            metUn.SetPtEtaPhiM(0,0,0,0)
-		    metUn.SetPz(0.)
-
-		self.metcov00[0] = entry.MET_covXX
-		self.metcov01[0] = entry.MET_covXY
-		self.metcov10[0] = entry.MET_covXY
-		self.metcov11[0] = entry.MET_covYY
-
-		try :
-		    #print entry.MET_T1_pt, entry.MET_T1_phi, entry.PV_npvsGood, entry.run, isMC, era, entry.PV_npvs
-
-		    self.MET_T1_pt[0]= entry.MET_T1_pt
-		    self.MET_T1_phi[0]= entry.MET_T1_phi
-		    metVT1.SetPtEtaPhiM(entry.MET_T1_pt,0, entry.MET_T1_phi,0)
-		    metVT1.SetPz(0.)
-		    metVT1.SetE(metV.Pt())
-
-		except AttributeError : 
-		    self.MET_T1_pt[0]= -1
-		    self.MET_T1_phi[0]= -99
-		    metVT1.SetPtEtaPhiM(0,0,0,0)
-		    self.MET_T1Smear_pt[0]= -1
-		    self.MET_T1Smear_phi[0]= -99
-		    metVSmear.SetPtEtaPhiM(0,0,0,0)
-
-		self.PuppiMET_pt[0]= entry.PuppiMET_pt
-		self.PuppiMET_phi[0]= entry.PuppiMET_phi
-		try : self.RawPuppiMET_pt[0] = entry.RawPuppiMET_pt
-                except AttributeError : self.RawPuppiMET_pt[0] = -1
-		try : self.RawPuppiMET_phi[0] = entry.RawPuppiMET_phi
-                except AttributeError : self.RawPuppiMET_phi[0]= -99
-		try : self.RawMET_pt[0]= entry.RawMET_pt
-		except AttributeError : self.RawMET_pt[0] = -1
-		try : self.RawMET_phi[0]= entry.RawMET_phi
-		except AttributeError : self.RawMET_phi[0] = -99
-
-	        try : metVR.SetPtEtaPhiM(entry.RawMET_pt,0, entry.RawMET_phi,0)
-                except AttributeError : metVR.SetPtEtaPhiM(-1,0, -99,0)
-	        metVR.SetPz(0.)
-	        metVR.SetE(metVR.Pt())
-		self.u_par_RawMET[0]= self.getu_par_MET( entry, metVR.X(), metVR.Y(), (LepP+LepM).X(), (LepP+LepM).Y(), (LepP+LepM).Pt() )
-		self.u_perp_RawMET[0]= self.getu_perp_MET( entry, metVR.X(), metVR.Y(), (LepP+LepM).X(), (LepP+LepM).Y(), (LepP+LepM).Pt() )
-
-	        try : metVR.SetPtEtaPhiM(entry.RawPuppiMET_pt,0, entry.RawPuppiMET_phi,0)
-                except AttributeError : metVR.SetPtEtaPhiM(-1,0, -99,0)
-	        metVR.SetPz(0.)
-	        metVR.SetE(metVR.Pt())
-		self.u_par_RawPuppiMET[0]= self.getu_par_MET( entry, metVR.X(), metVR.Y(), (LepP+LepM).X(), (LepP+LepM).Y(), (LepP+LepM).Pt() )
-		self.u_perp_RawPuppiMET[0]= self.getu_perp_MET( entry, metVR.X(), metVR.Y(), (LepP+LepM).X(), (LepP+LepM).Y(), (LepP+LepM).Pt() )
             
+	    if 'UL' in proc :
 		met = correctedMET(entry.MET_T1_pt, entry.MET_T1_phi, entry.PV_npvs, entry.run, isMC, yearin, True, False)
 		mett = correctedMET(entry.MET_T1_pt, entry.MET_T1_phi, entry.PV_npvsGood, entry.run, isMC, yearin, True, False)
-
+		self.METCor_T1_pt[0]= met[2]
+		self.METCor_T1_phi[0]= met[3]
 		self.METCorGood_T1_pt[0]= mett[2]
 		self.METCorGood_T1_phi[0]= mett[3]
-		
-                if isMC:
-		    self.MET_T1Smear_pt[0]= entry.MET_T1Smear_pt
-		    self.MET_T1Smear_phi[0]= entry.MET_T1Smear_phi
-
-
-		    mets = correctedMET(entry.MET_T1Smear_pt, entry.MET_T1Smear_phi, entry.PV_npvs, entry.run, isMC, yearin, True, False)
-
-		    metts = correctedMET(entry.MET_T1Smear_pt, entry.MET_T1Smear_phi, entry.PV_npvsGood, entry.run, isMC, yearin, True, False)
-		    self.METCorGood_T1Smear_pt[0]= metts[2]
-		    self.METCorGood_T1Smear_phi[0]= metts[3]
 
 		pmet = correctedMET(entry.PuppiMET_pt, entry.PuppiMET_phi, entry.PV_npvs, entry.run, isMC, yearin, True, True)
 		pmett = correctedMET(entry.PuppiMET_pt, entry.PuppiMET_phi, entry.PV_npvsGood, entry.run, isMC, yearin, True, True)
+		self.PuppiMETCor_pt[0]= pmet[2]
+		self.PuppiMETCor_phi[0]= pmet[3]
 		self.PuppiMETCorGood_pt[0]= pmett[2]
 		self.PuppiMETCorGood_phi[0]= pmett[3]
-
-
-
-                # in case of no corrections, the default MET is used
-	        if  doUncertainties and isMC: 
-		    self.MET_ptUnclusteredUp[0] =  (metV+metUn).Pt()
-		    self.MET_ptUnclusteredDown[0] =  (metV-metUn).Pt()
-		    self.MET_phiUnclusteredUp[0] =  (metV+metUn).Phi()
-		    self.MET_phiUnclusteredDown[0] =  (metV-metUn).Phi()
-	 
-
 
                 metflavorsM=['MET']
                 systsM = ['_jesTotal', '_jer', '_unclustEn'] #MET_T1_pt_jesTotalDown
                 #systsM = ['_jesTotal']
                 metflavorsP=[ 'PuppiMET']
                 systsP = ['JES', 'JER', 'Unclustered'] #MET_T1_pt_jesTotalDown
-
                 dirs=['Up','Down']
                 #adirs=['Up']
                 systs=[]
                 outvalues_pt_MET=[]
                 outvalues_phi_MET=[]
-                outvalues_pt_METs=[]
-                outvalues_phi_METs=[]
-
                 outvalues_pt_PMET=[]
                 outvalues_phi_PMET=[]
-
                 outvalues_pt_GMET=[]
                 outvalues_phi_GMET=[]
-                outvalues_pt_GMETs=[]
-                outvalues_phi_GMETs=[]
-
                 outvalues_pt_PGMET=[]
                 outvalues_phi_PGMET=[]
                 #print 'new event'
@@ -1440,60 +1752,92 @@ class outTupleW() :
                         for  syst in systsM :
                             for dr in dirs :
                                 #print 'will be doing', mfl, syst, dr
+				metpt = getattr(entry, "{0:s}_T1_pt{1:s}{2:s}".format(mfl, syst, dr), None)
+				metphi = getattr(entry, "{0:s}_T1_phi{1:s}{2:s}".format(mfl, syst, dr), None)
+		      
+				pmet = correctedMET(metpt, metphi, entry.PV_npvs, entry.run, isMC, str(era), True, True)
+				pmetg = correctedMET(metpt, metphi, entry.PV_npvsGood, entry.run, isMC, str(era), True, True)
                                 ss=syst
                                 if 'jes' in syst : ss = 'JES'
                                 if 'jer' in syst : ss = 'JER'
                                 if 'uncl' in syst : ss = 'Unclustered'
-
-				metpt = getattr(entry, "{0:s}_T1_pt{1:s}{2:s}".format(mfl, syst, dr), None)
-				metphi = getattr(entry, "{0:s}_T1_phi{1:s}{2:s}".format(mfl, syst, dr), None)
-                                getattr(self, '{}_T1_pt{}{}'.format(mfl,ss,dr ))[0] = metpt
-                                getattr(self, '{}_T1_phi{}{}'.format(mfl,ss,dr ))[0] = metphi
-
-                                #smear
-				metpts = getattr(entry, "{0:s}_T1Smear_pt{1:s}{2:s}".format(mfl, syst, dr), None)
-				metphis = getattr(entry, "{0:s}_T1Smear_phi{1:s}{2:s}".format(mfl, syst, dr), None)
-                                getattr(self, '{}_T1Smear_pt{}{}'.format(mfl,ss,dr ))[0] = metpts
-                                getattr(self, '{}_T1Smear_phi{}{}'.format(mfl,ss,dr ))[0] = metphis
-		      
-				pmet = correctedMET(metpt, metphi, entry.PV_npvs, entry.run, isMC, str(era), True, True)
-				pmetg = correctedMET(metpt, metphi, entry.PV_npvsGood, entry.run, isMC, str(era), True, True)
-				pmets = correctedMET(metpts, metphis, entry.PV_npvs, entry.run, isMC, str(era), True, True)
-				pmetsg = correctedMET(metpts, metphis, entry.PV_npvsGood, entry.run, isMC, str(era), True, True)
                                 outvalues_pt_MET.append(pmet[2])
-				outvalues_phi_MET.append(pmet[3])
-                                #smear
-				outvalues_pt_METs.append(pmets[2])
-                                outvalues_phi_METs.append(pmets[3])
-
+                                outvalues_phi_MET.append(pmet[3])
                                 outvalues_pt_GMET.append(pmetg[2])
                                 outvalues_phi_GMET.append(pmetg[3])
-
-                                outvalues_pt_GMETs.append(pmetsg[2])
-                                outvalues_phi_GMETs.append(pmetsg[3])
                                 
+				#setattr(self, "{0:s}Cor_T1_pt{1:s}{2:s}[0]".format(mfl, ss, dr), pmet[2])
+                                #self.METCor_T1_ptJESUp = float(pmet[2])
+                                #self.METCor_T1_phiJESUp = float(pmet[3])
+
+				#setattr(self, "{0:s}Cor_T1_phi{1:s}{2:s}".format(mfl, ss, dr), p2)
+				#setattr(self, "{0:s}CorGood_T1_pt{1:s}{2:s}".format(mfl, ss, dr), pmetg[2])
+				#setattr(self, "{0:s}CorGood_T1_phi{1:s}{2:s}".format(mfl, ss, dr), pmetg[3])
+		                #self.METCor_T1_pt[0]= met[2]
+				#setattr(self, "{0:s}Cor_T1_pt".format(mfl, ss, dr), p1)
       
+				#print "{0:s}_T1_pt{1:s}{2:s}".format(mfl, syst, dr), "{0:s}_T1_phi{1:s}{2:s}".format(mfl, syst, dr), metpt, metphi, entry.MET_T1_pt, entry.MET_T1_phi, entry.PuppiMET_pt, entry.PuppiMET_phi, getattr(self,"{0:s}Cor_T1_pt{1:s}{2:s}".format(mfl, ss, dr)), "{0:s}Cor_T1_pt{1:s}{2:s}".format(mfl, ss, dr), pmet[2], pmet[3]
+                                #print  "{0:s}Cor_T1_pt{1:s}{2:s}".format(mfl, ss, dr), getattr(self,"{0:s}Cor_T1_pt{1:s}{2:s}[0]".format(mfl, ss, dr) ), pmet[2], pmet[3]
+
+
+                    #self.METCor_T1_ptJESUp[0] = 1978.
+                    #self.METCor_T1_ptJESDown[0] = 1978.
+
+
                     for mfl in metflavorsP : 
                         for  syst in systsP :
                             for dr in dirs :
                                 
 				metpt = getattr(entry, "{0:s}_pt{1:s}{2:s}".format(mfl, syst, dr), None)
 				metphi = getattr(entry, "{0:s}_phi{1:s}{2:s}".format(mfl, syst, dr), None)
-                                getattr(self, '{}_pt{}{}'.format(mfl,syst,dr ))[0] = metpt
-                                getattr(self, '{}_phi{}{}'.format(mfl,syst,dr ))[0] = metphi
-                                #print '{}_pt{}{}'.format(mfl,syst,dr ), metpt
 
 		      
 				pmet = correctedMET(metpt, metphi, entry.PV_npvs, entry.run, isMC, str(era), True, True)
 				pmetg = correctedMET(metpt, metphi, entry.PV_npvsGood, entry.run, isMC, str(era), True, True)
       
 				#print "{0:s}_pt{1:s}{2:s}".format(mfl, syst, dr), "{0:s}_phi{1:s}{2:s}".format(mfl, syst, dr), metpt, metphi, entry.MET_T1_pt, entry.MET_T1_phi, entry.PuppiMET_pt, entry.PuppiMET_phi, pmet[2], pmet[3]
+				#self.METCorGood_T1_ptJESUp = array('f',[0])
+				#setattr(self, "{0:s}Cor_pt{1:s}{2:s}".format(mfl, syst, dr), pmet[2])
+				#setattr(self, "{0:s}Cor_phi{1:s}{2:s}".format(mfl, syst, dr), pmet[3])
+				#setattr(self, "{0:s}CorGood_pt{1:s}{2:s}".format(mfl, syst, dr), pmetg[2])
+				#setattr(self, "{0:s}CorGood_phi{1:s}{2:s}".format(mfl, syst, dr), pmetg[3])
                                 outvalues_pt_PMET.append(pmet[2])
                                 outvalues_phi_PMET.append(pmet[3])
                                 outvalues_pt_PGMET.append(pmetg[2])
                                 outvalues_phi_PGMET.append(pmetg[3])
 
 
+
+		    #print  outvalues_pt_MET,  outvalues_pt_PMET
+		    #self.METCor_T1_ptJESUp[0] = outvalues_pt_MET[0]
+		    #self.METCor_T1_pt[0] = outvalues_pt_MET[0]
+		    #print outvalues_pt_MET[0]
+
+		    self.METCor_T1_ptJESUp[0] = outvalues_pt_MET[0]
+		    self.METCor_T1_phiJESUp[0] = outvalues_phi_MET[0]
+		    self.METCor_T1_ptJESDown[0] = outvalues_pt_MET[1]
+		    self.METCor_T1_phiJESDown[0] = outvalues_phi_MET[1]
+		    self.METCor_T1_ptJERUp[0] = outvalues_pt_MET[2]
+		    self.METCor_T1_phiJERUp[0] = outvalues_phi_MET[2]
+		    self.METCor_T1_ptJERDown[0] = outvalues_pt_MET[3]
+		    self.METCor_T1_phiJERDown[0] = outvalues_phi_MET[3]
+		    self.METCor_T1_ptUnclusteredUp[0] = outvalues_pt_MET[4]
+		    self.METCor_T1_phiUnclusteredUp[0] = outvalues_phi_MET[4]
+		    self.METCor_T1_ptUnclusteredDown[0] = outvalues_pt_MET[5]
+		    self.METCor_T1_phiUnclusteredDown[0] = outvalues_phi_MET[5]
+
+		    self.PuppiMETCor_ptJESUp[0] = outvalues_pt_PMET[0]
+		    self.PuppiMETCor_phiJESUp[0] = outvalues_phi_PMET[0]
+		    self.PuppiMETCor_ptJESDown[0] = outvalues_pt_PMET[1]
+		    self.PuppiMETCor_phiJESDown[0] = outvalues_phi_PMET[1]
+		    self.PuppiMETCor_ptJERUp[0] = outvalues_pt_PMET[2]
+		    self.PuppiMETCor_phiJERUp[0] = outvalues_phi_PMET[2]
+		    self.PuppiMETCor_ptJERDown[0] = outvalues_pt_PMET[3]
+		    self.PuppiMETCor_phiJERDown[0] = outvalues_phi_PMET[3]
+		    self.PuppiMETCor_ptUnclusteredUp[0] = outvalues_pt_PMET[4]
+		    self.PuppiMETCor_phiUnclusteredUp[0] = outvalues_phi_PMET[4]
+		    self.PuppiMETCor_ptUnclusteredDown[0] = outvalues_pt_PMET[5]
+		    self.PuppiMETCor_phiUnclusteredDown[0] = outvalues_phi_PMET[5]
 
 
 		    self.METCorGood_T1_ptJESUp[0] = outvalues_pt_GMET[0]
@@ -1509,22 +1853,6 @@ class outTupleW() :
 		    self.METCorGood_T1_ptUnclusteredDown[0] = outvalues_pt_GMET[5]
 		    self.METCorGood_T1_phiUnclusteredDown[0] = outvalues_phi_GMET[5]
 
-
-		    self.METCorGood_T1Smear_ptJESUp[0] = outvalues_pt_GMETs[0]
-		    self.METCorGood_T1Smear_phiJESUp[0] = outvalues_phi_GMETs[0]
-		    self.METCorGood_T1Smear_ptJESDown[0] = outvalues_pt_GMETs[1]
-		    self.METCorGood_T1Smear_phiJESDown[0] = outvalues_phi_GMETs[1]
-		    self.METCorGood_T1Smear_ptJERUp[0] = outvalues_pt_GMETs[2]
-		    self.METCorGood_T1Smear_phiJERUp[0] = outvalues_phi_GMETs[2]
-		    self.METCorGood_T1Smear_ptJERDown[0] = outvalues_pt_GMETs[3]
-		    self.METCorGood_T1Smear_phiJERDown[0] = outvalues_phi_GMETs[3]
-		    self.METCorGood_T1Smear_ptUnclusteredUp[0] = outvalues_pt_GMETs[4]
-		    self.METCorGood_T1Smear_phiUnclusteredUp[0] = outvalues_phi_GMETs[4]
-		    self.METCorGood_T1Smear_ptUnclusteredDown[0] = outvalues_pt_GMETs[5]
-		    self.METCorGood_T1Smear_phiUnclusteredDown[0] = outvalues_phi_GMETs[5]
-
-
-
 		    self.PuppiMETCorGood_ptJESUp[0] = outvalues_pt_PGMET[0]
 		    self.PuppiMETCorGood_phiJESUp[0] = outvalues_phi_PGMET[0]
 		    self.PuppiMETCorGood_ptJESDown[0] = outvalues_pt_PGMET[1]
@@ -1539,86 +1867,6 @@ class outTupleW() :
 		    self.PuppiMETCorGood_phiUnclusteredDown[0] = outvalues_phi_PGMET[5]
 
 
-			# Define a list of variations and their corresponding attribute names
-                if doUncertainties: 
-		    main_branches = ['MET_T1',  'METCorGood_T1', 'MET_T1Smear',  'METCorGood_T1Smear', 'PuppiMET',  'PuppiMETCorGood']
-
-		    systematics = ['', 'JES', 'JER', 'Unclustered']
-		    if not isMC : systematics = ['']
-		    variations = ['Up', 'Down']
-		    if not isMC : variations = []
-
-		    for branch in main_branches:
-			for systematic in systematics:
-			    if systematic ==  '' :
-
-				pt_value = getattr(self, branch + '_pt')
-				phi_value = getattr(self, branch + '_phi')
-				metV.SetPtEtaPhiM(float(pt_value[0]), 0.0, float(phi_value[0]), 0.0)
-				metV.SetPz(0.)
-				metV.SetE(metV.Pt())
-
-				u_par_value = self.getu_par_MET(entry, metV.X(), metV.Y(), (LepP + LepM).X(), (LepP + LepM).Y(), (LepP + LepM).Pt())
-                                getattr(self, 'u_par_' + branch)[0] = u_par_value
-				u_perp_value = self.getu_perp_MET(entry, metV.X(), metV.Y(), (LepP + LepM).X(), (LepP + LepM).Y(), (LepP + LepM).Pt())
-                                getattr(self, 'u_perp_' + branch)[0] = u_perp_value
-                                #print 'main', u_par_value, u_perp_value,'aux', self.getu_par_METv2(entry, metV.X(), metV.Y(), (LepP + LepM).X(), (LepP + LepM).Y(), (LepP + LepM).Pt()), branch
-                                #print 'main', u_par_value, self.calculate_upara(metV.Pt(), metV.Phi(), (LepP + LepM).Pt(), (LepP + LepM).Phi()), self.makeUpara(metV.Pt(), metV.Phi(), (LepP + LepM).Pt(), (LepP + LepM).Phi()), systematic
-				#print("Branch:", 'u_par_' + branch, "Value:", u_par_value)
-				#print("Branch:", 'u_perp_' + branch, "Value:", u_perp_value)
-
-			    else : 
-				for variation in variations:
-
-					pt_value = getattr(self, branch + '_pt' + systematic + variation)
-					phi_value = getattr(self, branch + '_phi' + systematic + variation)
-
-					metV.SetPtEtaPhiM(float(pt_value[0]), 0.0, float(phi_value[0]), 0.0)
-					metV.SetPz(0.)
-					metV.SetE(metV.Pt())
-
-
-					u_par_value = self.getu_par_MET(entry, metV.X(), metV.Y(), (LepP + LepM).X(), (LepP + LepM).Y(), (LepP + LepM).Pt())
-                                        getattr(self, 'u_par_' + branch +  systematic + variation)[0] = u_par_value
-					u_perp_value = self.getu_perp_MET(entry, metV.X(), metV.Y(), (LepP + LepM).X(), (LepP + LepM).Y(), (LepP + LepM).Pt())
-                                        getattr(self, 'u_perp_' + branch +  systematic + variation)[0] = u_perp_value
-
-
-					#print("Branch:", 'u_par_' + branch + systematic + variation, "Value:", u_par_value)
-					#print("Branch:", 'u_perp_' + branch + systematic + variation, "Value:", u_perp_value)
-
-
-		    main_branches = ['METboson', 'METSmearboson', 'PuppiMETboson','METCorGoodboson', 'METCorGoodSmearboson','PuppiMETCorGoodboson']
-
-		    systematics = ['', 'JESUp', 'JESDown', 'JERUp', 'JERDown', 'UnclusteredUp', 'UnclusteredDown']
-		    if not isMC : systematics = ['']
-
-                    lV = LepP+LepM
-
-		    for branch in main_branches:
-			for systematic in systematics:
-
-			    met_ = branch[:-5]
-			    if 'Puppi' not in met_ and 'Smear' not in met_: met_ +='_T1'
-			    if 'Smear' in met_ : 
-                                met_ = met_.replace('Smear','')
-                                met_ +='_T1Smear'
-			    #print "{}_pt{}".format(met_,systematic), "{}_phi{}".format(met_, systematic)
-                            if 'Cor_' in met_ : continue
-			    metV.SetPtEtaPhiM(getattr(self, "{}_pt{}".format(met_,systematic))[0], 0, getattr(self, "{}_phi{}".format(met_, systematic))[0], 0)
-
-                            #print 'will get that ', "{}_pt{}".format(met_,systematic), " for ", met_, systematic
-			    getattr(self, branch + '_pt'+ systematic)[0] = (metV + lV).Pt()
-			    getattr(self, branch + '_phi'+ systematic)[0] = (metV + lV).Phi()
-			    getattr(self, branch + '_m'+ systematic)[0] = (metV + lV).M()
-			    getattr(self, branch + '_transm'+ systematic)[0] = (metV + lV).Mt()
-
-			    #print "Branch:", branch + '_pt'+ systematic ,"Value:", (metV + lV).Pt(), "{}_pt{}".format(met_,systematic), "{}_phi{}".format(met_, systematic)
-
-
-
-
-
 
 
 	    if 'UL' in proc or '2016' not in str(era):
@@ -1630,49 +1878,454 @@ class outTupleW() :
                 try : self.Flag_BadPFMuonDzFilter[0] = int(entry.Flag_BadPFMuonDzFilter)
 		except AttributeError: self.Flag_BadPFMuonDzFilter[0] = 1
 
-	    #fill the un-corrected or just in the case you dont care to doUncertainties      
+	    if 'UL' in proc : 
+		try:
+                    self.MET_pt[0]= entry.MET_pt
+		    self.MET_phi[0]= entry.MET_phi
+	            metV.SetPtEtaPhiM(entry.MET_pt,0, entry.MET_phi,0)
+	            metUn.SetXYZT(entry.MET_MetUnclustEnUpDeltaX,entry.MET_MetUnclustEnUpDeltaY,0,0)
+		    metUn.SetPz(0.)
+		    metUn.SetE(metUn.Pt())
+		except AttributeError:
+		    self.MET_pt[0]= -1
+		    self.MET_phi[0]= -99
+	            metV.SetPtEtaPhiM(0,0,0,0)
+	            metUn.SetPtEtaPhiM(0,0,0,0)
+
+
+	    if str(era) == '2017' and 'UL' not in proc: 
+		try :
+		    self.MET_pt[0]= entry.METFixEE2017_pt
+		    self.MET_phi[0]= entry.METFixEE2017_phi
+	            metV.SetPtEtaPhiM(entry.METFixEE2017_T1_pt,0, entry.METFixEE2017_T1_phi,0)
+	            metUn.SetXYZT(entry.METFixEE2017_MetUnclustEnUpDeltaX,entry.METFixEE2017_MetUnclustEnUpDeltaY,0,0)
+		    metUn.SetPz(0.)
+		    metUn.SetE(metUn.Pt())
+		except AttributeError:
+		    self.MET_pt[0]= -1
+		    self.MET_phi[0]= -99
+	            metV.SetPtEtaPhiM(0,0,0,0)
+	            metUn.SetPtEtaPhiM(0,0,0,0)
 
 	    if  doUncertainties : 
 
+		if 'UL' in proc : 
+		    try :
+                        #print entry.MET_T1_pt, entry.MET_T1_phi, entry.PV_npvsGood, entry.run, isMC, era, entry.PV_npvs
+
+			self.MET_T1_pt[0]= entry.MET_T1_pt
+			self.MET_T1_phi[0]= entry.MET_T1_phi
 
 
+	                metV.SetPtEtaPhiM(entry.MET_T1_pt,0, entry.MET_T1_phi,0)
+		    except AttributeError : 
+			self.MET_T1_pt[0]= -1
+			self.MET_T1_phi[0]= -99
+	                metV.SetPtEtaPhiM(0,0,0,0)
 
-		#print 'all systematics youcare ', self.allsystMET
-		for i, v in enumerate(self.allsystMET) : 
 
-
-		    try : j = getattr(entry, "{0:s}".format(str(v)))
-		    except AttributeError : j = -9.99
-		    self.list_of_arrays_noES[i][0] = j
-		    #if '_pt_jerUp' in v  : print '=====================================while filling-----------------',j, self.list_of_arrays[i][0], i, v, entry.event 
-
-		for i, v in enumerate(self.allsystJets) : 
-		#njets_sys, nbtag_sys
-		    jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist, era, str(v), proc) 
+		if str(era) == '2017' and 'UL' not in proc: 
 		    try : 
-			self.list_of_arraysJetsNjets[i][0] = -1
-			self.list_of_arraysJetsNjets[i][0] = len(jetList)#fix
-			self.list_of_arraysJetsNbtagL[i][0] = len(bJetListL)
-			self.list_of_arraysJetsNbtagM[i][0] = len(bJetListM)
-			self.list_of_arraysJetsNbtagT[i][0] = len(bJetListT)
-			#print 'jessyst===============!!!!!!!!!!!!', v, len(jetList), cat, jetList, self.list_of_arraysJetsNjets[i][0]
-		    except IndexError : print 'hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
+			self.MET_T1_pt[0]= entry.METFixEE2017_T1_pt
+			self.MET_T1_phi[0]= entry.METFixEE2017_T1_phi
+	                metV.SetPtEtaPhiM(entry.METFixEE2017_T1_pt,0, entry.METFixEE2017_T1_phi,0)
+		    except AttributeError : 
+			self.MET_T1_pt[0]= entry.METFixEE2017_pt
+			self.MET_T1_phi[0]= entry.METFixEE2017_phi
+	                metV.SetPtEtaPhiM(0,0,0,0)
 
-		    for ifl in range(len(jetList)) :
+	    metV.SetPz(0.)
+	    metV.SetE(metV.Pt())
+
+	#metNoTauES holds the uncorrected TauES MET - if not doUncerta -> holds the default ucorrected MET, if doUncert the T1_corrected
+            #if SaveEvent
+	    if 'UL' in proc: 
+
+		self.metcov00[0] = entry.MET_covXX
+		self.metcov01[0] = entry.MET_covXY
+		self.metcov10[0] = entry.MET_covXY
+		self.metcov11[0] = entry.MET_covYY
+
+		self.PuppiMET_pt[0]= entry.PuppiMET_pt
+		self.PuppiMET_phi[0]= entry.PuppiMET_phi
+		try : self.RawPuppiMET_pt[0] = entry.RawPuppiMET_pt
+                except AttributeError : self.RawPuppiMET_pt[0] = -1
+		try : self.RawPuppiMET_phi[0] = entry.RawPuppiMET_phi
+                except AttributeError : self.RawPuppiMET_phi[0]= -99
+		try : self.RawMET_pt[0]= entry.RawMET_pt
+		except AttributeError : self.RawMET_pt[0] = -1
+		try : self.RawMET_phi[0]= entry.RawMET_phi
+		except AttributeError : self.RawMET_phi[0] = -99
+
+
+	        if  doUncertainties : 
+                # in case of no corrections, the default MET is used
+		    self.MET_ptUnclusteredUp[0] =  (metV+metUn).Pt()
+		    self.MET_ptUnclusteredDown[0] =  (metV-metUn).Pt()
+		    self.MET_phiUnclusteredUp[0] =  (metV+metUn).Phi()
+		    self.MET_phiUnclusteredDown[0] =  (metV-metUn).Phi()
+	 
+		    self.PuppiMET_ptJESUp[0] = entry.PuppiMET_ptJESUp
+		    self.PuppiMET_ptJESDown[0] = entry.PuppiMET_ptJESDown
+		    self.PuppiMET_ptJERUp[0] = entry.PuppiMET_ptJERUp
+		    self.PuppiMET_ptJERDown[0] = entry.PuppiMET_ptJERDown
+
+		    self.PuppiMET_phiJESUp[0] = entry.PuppiMET_phiJESUp
+		    self.PuppiMET_phiJESDown[0] = entry.PuppiMET_phiJESDown
+		    self.PuppiMET_phiJERUp[0] = entry.PuppiMET_phiJERUp
+		    self.PuppiMET_phiJERDown[0] = entry.PuppiMET_phiJERDown
+
+		    self.PuppiMET_ptUnclusteredUp[0] = entry.PuppiMET_ptUnclusteredUp
+		    self.PuppiMET_ptUnclusteredDown[0] = entry.PuppiMET_ptUnclusteredDown
+		    self.PuppiMET_phiUnclusteredUp[0] = entry.PuppiMET_phiUnclusteredUp
+		    self.PuppiMET_phiUnclusteredDown[0] = entry.PuppiMET_phiUnclusteredDown
+     
+
+                #this will act with the latest metV
+		self.u_par_MET[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+		self.u_perp_MET[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+		self.METWmass[0] = (metV+Lep).M()
+		self.boson_pt[0] = (metV+Lep).Pt()
+		self.boson_phi[0] = (metV+Lep).Phi()
+		self.METWTmass[0] = (metV+Lep).Mt()
+	        metVTest.SetPtEtaPhiM(self.METCor_T1_pt[0],0, self.METCor_T1_phi[0],0)
+		self.METCorWTmass[0] = (metVTest+Lep).Mt()
+	        metVTest.SetPtEtaPhiM(self.METCorGood_T1_pt[0],0, self.METCorGood_T1_phi[0],0)
+		self.METCorGoodWTmass[0] = (metVTest+Lep).Mt()
+
+		self.DphiWMET[0] = self.getdPhi(entry,metV+Lep, metV)
+		self.DphilMET[0] = self.getdPhi(entry,Lep,metV)
+		self.METmTmass[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMET[0])))
+
+	        if  doUncertainties : 
+		    self.METWmassUnclusteredUp[0] = (metV+metUn+Lep).M()
+		    self.boson_ptUnclusteredUp[0] = (metV+metUn+Lep).Pt()
+		    self.boson_phiUnclusteredUp[0] = (metV+metUn+Lep).Phi()
+		    self.METWTmassUnclusteredUp[0] = (metV+metUn+Lep).Mt()
+		    self.DphiWMETUnclusteredUp[0] = self.getdPhi(entry,metV+metUn+Lep, metV+metUn)
+		    self.DphilMETUnclusteredUp[0] = self.getdPhi(entry,Lep,metV+metUn)
+		    self.METmTmassUnclusteredUp[0] = sqrt(2*Lep.Pt()*(metV+metUn).Pt()*(1-cos(self.DphilMETUnclusteredUp[0])))
+		    self.u_par_METUnclusteredUp[0]= - (metV+metUn+Lep).Pt() * cos(Lep.Phi()-(metV+metUn+Lep).Phi())
+		    self.u_perp_METUnclusteredUp[0]=  (metV+metUn).Pt() * sin(Lep.Phi()-(metV+metUn).Phi())
+
+		    self.METWmassUnclusteredDown[0] = (metV-metUn+Lep).M()
+		    self.boson_ptUnclusteredDown[0] = (metV-metUn+Lep).Pt()
+		    self.boson_phiUnclusteredDown[0] = (metV-metUn+Lep).Phi()
+		    self.METWTmassUnclusteredDown[0] = (metV-metUn+Lep).Mt()
+		    self.DphiWMETUnclusteredDown[0] = self.getdPhi(entry,metV-metUn+Lep, metV-metUn)
+		    self.DphilMETUnclusteredDown[0] = self.getdPhi(entry,Lep,metV-metUn)
+		    self.METmTmassUnclusteredDown[0] = sqrt(2*Lep.Pt()*(metV-metUn).Pt()*(1-cos(self.DphilMETUnclusteredDown[0])))
+		    self.u_par_METUnclusteredDown[0]= - (metV-metUn+Lep).Pt() * cos(Lep.Phi()-(metV-metUn+Lep).Phi())
+		    self.u_perp_METUnclusteredDown[0]=  (metV-metUn).Pt() * sin(Lep.Phi()-(metV-metUn).Phi())
+
+
+		metV.SetPtEtaPhiM(entry.PuppiMET_pt,0, entry.PuppiMET_phi,0)
+		metV.SetPz(0.)
+		metV.SetE(metV.Pt())
+		self.PuppiMETWmass[0] = (metV+Lep).M()
+		self.Puppiboson_pt[0] = (metV+Lep).Pt()
+		self.Puppiboson_phi[0] = (metV+Lep).Phi()
+		self.PuppiMETWTmass[0] = (metV+Lep).Mt()
+	        metVTest.SetPtEtaPhiM(self.PuppiMETCor_pt[0],0, self.PuppiMETCor_phi[0],0)
+		self.PuppiMETCorWTmass[0] = (metVTest+Lep).Mt()
+	        metVTest.SetPtEtaPhiM(self.PuppiMETCorGood_pt[0],0, self.PuppiMETCorGood_phi[0],0)
+		self.PuppiMETCorGoodWTmass[0] = (metVTest+Lep).Mt()
+
+
+
+		self.DphiWPuppiMET[0] = self.getdPhi(entry,metV+Lep, metV)
+		self.DphilPuppiMET[0] = self.getdPhi(entry,Lep,metV)
+		self.PuppiMETmTmass[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilPuppiMET[0])))
+		self.u_par_PuppiMET[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+		self.u_perp_PuppiMET[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+
+		if doUncertainties : 
+
+		    if isMC: 
+			metV.SetPtEtaPhiM(entry.MET_T1_pt_unclustEnUp,0, entry.MET_T1_phi_unclustEnUp,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.METWmassUnclusteredUp[0] = (metV+Lep).M()
+			self.boson_ptUnclusteredUp[0] = (metV+Lep).Pt()
+			self.boson_phiUnclusteredUp[0] = (metV+Lep).Phi()
+			self.METWTmassUnclusteredUp[0] = (metV+Lep).Mt()
+			self.DphiWMETUnclusteredUp[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilMETUnclusteredUp[0] = self.getdPhi(entry,Lep,metV)
+			self.METmTmassUnclusteredUp[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETUnclusteredUp[0])))
+			self.u_par_METUnclusteredUp[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_METUnclusteredUp[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+
+			metV.SetPtEtaPhiM(entry.MET_T1_pt_unclustEnDown,0, entry.MET_T1_phi_unclustEnDown,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.METWmassUnclusteredDown[0] = (metV+Lep).M()
+			self.boson_ptUnclusteredDown[0] = (metV+Lep).Pt()
+			self.boson_phiUnclusteredDown[0] = (metV+Lep).Phi()
+			self.METWTmassUnclusteredDown[0] = (metV+Lep).Mt()
+			self.DphiWMETUnclusteredDown[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilMETUnclusteredDown[0] = self.getdPhi(entry,Lep,metV)
+			self.METmTmassUnclusteredDown[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETUnclusteredDown[0])))
+			self.u_par_METUnclusteredDown[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_METUnclusteredDown[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+
+
+			self.MET_T1_ptJESUp[0] = entry.MET_T1_pt_jesTotalUp
+			self.MET_T1_ptJESDown[0] = entry.MET_T1_pt_jesTotalDown
+			self.MET_T1_ptJERUp[0] = entry.MET_T1_pt_jerUp
+			self.MET_T1_ptJERDown[0] = entry.MET_T1_pt_jerDown
+
+			self.MET_T1_phiJESUp[0] = entry.MET_T1_phi_jesTotalUp
+			self.MET_T1_phiJESDown[0] = entry.MET_T1_phi_jesTotalDown
+			self.MET_T1_phiJERUp[0] = entry.MET_T1_phi_jerUp
+			self.MET_T1_phiJERDown[0] = entry.MET_T1_phi_jerDown
+
+			self.MET_T1_ptUnclusteredUp[0] = entry.MET_T1_pt_unclustEnUp
+			self.MET_T1_ptUnclusteredDown[0] = entry.MET_T1_pt_unclustEnDown
+			self.MET_T1_phiUnclusteredUp[0] = entry.MET_T1_phi_unclustEnUp
+			self.MET_T1_phiUnclusteredDown[0] = entry.MET_T1_phi_unclustEnDown
+
+			metV.SetPtEtaPhiM(entry.MET_T1_pt_jesTotalUp,0, entry.MET_T1_phi_jesTotalUp,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.METWmassJESUp[0] = (metV+Lep).M()
+			self.boson_ptJESUp[0] = (metV+Lep).Pt()
+			self.boson_phiJESUp[0] = (metV+Lep).Phi()
+			self.METWTmassJESUp[0] = (metV+Lep).Mt()
+			self.DphiWMETJESUp[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilMETJESUp[0] = self.getdPhi(entry,Lep,metV)
+			self.METmTmassJESUp[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETJESUp[0])))
+			self.u_par_METJESUp[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_METJESUp[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+
+			metV.SetPtEtaPhiM(entry.MET_T1_pt_jesTotalDown,0, entry.MET_T1_phi_jesTotalDown,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.METWmassJESDown[0] = (metV+Lep).M()
+			self.boson_ptJESDown[0] = (metV+Lep).Pt()
+			self.boson_phiJESDown[0] = (metV+Lep).Phi()
+			self.METWTmassJESDown[0] = (metV+Lep).Mt()
+			self.DphiWMETJESDown[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilMETJESDown[0] = self.getdPhi(entry,Lep,metV)
+			self.METmTmassJESDown[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETJESDown[0])))
+			self.u_par_METJESDown[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_METJESDown[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+
+			metV.SetPtEtaPhiM(entry.MET_T1_pt_jerUp,0, entry.MET_T1_phi_jerUp,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.METWmassJERUp[0] = (metV+Lep).M()
+			self.boson_ptJERUp[0] = (metV+Lep).Pt()
+			self.boson_phiJERUp[0] = (metV+Lep).Phi()
+			self.METWTmassJERUp[0] = (metV+Lep).Mt()
+			self.DphiWMETJERUp[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilMETJERUp[0] = self.getdPhi(entry,Lep,metV)
+			self.METmTmassJERUp[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETJERUp[0])))
+			self.u_par_METJERUp[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_METJERUp[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+
+			metV.SetPtEtaPhiM(entry.MET_T1_pt_jerDown,0, entry.MET_T1_phi_jerDown,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.METWmassJERDown[0] = (metV+Lep).M()
+			self.boson_ptJERDown[0] = (metV+Lep).Pt()
+			self.boson_phiJERDown[0] = (metV+Lep).Phi()
+			self.METWTmassJERDown[0] = (metV+Lep).Mt()
+			self.DphiWMETJERDown[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilMETJERDown[0] = self.getdPhi(entry,Lep,metV)
+			self.METmTmassJERDown[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilMETJERDown[0])))
+			self.u_par_METJERDown[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_METJERDown[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+
+
+			metV.SetPtEtaPhiM(entry.PuppiMET_ptJESUp,0, entry.PuppiMET_phiJESUp,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.PuppiMETWmassJESUp[0] = (metV+Lep).M()
+			self.Puppiboson_ptJESUp[0] = (metV+Lep).Pt()
+			self.Puppiboson_phiJESUp[0] = (metV+Lep).Phi()
+			self.PuppiMETWTmassJESUp[0] = (metV+Lep).Mt()
+			self.DphiWPuppiMETJESUp[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilPuppiMETJESUp[0] = self.getdPhi(entry,Lep,metV)
+			self.PuppiMETmTmassJESUp[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilPuppiMETJESUp[0])))
+			self.u_par_PuppiMETJESUp[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_PuppiMETJESUp[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+
+			metV.SetPtEtaPhiM(entry.PuppiMET_ptJESDown,0, entry.PuppiMET_phiJESDown,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.PuppiMETWmassJESDown[0] = (metV+Lep).M()
+			self.Puppiboson_ptJESDown[0] = (metV+Lep).Pt()
+			self.Puppiboson_phiJESDown[0] = (metV+Lep).Phi()
+			self.PuppiMETWTmassJESDown[0] = (metV+Lep).Mt()
+			self.DphiWPuppiMETJESDown[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilPuppiMETJESDown[0] = self.getdPhi(entry,Lep,metV)
+			self.PuppiMETmTmassJESDown[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilPuppiMETJESDown[0])))
+			self.u_par_PuppiMETJESDown[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_PuppiMETJESDown[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+
+			metV.SetPtEtaPhiM(entry.PuppiMET_ptJERUp,0, entry.PuppiMET_phiJERUp,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.PuppiMETWmassJERUp[0] = (metV+Lep).M()
+			self.Puppiboson_ptJERUp[0] = (metV+Lep).Pt()
+			self.Puppiboson_phiJERUp[0] = (metV+Lep).Phi()
+			self.PuppiMETWTmassJERUp[0] = (metV+Lep).Mt()
+			self.DphiWPuppiMETJERUp[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilPuppiMETJERUp[0] = self.getdPhi(entry,Lep,metV)
+			self.PuppiMETmTmassJERUp[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilPuppiMETJERUp[0])))
+			self.u_par_PuppiMETJERUp[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_PuppiMETJERUp[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+
+			metV.SetPtEtaPhiM(entry.PuppiMET_ptJERDown,0, entry.PuppiMET_phiJERDown,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.PuppiMETWmassJERDown[0] = (metV+Lep).M()
+			self.Puppiboson_ptJERDown[0] = (metV+Lep).Pt()
+			self.Puppiboson_phiJERDown[0] = (metV+Lep).Phi()
+			self.PuppiMETWTmassJERDown[0] = (metV+Lep).Mt()
+			self.DphiWPuppiMETJERDown[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilPuppiMETJERDown[0] = self.getdPhi(entry,Lep,metV)
+			self.PuppiMETmTmassJERDown[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilPuppiMETJERDown[0])))
+			self.u_par_PuppiMETJERDown[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_PuppiMETJERDown[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+
+			metV.SetPtEtaPhiM(entry.PuppiMET_ptUnclusteredUp,0, entry.PuppiMET_phiUnclusteredUp,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.PuppiMETWmassUnclusteredUp[0] = (metV+Lep).M()
+			self.Puppiboson_ptUnclusteredUp[0] = (metV+Lep).Pt()
+			self.Puppiboson_phiUnclusteredUp[0] = (metV+Lep).Phi()
+			self.PuppiMETWTmassUnclusteredUp[0] = (metV+Lep).Mt()
+			self.DphiWPuppiMETUnclusteredUp[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilPuppiMETUnclusteredUp[0] = self.getdPhi(entry,Lep,metV)
+			self.PuppiMETmTmassUnclusteredUp[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilPuppiMETUnclusteredUp[0])))
+			self.u_par_PuppiMETUnclusteredUp[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_PuppiMETUnclusteredUp[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+
+			metV.SetPtEtaPhiM(entry.PuppiMET_ptUnclusteredDown,0, entry.PuppiMET_phiUnclusteredDown,0)
+			metV.SetPz(0.)
+			metV.SetE(metV.Pt())
+			self.PuppiMETWmassUnclusteredDown[0] = (metV+Lep).M()
+			self.Puppiboson_ptUnclusteredDown[0] = (metV+Lep).Pt()
+			self.Puppiboson_phiUnclusteredDown[0] = (metV+Lep).Phi()
+			self.PuppiMETWTmassUnclusteredDown[0] = (metV+Lep).Mt()
+			self.DphiWPuppiMETUnclusteredDown[0] = self.getdPhi(entry,metV+Lep, metV)
+			self.DphilPuppiMETUnclusteredDown[0] = self.getdPhi(entry,Lep,metV)
+			self.PuppiMETmTmassUnclusteredDown[0] = sqrt(2*Lep.Pt()*metV.Pt()*(1-cos(self.DphilPuppiMETUnclusteredDown[0])))
+			self.u_par_PuppiMETUnclusteredDown[0]= - (metV+Lep).Pt() * cos(Lep.Phi()-(metV+Lep).Phi())
+			self.u_perp_PuppiMETUnclusteredDown[0]=  metV.Pt() * sin(Lep.Phi()-metV.Phi())
+			
+
+	    if  str(era) == '2017' and 'UL' not in proc :  
+
+		self.metcov00[0] = entry.METFixEE2017_covXX
+
+		self.metcov00[0] = entry.METFixEE2017_covXX
+		self.metcov01[0] = entry.METFixEE2017_covXY
+		self.metcov10[0] = entry.METFixEE2017_covXY
+		self.metcov11[0] = entry.METFixEE2017_covYY
+
+		self.PuppiMET_pt[0]= entry.PuppiMETFixEE2017_pt
+		self.PuppiMET_phi[0]= entry.PuppiMETFixEE2017_phi
+		self.RawPuppiMETFixEE2017_pt[0] = entry.RawPuppiMETFixEE2017_pt
+		self.RawPuppiMETFixEE2017_phi[0] = entry.RawPuppiMETFixEE2017_phi
+		self.RawMETFixEE2017_pt[0]= entry.RawMETFixEE2017_pt
+		self.RawMETFixEE2017_phi[0]= entry.RawMETFixEE2017_phi
+
+
+		if doUncertainties : 
+		    metV, metUn =  TLorentzVector(), TLorentzVector()
+		    metUn.SetXYZT(entry.METFixEE2017_MetUnclustEnUpDeltaX,entry.METFixEE2017_MetUnclustEnUpDeltaY,0,0)
+		    metV.SetPtEtaPhiM(entry.METFixEE2017_pt,0, entry.METFixEE2017_phi,0)
+		    metV.SetPz(0.)
+		    metV.SetE(metV.Pt())
+
+		    self.MET_ptUnclusteredUp[0] =  (metV+metUn).Pt()
+		    self.MET_ptUnclusteredDown[0] =  (metV-metUn).Pt()
+		    self.MET_phiUnclusteredUp[0] =  (metV+metUn).Phi()
+		    self.MET_phiUnclusteredDown[0] =  (metV-metUn).Phi()
+	 
+		    self.PuppiMET_ptJESUp[0] = entry.PuppiMETFixEE2017_ptJESUp
+		    self.PuppiMET_ptJESDown[0] = entry.PuppiMETFixEE2017_ptJESDown
+		    self.PuppiMET_ptJERUp[0] = entry.PuppiMETFixEE2017_ptJERUp
+		    self.PuppiMET_ptJERDown[0] = entry.PuppiMETFixEE2017_ptJERDown
+
+		    self.PuppiMET_phiJESUp[0] = entry.PuppiMETFixEE2017_phiJESUp
+		    self.PuppiMET_phiJESDown[0] = entry.PuppiMETFixEE2017_phiJESDown
+		    self.PuppiMET_phiJERUp[0] = entry.PuppiMETFixEE2017_phiJERUp
+		    self.PuppiMET_phiJERDown[0] = entry.PuppiMETFixEE2017_phiJERDown
+
+		    self.PuppiMET_ptUnclusteredUp[0] = entry.PuppiMETFixEE2017_ptUnclusteredUp
+		    self.PuppiMET_ptUnclusteredDown[0] = entry.PuppiMETFixEE2017_ptUnclusteredDown
+		    self.PuppiMET_phiUnclusteredUp[0] = entry.PuppiMETFixEE2017_phiUnclusteredUp
+		    self.PuppiMET_phiUnclusteredDown[0] = entry.PuppiMETFixEE2017_phiUnclusteredDown
+
+
+		if doUncertainties : 
+		    if isMC : 
+			'''
+			self.MET_T1_pt_jesTotalUp[0] = entry.METFixEE2017_T1_pt_jesTotalUp
+			self.MET_T1_pt_jesTotalDown[0] = entry.METFixEE2017_T1_pt_jesTotalDown
+			self.MET_T1_phi_jesTotalUp[0] = entry.METFixEE2017_T1_phi_jesTotalUp
+			self.MET_T1_phi_jesTotalDown[0] = entry.METFixEE2017_T1_phi_jesTotalDown
+			'''
+
+			self.MET_T1_ptUnclusteredUp[0] = entry.METFixEE2017_T1_pt_unclustEnUp
+			self.MET_T1_ptUnclusteredDown[0] = entry.METFixEE2017_T1_pt_unclustEnDown
+			self.MET_T1_phiUnclusteredUp[0] = entry.METFixEE2017_T1_phi_unclustEnUp
+			self.MET_T1_phiUnclusteredDown[0] = entry.METFixEE2017_T1_phi_unclustEnDown
+
+			'''
+			self.MET_T1_pt_jerUp[0] = entry.METFixEE2017_T1_pt_jerUp
+			self.MET_T1_pt_jerDown[0] = entry.METFixEE2017_T1_pt_jerDown
+			self.MET_T1_phi_jerUp[0] = entry.METFixEE2017_T1_phi_jerUp
+			self.MET_T1_phi_jerDown[0] = entry.METFixEE2017_T1_phi_jerDown
+			'''
+
+		# trig
+
+		if doUncertainties: 
+		    ## this is not done from within ZH and the correctallMET function
+		    for i, v in enumerate(self.allsystMET) : 
+
+			if str(era)=='2017' and 'UL' not in proc:
+			    #i_ should be the righ-hand of the branch and should retain the METFixEE2017 if y=2017 
+			    #iMET should appear always at the branch name...
+			    v = v.replace('MET','METFixEE2017')
+			iMET= v.replace('METFixEE2017','MET')
+
+			try : j = getattr(entry, "{0:s}".format(str(v)))
+			except AttributeError : j = -9.99
+			self.list_of_arrays_noES[i][0] = j
+			#if '_pt_jerUp' in v  : print '=====================================while filling-----------------',j, self.list_of_arrays[i][0], i, v, entry.event 
+
+		    for i, v in enumerate(self.allsystJets) : 
+		    #njets_sys, nbtag_sys
+			#jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,v) 
+		        jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist, era, str(v), proc) 
+			print 'jessyst===============!!!!!!!!!!!!', systematic, len(jetList), cat
 			try : 
-			    self.list_of_arraysJetsPt[i][ifl] = jetListPt[ifl]
-			    self.list_of_arraysJetsEta[i][ifl] = jetListEta[ifl]
-			    self.list_of_arraysJetsPhi[i][ifl] = jetListPhi[ifl]
-			    self.list_of_arraysJetsFlavour[i][ifl] = jetListFlav[ifl]
-			    #self.list_of_arraysJetsNbtagDeep[i][ifl] = bTagListDeep[ifl] #fix
+			    self.list_of_arraysJetsNjets[i][0] = len(jetList)
+			    self.list_of_arraysJetsNbtagL[i][0] = len(bJetListL)
+			    self.list_of_arraysJetsNbtagM[i][0] = len(bJetListM)
+			    self.list_of_arraysJetsNbtagT[i][0] = len(bJetListT)
 			except IndexError : print 'hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
+
+			for ifl in range(len(jetList)) :
+			    try : 
+				self.list_of_arraysJetsPt[i][ifl] = jetListPt[ifl]
+				self.list_of_arraysJetsEta[i][ifl] = jetListEta[ifl]
+				self.list_of_arraysJetsFlavour[i][ifl] = jetListFlav[ifl]
+				self.list_of_arraysJetsNbtagDeep[i][ifl] = bTagListDeep[ifl]
+			    except IndexError : print 'hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
+
 
 	    #fill the un-corrected or just in the case you dont care to doUncertainties      
 	    nom_=''
 	    sysj = ''
 	    if doUncertainties : sysj='nom'
+	    #jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,sysj,proc) 
 	    jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist,era,sysj,proc) 
-            #print 'jessyst=========%%%%%%%%%%======!!!!!!!!!!!!', v, len(jetList), sysj, jetList
             self.njets[0], self.nbtagL[0], self.nbtagM[0], self.nbtagT[0]= -1, -1, -1, 1
 	    self.njets[0] = len(jetList)
 	    self.nbtagL[0] = len(bJetListL)
@@ -1685,9 +2338,9 @@ class outTupleW() :
 		try :
 		    self.jflavour[ifl]  = jetListFlav[ifl]
 		    self.jeta[ifl]  = jetListEta[ifl]
-		    self.jphi[ifl]  = jetListPhi[ifl]
 		    self.jpt[ifl]  = jetListPt[ifl]
-		    #self.btagDeep[ifl] = bTagListDeep[ifl]
+		    self.jphi[ifl]  = jetListPhi[ifl]
+		    self.btagDeep[ifl] = bTagListDeep[ifl]
 		except IndexError : print 'we hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
 	    #print self.jpt[0], self.jeta[0]
             '''
@@ -1709,6 +2362,8 @@ class outTupleW() :
 	    #if  self.nbtag[0] == 0 : 
 
 	    #if self.nbtagL[0] == 0 :
+
+
             ptMiss, pptMiss = TLorentzVector(), TLorentzVector()
             if self.njets[0]>0 : 
 	        branches = ['dPhiMETCorGood_T1J1','dPhiPuppiMETCorGood_J1', 'dPhiMETCorGood_T1J2','dPhiPuppiMETCorGood_J2', 'dRMETCorGood_T1J1','dRPuppiMETCorGood_J1', 'dRMETCorGood_T1J2','dRPuppiMETCorGood_J2']
@@ -1900,23 +2555,6 @@ class outTupleW() :
 		    self.dPhiPuppiMETCorGood_J2UnclusteredDown[0] = self.calculate_dPhi(phi2,pphim)
 		    self.dRMETCorGood_T1J2UnclusteredDown[0] = self.getDRnV(entry, self.jeta[1], self.jphi[1], ptMiss.Eta(), ptMiss.Phi())
 		    self.dRPuppiMETCorGood_J2UnclusteredDown[0] = self.getDRnV(entry,  self.jeta[1], self.jphi[1], pptMiss.Eta(), pptMiss.Phi())
-            '''
-	    if self.njets[0] > 0:
-		branches = ['dPhiMETCorGood_T1J1', 'dPhiPuppiMETCorGood_J1', 'dRMETCorGood_T1J1', 'dRPuppiMETCorGood_J1', 'dPhiMETCorGood_T1J2', 'dPhiPuppiMETCorGood_J2', 'dRMETCorGood_T1J2', 'dRPuppiMETCorGood_J2']
-		variations = ['', 'UnclusteredUp', 'UnclusteredDown', 'JESUp', 'JESDown', 'JERUp', 'JERDown']
-
-		if not isMC:
-		    variations = ['']
-
-		#for branch in branches:
-		#    for var in variations:
-		#	setattr(self, f"{branch}{var}", array('f', [-999]))
-		#	self.t.Branch(f"{branch}{var}", getattr(self, f"{branch}{var}"), f"{branch}{var}/F")
-
-		for var_suffix in variations:
-		    self.calculate_variation_values(var_suffix)
-            '''
-
 
 
 

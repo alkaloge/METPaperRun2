@@ -24,7 +24,7 @@ class Canvas:
       if 'El' in name : self.extra = 'W #rightarrow e#nu'
       if 'dy' in name and  'Mu' in name : self.extra = 'Z #rightarrow #mu#mu'
       if 'dy' in name and 'El' in name : self.extra = 'Z #rightarrow ee'
-      if 'gjets' in name  : self.extra = '\gamma + jets'
+      if 'gjets' in name  : self.extra = '#gamma + jets'
       #if 'njetsgt0' in name : self.extra += 'N_{jets}>0'
       #allpv=['_pult10', '_pu10to20', '_pu20to30', '_pu30to40', '_pu40to50', '_pugeq50']
       if 'njetsgt0' in name : 
@@ -458,12 +458,15 @@ class Canvas:
 	setLowAxis = 1          
 
     self.myCanvas.cd()
-    pad1 = TPad("pad1", "pad1", 0, 0.3, 1, 1.0) 
+    pad1 = TPad("pad1", "pad1", 0, 0.1, 1, 1.0) 
+    pad2 = TPad("pad2", "pad2", 0, 0.0, 1, 0.)
+    
     pad1.SetBottomMargin(0.01)
-    pad1.Draw()
-    pad2 = TPad("pad2", "pad2", 0, 0.0, 1, 0.3)
     pad2.SetTopMargin(0.1);
     pad2.SetBottomMargin(0.3);
+    
+
+    pad1.Draw()
     pad2.Draw();
 
     pad1.cd()
@@ -1317,6 +1320,8 @@ class Canvas:
 	self.myCanvas.SaveAs(path)
 
 
+
+
    def saveRatioGjets(self, legend, isData, log,  lumi, hdata, hMC, hjerUp, hjerDown ,  hjesUp, hjesDown ,hunclUp, hunclDown, hpuUp, hpuDown, hidUp, hidDown,title,  option, run = '2016',  r_ymin=0, r_ymax=2):
 
       
@@ -1350,11 +1355,12 @@ class Canvas:
 	hMC.SetMaximum(hMC.GetMaximum()*15)
 	hdata.SetMaximum(hMC.GetMaximum())
 
-    if 'boson_pt' in option or 'iso_' in option or 'Photon_' in option or 'Raw' in option: 
+
+    if 'mll' in option  or 'boson_pt' in option or 'iso_' in option or 'Photon_' in option or 'Raw' in option: 
         statOnly = 1
         doAllErrors = 0
 
-    for km in range(0, hMC.GetNbinsX()+1):
+    for km in range(1, hMC.GetNbinsX()+1):
 
 	binC = hMC.GetBinContent(km)
 	binE = hMC.GetBinError(km)
@@ -1368,22 +1374,43 @@ class Canvas:
 	hMC.SetBinError(km, math.sqrt(binE**2 + lumiErr**2 + puErr**2 + idErr**2+leptErr**2 + trigErr**2))
 	#hMC.SetBinError(km, math.sqrt(binE**2 + lumiErr**2 + puErr**2 ))
 	#hMC.SetBinError(km, math.sqrt(binE*binE + lumiErr*lumiErr ))#+ leptErr*leptErr + trigErr*trigErr))
+        #print 'bissssssssssssssssssssss', hMC.GetBinError(km), km, option
     
     self.myCanvas.cd()
+
+    #if '_norm' in option : 
+    #    pad1 = TPad("pad1", "pad1", 0, 0.1, 1, 1.0) 
+    #    pad2 = TPad("pad2", "pad2", 0, 0.0, 1, 0.)
+    #else : 
     pad1 = TPad("pad1", "pad1", 0, 0.3, 1, 1.0) 
-    pad1.SetBottomMargin(0.01)
-    pad1.Draw()
     pad2 = TPad("pad2", "pad2", 0, 0.0, 1, 0.3)
+    
+    #if "_norm" in option : 
+    #	pad1 = TPad("pad1", "pad1", 0, 0.3, 1, 1.0) 
+    #	pad2 = TPad("pad2", "pad2", 0, 0.0, 0, 0.)
+
+
+    pad1.SetBottomMargin(0.01)
     pad2.SetTopMargin(0.1);
     pad2.SetBottomMargin(0.3);
-    pad2.Draw();
+
+
+    pad1.Draw()
+    pad2.Draw()
 
     pad1.cd()
     if(log):
 	pad1.SetLogy(1)
+    if '_norm' in option : 
+        hh = hMC.Clone()
+	hh.GetXaxis().SetTitle(title)
+	hh.GetXaxis().SetTitleOffset(0.91)
+	hh.GetXaxis().SetTitleSize(0.135)
+        hh.Draw()
    
     for i in range(0, len(self.histos)):
 	if(self.ToDraw[i] != 0):
+
 	    if lowAxis: 
 		self.histos[i].SetMinimum(0.00001)
 	    if setLowAxis:
@@ -1401,6 +1428,10 @@ class Canvas:
 	    else : self.histos[i].SetMinimum(0.1)
 	    if 'boson' in title.lower() : 
 	        self.histos[i].SetMaximum(hMC.GetMaximum()*500)
+	    if '_norm' in option : 
+	        self.histos[i].SetMaximum(1.5)
+	        self.histos[i].SetMinimum(0.0001)
+                   
 	    #print '----------------------------========================= histo i', i, hMC.GetName(), hMC.GetMaximum(), 'histos name', self.histos[i].GetName(), self.histos[i].GetMaximum(), log, lowAxis, setLowAxis, setUpAxis 
 
 	    self.histos[i].Draw(self.options[i])
@@ -1408,6 +1439,7 @@ class Canvas:
     if(legend):
 	self.makeLegend(log)
 	self.myLegend.Draw()
+
 
     #lTex2 = TLatex(hMC.GetBinLowEdge(2), hMC.GetMaximum()*0.85,'{0:s}'.format(self.extra))
     #lTex2 = TLatex(0.28, 0.75,'{0:s}'.format(self.extra))
@@ -1435,6 +1467,7 @@ class Canvas:
 
     hdata.Sumw2()
     hMC.Sumw2()
+
     ratio = copy.deepcopy(hdata.Clone("ratio"))
     ratio.Divide(hMC)  #here we make the ratio INFO
     #ratio = self.ratioHist(hdata, hMC, hMC.GetName())
@@ -1814,7 +1847,6 @@ class Canvas:
 	legratio2.Draw("same")
 	gPad.RedrawAxis()
        
-
     pad1.cd()
     legratio = TLegend(0.6,0.53,0.8,0.6);
     #legratio = TLegend(0.698,0.53,0.88,0.6);

@@ -25,6 +25,45 @@ import include.Sample     as Sample
 import include.Rounder    as Rounder        
 import numpy as np
 
+r.gROOT.SetBatch(True)
+
+
+def create_relative_contribution_stack(input_stack):
+    # Create a new THStack to hold the relative contribution histograms
+    relative_stack = r.THStack("relative_stack", "Stacked Histograms (Relative)")
+
+    # Get the list of individual histograms from the input THStack
+    histograms = input_stack.GetHists()
+
+
+    # Loop over the individual histograms
+    for hist in histograms:
+        # Clone the original histogram to create a relative contribution histogram
+        relative_hist = hist.Clone()
+        relative_hist.Reset()
+
+        # Get the total histogram from the input THStack
+        total_histogram = input_stack.GetStack().Last()
+
+        # Loop over the bins
+        for bin in range(1, relative_hist.GetNbinsX() + 1):
+            total_bin_content = total_histogram.GetBinContent(bin)
+            #if total_bin_content >= 0.00:
+	    hist_bin_content = hist.GetBinContent(bin)
+	    if total_bin_content != 0.000 : relative_contribution = hist_bin_content / total_bin_content
+            else : relative_contribution = 0.000
+	    relative_hist.SetBinContent(bin, relative_contribution)
+	    #print "Histogram %d, Bin %d: Relative Contribution = %.4f" % (i+1, bin, relative_contribution), hist.GetName(), hist.GetTitle()
+
+        # Add the relative contribution histogram to the relative THStack
+        relative_stack.Add(relative_hist)
+
+    return relative_stack
+
+
+
+
+
 era='2017'
 channel=''
 if __name__ == "__main__":
@@ -66,11 +105,12 @@ if __name__ == "__main__":
     #fIn = TFile.Open('plotS.root'.format(str(opts.Year), str(opts.varr), str(opts.Channel)), 'read')
     print 'fIn is.......', fIn.GetName()
     fIn.ls()
-    tmp_histo=0;mc_histo = 0; histo_err = 0; mc_up = 0; mc_down = 0; mc_puup=0; mc_pudown=0; mc_idup=0; mc_iddown=0;mc_jerup=0; mc_jerdown=0;mc_jesup = 0; mc_jesdown = 0; mc_unclup = 0; mc_uncldown = 0; mc_stack = r.THStack()
+    tmp_histo=0;mc_histo = 0; histo_err = 0; mc_up = 0; mc_down = 0; mc_puup=0; mc_pudown=0; mc_idup=0; mc_iddown=0;mc_jerup=0; mc_jerdown=0;mc_jesup = 0; mc_jesdown = 0; mc_unclup = 0; mc_uncldown = 0; mc_stack = r.THStack(); mc_stack_norm = r.THStack()
     #histo_dy_MET_T1_pt
 
     samples=['tx', 'qcd', 'ewknlo', 'ew', 'gjets' ]
     samples=['tx', 'ew', 'ewknlo',  'qcdmg', 'gjets' ]
+    #samples=['tx', 'ewknlo',  'qcdmg', ]
     givein ='{0:s}'.format(str(opts.varr))
 
     varbs=[]
@@ -86,7 +126,7 @@ if __name__ == "__main__":
     doQCD = int(opts.DoQCD)
     doStat = True
     doSyst = True
-    if 'boson_pt' in givein or 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein: doSyst = False
+    if 'boson_pt' in givein or 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein or 'hoe' in givein: doSyst = False
     print 'varbs and systeamatic', varbs, doSyst
     #doSyst = False
     channel='gjets'
@@ -110,8 +150,8 @@ if __name__ == "__main__":
     if 'pt_1' in givein : varTitle    = 'p_{T}(#mu)'
     if 'eta_1' in givein : varTitle    = '#eta(#mu)'
     if 'phi' in givein : varTitle    = '#phi'
+    if 'iso_1' in givein : varTitle    = 'PF Neutral RelIso'
     allh1 =0
-    nscale = 1.
 
 
     kFactor=1.
@@ -165,8 +205,8 @@ if __name__ == "__main__":
 
     print "------------------------------"
 
-
-            
+   
+        
     kFactor = float(data_hist.GetSumOfWeights()/hMC_total.GetSumOfWeights())
     if 'noscale' in str(opts.ExtraTag).lower() :  kFactor=1.
     for v in varbs :
@@ -174,7 +214,6 @@ if __name__ == "__main__":
         for i in range(0, len(samples)):
             s = str(samples[i])
             histo = fIn.Get("histo_"+s+"_"+v)
-            #histo.Rebin(4)
             if kFactor !=1. : histo.Scale(kFactor)
             try : print histo.GetName(), histo.Integral()
 
@@ -185,8 +224,10 @@ if __name__ == "__main__":
             #    allh1.Add(histo)
             if not mc_histo: mc_histo = copy.deepcopy(histo) 
             else : mc_histo.Add(histo, 1.)
+
+
             mc_stack.Add(histo)
-            mc_stack.Draw()
+            #mc_stack.Draw()
             #if 'Cor' in v : v = v.replace("METCor","MET")
             if doStat : 
 		for sy in Othersysts : 
@@ -268,6 +309,14 @@ if __name__ == "__main__":
 				mc_uncldown = copy.deepcopy(htemp)
 				print 'should be uncldown integral', hname, mc_uncldown.Integral()
 			    else : mc_uncldown.Add(htemp)
+        #relative_contribution_hist = create_relative_contribution_histogram(mc_stack)
+    mc_stack_norm = mc_stack
+    if '_pu' in str(opts.ExtraTag).lower() : mc_stack_norm = create_relative_contribution_stack(mc_stack)
+
+    #canvas = r.TCanvas("canvas", "THStack Example", 800, 600)
+    #mc_histo_norm.Draw("hist")  # Use "hist" option to draw histograms with fill
+    #canvas.SaveAs("stacked_histograms.png")
+    #mc_histo2 = mc_histo.Clone()
     if not doSyst:
 	mc_jesup = mc_histo
 	mc_jesdown = mc_histo
@@ -283,17 +332,53 @@ if __name__ == "__main__":
     option=str(opts.varr)
     run_str =str(lumi)
     logcase=[0,1]
-    nscale=1
-    nscale= ( data_hist.GetSumOfWeights()/mc_histo.GetSumOfWeights())
-    print 'some testttttttttt', mc_histo.GetName(), mc_histo.GetSumOfWeights(), mc_histo.GetTitle(), data_hist.GetSumOfWeights(), nscale
-    
+    isLog = 1
+    PUnorm = 0
+
+    #print 'some testttttttttt', mc_histo.GetName(), mc_histo.GetSumOfWeights(), mc_histo.GetTitle(), data_hist.GetSumOfWeights(), nscale, mc_histo.GetSumOfWeights(), mc_histo_norm.GetSumOfWeights(), mc_histo.GetBinContent(1), mc_histo_norm.GetBinContent(1)
+    #if '_pu' not in  str(opts.ExtraTag).lower() : 
+    if '_pu' in  str(opts.ExtraTag).lower() : 
+        if PUnorm  : 
+	    plot_varr = Canvas.Canvas("test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog_norm"%(str(opts.varr),puname, channel, puname ,str(era), str(int(doQCD)), str(opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])               
+	    plot_varr.addStack(mc_stack_norm  , "hist" , 1, 1)
+	    plot_varr.addHisto(data_hist, "E,SAME"   , "Data"  , "PL", r.kBlack , 1, 0)
+	    plot_varr.saveRatioGjets(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, mc_puup, mc_pudown, mc_idup, mc_iddown, varTitle , option+"_norm", run_str)
+        else : 
+	    plot_var = Canvas.Canvas("test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog"%(str(opts.varr),puname, channel, puname ,str(era), str(int(doQCD)), str(opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])               
+	    plot_var.addStack(mc_stack  , "hist" , 1, 1)
+	    plot_var.addHisto(data_hist, "E,SAME"   , "Data"  , "PL", r.kBlack , 1, 0)
+	    plot_var.saveRatioGjets(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, mc_puup, mc_pudown, mc_idup, mc_iddown, varTitle , option, run_str)
+
+        '''   
+        isLog = 0
+	plot_varrL = Canvas.Canvas("test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog_norm"%(str(opts.varr),puname, channel, puname ,str(era), str(int(doQCD)), str(opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])               
+	plot_varrL.addStack(mc_stack_norm  , "hist" , 1, 1)
+	plot_varrL.addHisto(data_hist, "E,SAME"   , "Data"  , "PL", r.kBlack , 1, 0)
+	plot_varrL.saveRatioGjets(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, mc_puup, mc_pudown, mc_idup, mc_iddown, varTitle , option+"_norm", run_str)
+           
+       '''
+    else : 
+	isLog = 1
+	plot_varr = Canvas.Canvas("test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog_norm"%(str(opts.varr),puname, channel, puname ,str(era), str(int(doQCD)), str(opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])               
+	plot_varr.addStack(mc_stack_norm  , "hist" , 1, 1)
+	plot_varr.addHisto(data_hist, "E,SAME"   , "Data"  , "PL", r.kBlack , 1, 0)
+	plot_varr.saveRatioGjets(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, mc_puup, mc_pudown, mc_idup, mc_iddown, varTitle , option+"_norm", run_str)
+    '''
+    if '_pu' in  str(opts.ExtraTag).lower() : 
+	for ilog in logcase :
+	    isLog = ilog
+	    plot_varr = Canvas.Canvas("test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog_norm"%(str(opts.varr),puname, channel, puname ,str(era), str(int(doQCD)), str(opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])               
+	    plot_varr.addStack(mc_stack_norm  , "hist" , 1, 1)
+	    plot_varr.addHisto(data_hist, "E,SAME"   , "Data"  , "PL", r.kBlack , 1, 0)
+	    plot_varr.saveRatioGjets(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, mc_puup, mc_pudown, mc_idup, mc_iddown, varTitle , option+"_norm", run_str)
     for ilog in logcase :
-        isLog = ilog
+	isLog = ilog
 	plot_var = Canvas.Canvas("test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog"%(str(opts.varr),puname, channel, puname ,str(era), str(int(doQCD)), str(opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])               
 	plot_var.addStack(mc_stack  , "hist" , 1, 1)
 	plot_var.addHisto(data_hist, "E,SAME"   , "Data"  , "PL", r.kBlack , 1, 0)
 
 	plot_var.saveRatioGjets(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, mc_puup, mc_pudown, mc_idup, mc_iddown, varTitle , option, run_str)
+    #else : 
 
-
+    '''
     print color.blue+'********************************************DONE***************************************************'+color.end

@@ -1,4 +1,5 @@
 import ROOT as r
+import os
 from array import array
 from ROOT import TTree, TFile, TCut, TH1F, TH2F, THStack, TCanvas, TEntryList
 from math import sqrt, sin, cos, pi, tan, acos, atan2,log
@@ -55,6 +56,7 @@ class Sample:
       #    self.location=loc
       loc = self.location.replace('group','user')
       self.location = loc
+      '''
       if 'Run' not in name : 
 	  if 'preVFP' in location and 'preVFP' not in str(era): tfileloc= self.location+'/{0:s}_{1:s}preVFP_{2:s}.root'.format( str(name), str(era), str(channel))
 	  else : tfileloc=self.location+'/{0:s}_{1:s}_{2:s}.root'.format( str(name), str(era), str(channel))
@@ -64,6 +66,90 @@ class Sample:
       else  :
           print 'this is not local, will try to read from-->', 'root://cmseos.fnal.gov//', '+ tfileloc', tfileloc 
           self.tfile = TFile.Open("root://cmseos.fnal.gov//"+tfileloc, "READ")
+      '''
+
+      chain_events = r.TChain("Events")
+      chain_weights = r.TChain("hWeights")
+      if 'Run' not in name:
+          if 'preVFP' in location and 'preVFP' not in str(era):
+	      file_pattern = '{0:s}_{1:s}preVFP_{2:s}'.format(str(name), str(era), str(channel))
+	  else:
+	      file_pattern = '{0:s}_{1:s}_{2:s}/'.format(str(name), str(era), str(channel))
+      else:
+          file_pattern = '{0:s}_{1:s}/'.format(str(name), str(era), str(channel))
+
+      # Specify the patterns for the files you want to read
+      file_patterns = [file_pattern + "*Muons.root", file_pattern + "*weights"]  # Adjust these patterns as needed
+      file_patterns = ["Muons.root",  "weights"]  # Adjust these patterns as needed
+      file_patterns = ["Muons.root"]  # Adjust these patterns as needed
+
+      print "file_patterns", file_patterns, isLocal, file_pattern, location, self.location
+      # Add all matching files to the TChain
+      if isLocal:
+          for pattern in file_patterns:
+              print('Getting files matching pattern:', pattern)
+              files = []
+              filesW = []
+              for root, dirs, root_files in os.walk(location):
+                  for root_file in root_files:
+                      if pattern in root_file:
+                          file_path = os.path.join(root, root_file)
+                          files.append(file_path)
+              print('Files matching pattern:', files)
+              
+              for file_path in files:
+                  if 'weights' not in pattern:
+                      chain_events.Add(file_path)
+                      print("Added file to 'Events' chain:", file_path)
+                  else:
+                      chain_weights.Add(file_path)
+                      print("Added weights file to 'hWeights' chain:", file_path)
+      else:
+          for pattern in file_patterns:
+              file_location = "root://cmseos.fnal.gov//" + location + pattern
+              if 'weights' not in pattern:
+                  chain_events.Add(file_location)
+                  print("Added file to 'Events' chain:", file_location)
+              else:
+                  chain_weights.Add(file_location)
+                  print("Added weights file to 'hWeights' chain:", file_location)
+
+      # Now, you can use 'chain_events' to read from all matched files
+      nEntries = chain_events.GetEntries()
+      #nEntriesW = chain_weights.GetEntries()
+      self.ttree = chain_events  # Assign the TChain to self.ttree
+      hWeights = None
+      print 'ok. this works....'
+      '''
+      for entry in range(nEntriesW):
+  	  chain_weights.GetEntry(entry)
+
+	  # Access the hWeights histogram from the current file
+	  hWeightCurrent = chain_weights.GetFile().Get("hWeights")
+
+	  # Accumulate histograms
+	  if hWeights is None:
+	      hWeights = hWeightCurrent.Clone()
+	  else:
+	      hWeights.Add(hWeightCurrent)
+
+      htest = hWeights
+
+      try:self.count = htest.GetSumOfWeights()
+      except AttributeError:
+          self.count = 1.
+          self.xSection = 0
+      if self.xSection !=0 : print self.name, 'neentries', self.ttree.GetEntries()
+      #self.count = self.tfile.Get('demo/nEvents').GetSumOfWeights()
+      else :
+          #self.count = self.ttree.GetEntries()
+          self.count = 1
+
+
+      '''
+      self.count=1
+      #print 'will try to read from ', self.location, self.tfile.GetName(), name, era, channel
+      print 'will try to read from nEvents', nEntries, self.count
       '''    
       #else : 
           #/eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/ST_s-channel_antitop_2016
@@ -88,10 +174,11 @@ class Sample:
       #if not self.isData : self.tfileW = TFile(self.location+'/{0:s}_{1:s}.weights.root'.format( str(name), str(era)))
       #self.tfile = TFile(self.location+'/*.root'.format( str(name), str(era)))
       #self.tfileW = TFile(self.location+'/*weights'.format( str(name), str(era)))
-      print 'will try to read from ', self.location, self.tfile.GetName(), name, era, channel
-      self.ttree = self.tfile.Get('Events')
+      #self.ttree = self.tfile.Get('Events')
+
       print self.name
       self.puWeight  = "1.0"
+      '''
       if not self.isData:
           htest = self.tfile.Get('hWeights')
           if isWinclWNjets :
@@ -110,6 +197,7 @@ class Sample:
       else :
           #self.count = self.ttree.GetEntries()
           self.count = 1
+      '''
 
       '''
       if not self.isData:
@@ -193,9 +281,7 @@ class Sample:
 
           if 'ElNu' in channel or 'MuNu' in channel: 
               #print 'there you are', channel
-              #if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName() and 'incl' not in options: cut = cut +  " && LHE_Njets[0]<1 "
-              if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName() and 'incl' not in options: 
-                  cut = cut +  " && LHE_Njets[0]<1 "
+              if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName(): cut = cut +  " && LHE_Njets[0]<1 "
 
               if 'MuNu' in channel : cut =  cut    + "* ( " + "TrigSF1[0] " +  " )"  
 	      if 'isoup' not in var.lower() and 'isodown' not in var.lower() :
@@ -337,8 +423,8 @@ class Sample:
 		      var = var.replace('IDDown', '')
 		      var = var.replace('IDdown', '')
           
-          #if 'WJets' in h.GetName() and 'NLO' not in h.GetName() :
-          #     cut = cut +  "&& ( " + "weight[0] " +  " ) < 10"
+          if 'WJets' in h.GetName() and 'NLO' not in h.GetName() :
+               cut = cut +  "&& ( " + "weight[0] " +  " ) < 10"
       #if not self.isData :
       #    if 'QCD' in name : cut = cut +  "* ( " + "Photon_genPartFlav_1[0] !=1" +  " ) "
 
@@ -348,30 +434,13 @@ class Sample:
 
       if 'u_par' in var or 'u_perp' in var :
 	  if 'parboson' not in var: var = "-1.*"+var
+	  if 'u_perp'  in var: var = var + "/boson_pt"
 	  if 'u_parboson' in var : 
 	      var = var.replace("parboson", "par")
-
-          if 'Gjets' in channel : 
-	      if 'u_perp'  in var: var = var + "/boson_pt"
-	      if 'u_parboson' in var : 
-		  #var = var.replace("parboson", "par")
-		  var  = var + "+ boson_pt"
-	      if 'resp' in var : 
-		  var = var.replace("resp", "")
-		  var  = "("+var + ")/boson_pt"
-          else: 
-              bpt= "METCorGoodboson_pt"
-              if "METCorGood" in var and "Puppi" not in var : bpt = "METCorGood_T1_pt"
-              if "PuppiMETCorGood" in var  : bpt = "PuppiMETCorGood_pt"
-	      if 'u_perp'  in var: var = var + "/"+bpt
-
-	      if 'u_parboson' in var : 
-		  #var = var.replace("parboson", "par")
-		  var  = var + "+ "+ bpt
-
-	      if 'resp' in var : 
-		  var = var.replace("resp", "")
-		  var  = "("+var + ")/" + bpt
+              var  = var + "+ boson_pt"
+          if 'resp' in var : 
+	      var = var.replace("resp", "")
+	      var  = "("+var + ")/boson_pt"
 
 
 
@@ -379,7 +448,7 @@ class Sample:
           #cut = cut +  "&& boson_pt >=0"
           #cut = cut +  "&& boson_pt >=0"
          
-      print '============================>>>>>>>>>>', h.GetName(), cut, 'puweigh = ', options, var
+      print '============================>>>>>>>>>>', h.GetName(), cut, 'puweigh = ', options
       #cut =  cut    + "&& Entry$ < 1000"
       print 'some info....', name, "var", var, "cut", cut, "options", options
       evscale=1.

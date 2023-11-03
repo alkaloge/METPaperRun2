@@ -401,10 +401,15 @@ if __name__ == "__main__":
             jetcut='-1'
             tagname = str(opts.ExtraTag).lower()
             #njets_jesTotalUp  njets_jerUp
-            if 'jetsgeq0' in tagname: jetcut='=0'
-            if 'jetsgt0' in tagname: jetcut='0'
+            if 'njetsgeq0' in str(opts.ExtraTag).lower() : jetcut='>=0'
+            if 'njetsgeq1' in str(opts.ExtraTag).lower() : jetcut='>=1'
+            if 'njetsgincl' in str(opts.ExtraTag).lower() : jetcut='>=0'
+            if 'njetsgt1' in str(opts.ExtraTag).lower() : jetcut='>1'
+            if 'njetsgt0' in str(opts.ExtraTag).lower() : jetcut='>0'
+            if 'hitslt1' in str(opts.ExtraTag).lower() : losthits='1'
             if 'hitslt1' in tagname : losthits='1'
             if 'massgt0' in tagname: wtmasscut='0'
+            if '_transm' in tagname: wtmasscut='0'
             if 'massgt80' in tagname: wtmasscut='80'
             
             if 'jesup' in givein.lower() : 
@@ -429,20 +434,18 @@ if __name__ == "__main__":
             if 'btagt' in tagname : btagcut="T"
 
             ### ACTUAL CUTS
-	    jetCutMu = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} &&  nbtag{5:s}[0]==0 &&njets{6:s}[0]> {1:s} && {4:s}METWTmass{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst)
+	    jetCutMu = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets{6:s}[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst)
+	    jetCutMu = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst)
 
-	    jetCutEl = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && nbtag{6:s}[0]==0 &&njets{7:s}[0]> {1:s} && {4:s}METWTmass{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits,btagcut, njetsSyst)
+	    jetCutEl = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{7:s}[0] {1:s} && {4:s}METCorGoodboson_transm{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits,btagcut, njetsSyst)
 
             
-            if 'vetophoton' in str(opts.ExtraTag).lower() : jetCut = jetCut+ "&&  VetoPhoton[0]==0"
-            if 'vetotau' in str(opts.ExtraTag).lower() : jetCut = jetCut+ "&& VetoTau[0]==0"
-            if 'vetoall' in str(opts.ExtraTag).lower() : jetCut = jetCut+ "&& VetoTau[0]==0 && VetoPhoton[0]==0"
 
-            jetCutInvIso = " (nMuon==1 && pt_1[0]> 29 && (isGlobal_1[0]>0 || isTracker_1[0]>0) && fabs(eta_1[0])<2.4 && fabs(dZ_1[0])<0.2 && fabs(d0_1[0])<0.045 && isTrig_1[0]==2 &&  tightId_1[0] >0   &&  fabs(q_1[0])==1 &&  iso_1[0] > .15 && mediumPromptId_1[0]>0 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets[0]<20 && METWTmass[0]>0 && isStandalone_1[0]>0 && nbtagL[0]==0"
-	    jetCutMuInvIso = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1 &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} &&  nbtag{5:s}[0]==0 &&njets[0]> {1:s} && {4:s}METWTmass{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut)
+            jetCutInvIso = " (nMuon==1 && pt_1[0]> 29 && (isGlobal_1[0]>0 || isTracker_1[0]>0) && fabs(eta_1[0])<2.4 && fabs(dZ_1[0])<0.2 && fabs(d0_1[0])<0.045 && isTrig_1[0]==2 &&  tightId_1[0] >0   &&  fabs(q_1[0])==1 &&  iso_1[0] > .15 && mediumPromptId_1[0]>0 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets[0]<20 && METCorGoodboson_transm[0]>0 && isStandalone_1[0]>0 && nbtagL[0]==0"
+	    jetCutMuInvIso = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1 &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} &&  nbtag{5:s}[0]==0 &&njets[0]> {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut)
 
             #jetCutInvIso = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPV[0]>2 && cat=={0:s} && nbtagL[0]==0".format(docat)
-	    jetCutElInvIso = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && nbtag{6:s}[0]==0 &&njets[0]> {1:s} && {4:s}METWTmass{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits,btagcut)
+	    jetCutElInvIso = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && nbtag{6:s}[0]==0 &&njets[0]> {1:s} && {4:s}METCorGoodboson_transm{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits,btagcut)
 
             jetCut= jetCutMu
             jetCutInvIso= jetCutMuInvIso
@@ -450,6 +453,17 @@ if __name__ == "__main__":
                 jetCut= jetCutEl
                 jetCutInvIso= jetCutElInvIso
             print 'CCCCCCCCCCCCCCCCUTTTTS', jetCut, 'GiveIn', givein.lower(), tagname
+            if 'vetophoton' in str(opts.ExtraTag).lower() : jetCut = jetCut+ "&&  VetoPhoton[0]==0"
+            if 'vetotau' in str(opts.ExtraTag).lower() : jetCut = jetCut+ "&& VetoTau[0]==0"
+            if 'vetoall' in str(opts.ExtraTag).lower() : jetCut = jetCut+ "&& VetoTau[0]==0 && VetoPhoton[0]==0"
+            if 'pult10' in tagname : jetCut  = jetCut + " && nPVGood[0]<10"
+            if 'pu10to20' in tagname : jetCut  = jetCut + " && nPVGood[0]<20 && nPVGood>=10"
+            if 'pu20to30' in tagname : jetCut  = jetCut + " && nPVGood[0]<30 && nPVGood>=20"
+            if 'pu30to40' in tagname : jetCut  = jetCut + " && nPVGood[0]<40 && nPVGood>=30"
+            if 'pu40to50' in tagname : jetCut  = jetCut + " && nPVGood[0]<50 && nPVGood>=40"
+            if 'pugeq50' in tagname : jetCut  = jetCut + " && nPVGood[0]>=50 "
+            if 'pugeq40' in tagname : jetCut  = jetCut + " && nPVGood[0]>=40 "
+            if 'nbtagl' in tagname :  jetCut  = jetCut + " && nbtagL[0]==0.0 "
 
             #jetCut = "1"
             print color.blue+'************************************************************************************************'+color.end
@@ -468,7 +482,7 @@ if __name__ == "__main__":
                 met = ['DphilMET']
                 met = ['njets']
                 met = ['MET_T1_pt']
-                met = ['METWTmass']
+                met = ['METCorGoodboson_transm']
                 met = ['METWmass']
                 met = ['DphilMET']
                 met = ['DphiWMET']
