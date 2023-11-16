@@ -980,14 +980,10 @@ class outTuple2Lep() :
 		jpt = getattr(entry, "Jet_pt{0:s}".format(str(syst)), None)
                 #if syst=='_nom' : print jpt[j],  entry.Jet_pt[j],  syst
 
-		if jpt[j] < 30. : continue
+		if jpt[j] < 40. : continue
 		if entry.Jet_jetId[j]  < 6  : continue  #pass tight and tightLepVeto ID. 
 		if jpt[j] < 50  and  entry.Jet_puId[j]  != 7  : continue #loose jetPU_iD
 
-		    if '2016' not in str(era) and  entry.Jet_puId[j]  < 4  : continue #loose jetPU_iD
-		    if '2016' in str(era) and  entry.Jet_puId[j]  > 4  : continue #inverted working points https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetIDUL
-
-		#if str(era) == '2017'  and jpt[j] > 20 and jpt[j] < 50 and abs(entry.Jet_eta[j]) > 2.65 and abs(entry.Jet_eta[j]) < 3.139 : continue  #remove noisy jets
 		if abs(entry.Jet_eta[j]) > 2.4 : continue
 
 		#for iv, lepv in enumerate(LepList) : 
@@ -1014,7 +1010,7 @@ class outTuple2Lep() :
             bTagListDeep.append(entry.Jet_btagDeepB[jj])
 
             #print 'will check',  entry.luminosityBlock, entry.event, entry.run, goodJets, jj, jpt[jj], 'flav', entry.Jet_partonFlavour[jj]
-            if jpt[jj] > 30 : 
+            if jpt[jj] > 40 : 
 
                 jetList.append(jj) 
 

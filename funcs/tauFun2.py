@@ -1214,12 +1214,14 @@ def goodMuonWjets(entry, j ):
     if abs(entry.Muon_eta[j]) > mm['mu_eta']: return False
     if mm['mu_iso_f'] and entry.Muon_pfRelIso04_all[j] >  mm['mu_iso']: return False
     if mm['mu_ID'] :
-        if not (entry.Muon_tightId[j]) or ord(entry.Muon_pfIsoId[j]) < 4: return False
+        #if not (entry.Muon_tightId[j]) or ord(entry.Muon_pfIsoId[j]) < 4: return False
+        if not (entry.Muon_tightId[j]) : return False
         #if not (entry.Muon_mediumId[j]): return False
     if abs(entry.Muon_dxy[j]) > mm['mu_dxy']: return False 
     if abs(entry.Muon_dz[j]) > mm['mu_dz']: return False
     if mm['mu_type'] :
-        if not (entry.Muon_isGlobal[j] or entry.Muon_isTracker[j]) : return False
+        #if not (entry.Muon_isGlobal[j] or entry.Muon_isTracker[j]) : return False
+        if not (entry.Muon_isGlobal[j] ) : return False
     return True 
 
 def vetoMuon(entry, j ):
@@ -1229,10 +1231,10 @@ def vetoMuon(entry, j ):
     mm = selections['muveto'] # selections for Z->mumu
     if entry.Muon_pt[j]  > mm['mu_pt'] and \
     abs(entry.Muon_eta[j]) < mm['mu_eta'] and \
-    mm['mu_iso_f'] and entry.Muon_pfRelIso04_all[j] <  mm['mu_iso'] and \
-    mm['mu_ID'] and  (entry.Muon_mediumId[j] ) and \
-    abs(entry.Muon_dxy[j]) < mm['mu_dxy'] and \
-    abs(entry.Muon_dz[j]) < mm['mu_dz'] :  return True 
+    mm['mu_ID'] and  (entry.Muon_looseId[j] ) and \
+    abs(entry.Muon_dxy[j]) < 0.05 : return True
+    #abs(entry.Muon_dz[j]) < mm['mu_dz'] :  return True 
+    #mm['mu_iso_f'] and entry.Muon_pfRelIso04_all[j] <  mm['mu_iso'] and \
 
              
 
@@ -1310,13 +1312,13 @@ def vetoElectron(entry, j) :
     ee = selections['elveto'] # selections for Z->ee
     if entry.Electron_pt[j] > ee['ele_pt'] and \
     abs(entry.Electron_eta[j]) < ee['ele_eta'] and \
-    abs(entry.Electron_dxy[j]) < ee['ele_dxy'] and \
-    abs(entry.Electron_dz[j]) < ee['ele_dz'] and \
-    ord(entry.Electron_lostHits[j]) < ee['ele_lostHits'] and \
-    entry.Electron_convVeto[j] and \
-    entry.Electron_pfRelIso03_all[j] <  ee['ele_iso'] and\
-    entry.Electron_cutBased[j] == 1: return True
-    #entry.Electron_mvaFall17V2Iso_WP90[j] : return True
+    abs(entry.Electron_dxy[j]) < 0.05 and \
+    entry.Electron_mvaFall17V2noIso_WPL[j] : return True
+    #entry.Electron_pfRelIso03_all[j] <  ee['ele_iso'] and\
+    #abs(entry.Electron_dz[j]) < ee['ele_dz'] and \
+    #entry.Electron_cutBased[j] == 1: return True
+    #ord(entry.Electron_lostHits[j]) < ee['ele_lostHits'] and \
+    # entry.Electron_convVeto[j] and \
 
     #entry.Electron_cutBased[j] == ee['ele_cut'] : return True
 

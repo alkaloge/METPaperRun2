@@ -1058,11 +1058,11 @@ class outTupleGjets() :
 
 		if jpt[j] < 40. : continue
 		if entry.Jet_jetId[j]  < 6  : continue  #pass tight and tightLepVeto ID. 
-		if jpt[j] < 50  : #loose jetPU_iD
-		    if '2016' not in str(era) and  entry.Jet_puId[j]  < 4  : continue #loose jetPU_iD
-		    if '2016' in str(era) and  entry.Jet_puId[j]  > 4  : continue #inverted working points https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetIDUL
+		if jpt[j] < 50  and  entry.Jet_puId[j]  != 7  : continue #loose jetPU_iD
+		#if jpt[j] < 50  : #loose jetPU_iD
+		#    if '2016' not in str(era) and  entry.Jet_puId[j]  < 4  : continue #loose jetPU_iD
+		#    if '2016' in str(era) and  entry.Jet_puId[j]  > 4  : continue #inverted working points https://twiki.cern.ch/twiki/bin/view/CMS/PileupJetIDUL
 
-		#if str(era) == '2017'  and jpt[j] > 20 and jpt[j] < 50 and abs(entry.Jet_eta[j]) > 2.65 and abs(entry.Jet_eta[j]) < 3.139 : continue  #remove noisy jets
 		if abs(entry.Jet_eta[j]) > 2.4 : continue
 
 		#for iv, lepv in enumerate(LepList) : 
