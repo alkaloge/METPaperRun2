@@ -36,7 +36,7 @@ class dupeDetector() :
 class Sample:
    'Common base class for all Samples'
 
-   def __init__(self, name, location, xsection, isdata, doee, dokfactorweight, iszjets, era, channel, isLocal=True, isWinclWNjets=False, IWDP='mvaID'):
+   def __init__(self, name, location, xsection, isdata, doee, dokfactorweight, iszjets, era, channel, isLocal=True, isWinclWNjets=False, IWDP='mvaID', doChain=True):
       self.name = name
       self.location = location
       self.xSection = xsection
@@ -55,56 +55,169 @@ class Sample:
       #    self.location=loc
       loc = self.location.replace('group','user')
       self.location = loc
-      if 'Run' not in name : 
-	  if 'preVFP' in location and 'preVFP' not in str(era): tfileloc= self.location+'/{0:s}_{1:s}preVFP_{2:s}.root'.format( str(name), str(era), str(channel))
-	  else : tfileloc=self.location+'/{0:s}_{1:s}_{2:s}.root'.format( str(name), str(era), str(channel))
-      else : tfileloc = self.location+'/{0:s}_{1:s}.root'.format( str(name), str(era), str(channel))
-      if isLocal  : self.tfile = TFile(tfileloc)
 
-      else  :
-          print 'this is not local, will try to read from-->', 'root://cmseos.fnal.gov//', '+ tfileloc', tfileloc 
-          self.tfile = TFile.Open("root://cmseos.fnal.gov//"+tfileloc, "READ")
-      '''    
-      #else : 
-          #/eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/ST_s-channel_antitop_2016
-          # root://cmsxrootd.fnal.gov///store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_NLO_2016preVFP/WJetsToLNu_NLO_2016preVFP_MuMu.root
-          #newlocation = self.location.split['Wjets_T1']
-          #self.location='root://cmsxrootd.fnal.gov///store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/'+self.location.split('Wjets_T1')[1]
-          if 'Gjets' in channel : 
-              
-              self.location='root://cmseos.fnal.gov//store/user/lpcsusyhiggs/ntuples/nAODv9/Gjets_out/'+self.location.split('Gjets_out')[1]
-              if  IWDP=='mvaID' : self.location='root://cmseos.fnal.gov//store/user/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/'+self.location.split('Gjets_out_mvaID')[1]
-              if  IWDP=='cutBased' : self.location='root://cmseos.fnal.gov//store/user/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_cutBased/'+self.location.split('Gjets_out_cutBased')[1]
-              #self.location  = loc.replace('Gjets_out', 'Gjet_out_'+TheSelection)
-              print 'This is for Gjets', self.location
-          if 'MuMu' in channel or 'ElEl' in channel: 
-              self.location='root://cmseos.fnal.gov//store/user/lpcsusyhiggs/ntuples/nAODv9/2Lep/'+self.location.split('2Lep')[1]
-          print 'check 1======================>', isLocal, self.location
+      
+      if doChain : 
+          print 'Ordered a TChaining...will run on the individual files.....'
+
+	  chain_events = r.TChain("Events")
+	  chain_weights = r.TChain("hWeights")
+	  if 'Run' not in name:
+	      if 'preVFP' in location and 'preVFP' not in str(era):
+		  file_pattern = '{0:s}_{1:s}preVFP_{2:s}'.format(str(name), str(era), str(channel))
+	      else:
+		  file_pattern = '{0:s}_{1:s}_{2:s}/'.format(str(name), str(era), str(channel))
+	  else:
+	      file_pattern = '{0:s}_{1:s}/'.format(str(name), str(era), str(channel))
+
+	  # Specify the patterns for the files you want to read
+	  file_patterns = [file_pattern + "*Muons.root", file_pattern + "*weights"]  # Adjust these patterns as needed
+	  file_patterns = ["Muons.root",  "weights"]  # Adjust these patterns as needed
+	  if 'MuNu' in self.channel : file_patterns = ["/*Muons.root"]  # Adjust these patterns as needed
+	  if 'ElNu' in self.channel : file_patterns = ["/*Electrons.root"]  # Adjust these patterns as needed
+
+	  print "file_patterns", file_patterns, isLocal, file_pattern, location, self.location
+	  # Add all matching files to the TChain
+	  if isLocal:
+	      for pattern in file_patterns:
+		  print('Getting files matching pattern:', pattern)
+		  files = []
+		  filesW = []
+		  for root, dirs, root_files in os.walk(location):
+		      for root_file in root_files:
+			  if pattern in root_file:
+			      file_path = os.path.join(root, root_file)
+			      files.append(file_path)
+		  print('Files matching pattern:', files)
+		  
+		  for file_path in files:
+		      if 'weights' not in pattern:
+			  chain_events.Add(file_path)
+			  print("Added file to 'Events' chain:", file_path)
+		      else:
+			  chain_weights.Add(file_path)
+			  print("Added weights file to 'hWeights' chain:", file_path)
+	  else:
+	      for pattern in file_patterns:
+		  file_location = "root://cmseos.fnal.gov//" + location + pattern
+		  if 'weights' not in pattern:
+		      chain_events.Add(file_location)
+		      print("Added file to 'Events' chain:", file_location)
+		  else:
+		      chain_weights.Add(file_location)
+		      print("Added weights file to 'hWeights' chain:", file_location)
+
+	  # Now, you can use 'chain_events' to read from all matched files
+	  nEntries = chain_events.GetEntries()
+	  #nEntriesW = chain_weights.GetEntries()
+	  self.ttree = chain_events  # Assign the TChain to self.ttree
+	  hWeights = None
+	  print 'ok. this works....'
+
+	  self.puWeight  = "1.0"
+	  if not self.isData:
+              weights_2017={
+		'ZZTo2L2Nu' : 39767479.5829,
+		'TTTo2L2Nu' : 7695841652.17,
+		'WJetsToLNu' : 782170184.765,
+		'WW' : 15634116.1995,
+		'QCD_HT1500to2000' : 7613935.0,
+		'ZZTo4L' : 131377912.099,
+		'W1JetsToLNu' : 132885035.121,
+		'QCD_HT500to700' : 36194860.0,
+		'ST_s-channel' : 48361410.4205,
+		'ST_t-channel_top' : 5734591181.42,
+		'WGToLNuG' : 10302104.0,
+		'ZZZ' : 2232.54036875,
+		'W2JetsToLNu' : 38944765.4379,
+		'ST_tW_antitop' : 184446306.894,
+		'TTToSemiLeptonic' : 1.0374485332e+11,
+		'ST_tW_top' : 183284892.385,
+		'DYJetsToLLM50' : 102863931.0,
+		'QCD_HT700to1000' : 32934816.0,
+		'WZZ' : 17023.6507413,
+		'QCD_HT100to200' : 73254068.0,
+		'QCD_HT1000to1500' : 4266174.0,
+		'WWW' : 36869.1608253,
+		'W4JetsToLNu' : 61149413352.2,
+		'ZZTo2Q2L' : 156721190.198,
+		'ttWJets' : 27662138.0,
+		'QCD_HT200to300' : 42714435.0,
+		'QCD_HT300to500' : 43429979.0,
+		'QCD_HT50to100' : 26208347.0,
+		'DYJetsToLLM10to50' : 68480179.0,
+		'ST_t-channel_antitop' : 4462868882.06,
+		'QCD_HT2000toInf' : 1847781.0,
+		'WJetsToLNu_NLO' : 4.53144357309e+12,
+		'W3JetsToLNu' : 19790787.9141}
+              weights_2018=[]
+              weights_=weights_2018
+              if str(era) == "2017" : weights_ = weights_2017
+             
+              try : self.count = weights_[str(name)] 
+
+	      except AttributeError: 
+		  self.count = 1.
+		  self.xSection = 0
+
+	  if self.xSection !=0 : print self.name, 'neentries', self.ttree.GetEntries()        
+	  #self.count = self.tfile.Get('demo/nEvents').GetSumOfWeights()
+	  else :
+	      #self.count = self.ttree.GetEntries()
+	      self.count = 1
+
+      if not doChain : 
+          print 'no chaining...will run on the merged'
 	  if 'Run' not in name : 
-	      if 'preVFP' in location and 'preVFP' not in str(era): self.tfile = TFile.Open(self.location+'/{0:s}_{1:s}preVFP_{2:s}.root'.format( str(name), str(era), str(channel)))
-	      else : self.tfile = TFile.Open(self.location+'/{0:s}_{1:s}_{2:s}.root'.format( str(name), str(era), str(channel)))
-	  else  : self.tfile = TFile.Open(self.location+'/{0:s}_{1:s}.root'.format( str(name), str(era), str(channel)))
-      '''
-      #if not self.isData : self.tfileW = TFile(self.location+'/{0:s}_{1:s}.weights.root'.format( str(name), str(era)))
-      #self.tfile = TFile(self.location+'/*.root'.format( str(name), str(era)))
-      #self.tfileW = TFile(self.location+'/*weights'.format( str(name), str(era)))
-      print 'will try to read from ', self.location, self.tfile.GetName(), name, era, channel
-      self.ttree = self.tfile.Get('Events')
-      print self.name
-      self.puWeight  = "1.0"
-      if not self.isData:
-          htest = self.tfile.Get('hWeights')
-          if isWinclWNjets :
-              print 'you are binding Wjets Inclusive and WNjets exclusive samples....'
-	      if 'WJetsToLNu' not in self.tfile.GetName() : htest = self.tfile.Get('hWeights')
-	      else :  htest = self.tfile.Get('W0genWeights')
+	      if 'preVFP' in location and 'preVFP' not in str(era): tfileloc= self.location+'/{0:s}_{1:s}preVFP_{2:s}.root'.format( str(name), str(era), str(channel))
+	      else : tfileloc=self.location+'/{0:s}_{1:s}_{2:s}.root'.format( str(name), str(era), str(channel))
+	  else : tfileloc = self.location+'/{0:s}_{1:s}.root'.format( str(name), str(era), str(channel))
+	  if isLocal  : self.tfile = TFile(tfileloc)
 
-          if 'WJetsToLNu' in self.tfile.GetName() and 'NLO' in self.tfile.GetName(): htest = self.tfile.Get('hWeights')
+	  else  :
+	      print 'this is not local, will try to read from-->', 'root://cmseos.fnal.gov//', '+ tfileloc', tfileloc 
+	      self.tfile = TFile.Open("root://cmseos.fnal.gov//"+tfileloc, "READ")
+	  '''    
+	  #else : 
+	      #/eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/ST_s-channel_antitop_2016
+	      # root://cmsxrootd.fnal.gov///store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_NLO_2016preVFP/WJetsToLNu_NLO_2016preVFP_MuMu.root
+	      #newlocation = self.location.split['Wjets_T1']
+	      #self.location='root://cmsxrootd.fnal.gov///store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/'+self.location.split('Wjets_T1')[1]
+	      if 'Gjets' in channel : 
+		  
+		  self.location='root://cmseos.fnal.gov//store/user/lpcsusyhiggs/ntuples/nAODv9/Gjets_out/'+self.location.split('Gjets_out')[1]
+		  if  IWDP=='mvaID' : self.location='root://cmseos.fnal.gov//store/user/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_mvaID/'+self.location.split('Gjets_out_mvaID')[1]
+		  if  IWDP=='cutBased' : self.location='root://cmseos.fnal.gov//store/user/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_cutBased/'+self.location.split('Gjets_out_cutBased')[1]
+		  #self.location  = loc.replace('Gjets_out', 'Gjet_out_'+TheSelection)
+		  print 'This is for Gjets', self.location
+	      if 'MuMu' in channel or 'ElEl' in channel: 
+		  self.location='root://cmseos.fnal.gov//store/user/lpcsusyhiggs/ntuples/nAODv9/2Lep/'+self.location.split('2Lep')[1]
+	      print 'check 1======================>', isLocal, self.location
+	      if 'Run' not in name : 
+		  if 'preVFP' in location and 'preVFP' not in str(era): self.tfile = TFile.Open(self.location+'/{0:s}_{1:s}preVFP_{2:s}.root'.format( str(name), str(era), str(channel)))
+		  else : self.tfile = TFile.Open(self.location+'/{0:s}_{1:s}_{2:s}.root'.format( str(name), str(era), str(channel)))
+	      else  : self.tfile = TFile.Open(self.location+'/{0:s}_{1:s}.root'.format( str(name), str(era), str(channel)))
+	  '''
+	  #if not self.isData : self.tfileW = TFile(self.location+'/{0:s}_{1:s}.weights.root'.format( str(name), str(era)))
+	  #self.tfile = TFile(self.location+'/*.root'.format( str(name), str(era)))
+	  #self.tfileW = TFile(self.location+'/*weights'.format( str(name), str(era)))
+	  print 'will try to read from ', self.location, self.tfile.GetName(), name, era, channel
+	  self.ttree = self.tfile.Get('Events')
+	  print self.name
+	  self.puWeight  = "1.0"
+	  if not self.isData:
+	      htest = self.tfile.Get('hWeights')
+	      if isWinclWNjets :
+		  print 'you are binding Wjets Inclusive and WNjets exclusive samples....'
+		  if 'WJetsToLNu' not in self.tfile.GetName() : htest = self.tfile.Get('hWeights')
+		  else :  htest = self.tfile.Get('W0genWeights')
 
-          try:self.count = htest.GetSumOfWeights()
-          except AttributeError: 
-              self.count = 1.
-              self.xSection = 0
+	      if 'WJetsToLNu' in self.tfile.GetName() and 'NLO' in self.tfile.GetName(): htest = self.tfile.Get('hWeights')
+
+	      try:self.count = htest.GetSumOfWeights()
+	      except AttributeError: 
+		  self.count = 1.
+		  self.xSection = 0
       if self.xSection !=0 : print self.name, 'neentries', self.ttree.GetEntries()        
       #self.count = self.tfile.Get('demo/nEvents').GetSumOfWeights()
       else :
@@ -194,7 +307,7 @@ class Sample:
           if 'ElNu' in channel or 'MuNu' in channel: 
               #print 'there you are', channel
               #if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName() and 'incl' not in options: cut = cut +  " && LHE_Njets[0]<1 "
-              if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName() and 'incl' not in options: 
+              if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName() and 'incl' not in options and 'ewkht' not in options: 
                   cut = cut +  " && LHE_Njets[0]<1 "
 
               if 'MuNu' in channel : cut =  cut    + "* ( " + "TrigSF1[0] " +  " )"  
@@ -337,8 +450,8 @@ class Sample:
 		      var = var.replace('IDDown', '')
 		      var = var.replace('IDdown', '')
           
-          #if 'WJets' in h.GetName() and 'NLO' not in h.GetName() :
-          #     cut = cut +  "&& ( " + "weight[0] " +  " ) < 10"
+          if 'WJets' in h.GetName() and 'NLO' not in h.GetName() :
+               cut = cut +  "&& ( " + "weight[0] " +  " ) < 10"
       #if not self.isData :
       #    if 'QCD' in name : cut = cut +  "* ( " + "Photon_genPartFlav_1[0] !=1" +  " ) "
 
@@ -488,17 +601,18 @@ class Block:
 class Tree:
    'Common base class for a physics meaningful tree'
 
-   def __init__(self, fileName, name, isdata, chann, islocal=True, isWjetsWNjets=False,  IWDP='mvaID'):
+   def __init__(self, fileName, name, isdata, chann, islocal=True, isWjetsWNjets=False,  IWDP='mvaID', dochain=False):
       self.name  = name
       self.isData = isdata
       self.blocks = []
       self.channel  = 'MuMu'
       self.isWjetsWNjets = isWjetsWNjets
       self.IWDP=  IWDP
+      self.dochain=  dochain
       self.islocal = islocal
-      self.parseFileName(fileName, chann, islocal, isWjetsWNjets, IWDP)
-
-   def parseFileName(self, fileName, chann, islocal, isWjetsWNjets, IWDP):
+      self.parseFileName(fileName, chann, islocal, isWjetsWNjets, IWDP, dochain)
+      #Sample.Tree(helper.selectSamples(opts.sampleFile, ewkNLODatasets, 'EWKNLO'), 'EWKNLO'  , 0, channel, isLocal)
+   def parseFileName(self, fileName, chann, islocal, isWjetsWNjets, IWDP, dochain):
       f = open(fileName)
     
       for l in f.readlines():
@@ -529,7 +643,7 @@ class Tree:
           color = eval(theColor[0:plusposition])
           color = color + int(theColor[plusposition+1:len(theColor)])
 
-        sample = Sample(name, location,  xsection, isdata, doboson, dokfactor, iszjets, year, chann, islocal, isWjetsWNjets, IWDP)
+        sample = Sample(name, location,  xsection, isdata, doboson, dokfactor, iszjets, year, chann, islocal, isWjetsWNjets, IWDP, dochain)
         coincidentBlock = [l for l in self.blocks if l.name == block]
 
         if(coincidentBlock == []):

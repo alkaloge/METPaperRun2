@@ -120,6 +120,9 @@ if __name__ == "__main__":
             ewk4Datasets = ['W4JetsToLNu']#, 'W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu']
             #ewkDatasets = ['W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu', 'WJetsToLNu']
             #ewkDatasets = ['WJetsToLNu_0J', 'WJetsToLNu_1J', 'WJetsToLNu_2J']
+            ewkHTDatasets = ['WJetsToLNu_HT-100To200',    'WJetsToLNu_HT-200To400',   'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-70To100', 'WJetsToLNu_HT-1200To2500',  'WJetsToLNu_HT-2500ToInf',  'WJetsToLNu_HT-600To800',  'WJetsToLNu_HT-800To1200']
+            ewkHTDatasetsext = ['WJetsToLNu_HT-400To600_ext1', 'WJetsToLNu_HT-600To800_ext1']
+            if '2017' in era : ewkHTDatasets +=ewkHTDatasetsext
 
             ewkNLODatasets = ['WJetsToLNu_NLO']
             ewkDatasets = ['WJetsToLNuincl']
@@ -201,7 +204,9 @@ if __name__ == "__main__":
             ewk61Datasets = ['WJetsToLNuincl61']
             ewkNLO61Datasets = ['WJetsToLNu_NLO61']
             ewkAllDatasets = ['W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu', 'WJetsToLNu']
-
+            ewkHTDatasets = ['WJetsToLNu_HT-100To200',    'WJetsToLNu_HT-200To400',   'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-70To100', 'WJetsToLNu_HT-1200To2500',  'WJetsToLNu_HT-2500ToInf',  'WJetsToLNu_HT-600To800',  'WJetsToLNu_HT-800To1200']
+            ewkHTDatasetsext = ['WJetsToLNu_HT-400To600_ext1', 'WJetsToLNu_HT-600To800_ext1']
+            if '2017' in era : ewkHTDatasets +=ewkHTDatasetsext
             qcdDatasets = ['QCD_HT50to100', 'QCD_HT100to200', 'QCD_HT200to300', 'QCD_HT300to500', 'QCD_HT500to700',  'QCD_HT700to1000','QCD_HT1000to1500', 'QCD_HT1500to2000', 'QCD_HT2000toInf']
 
             #qcdDatasetsPt = [ 'QCD_Pt-20_MuEn']
@@ -241,31 +246,36 @@ if __name__ == "__main__":
             #daDatasets = [ 'SingleMuon_Run2017B']  
         print 'the lumito be used is ',lumi
         isLocal = True
+        doChain = False
         if str(opts.Local) == '0' or str(opts.Local).lower() == 'false' or str(opts.Local).lower() == 'no': isLocal = False
-        treeTT = Sample.Tree(helper.selectSamples(opts.sampleFile, ttDatasets, 'TOP'), 'TOP'  , 0, channel, isLocal)
+        if'top' in inn : treeTT = Sample.Tree(helper.selectSamples(opts.sampleFile, ttDatasets, 'TOP'), 'TOP'  , 0, channel, isLocal, False, "cutID", True)
+
         ##treeST = Sample.Tree(helper.selectSamples(opts.sampleFile, stDatasets, 'STOP'), 'STOP'  , 0)
-        treeDY = Sample.Tree(helper.selectSamples(opts.sampleFile, dyDatasets, 'DY'), 'DY'  , 0, channel, isLocal)
-        treeEW = Sample.Tree(helper.selectSamples(opts.sampleFile, ewDatasets, 'EW'), 'EW'  , 0, channel, isLocal)
-        treeEWKincl = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWKincl'), 'EWKincl'  , 0, channel, isLocal)
-        treeEWKincl61 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk61Datasets, 'EWKincl61'), 'EWKincl61'  , 0, channel, isLocal)
+        if 'dy' in inn:treeDY = Sample.Tree(helper.selectSamples(opts.sampleFile, dyDatasets, 'DY'), 'DY'  , 0, channel, isLocal, False, "cutID", doChain)
+        if 'ew' in inn and 'ewk' not in inn : treeEW = Sample.Tree(helper.selectSamples(opts.sampleFile, ewDatasets, 'EW'), 'EW'  , 0, channel, isLocal, False, "cutID", doChain)
+        if 'ewk' in inn : 
+            treeEWKHT = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkHTDatasets, 'EWKHT'), 'EWKHT'  , 0, channel, isLocal, False, "cutID", doChain)
+            treeEWKincl = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWKincl'), 'EWKincl'  , 0, channel, isLocal, False, "cutID", doChain)
+            treeEWKincl61 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk61Datasets, 'EWKincl61'), 'EWKincl61'  , 0, channel, isLocal, False, "cutID", doChain)
 
-        treeEWKAll = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkAllDatasets, 'EWK'), 'EWK'  , 0, channel, isLocal, True)
+            treeEWKAll = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkAllDatasets, 'EWK'), 'EWK'  , 0, channel, isLocal, True, "cutID", doChain)
 
-        treeEWKNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkNLODatasets, 'EWKNLO'), 'EWKNLO'  , 0, channel, isLocal)
-        treeEWKNLO61 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkNLO61Datasets, 'EWKNLO61'), 'EWKNLO61'  , 0, channel, isLocal)
-        #treeEWK1 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk1Datasets, 'EWK1'), 'EWK1'  , 0, channel, isLocal)
-        #treeEWK2 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk2Datasets, 'EWK2'), 'EWK2'  , 0, channel, isLocal)
-        #treeEWK3 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk3Datasets, 'EWK3'), 'EWK3'  , 0, channel, isLocal)
-        #treeEWK4 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk4Datasets, 'EWK4'), 'EWK4'  , 0, channel, isLocal)
-        if 'qcdpt' not in str(opts.ExtraTag) :      treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasets, 'QCD'), 'QCD'  , 0, channel, isLocal)
-        if 'qcdpt' in str(opts.ExtraTag) :      treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPtBins, 'QCDPt'), 'QCDPt'  , 0, channel, isLocal)
-        #treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPt, 'QCD'), 'QCD'  , 0, channel, isLocal)
-        #treeQCDPtBins = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPtBins, 'QCD'), 'QCD'  , 0, channel, isLocal)
+            treeEWKNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkNLODatasets, 'EWKNLO'), 'EWKNLO'  , 0, channel, isLocal, False, "cutID", doChain)
+            treeEWKNLO61 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkNLO61Datasets, 'EWKNLO61'), 'EWKNLO61'  , 0, channel, isLocal, False, "cutID", doChain)
+	    #treeEWK1 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk1Datasets, 'EWK1'), 'EWK1'  , 0, channel, isLocal, False, "cutID", doChain)
+	    #treeEWK2 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk2Datasets, 'EWK2'), 'EWK2'  , 0, channel, isLocal, False, "cutID", doChain)
+	    #treeEWK3 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk3Datasets, 'EWK3'), 'EWK3'  , 0, channel, isLocal, False, "cutID", doChain)
+	    #treeEWK4 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk4Datasets, 'EWK4'), 'EWK4'  , 0, channel, isLocal, False, "cutID", doChain)
+        if 'qcd' in inn : 
+	    if 'qcdpt' not in str(opts.ExtraTag) :      treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasets, 'QCD'), 'QCD'  , 0, channel, isLocal, False, "cutID", doChain)
+	    if 'qcdpt' in str(opts.ExtraTag) :      treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPtBins, 'QCDPt'), 'QCDPt'  , 0, channel, isLocal, False, "cutID", doChain)
+	    #treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPt, 'QCD'), 'QCD'  , 0, channel, isLocal, False, "cutID", doChain)
+        #treeQCDPtBins = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPtBins, 'QCD'), 'QCD'  , 0, channel, isLocal, False, "cutID", doChain)
         #treeEWKmcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWKmcnlo'), 'EWKmcnlo'  , 0)
         #treeEWK1mcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK1mcnlo'), 'EWK1mcnlo'  , 0)
         #treeEWK2mcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK2mcnlo'), 'EWK2mcnlo'  , 0)
 
-        treeDA = Sample.Tree(helper.selectSamples(opts.sampleFile, daDatasets, 'DA'), 'DATA', 1, channel, isLocal)
+        if 'data' in inn : treeDA = Sample.Tree(helper.selectSamples(opts.sampleFile, daDatasets, 'DA'), 'DATA', 1, channel, isLocal, False, "cutID", doChain)
         #mcTrees = [  treeTT, treeEWK,  treeDY, treeEWK]   
         #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK, treeEWK1, treeEWK2, treeEWK3, treeEWK4]   
         #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK]   
@@ -289,6 +299,7 @@ if __name__ == "__main__":
         if 'ewk' in inn  and 'incl' in inn and '61' in inn : mcTrees = [treeEWKincl61]
         if 'ewknlo' in inn and '61' not in inn : mcTrees = [treeEWKNLO]
         if 'ewknlo61' in inn : mcTrees = [treeEWKNLO61]
+        if 'ewkht' in inn : mcTrees = [treeEWKHT]
         if 'ew' in inn and 'ewk' not in inn : mcTrees = [treeEW]
         if 'allmc' in inn : mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWKNLO]
         if doQCD : 
@@ -401,11 +412,11 @@ if __name__ == "__main__":
             jetcut='-1'
             tagname = str(opts.ExtraTag).lower()
             #njets_jesTotalUp  njets_jerUp
-            if 'njetsgeq0' in str(opts.ExtraTag).lower() : jetcut='>=0'
-            if 'njetsgeq1' in str(opts.ExtraTag).lower() : jetcut='>=1'
-            if 'njetsgincl' in str(opts.ExtraTag).lower() : jetcut='>=0'
-            if 'njetsgt1' in str(opts.ExtraTag).lower() : jetcut='>1'
-            if 'njetsgt0' in str(opts.ExtraTag).lower() : jetcut='>0'
+            if 'jetsgeq0' in str(opts.ExtraTag).lower() : jetcut='>=0'
+            if 'jetsgeq1' in str(opts.ExtraTag).lower() : jetcut='>=1'
+            if 'jetsgincl' in str(opts.ExtraTag).lower() : jetcut='>=0'
+            if 'jetsgt1' in str(opts.ExtraTag).lower() : jetcut='>1'
+            if 'jetsgt0' in str(opts.ExtraTag).lower() : jetcut='>0'
             if 'hitslt1' in str(opts.ExtraTag).lower() : losthits='1'
             if 'hitslt1' in tagname : losthits='1'
             if 'massgt0' in tagname: wtmasscut='0'
@@ -435,7 +446,7 @@ if __name__ == "__main__":
 
             ### ACTUAL CUTS
 	    jetCutMu = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets{6:s}[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst)
-	    jetCutMu = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst)
+	    #jetCutMu = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst)
 
 	    jetCutEl = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{7:s}[0] {1:s} && {4:s}METCorGoodboson_transm{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits,btagcut, njetsSyst)
 
@@ -762,12 +773,14 @@ if __name__ == "__main__":
                         if treename == 'ewk' or treename == "ewkincl":
                             tmp_full.SetTitle("W + jets (LO)")
                         if treename == 'ewkincl61':
-                            tmp_full.SetTitle("W + jets (LO)-61")
+                            tmp_full.SetTitle("W+jets (LO)-61")
                         if treename == 'ewknlo61':
-                            tmp_full.SetTitle("W + jets (NLO)-61")
+                            tmp_full.SetTitle("W+jets (NLO)-61")
 
                         if treename == 'ewknlo':
-                            tmp_full.SetTitle("W + jets (NLO)")
+                            tmp_full.SetTitle("W+jets (NLO)")
+                        if treename == 'ewkht':
+                            tmp_full.SetTitle("W+jets (HT)")
 
                         if treename == 'dy':
                             if doee:

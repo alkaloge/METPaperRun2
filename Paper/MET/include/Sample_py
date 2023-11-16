@@ -148,8 +148,8 @@ class Sample:
 
 
    # this is the correct one!!!
-   def getTH1F(self, lumi, name, var, nbin, xmin, xmax, cut, options, xlabel, doNPV):
-      print 'inside the correct one....'
+   def getTH1F(self, lumi, name, var, nbin, xmin, xmax, cut, options, xlabel, channel):
+      print 'inside the correct one....', name, var, options
       if(xmin == xmax):
         h = TH1F(name, "", len(nbin)-1, array('d', nbin))
         #h = TH1F(name, "", 10,0.,500.)
@@ -168,22 +168,175 @@ class Sample:
               
           #cut = "("+ cut + addTriggers + addDataFilters+ ")" + "* (" + addPrescale +")" 
       lumi *=1000.
-      print 'cross check, isdata=================>', self.isData, lumi, name, var
+      print 'cross check, isdata=================>', self.isData, lumi, name, var,channel, options
       if self.isData: cut =  cut    + ")"
       if not self.isData :
           print 'not data, will also apply weights'
 
           #cut =  cut    + "* ( " + str(lumi)  +  " )"  + "* ( " + str(self.lumWeight)  +  " )" + "* ( " + "Generator_weight " +  " )"  + "* ( " + "weightPUtrue " +  " )"  + "* ( " + "L1PreFiringWeight_Nom " +  " )"
           #cut =  cut    + "&&    (abs(gen_match_1[0])==1 || abs(gen_match_1[0])==15) )" 
-          if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName(): cut = cut +  " && LHE_Njets[0]<1 "
           cut =  cut    + ")" 
-          cut =  cut    + "* ( " + "weight[0] " +  " )"  + "* ( " + "L1PreFiringWeight_Nom[0] " +  " )"  + "* ( " + "IDSF " +  " )"+ "* ( " + "TrigSF" +  " )"+ "* ( " + "IsoSF " +  " )"
-          if 'puup'not in options and 'pudown' not in options : 
+          #cut =  cut    + "* ( " + "weight[0] " +  " )"  + "* ( " + "L1PreFiringWeight_Nom[0] " +  " )"  + "* ( " + "IDSF " +  " )"+ "* ( " + "TrigSF" +  " )"+ "* ( " + "IsoSF " +  " )"
+          cut =  cut    + "* ( " + "weight[0] " +  " )"  + "* ( " + "L1PreFiringWeight_Nom[0] " +  " )"  
+          if 'puup'not in var.lower() and 'pudown' not in var.lower() : 
               cut =  cut    + "* fabs( " + "weightPUtruejson[0] " +  " )"  
-          if 'puup' in options: 
+              #cut =  cut    + "* fabs( " + "weightPUtrue[0] " +  " )"  
+          if 'puup' in var.lower(): 
               cut =  cut    + "* fabs( " + "weightPUtruejson_up[0] " +  " )"  
-          if 'pudown' in options: 
+              var = var.replace('PUUp', '')
+              var = var.replace('PUup', '')
+          if 'pudown' in var.lower(): 
               cut =  cut    + "* fabs( " + "weightPUtruejson_down[0] " +  " )"  
+              var = var.replace('PUDown', '')
+              var = var.replace('PUdown', '')
+
+
+          if 'ElNu' in channel or 'MuNu' in channel: 
+              #print 'there you are', channel
+              #if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName() and 'incl' not in options: cut = cut +  " && LHE_Njets[0]<1 "
+              if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName() and 'incl' not in options and 'ewkht' not in options: 
+                  cut = cut +  " && LHE_Njets[0]<1 "
+
+              if 'MuNu' in channel : cut =  cut    + "* ( " + "TrigSF1[0] " +  " )"  
+	      if 'isoup' not in var.lower() and 'isodown' not in var.lower() :
+		  cut =  cut    + "* ( " + "IsoSF1[0] " +  " )"  
+	      if 'isoup' in var.lower() :
+		  cut =  cut    + "* ( " + "IsoSF1_up[0] " +  " )"  
+		  var = var.replace('ISoUp', '')
+		  var = var.replace('ISoup', '')
+	      if 'isodown' in var.lower() :
+		  cut =  cut    + "* ( " + "IsoSF1_down[0] " +  " )"   
+		  var = var.replace('ISoDown', '')
+		  var = var.replace('ISodown', '')
+
+	      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+		  cut =  cut    + "* ( " + "IDSF1[0] " +  " )"  
+	      if 'idup' in var.lower() :
+		  cut =  cut    + "* ( " + "IDSF1_up[0] " +  " )"  
+		  var = var.replace('IDUp', '')
+		  var = var.replace('IDup', '')
+	      if 'iddown' in var.lower() :
+		  cut =  cut    + "* ( " + "IDSF1_down[0] " +  " )"   
+		  var = var.replace('IDDown', '')
+		  var = var.replace('IDdown', '')
+
+
+          if 'ElEl' in channel or 'MuMu' in channel: 
+              #print 'there you are', channel
+              if 'MuMu' in channel : cut =  cut    + "* ( " + "TrigSF1[0] " +  " )"  + "* ( " + "TrigSF2[0] " +  " )"
+	      if 'isoup' not in var.lower() and 'isodown' not in var.lower() :
+		  cut =  cut    + "* ( " + "IsoSF1[0] " +  " )"  + "* ( " + "IsoSF2[0] " +  " )"
+	      if 'isoup' in var.lower() :
+		  cut =  cut    + "* ( " + "IsoSF1_up[0] " +  " )"  + "* ( " + "IsoSF2_up[0] " +  " )"
+		  var = var.replace('ISoUp', '')
+		  var = var.replace('ISoup', '')
+	      if 'isodown' in var.lower() :
+		  cut =  cut    + "* ( " + "IsoSF1_down[0] " +  " )"   + "* ( " + "IsoSF2_down[0] " +  " )"
+		  var = var.replace('ISoDown', '')
+		  var = var.replace('ISodown', '')
+
+	      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+		  cut =  cut    + "* ( " + "IDSF1[0] " +  " )"  + "* ( " + "IDSF2[0] " +  " )"
+	      if 'idup' in var.lower() :
+		  cut =  cut    + "* ( " + "IDSF1_up[0] " +  " )"  + "* ( " + "IDSF2_up[0] " +  " )"
+		  var = var.replace('IDUp', '')
+		  var = var.replace('IDup', '')
+	      if 'iddown' in var.lower() :
+		  cut =  cut    + "* ( " + "IDSF1_down[0] " +  " )"   + "* ( " + "IDSF2_down[0] " +  " )"
+		  var = var.replace('IDDown', '')
+		  var = var.replace('IDdown', '')
+
+
+
+
+
+          if 'Gjets' in channel : 
+              if 'Gjets' not in channel : cut =  cut    + "* ( " + "TrigSF1[0] " +  " )"  
+              if 'Gjets'  in channel : 
+                  if 'cutbasedtight' in options :
+		      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFT[0] " +  " )"  
+		      if 'idup' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFT_up[0] " +  " )"  
+			  var = var.replace('IDUp', '')
+			  var = var.replace('IDp', '')
+		      if 'iddown' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFT_down[0] " +  " )"  
+			  var = var.replace('IDDown', '')
+			  var = var.replace('IDdown', '')
+
+                  if 'cutbasedmedium' in options :
+		      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFM[0] " +  " )"  
+		      if 'idup' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFM_up[0] " +  " )"  
+			  var = var.replace('IDUp', '')
+			  var = var.replace('IDup', '')
+		      if 'iddown' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFM_down[0] " +  " )"  
+			  var = var.replace('IDDown', '')
+			  var = var.replace('IDdown', '')
+
+                  if 'mvaid80' in options :
+		      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP80[0] " +  " )"  
+		      if 'idup' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP80_up[0] " +  " )"  
+			  var = var.replace('IDUp', '')
+			  var = var.replace('IDup', '')
+		      if 'iddown' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP80_down[0] " +  " )"  
+			  var = var.replace('IDDown', '')
+			  var = var.replace('IDdown', '')
+
+                  if 'mvaid90' in options :
+		      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP90[0] " +  " )"  
+		      if 'idup' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP90_up[0] " +  " )"  
+			  var = var.replace('IDUp', '')
+			  var = var.replace('IDup', '')
+		      if 'iddown' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP90_down[0] " +  " )"  
+			  var = var.replace('IDDown', '')
+			  var = var.replace('IDdown', '')
+
+                  if 'mvaidwp80' in options :
+		      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP80[0] " +  " )"  
+		      if 'idup' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP80_up[0] " +  " )"  
+			  var = var.replace('IDUp', '')
+			  var = var.replace('IDup', '')
+		      if 'iddown' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP80_down[0] " +  " )"  
+			  var = var.replace('IDDown', '')
+			  var = var.replace('IDdown', '')
+
+                  if 'mvaidwp90' in options :
+		      if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP90[0] " +  " )"  
+		      if 'idup' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP90_up[0] " +  " )"  
+			  var = var.replace('IDUp', '')
+			  var = var.replace('IDup', '')
+		      if 'iddown' in var.lower() :
+			  cut =  cut    + "* ( " + "IDSFWP90_down[0] " +  " )"  
+			  var = var.replace('IDDown', '')
+			  var = var.replace('IDdown', '')
+
+              if 'Gjets' not  in channel : 
+		  if 'idup' not in var.lower() and 'iddown' not in var.lower() :
+		      cut =  cut    + "* ( " + "IDSF[0] " +  " )"  
+		  if 'idup' in var.lower() :
+		      cut =  cut    + "* ( " + "IDSF_up[0] " +  " )"  
+		      var = var.replace('IDUp', '')
+		      var = var.replace('IDup', '')
+		  if 'iddown' in var.lower() :
+		      cut =  cut    + "* ( " + "IDSF_down[0] " +  " )"  
+		      var = var.replace('IDDown', '')
+		      var = var.replace('IDdown', '')
+          
           if 'WJets' in h.GetName() and 'NLO' not in h.GetName() :
                cut = cut +  "&& ( " + "weight[0] " +  " ) < 10"
       #if not self.isData :
@@ -195,13 +348,30 @@ class Sample:
 
       if 'u_par' in var or 'u_perp' in var :
 	  if 'parboson' not in var: var = "-1.*"+var
-	  if 'u_perp'  in var: var = var + "/boson_pt"
 	  if 'u_parboson' in var : 
 	      var = var.replace("parboson", "par")
-              var  = var + "+ boson_pt"
-          if 'resp' in var : 
-	      var = var.replace("resp", "")
-	      var  = "("+var + ")/boson_pt"
+
+          if 'Gjets' in channel : 
+	      if 'u_perp'  in var: var = var + "/boson_pt"
+	      if 'u_parboson' in var : 
+		  #var = var.replace("parboson", "par")
+		  var  = var + "+ boson_pt"
+	      if 'resp' in var : 
+		  var = var.replace("resp", "")
+		  var  = "("+var + ")/boson_pt"
+          else: 
+              bpt= "METCorGoodboson_pt"
+              if "METCorGood" in var and "Puppi" not in var : bpt = "METCorGood_T1_pt"
+              if "PuppiMETCorGood" in var  : bpt = "PuppiMETCorGood_pt"
+	      if 'u_perp'  in var: var = var + "/"+bpt
+
+	      if 'u_parboson' in var : 
+		  #var = var.replace("parboson", "par")
+		  var  = var + "+ "+ bpt
+
+	      if 'resp' in var : 
+		  var = var.replace("resp", "")
+		  var  = "("+var + ")/" + bpt
 
 
 
@@ -209,7 +379,7 @@ class Sample:
           #cut = cut +  "&& boson_pt >=0"
           #cut = cut +  "&& boson_pt >=0"
          
-      print '============================>>>>>>>>>>', h.GetName(), cut, 'puweigh = ', options
+      print '============================>>>>>>>>>>', h.GetName(), cut, 'puweigh = ', options, var
       #cut =  cut    + "&& Entry$ < 1000"
       print 'some info....', name, "var", var, "cut", cut, "options", options
       evscale=1.
@@ -434,7 +604,7 @@ class Tree:
      print 'options--------------------------->', options
      if 'njets' in var or 'nTau' in var or 'nMuon' in var: nbin=range(0,10,1)
      if 'mll' in var : 
-         nbin=arange(60,120,2.5)
+         nbin=arange(60,120,2)
      if '_pt' in var : 
          if 'Photon' not in cut :
 	     #if islog < 1 : nbin = range(0,140,10)
@@ -455,13 +625,18 @@ class Tree:
 		 if 'varbin' in options : nbin = [50, 60, 70, 80, 90, 100, 120, 150, 200]
 		 if 'onebin' in options  : nbin=range(50,200,1)
 
-     if 'Photon_r9_1' in var : 
-         nbin = arange(0.8, 1.05, 0.05)
-     if 'Photon_hoe_1' in var : 
-         nbin = arange(0.0, 0.2, 0.01)
+     if 'Photon_r9' in var : 
+         nbin = arange(0.8, 1.05, 0.01)
+     if 'Photon_hoe' in var : 
+         nbin = arange(0.0, 0.2, 0.005)
+     if 'jetIdx' in var : 
+         nbin = arange(-1, 23,1)
 
      if 'iso' in var : 
-         nbin = arange( 0., 0.15, 0.025)
+         nbin = arange( 0., 0.10, 0.005)
+
+     if 'sieie' in var : 
+         nbin = arange( 0., 0.016, 0.002)
 
      if 'WTmass' in var or 'Wmass' in var : 
          islog  = False 
@@ -470,13 +645,13 @@ class Tree:
      if 'eta' in var : 
          nbin = arange(-2.4,2.4,0.1)
      if 'phi' in var or 'dPhi' in var: 
-         nbin = arange(-3.1,3.1,0.2)
+         nbin = arange(-3.14,3.14+0.314,0.314)
          #if 'onebin' in options  : nbin=range(-3,3,1)
      if 'dR' in var or 'dr' in var: 
          nbin = arange(0,4.2,.2)
          #if 'onebin' in options  : nbin=range(-3,3,1)
 
-     if 'tight' in var or 'high' in var or 'is' in var: nbin = range(-1,2)
+     if 'tight' in var or 'high' in var or 'is' in var and 'iso' not in var: nbin = range(-1,2)
      if 'PV' in var : 
          nbin = arange(0,100,0.5)
      if 'ip3d' in var : 
@@ -562,6 +737,7 @@ class Tree:
      bin1Content = h_of.GetBinContent(1)
      bin1Error = sqrt(h_of.GetBinError(0)**2 + h_of.GetBinError(1)**2)
      if 'u_p' in var or 'phi' in var: 
+     #if 'u_p' in var: 
 	 h_of.SetBinContent(1, underflowContent + bin1Content)
 	 h_of.SetBinError(1, bin1Error)
 	 h_of.SetBinError(0, 0.)

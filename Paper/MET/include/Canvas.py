@@ -329,6 +329,7 @@ class Canvas:
              if(self.orderForLegend[j] != -1 and self.orderForLegend[j] == i):
                  self.labels[j] = self.labels[j].replace('QCD MG', 'QCD')
                  self.labels[j] = self.labels[j].replace(' + jets', '+jets')
+                 self.labels[j] = self.labels[j].replace('-61', '')
                  self.myLegend.AddEntry(self.histos[j], self.labels[j], self.labelsOption[j])
       #else:
       #    self.myLegend.AddEntry(self.histos[4], self.labels[4], self.labelsOption[4])
