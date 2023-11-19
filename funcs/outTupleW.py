@@ -607,10 +607,10 @@ class outTupleW() :
 
                 #print '====================>',self.tN[i-1], self.tN[i-1].GetName()
 
+	self.t.SetBranchStatus("*_trans*",1)
         if isMC : 
             print ' this is MC...............'
 	    self.t.SetBranchStatus("GenPart*",1)
-	    self.t.SetBranchStatus("*_tr*",1)
 	    #self.t.SetBranchStatus("*LHE*",1)
 	    self.t.SetBranchStatus("*LHEScaleWeight*",1)
 	    self.t.SetBranchStatus("*Up*",1)

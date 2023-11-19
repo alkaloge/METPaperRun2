@@ -32,6 +32,21 @@ class dupeDetector() :
         print("Duplicate Event Summary: Calls={0:d} Unique Events={1:d}".format(self.nCalls,len(self.runEventList)))
         return
 
+def calculate_transverse_mass(pt_lepton, mass_lepton, met):
+    # Assuming pt_lepton, mass_lepton, and met are the transverse momentum, mass, and missing transverse energy
+    # Convert pt_lepton and met to TVector2
+    vec_lepton = ROOT.TVector2(pt_lepton, 0)
+    vec_met = ROOT.TVector2(met, 0)
+
+    # Calculate Delta Phi
+    delta_phi = vec_lepton.DeltaPhi(vec_met)
+
+    # Calculate transverse mass
+    m_T = ROOT.TMath.Sqrt(2 * pt_lepton * met * (1 - ROOT.TMath.Cos(delta_phi)))
+
+    return m_T
+
+
 
 class Sample:
    'Common base class for all Samples'
@@ -61,7 +76,7 @@ class Sample:
           print 'Ordered a TChaining...will run on the individual files.....'
 
 	  chain_events = r.TChain("Events")
-	  chain_weights = r.TChain("hWeights")
+	  #chain_weights = r.TChain("hWeights")
 	  if 'Run' not in name:
 	      if 'preVFP' in location and 'preVFP' not in str(era):
 		  file_pattern = '{0:s}_{1:s}preVFP_{2:s}'.format(str(name), str(era), str(channel))
@@ -75,6 +90,8 @@ class Sample:
 	  file_patterns = ["Muons.root",  "weights"]  # Adjust these patterns as needed
 	  if 'MuNu' in self.channel : file_patterns = ["/*Muons.root"]  # Adjust these patterns as needed
 	  if 'ElNu' in self.channel : file_patterns = ["/*Electrons.root"]  # Adjust these patterns as needed
+
+          if 'Run' in file_pattern : file_patterns =['/all*root']
 
 	  print "file_patterns", file_patterns, isLocal, file_pattern, location, self.location
 	  # Add all matching files to the TChain
@@ -94,18 +111,18 @@ class Sample:
 		      if 'weights' not in pattern:
 			  chain_events.Add(file_path)
 			  print("Added file to 'Events' chain:", file_path)
-		      else:
-			  chain_weights.Add(file_path)
-			  print("Added weights file to 'hWeights' chain:", file_path)
+		      #else:
+		      #	  chain_weights.Add(file_path)
+	              #	  print("Added weights file to 'hWeights' chain:", file_path)
 	  else:
 	      for pattern in file_patterns:
 		  file_location = "root://cmseos.fnal.gov//" + location + pattern
 		  if 'weights' not in pattern:
 		      chain_events.Add(file_location)
 		      print("Added file to 'Events' chain:", file_location)
-		  else:
-		      chain_weights.Add(file_location)
-		      print("Added weights file to 'hWeights' chain:", file_location)
+		  #else:
+		  #    chain_weights.Add(file_location)
+		  #    print("Added weights file to 'hWeights' chain:", file_location)
 
 	  # Now, you can use 'chain_events' to read from all matched files
 	  nEntries = chain_events.GetEntries()
@@ -116,6 +133,59 @@ class Sample:
 
 	  self.puWeight  = "1.0"
 	  if not self.isData:
+              weights_2018={
+	    'QCD_Pt-120To170_MuEn' : 38023147.1431,
+	    'QCD_Pt-80To120_MuEn' : 45499860.1014,
+	    'ZZTo2L2Nu' : 55393059.2321,
+	    'TTTo2L2Nu' : 10457567170.1,
+	    'WJetsToLNu' : 899814058.903,
+	    'WJetsToLNuincl' : 1.1888747e+09,
+	    'WW' : 15679122.7146,
+	    'QCD_HT1500to2000' : 10411831.0,
+	    'ZZTo4L' : 130483170.281,
+	    'QCD_Pt-30To50_MuEn' : 58737695.0,
+	    'WZ' : 7940000.0,
+	    'QCD_HT500to700' : 49184771.0,
+	    'ST_s-channel' : 68767081.0058,
+	    'ST_t-channel_top' : 18955983283.5,
+	    'WGToLNuG' : 9850083.0,
+	    'ZZZ' : 3690.78421879,
+	    'QCD_Pt-15To20_MuEn' : 9327292.78814,
+	    'W2JetsToLNu' : 40098866.6759,
+	    'ST_tW_antitop' : 251902154.461,
+	    'W1JetsToLNu' : 139159134.165,
+	    'QCD_HT1000to1500' : 13754593.0,
+	    'TTToSemiLeptonic' : 1.43354138329e+11,
+	    'ST_tW_top' : 258137404.748,
+	    'DYJetsToLLM50' : 96233328.0,
+	    'QCD_Pt-1000_MuEn' : 27427130.0,
+	    'QCD_HT700to1000' : 48506751.0,
+	    'WZZ' : 17121.264862,
+	    'QCD_HT100to200' : 82114770.0,
+	    'QCD_Pt-600To800_MuEn' : 37197943.0862,
+	    'W3JetsToLNu' : 20236537.9556,
+	    'QCD_Pt-470To600_MuEn' : 38453444.9026,
+	    'WWW' : 51638.2565607,
+	    'QCD_Pt-20To30_MuEn' : 60641468.4398,
+	    'QCD_HT50to100' : 36944853.0,
+	    'QCD_Pt-170To300_MuEn' : 71870974.0,
+	    'ttWJets' : 27686862.0,
+	    'QCD_HT200to300' : 57336623.0,
+	    'WZTo3LNu' : 83145977.5623,
+	    'QCD_HT300to500' : 61675573.0,
+	    'QCD_Pt-800To1000_MuEn' : 78942993.0,
+	    'DYJetsToLLM10to50' : 94452816.0,
+	    'ST_t-channel_antitop' : 6114949634.87,
+	    'ZZTo2Q2L' : 161924458.071,
+	    'QCD_Pt-20_MuEn' : 16556684.0,
+	    'QCD_HT2000toInf' : 5374711.0,
+	    'WJetsToLNu_NLO' : 5.01811676681e+12,
+	    'QCD_Pt-300To470_MuEn' : 58949766.2914,
+	    'W4JetsToLNu' : 57029839635.0,
+	    'QCD_Pt-50To80_MuEn' : 40022458.0}
+
+
+
               weights_2017={
 		'ZZTo2L2Nu' : 39767479.5829,
 		'TTTo2L2Nu' : 7695841652.17,
@@ -150,9 +220,82 @@ class Sample:
 		'QCD_HT2000toInf' : 1847781.0,
 		'WJetsToLNu_NLO' : 4.53144357309e+12,
 		'W3JetsToLNu' : 19790787.9141}
-              weights_2018=[]
+
+              weights_2016 = {
+		'ZZTo2L2Nu' : 15509971.4162,
+		'TTTo2L2Nu' : 3140127310.67,
+		'WJetsToLNu' : 7.37278808976e+12,
+		'WW' : 15821137.2551,
+		'ZZTo4L' : 251315344.271,
+		'WZ' : 7584000.0,
+		'QCD_HT500to700' : 14212819.0,
+		'ST_s-channel' : 22286424.6235,
+		'ST_t-channel_top' : 6703801969.77,
+		'WGToLNuG' : 8394172.0,
+		'ZZZ' : 66938.696801,
+		'W2JetsToLNu' : 39941566.5092,
+		'ST_tW_antitop' : 83024147.0543,
+		'W1JetsToLNu' : 1.26365736659e+12,
+		'TTToSemiLeptonic' : 43548253970.6,
+		'ST_tW_top' : 80821434.5228,
+		'DYJetsToLLM50' : 82448537.0,
+		'QCD_HT700to1000' : 13194849.0,
+		'WZZ' : 260326.405728,
+		'QCD_HT100to200' : 23717410.0,
+		'QCD_HT1000to1500' : 4365993.0,
+		'WWW' : 897983.02362,
+		'W4JetsToLNu' : 30810512901.7,
+		'ZZTo2Q2L' : 75775135.9249,
+		'ttWJets' : 901003.005917,
+		'QCD_HT200to300' : 17569141.0,
+		'QCD_HT300to500' : 16747056.0,
+		'QCD_HT50to100' : 11197186.0,
+		'DYJetsToLLM10to50' : 26927726.0,
+		'ST_t-channel_antitop' : 1957283183.15,
+		'QCD_HT2000toInf' : 1847781.0,
+		'WJetsToLNu_NLO' : 4.87296446076e+12,
+		'W3JetsToLNu' : 18887529.5137,}
+
+              weights_2016preVFP={
+		'ZZTo2L2Nu' : 16419222.3522,
+		'TTTo2L2Nu' : 2704527656.16,
+		'WJetsToLNu' : 602065852.695,
+		'WW' : 15859130.7831,
+		'QCD_HT1500to2000' : 3503675.0,
+		'ZZTo4L' : 271601384.279,
+		'WZ' : 7934000.0,
+		'QCD_HT500to700' : 15775001.0,
+		'ST_s-channel' : 19596249.8351,
+		'ST_t-channel_top' : 5948135153.64,
+		'WGToLNuG' : 9714707.0,
+		'ZZZ' : 78317.0635339,
+		'W2JetsToLNu' : 44186948.5833,
+		'ST_tW_antitop' : 74766341.1971,
+		'W1JetsToLNu' : 197368322.281,
+		'TTToSemiLeptonic' : 39772305959.2,
+		'ST_tW_top' : 74624668.1187,
+		'DYJetsToLLM50' : 95170542.0,
+		'QCD_HT700to1000' : 15808790.0,
+		'WZZ' : 308416.915451,
+		'QCD_HT100to200' : 26312661.0,
+		'QCD_HT1000to1500' : 4773503.0,
+		'WWW' : 15310.5959079,
+		'W4JetsToLNu' : 28287448247.5,
+		'ZZTo2Q2L' : 88594639.7718,
+		'ttWJets' : 27548593.0,
+		'QCD_HT200to300' : 16524587.0,
+		'QCD_HT300to500' : 16720486.0,
+		'QCD_HT50to100' : 12233035.0,
+		'DYJetsToLLM10to50' : 32305345.0,
+		'ST_t-channel_antitop' : 1983864432.8,
+		'QCD_HT2000toInf' : 1629000.0,
+		'WJetsToLNu_NLO' : 4.98951935909e+12,
+		'W3JetsToLNu' : 18073455.0193, }
+
               weights_=weights_2018
               if str(era) == "2017" : weights_ = weights_2017
+              if str(era) == "2016" : weights_ = weights_2016
+              if str(era) == "2016preVFP" : weights_ = weights_2016preVFP
              
               try : self.count = weights_[str(name)] 
 

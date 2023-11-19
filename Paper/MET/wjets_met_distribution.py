@@ -44,6 +44,14 @@ def makeUPerp(met, phi,boson, boson_phi):
     uPerp = ( "((( -"+ met + "*cos("+phi +" ) "+ " - " +boson + "*cos( " + boson_phi +"))* " + boson + "*sin( " +boson_phi +" )-(- "+ met + "*sin( "+ phi+ " )- " +boson+"*sin(" + boson_phi +" ))* " +boson +"*cos( " +boson_phi +" ))/" +boson +")" )                              
     print "uPerp:  ",uPerp
     return uPerp                                                                                                                                                                                                                                                                      
+
+def makeTransM(met, pt):
+    vec_lepton = ROOT.TVector2(pt, 0)
+    vec_met = ROOT.TVector2(met, 0)
+    delta_phi = vec_lepton.DeltaPhi(vec_met)
+    transm =  "(sqrt(2*"+pt+"*"+met+"*("+ 1-delta_phi+")))"
+    return transm
+
 def makeMET(met):
 # yes this is the smartest function 
     justMET = met 
@@ -246,21 +254,31 @@ if __name__ == "__main__":
             #daDatasets = [ 'SingleMuon_Run2017B']  
         print 'the lumito be used is ',lumi
         isLocal = True
-        doChain = False
+        doChain = True
         if str(opts.Local) == '0' or str(opts.Local).lower() == 'false' or str(opts.Local).lower() == 'no': isLocal = False
         if'top' in inn : treeTT = Sample.Tree(helper.selectSamples(opts.sampleFile, ttDatasets, 'TOP'), 'TOP'  , 0, channel, isLocal, False, "cutID", True)
 
         ##treeST = Sample.Tree(helper.selectSamples(opts.sampleFile, stDatasets, 'STOP'), 'STOP'  , 0)
-        if 'dy' in inn:treeDY = Sample.Tree(helper.selectSamples(opts.sampleFile, dyDatasets, 'DY'), 'DY'  , 0, channel, isLocal, False, "cutID", doChain)
+        if 'dy' in inn:treeDY = Sample.Tree(helper.selectSamples(opts.sampleFile, dyDatasets, 'DY'), 'DY'  , 0, channel, isLocal, False, "cutID", False)
+
         if 'ew' in inn and 'ewk' not in inn : treeEW = Sample.Tree(helper.selectSamples(opts.sampleFile, ewDatasets, 'EW'), 'EW'  , 0, channel, isLocal, False, "cutID", doChain)
-        if 'ewk' in inn : 
+
+        if 'ewkht' in inn : 
             treeEWKHT = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkHTDatasets, 'EWKHT'), 'EWKHT'  , 0, channel, isLocal, False, "cutID", doChain)
+
+        if 'ewkincl' in inn : 
             treeEWKincl = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWKincl'), 'EWKincl'  , 0, channel, isLocal, False, "cutID", doChain)
+
+        if 'ewkincl61' in inn : 
             treeEWKincl61 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk61Datasets, 'EWKincl61'), 'EWKincl61'  , 0, channel, isLocal, False, "cutID", doChain)
 
+        if 'ewk_' in inn : 
             treeEWKAll = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkAllDatasets, 'EWK'), 'EWK'  , 0, channel, isLocal, True, "cutID", doChain)
 
+        if 'ewknlo' in inn and '61' not in inn: 
             treeEWKNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkNLODatasets, 'EWKNLO'), 'EWKNLO'  , 0, channel, isLocal, False, "cutID", doChain)
+
+        if 'ewknlo' in inn and '61' in inn: 
             treeEWKNLO61 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkNLO61Datasets, 'EWKNLO61'), 'EWKNLO61'  , 0, channel, isLocal, False, "cutID", doChain)
 	    #treeEWK1 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk1Datasets, 'EWK1'), 'EWK1'  , 0, channel, isLocal, False, "cutID", doChain)
 	    #treeEWK2 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk2Datasets, 'EWK2'), 'EWK2'  , 0, channel, isLocal, False, "cutID", doChain)
@@ -275,7 +293,7 @@ if __name__ == "__main__":
         #treeEWK1mcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK1mcnlo'), 'EWK1mcnlo'  , 0)
         #treeEWK2mcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK2mcnlo'), 'EWK2mcnlo'  , 0)
 
-        if 'data' in inn : treeDA = Sample.Tree(helper.selectSamples(opts.sampleFile, daDatasets, 'DA'), 'DATA', 1, channel, isLocal, False, "cutID", doChain)
+        if 'data' in inn : treeDA = Sample.Tree(helper.selectSamples(opts.sampleFile, daDatasets, 'DA'), 'DATA', 1, channel, isLocal, False, "cutID", False)
         #mcTrees = [  treeTT, treeEWK,  treeDY, treeEWK]   
         #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK, treeEWK1, treeEWK2, treeEWK3, treeEWK4]   
         #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK]   
@@ -412,15 +430,15 @@ if __name__ == "__main__":
             jetcut='-1'
             tagname = str(opts.ExtraTag).lower()
             #njets_jesTotalUp  njets_jerUp
-            if 'jetsgeq0' in str(opts.ExtraTag).lower() : jetcut='>=0'
-            if 'jetsgeq1' in str(opts.ExtraTag).lower() : jetcut='>=1'
-            if 'jetsgincl' in str(opts.ExtraTag).lower() : jetcut='>=0'
-            if 'jetsgt1' in str(opts.ExtraTag).lower() : jetcut='>1'
-            if 'jetsgt0' in str(opts.ExtraTag).lower() : jetcut='>0'
-            if 'hitslt1' in str(opts.ExtraTag).lower() : losthits='1'
+            if 'jetsgeq0' in tagname : jetcut='>=0'
+            if 'jetsgeq1' in tagname : jetcut='>=1'
+            if 'jetsgincl' in tagname : jetcut='>=0'
+            if 'jetsgt1' in tagname : jetcut='>1'
+            if 'jetsgt0' in tagname : jetcut='>0'
+            if 'hitslt1' in tagname : losthits='1'
             if 'hitslt1' in tagname : losthits='1'
             if 'massgt0' in tagname: wtmasscut='0'
-            if '_transm' in tagname: wtmasscut='0'
+            if '_transm' in var: wtmasscut='0'
             if 'massgt80' in tagname: wtmasscut='80'
             
             if 'jesup' in givein.lower() : 
@@ -443,6 +461,11 @@ if __name__ == "__main__":
             if 'puppi' in tagname : puppicut='Puppi'
             if 'btagm' in tagname : btagcut="M"
             if 'btagt' in tagname : btagcut="T"
+            isocut= '<=0.15'
+            if 'lt0p1' in tagname : isocut ='<= .1'
+            if 'gt0p1' in tagname : isocut ='> .1'
+            if 'gt0p15' in tagname : isocut ='> .15'
+            if 'lt0p15' in tagname : isocut ='<= .15'
 
             ### ACTUAL CUTS
 	    jetCutMu = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets{6:s}[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst)
@@ -450,6 +473,10 @@ if __name__ == "__main__":
 
 	    jetCutEl = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{7:s}[0] {1:s} && {4:s}METCorGoodboson_transm{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits,btagcut, njetsSyst)
 
+
+	    jetCutMu = " (Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] {7:s} && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets{6:s}[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst, isocut)
+
+	    jetCutEl = " (Flag_BadPFMuonDzFilter[0]==1  &&  fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(q_1[0])==1 && iso_1[0]  {8:s} && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{7:s}[0] {1:s} && {4:s}METCorGoodboson_transm{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits,btagcut, njetsSyst, isocut)
             
 
             jetCutInvIso = " (nMuon==1 && pt_1[0]> 29 && (isGlobal_1[0]>0 || isTracker_1[0]>0) && fabs(eta_1[0])<2.4 && fabs(dZ_1[0])<0.2 && fabs(d0_1[0])<0.045 && isTrig_1[0]==2 &&  tightId_1[0] >0   &&  fabs(q_1[0])==1 &&  iso_1[0] > .15 && mediumPromptId_1[0]>0 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets[0]<20 && METCorGoodboson_transm[0]>0 && isStandalone_1[0]>0 && nbtagL[0]==0"
@@ -703,6 +730,7 @@ if __name__ == "__main__":
                     varData = var
                     #if 'Up' in var or 'Down' in var : var.replace("_T1","")
                     print 'this is for data', var, 'bins', reg.bins[reg.rvars.index(var)]
+
                     data_hist = treeDA.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , inn, varTitle, channel, isLog)
 		    d={'{0:s} tmp_full'.format(data_hist.GetName()):data_hist.Integral()}
 		    yields.update(d)

@@ -198,7 +198,8 @@ if args.unique != 'none' :
     print("******* Analyzing only {0:d} events from {1:s} ******.".format(len(uniqueEvents),args.unique))
     
 print("Opening {0:s} as output.".format(outFileName))
-outTuple = outTupleW.outTupleW(outFileName,  era, doSyst=True, isW=True)
+outTuple = outTupleW.outTupleW(outFileName,  era, isMC=isMC, doSyst=True, isW=True)
+#outTuple = outTupleW.outTupleW(outFileName,  era, doSyst=True, isW=True)
 
 
 tStart = time.time()
@@ -214,6 +215,8 @@ for count, e in enumerate(inTree) :
 '''
 if inTree.GetEntries()>0 : 
     for count, e in enumerate(inTree) :
+	#if count % 2000 == 0 :  outTuple.SaveSelfTree()
+
 	if count % countMod == 0 :
 	    print("Count={0:d}".format(count))
 	    if count >= 10000 : countMod = 10000
@@ -343,7 +346,7 @@ if inTree.GetEntries()>0 :
 	    #print 'info..', goodMuonList, len(lepList), lepList, lepMode, cat
 	    # eliminate close leptons amongst selected ones
 	    #goodElectronListExtraLepton, goodMuonListExtraLepton, goodTauList = tauFun.eliminateCloseTauAndLepton(e, goodElectronListExtraLepton, goodMuonListExtraLepton, tauList)
-	    if len(lepList)<1 : continue
+	    if len(lepList)!=1 : continue
 	    #print len(lepList), 'index:', lepList[0], e.Muon_pt[lepList[0]], e.Muon_eta[lepList[0]], 'nMuon', e.nMuon, 'genPartFlav: ', ord(e.Muon_genPartFlav[lepList[0]]), 'genPartIdx: ', e.Muon_genPartIdx[lepList[0]]
 
 	    tauList = tauFun.getGoodTauListWjets(cat, e, lepList[0])
@@ -388,7 +391,11 @@ if inTree.GetEntries()>0 :
 
 	    if len(lepList)<1 : continue
 	    #print 'will fill now', cat,Lep,lepList, tauList, photonList
-            #print 'some info', lepList, electronList, tauList, photonList, e.nMuon
+            #print 'some info', lepList, electronList, tauList, photonList, muonList
+            #some info [1] [] [0, 0, 1] [] []
+            #some info [0] [] [0, 0, 1] [0] []
+            #if lepMode == 'mnu' and len(muonList)> 0  : continue
+            #if lepMode == 'enu' and len(electronList)> 0  : continue
 	    outTuple.FillW(e, cat,Lep,lepList, tauList, photonList, electronList, muonList, isMC,era,doJME, proc)
 
 	    if maxPrint > 0 :
