@@ -80,8 +80,9 @@ if __name__ == "__main__":
     era = str(opts.Year)
     eras = str(opts.Year)
     ee = era
-    
     opts.sampleFile = 'samples_{0:s}_v2.dat'.format(era[:4], channel)
+    #for charr in eras : 
+    #    if 'A' <= charr <= 'D': eras = '2018'
      
     if '2016' in era and 'pre' in era : 
         eras ='2016preVFP'
@@ -130,7 +131,7 @@ if __name__ == "__main__":
             #ewkDatasets = ['WJetsToLNu_0J', 'WJetsToLNu_1J', 'WJetsToLNu_2J']
             ewkHTDatasets = ['WJetsToLNu_HT-100To200',    'WJetsToLNu_HT-200To400',   'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-70To100', 'WJetsToLNu_HT-1200To2500',  'WJetsToLNu_HT-2500ToInf',  'WJetsToLNu_HT-600To800',  'WJetsToLNu_HT-800To1200']
             ewkHTDatasetsext = ['WJetsToLNu_HT-400To600_ext1', 'WJetsToLNu_HT-600To800_ext1']
-            if '2017' in era : ewkHTDatasets +=ewkHTDatasetsext
+            #if '2017' in era : ewkHTDatasets +=ewkHTDatasetsext
 
             ewkNLODatasets = ['WJetsToLNu_NLO']
             ewkDatasets = ['WJetsToLNuincl']
@@ -214,7 +215,7 @@ if __name__ == "__main__":
             ewkAllDatasets = ['W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu', 'WJetsToLNu']
             ewkHTDatasets = ['WJetsToLNu_HT-100To200',    'WJetsToLNu_HT-200To400',   'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-70To100', 'WJetsToLNu_HT-1200To2500',  'WJetsToLNu_HT-2500ToInf',  'WJetsToLNu_HT-600To800',  'WJetsToLNu_HT-800To1200']
             ewkHTDatasetsext = ['WJetsToLNu_HT-400To600_ext1', 'WJetsToLNu_HT-600To800_ext1']
-            if '2017' in era : ewkHTDatasets +=ewkHTDatasetsext
+            #if '2017' in era : ewkHTDatasets +=ewkHTDatasetsext
             qcdDatasets = ['QCD_HT50to100', 'QCD_HT100to200', 'QCD_HT200to300', 'QCD_HT300to500', 'QCD_HT500to700',  'QCD_HT700to1000','QCD_HT1000to1500', 'QCD_HT1500to2000', 'QCD_HT2000toInf']
 
             #qcdDatasetsPt = [ 'QCD_Pt-20_MuEn']
@@ -255,11 +256,13 @@ if __name__ == "__main__":
         print 'the lumito be used is ',lumi
         isLocal = True
         doChain = True
+        doNotChain = False
+        #if '2017' in era : doNotChain = True
         if str(opts.Local) == '0' or str(opts.Local).lower() == 'false' or str(opts.Local).lower() == 'no': isLocal = False
-        if'top' in inn : treeTT = Sample.Tree(helper.selectSamples(opts.sampleFile, ttDatasets, 'TOP'), 'TOP'  , 0, channel, isLocal, False, "cutID", True)
+        if'top' in inn : treeTT = Sample.Tree(helper.selectSamples(opts.sampleFile, ttDatasets, 'TOP'), 'TOP'  , 0, channel, isLocal, False, "cutID", doChain)
 
         ##treeST = Sample.Tree(helper.selectSamples(opts.sampleFile, stDatasets, 'STOP'), 'STOP'  , 0)
-        if 'dy' in inn:treeDY = Sample.Tree(helper.selectSamples(opts.sampleFile, dyDatasets, 'DY'), 'DY'  , 0, channel, isLocal, False, "cutID", False)
+        if 'dy' in inn:treeDY = Sample.Tree(helper.selectSamples(opts.sampleFile, dyDatasets, 'DY'), 'DY'  , 0, channel, isLocal, False, "cutID", doChain)
 
         if 'ew' in inn and 'ewk' not in inn : treeEW = Sample.Tree(helper.selectSamples(opts.sampleFile, ewDatasets, 'EW'), 'EW'  , 0, channel, isLocal, False, "cutID", doChain)
 
@@ -293,7 +296,7 @@ if __name__ == "__main__":
         #treeEWK1mcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK1mcnlo'), 'EWK1mcnlo'  , 0)
         #treeEWK2mcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK2mcnlo'), 'EWK2mcnlo'  , 0)
 
-        if 'data' in inn : treeDA = Sample.Tree(helper.selectSamples(opts.sampleFile, daDatasets, 'DA'), 'DATA', 1, channel, isLocal, False, "cutID", False)
+        if 'data' in inn : treeDA = Sample.Tree(helper.selectSamples(opts.sampleFile, daDatasets, 'DA'), 'DATA', 1, channel, isLocal, False, "cutID", doChain)
         #mcTrees = [  treeTT, treeEWK,  treeDY, treeEWK]   
         #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK, treeEWK1, treeEWK2, treeEWK3, treeEWK4]   
         #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK]   
@@ -312,8 +315,8 @@ if __name__ == "__main__":
         if 'dy' in inn  : mcTrees = [treeDY]
         if 'top' in inn  : mcTrees = [treeTT]
         if 'qcd' in inn : mcTrees = [treeQCD]
-        if 'ewk' in inn  and 'incl' not in inn and 'nlo' not in inn: mcTrees = [treeEWKAll]
-        if 'ewk' in inn  and 'incl' in inn and '61' not in inn: mcTrees = [treeEWKincl]
+        if 'ewk_' in inn  and 'incl' not in inn and 'nlo' not in inn: mcTrees = [treeEWKAll]
+        if 'ewkincl' in inn  and '61' not in inn: mcTrees = [treeEWKincl]
         if 'ewk' in inn  and 'incl' in inn and '61' in inn : mcTrees = [treeEWKincl61]
         if 'ewknlo' in inn and '61' not in inn : mcTrees = [treeEWKNLO]
         if 'ewknlo61' in inn : mcTrees = [treeEWKNLO61]
@@ -431,15 +434,19 @@ if __name__ == "__main__":
             tagname = str(opts.ExtraTag).lower()
             #njets_jesTotalUp  njets_jerUp
             if 'jetsgeq0' in tagname : jetcut='>=0'
+            if 'jetseq0' in tagname : jetcut='==0'
+            #if 'jetseq0wpt' in tagname : jetcut='==0 and jpt<0'
             if 'jetsgeq1' in tagname : jetcut='>=1'
             if 'jetsgincl' in tagname : jetcut='>=0'
             if 'jetsgt1' in tagname : jetcut='>1'
             if 'jetsgt0' in tagname : jetcut='>0'
             if 'hitslt1' in tagname : losthits='1'
             if 'hitslt1' in tagname : losthits='1'
-            if 'massgt0' in tagname: wtmasscut='0'
-            if '_transm' in var: wtmasscut='0'
-            if 'massgt80' in tagname: wtmasscut='80'
+            if 'massgt0' in tagname: wtmasscut='>=0.'
+            if 'massgt80' in tagname : wtmasscut=' > 80.'
+            if 'masslt80' in tagname in tagname: wtmasscut=' < 80.'
+       
+            if '_transm' in str(givein.lower()): wtmasscut='>=0.'
             
             if 'jesup' in givein.lower() : 
                 extracut = 'JESUp'
@@ -458,25 +465,32 @@ if __name__ == "__main__":
                 extracut = 'JERDown'
                 njetsSyst = '_jerDown'
 
-            if 'puppi' in tagname : puppicut='Puppi'
+            if 'puppi' in str(givein.lower()) : puppicut='Puppi'
             if 'btagm' in tagname : btagcut="M"
             if 'btagt' in tagname : btagcut="T"
             isocut= '<=0.15'
-            if 'lt0p1' in tagname : isocut ='<= .1'
-            if 'gt0p1' in tagname : isocut ='> .1'
-            if 'gt0p15' in tagname : isocut ='> .15'
-            if 'lt0p15' in tagname : isocut ='<= .15'
+            if 'isolt0p01' in tagname : isocut ='<= .01'
+            if 'isolt0p005' in tagname : isocut ='<= .005'
+            if 'isolt0p05' in tagname : isocut ='<= .05'
+            if 'isolt0p1' in tagname : isocut ='<= .1'
+            if 'isogt0p1' in tagname : isocut ='> .1'
+            if 'isogt0p15' in tagname : isocut ='> .15'
+            if 'isolt0p15' in tagname : isocut ='<= .15'
+            if 'njets' in str(givein.lower()) : jetcut= '>=0'
+            if 'iso_1' in str(givein.lower()) : isocut='<0.5'
+            isocut += "&& iso_1>=0."
 
             ### ACTUAL CUTS
-	    jetCutMu = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets{6:s}[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst)
+	    #jetCutMu = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets{6:s}[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst)
 	    #jetCutMu = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst)
 
-	    jetCutEl = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{7:s}[0] {1:s} && {4:s}METCorGoodboson_transm{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits,btagcut, njetsSyst)
+	    #jetCutEl = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{7:s}[0] {1:s} && {4:s}METCorGoodboson_transm{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits,btagcut, njetsSyst)
 
 
-	    jetCutMu = " (Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] {7:s} && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets{6:s}[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst, isocut)
 
-	    jetCutEl = " (Flag_BadPFMuonDzFilter[0]==1  &&  fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(q_1[0])==1 && iso_1[0]  {8:s} && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{7:s}[0] {1:s} && {4:s}METCorGoodboson_transm{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits,btagcut, njetsSyst, isocut)
+	    jetCutMu = " (Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] {7:s} && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets{6:s}[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0] {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst, isocut)
+
+	    jetCutEl = " (Flag_BadPFMuonDzFilter[0]==1  &&  fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(q_1[0])==1 && iso_1[0]  {8:s} && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{7:s}[0] {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]  {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits,btagcut, njetsSyst, isocut)
             
 
             jetCutInvIso = " (nMuon==1 && pt_1[0]> 29 && (isGlobal_1[0]>0 || isTracker_1[0]>0) && fabs(eta_1[0])<2.4 && fabs(dZ_1[0])<0.2 && fabs(d0_1[0])<0.045 && isTrig_1[0]==2 &&  tightId_1[0] >0   &&  fabs(q_1[0])==1 &&  iso_1[0] > .15 && mediumPromptId_1[0]>0 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets[0]<20 && METCorGoodboson_transm[0]>0 && isStandalone_1[0]>0 && nbtagL[0]==0"
@@ -490,10 +504,11 @@ if __name__ == "__main__":
             if doee : 
                 jetCut= jetCutEl
                 jetCutInvIso= jetCutElInvIso
-            print 'CCCCCCCCCCCCCCCCUTTTTS', jetCut, 'GiveIn', givein.lower(), tagname
+            #print 'CCCCCCCCCCCCCCCCUTTTTS', jetCut, 'GiveIn', givein.lower(), tagname
             if 'vetophoton' in str(opts.ExtraTag).lower() : jetCut = jetCut+ "&&  VetoPhoton[0]==0"
             if 'vetotau' in str(opts.ExtraTag).lower() : jetCut = jetCut+ "&& VetoTau[0]==0"
             if 'vetoall' in str(opts.ExtraTag).lower() : jetCut = jetCut+ "&& VetoTau[0]==0 && VetoPhoton[0]==0"
+            if 'vetolept' in str(opts.ExtraTag).lower() :  jetCut = jetCut+ "&& VetoElectron[0]==0 && VetoMuon[0] == 0"
             if 'pult10' in tagname : jetCut  = jetCut + " && nPVGood[0]<10"
             if 'pu10to20' in tagname : jetCut  = jetCut + " && nPVGood[0]<20 && nPVGood>=10"
             if 'pu20to30' in tagname : jetCut  = jetCut + " && nPVGood[0]<30 && nPVGood>=20"
@@ -501,7 +516,12 @@ if __name__ == "__main__":
             if 'pu40to50' in tagname : jetCut  = jetCut + " && nPVGood[0]<50 && nPVGood>=40"
             if 'pugeq50' in tagname : jetCut  = jetCut + " && nPVGood[0]>=50 "
             if 'pugeq40' in tagname : jetCut  = jetCut + " && nPVGood[0]>=40 "
-            if 'nbtagl' in tagname :  jetCut  = jetCut + " && nbtagL[0]==0.0 "
+            if 'nbtagl' in tagname :  jetCut  = jetCut + " && nbtagL[0]== 0.0 "
+            if 'nbtagm' in tagname :  jetCut  = jetCut + " && nbtagM[0]== 0.0 "
+            if 'nbtagt' in tagname :  jetCut  = jetCut + " && nbtagT[0]== 0.0 "
+            
+            #if 'jptlt0' in tagname :jetCut = jetCut + "&& jpt[0]<0"
+            #if 'jptgt0' in tagname :jetCut = jetCut + "&& jpt[0]>=0"
 
             #jetCut = "1"
             print color.blue+'************************************************************************************************'+color.end
@@ -694,6 +714,7 @@ if __name__ == "__main__":
             #print "uParaCut ", uParaCut
             #print "cut      ", cut
             fOut= TFile("plotS_{0:s}_{1:s}_{2:s}_{3:s}.root".format(str(era),str(inn), str(givein), str(channel)), "recreate")
+
             for m in met:
                 Variable = ""
                 # here, either make the met, uPara or uPerp, and loop over all five types of met...

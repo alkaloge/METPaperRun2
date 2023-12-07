@@ -8,7 +8,7 @@
 #TT      r.kRed     TTJets  TTJets   /eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/2Lep/WZ_2017              88287.0        0    1   0  0  2017
 #EW      r.kBlue     WZ    WZ    /eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/2Lep/WZ_2017 27.6     0    1   0  0
 DYNLO      r.kYellow+1   DYJetsToLLM50NLO    DYJetsToLLM50NLO   /eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/2Lep/DYJetsToLLM50NLO_2017            6529        0    1   0  0  2017
-DYNLO      r.kYellow+1   DYJetsToLLM10to50 DYJetsToLLM10to50   /eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/2Lep/DYJetsToLLM10to50_2017     18610        0    1   0  0  2017
+DYNLO      r.kYellow+1   DYJetsToLLM10to50NLO DYJetsToLLM10to50NLO   /eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/2Lep/DYJetsToLLM10to50_2017     18610        0    1   0  0  2017
 #
 DY      r.kYellow   DYJetsToLLM50    DYJetsToLLM50   /eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/2Lep/DYJetsToLLM50_2017            6077        0    1   0  0  2017
 #DY      r.kYellow   DYJetsToLLM50    DYJetsToLLM50   /eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/2Lep/DYJetsToLLM50_2017            6077        0    1   0  0  2017

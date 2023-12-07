@@ -7,8 +7,9 @@
 #TT       r.kRed      TTJets         TTJets                             /eos/uscms/store/group/lpcsusyhiggs/ntuples/MetStudies/2018/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/crab_TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/211101_225233/0000/               88287.0        0    1   0  0 
 #TT      r.kRed     TTJets  TTJets   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WZ_2018              88287.0        0    1   0  0  2018
 #EW      r.kBlue     WZ    WZ    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WZ_2018 27.6     0    1   0  0
-DY      r.kYellow   DYJetsToLLM50    DYJetsToLLM50   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/DYJetsToLLM50_2018/            6225.42        0    1   0  0  2018
-DY      r.kYellow   DYJetsToLLM10to50 DYJetsToLLM10to50   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/DYJetsToLLM10to50_2018/     18610        0    1   0  0  2018
+#
+DY      r.kYellow   DYJetsToLLM50    DYJetsToLLM50   /eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/DYJetsToLLM50_2018            6225.42        0    1   0  0  2018
+DY      r.kYellow   DYJetsToLLM10to50 DYJetsToLLM10to50   /eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/DYJetsToLLM10to50_2018     18610        0    1   0  0  2018
 #
 TOP     r.kBlue  ST_s-channel ST_s-channel   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/ST_s-channel_2018  3.74        0    1   0  0  2018
 TOP     r.kBlue  ST_t-channel_top ST_t-channel_top   /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/ST_t-channel_top_2018  115.3        0    1   0  0  2018
@@ -48,7 +49,15 @@ EWK        r.kCyan+2    W2JetsToLNu    W2JetsToLNu    /eos/uscms/store/group/lpc
 EWK        r.kCyan+3    W3JetsToLNu    W3JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/W3JetsToLNu_2018 920.765     0    1   0  0 2018
 EWK        r.kCyan+4    W4JetsToLNu    W4JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/W4JetsToLNu_2018 437.19   0    1   0  0 2018
 EWK        r.kCyan      WJetsToLNu    WJetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2018 46567.220     0    1   0  0 2018
-#
+EWKHT        r.kCyan    WJetsToLNu_HT-70To100 WJetsToLNu_HT-70To100    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-70To100_2018 1563.32     0    1   0  0 2018
+EWKHT        r.kCyan    WJetsToLNu_HT-100To200 WJetsToLNu_HT-100To200    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-100To200_2018 1627.45     0    1   0  0 2018
+EWKHT        r.kCyan    WJetsToLNu_HT-200To400 WJetsToLNu_HT-200To400    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-200To400_2018 435.237     0    1   0  0 2018
+EWKHT        r.kCyan    WJetsToLNu_HT-400To600 WJetsToLNu_HT-400To600    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-400To600_2018 59.18     0    1   0  0 2018
+EWKHT        r.kCyan    WJetsToLNu_HT-600To800 WJetsToLNu_HT-600To800    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-600To800_2018 14.58     0    1   0  0 2018
+EWKHT        r.kCyan    WJetsToLNu_HT-800To1200 WJetsToLNu_HT-800To1200    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-800To1200_2018 6.66     0    1   0  0 2018
+EWKHT        r.kCyan    WJetsToLNu_HT-1200To2500 WJetsToLNu_HT-1200To2500    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-1200To2500_2018 1.61     0    1   0  0 2018
+EWKHT        r.kCyan    WJetsToLNu_HT-2500ToInf WJetsToLNu_HT-2500ToInf    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-2500ToInf_2018 0.039     0    1   0  0 2018
+#2145 
 #EWK        r.kCyan      WJetsToLNu    WJetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2018 61526.7     0    1   0  0 2018
 EWKincl        r.kCyan      WJetsToLNuincl    WJetsToLNuincl    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2018 67350.7     0    1   0  0 2018
 EWKincl61        r.kCyan      WJetsToLNuincl61    WJetsToLNuincl61    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2018 61526.7     0    1   0  0 2018

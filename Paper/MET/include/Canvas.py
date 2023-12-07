@@ -27,6 +27,30 @@ class Canvas:
       if 'gjets' in name  : self.extra = '#gamma + jets'
       #if 'njetsgt0' in name : self.extra += 'N_{jets}>0'
       #allpv=['_pult10', '_pu10to20', '_pu20to30', '_pu30to40', '_pu40to50', '_pugeq50']
+       
+      SR = "isolt0p15_mtmassgt80"
+      B = "isolt0p15_mtmasslt80"
+      D = "isogt0p15_mtmasslt80"
+      C = "isogt0p15_mtmassgt80"
+
+      if 'njetseq0' in name : 
+          if '_pu' not in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=0}"
+          if '_pult10' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=0 - nVtx<10}"
+          if '_pu10to20' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=0 - 10<nVtx<20}"
+          if '_pu20to30' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=0 - 20<nVtx<30}"
+          if '_pu30to40' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=0 - 30<nVtx<40}"
+          if '_pu40to50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=0 - 40<nVtx<50}"
+          if '_pugeq50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=0 - nVtx>50}"
+          if '_pugeq40' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=0 - nVtx>40}"
+      if 'njetseq1' in name : 
+          if '_pu' not in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=1}"
+          if '_pult10' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=1 - nVtx<10}"
+          if '_pu10to20' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=1 - 10<nVtx<20}"
+          if '_pu20to30' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=1 - 20<nVtx<30}"
+          if '_pu30to40' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=1 - 30<nVtx<40}"
+          if '_pu40to50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=1 - 40<nVtx<50}"
+          if '_pugeq50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=1 - nVtx>50}"
+          if '_pugeq40' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}=1 - nVtx>40}"
       if 'njetsgt0' in name : 
           if '_pu' not in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0}"
           if '_pult10' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}>0 - nVtx<10}"
@@ -46,6 +70,12 @@ class Canvas:
           if '_pu40to50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - 40<nVtx<50}"
           if '_pugeq50' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - nVtx>50}"
           if '_pugeq40' in name : self.extra = "#splitline{" + self.extra + "}{N_{jets}#geq0 - nVtx>40}"
+      #if SR in name : self.extra = self.extra + " SR "
+      if B in name : self.extra =  self.extra + " B- iso<.15, W_{T}<80 "
+      if C in name : self.extra =  self.extra + " C- iso>.15, W_{T}>80 "
+      if D in name : self.extra =  self.extra + " D- iso>.15, W_{T}<80 "
+
+
       self.bands = []
       self.options = []
       self.labels = []      
@@ -1328,7 +1358,7 @@ class Canvas:
       
     print '=============>======', option, run, title, lumi
     #plot_var.saveRatio(1,1, isLog, lumi, data_hist, mc_histo, mc_up, mc_down, mc_jesup, mc_jesdown, mc_unclUp, mc_unclDown, varTitle , option, run_str)
-    #print 'inside Canvas' 'hdata, hMC, hjerUp, hjerDown ,  hjesUp, hjesDown ,hunclUp, hunclDown', hdata.GetSumOfWeights(), hMC.GetSumOfWeights(), hjerUp.GetSumOfWeights(), hjerDown.GetSumOfWeights(), hjesUp.GetSumOfWeights(), hjesDown.GetSumOfWeights(), hunclUp.GetSumOfWeights(), hunclDown.GetSumOfWeights()
+    print 'inside Canvas' 'hdata, hMC, hjerUp, hjerDown ,  hjesUp, hjesDown ,hunclUp, hunclDown', hdata.GetSumOfWeights(), hMC.GetSumOfWeights(), hjerUp.GetSumOfWeights(), hjerDown.GetSumOfWeights(), hjesUp.GetSumOfWeights(), hjesDown.GetSumOfWeights(), hunclUp.GetSumOfWeights(), hunclDown.GetSumOfWeights()
     events = 5  
     events = hdata.GetBinWidth(1)
     setUpAxis = 1 
@@ -1351,7 +1381,7 @@ class Canvas:
         lumiSys = 0.016
     leptSys  = 0.02
     trigSys  = 0.02
-    print 'some numbers mc, hdata{}, hMC{}, hjerUp{}, hjerDown{} ,  hjesUp{}, hjesDown{} ,hunclUp{}, hunclDown{}, hpuUp{}, hpuDown{}, hidUp{}, hidDown{}'.format(hdata.GetSumOfWeights(), hMC.GetSumOfWeights(), hjerUp.GetSumOfWeights(), hjerDown.GetSumOfWeights() ,  hjesUp.GetSumOfWeights(), hjesDown.GetSumOfWeights() ,hunclUp.GetSumOfWeights(), hunclDown.GetSumOfWeights(), hpuUp.GetSumOfWeights(), hpuDown.GetSumOfWeights(), hidUp.GetSumOfWeights(), hidDown.GetSumOfWeights())
+    #print 'some numbers mc, hdata{}, hMC{}, hjerUp{}, hjerDown{} ,  hjesUp{}, hjesDown{} ,hunclUp{}, hunclDown{}, hpuUp{}, hpuDown{}, hidUp{}, hidDown{}'.format(hdata.GetSumOfWeights(), hMC.GetSumOfWeights(), hjerUp.GetSumOfWeights(), hjerDown.GetSumOfWeights() ,  hjesUp.GetSumOfWeights(), hjesDown.GetSumOfWeights() ,hunclUp.GetSumOfWeights(), hunclDown.GetSumOfWeights(), hpuUp.GetSumOfWeights(), hpuDown.GetSumOfWeights(), hidUp.GetSumOfWeights(), hidDown.GetSumOfWeights())
     if 'phi' in title.lower() : 
 	hMC.SetMaximum(hMC.GetMaximum()*15)
 	hdata.SetMaximum(hMC.GetMaximum())
@@ -1517,7 +1547,9 @@ class Canvas:
 	uncl_diff_down = hMC.GetBinContent(km) - hunclDown.GetBinContent(km)
 	jer_diff_up = hjerUp.GetBinContent(km) - hMC.GetBinContent(km)
 	jer_diff_down = hMC.GetBinContent(km) - hjerDown.GetBinContent(km)
-        #print 'diffs',  jes_diff_up,  jes_diff_down, jer_diff_up,  jer_diff_down, uncl_diff_up, uncl_diff_down
+        #jer_diff_up = 0
+        #jer_diff_down = 0
+        #if hMC.GetBinContent(km)> 0 : print 'diffs',  jer_diff_up/hMC.GetBinContent(km),  jer_diff_down/hMC.GetBinContent(km), km, jes_diff_up/hMC.GetBinContent(km), jes_diff_down/hMC.GetBinContent(km)
 	conte1tottot = math.sqrt(mc_bin_error**2 + jes_diff_up**2 + uncl_diff_up**2 + jer_diff_up**2 )
 	conte2tottot = math.sqrt(mc_bin_error**2 + jes_diff_down**2 + uncl_diff_down**2 + jer_diff_down**2 )
 

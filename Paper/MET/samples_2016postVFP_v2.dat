@@ -44,7 +44,7 @@ EWKincl61        r.kCyan      WJetsToLNuincl61    WJetsToLNuincl61    /eos/uscms
 #the 44152.6 is already scales X 1.221 the 0-jet
 #EWK        r.kCyan    WJetsToLNu    WJetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2016 67350     0    1   0  0 2016
 EWKNLO        r.kCyan    WJetsToLNu_NLO    WJetsToLNu_NLO    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_NLO_2016 67350.7     0    1   0  0 2016
-EWKNLO61        r.kCyan    WJetsToLNu_NLO61    WJetsToLNu_NLO61    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_NLO_2016 67350.7     0    1   0  0 2016
+EWKNLO61        r.kCyan    WJetsToLNu_NLO61    WJetsToLNu_NLO61    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_NLO_2016 61526.7     0    1   0  0 2016
 #EWKNLO        r.kCyan    WJetsToLNu_NLO    WJetsToLNu_NLO    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_NLO_2016 67350.7     0    1   0  0 2016
 #EWK        r.kCyan    WJetsToLNu_NLO    WJetsToLNu_NLO    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_NLO_2016 61526.7     0    1   0  0 2016
 EWKmcnlo        r.kCyan    WJetsToLNu_0J  WJetsToLNu_0J    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_0J_2016 53330     0    1   0  0 2016  

@@ -7,9 +7,9 @@ years = ["2016preVFP", "2016postVFP", "2017", "2018", "2016"]
 channels = ["Gjets"]
 vars = ["RawMET_pt", "RawPuppiMET_pt", "METCorGood_T1_pt", "PuppiMETCorGood_pt", "METCorGood_T1Smear_pt", "boson_pt", "u_parboson_RawMET", "u_parboson_RawPuppiMET", "u_perp_RawMET", "u_perp_RawPuppiMET", "u_parboson_METCorGood_T1Smear", "u_parboson_METCorGood_T1", "u_perp_METCorGood_T1Smear", "u_perp_METCorGood_T1", "u_parboson_PuppiMETCorGood", "u_perp_PuppiMETCorGood", "METCorGood_T1_phi", "PuppiMETCorGood_phi", "boson_phi", "METCorGood_T1Smear_phi", "RawMET_phi", "RawPuppiMET_phi"]
 
-vars = ["METCorGood_T1_pt", "PuppiMETCorGood_pt", "boson_pt", "METCorGood_T1Smear_pt"]
+#vars = ["METCorGood_T1_pt", "PuppiMETCorGood_pt", "boson_pt", "METCorGood_T1Smear_pt"]
 #vars=["iso_1", "Photon_hoe_1", "Photon_sieie_1"]
-#vars=["METCorGood_T1_pt"]
+#vars=["iso_1"]
 
 #vars=["boson_pt", "boson_phi"]
 alljetcuts = ["njetsgeq0", "njetsgt0"]
@@ -23,8 +23,8 @@ allpv=['_pult10', '_pu10to20', '_pu20to30', '_pu30to40', '_pugeq40']
 #allpv=['_pu30to40']
 pu=""
 #isocuttight_pixelSeed_electronVeto
-#if True:
-for pu in allpv : 
+if True:
+#for pu in allpv : 
     for nj in alljetcuts:
 
 	njetssideband = nj+'_nbtagl_' + ID + "_varbins_sideband"+pu

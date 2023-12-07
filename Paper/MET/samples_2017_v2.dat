@@ -37,6 +37,16 @@ EWK        r.kCyan+2    W2JetsToLNu    W2JetsToLNu    /eos/uscms/store/group/lpc
 EWK        r.kCyan+3    W3JetsToLNu    W3JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/W3JetsToLNu_2017 920.765     0    1   0  0 2017
 EWK        r.kCyan+4    W4JetsToLNu    W4JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/W4JetsToLNu_2017 437.19   0    1   0  0 2017
 EWK        r.kCyan      WJetsToLNu    WJetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2017 46567.220     0    1   0  0 2017
+EWKHT        r.kCyan    WJetsToLNu_HT-70To100 WJetsToLNu_HT-70To100    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-70To100_2017 16950     0    1   0  0 2017
+EWKHT        r.kCyan    WJetsToLNu_HT-100To200 WJetsToLNu_HT-100To200    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-100To200_2017 1627.45     0    1   0  0 2017
+EWKHT        r.kCyan    WJetsToLNu_HT-200To400 WJetsToLNu_HT-200To400    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-200To400_2017 435.237     0    1   0  0 2017
+EWKHT        r.kCyan    WJetsToLNu_HT-400To600 WJetsToLNu_HT-400To600    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-400To600_2017 59.18     0    1   0  0 2017
+EWKHT        r.kCyan    WJetsToLNu_HT-400To600_ext1 WJetsToLNu_HT-400To600_ext1    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-400To600_ext1_2017 59.18     0    1   0  0 2017
+EWKHT        r.kCyan    WJetsToLNu_HT-600To800 WJetsToLNu_HT-600To800    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-600To800_2017 14.58     0    1   0  0 2017
+EWKHT        r.kCyan    WJetsToLNu_HT-600To800_ext1 WJetsToLNu_HT-600To800_ext1    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-600To800_ext1_2017 14.58     0    1   0  0 2017
+EWKHT        r.kCyan    WJetsToLNu_HT-800To1200 WJetsToLNu_HT-800To1200    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-800To1200_2017 6.66     0    1   0  0 2017
+EWKHT        r.kCyan    WJetsToLNu_HT-1200To2500 WJetsToLNu_HT-1200To2500    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-1200To2500_2017 1.61     0    1   0  0 2017
+EWKHT        r.kCyan    WJetsToLNu_HT-2500ToInf WJetsToLNu_HT-2500ToInf    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_HT-2500ToInf_2017 0.039     0    1   0  0 2017
 #
 #EWK        r.kCyan      WJetsToLNu    WJetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2017 61526.7     0    1   0  0 2017
 EWKincl        r.kCyan      WJetsToLNuincl    WJetsToLNuincl    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2017 67350.7     0    1   0  0 2017

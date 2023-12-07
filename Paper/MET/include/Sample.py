@@ -1,9 +1,9 @@
 import ROOT as r
 from array import array
-from ROOT import TTree, TFile, TCut, TH1F, TH2F, THStack, TCanvas, TEntryList
+from ROOT import TTree, TFile, TCut, TH1F, TH1D, TH2F, THStack, TCanvas, TEntryList
 from math import sqrt, sin, cos, pi, tan, acos, atan2,log
 from numpy import arange
-
+import os
 class dupeDetector() :
 
     def __init__(self):
@@ -86,20 +86,43 @@ class Sample:
 	      file_pattern = '{0:s}_{1:s}/'.format(str(name), str(era), str(channel))
 
 	  # Specify the patterns for the files you want to read
-	  file_patterns = [file_pattern + "*Muons.root", file_pattern + "*weights"]  # Adjust these patterns as needed
-	  file_patterns = ["Muons.root",  "weights"]  # Adjust these patterns as needed
-	  if 'MuNu' in self.channel : file_patterns = ["/*Muons.root"]  # Adjust these patterns as needed
-	  if 'ElNu' in self.channel : file_patterns = ["/*Electrons.root"]  # Adjust these patterns as needed
+	  #file_patterns = [file_pattern + "*Muons.root", file_pattern + "*weights"]  # Adjust these patterns as needed
+	  #file_patterns = ["Muons.root",  "weights"]  # Adjust these patterns as needed
+	  if 'MuNu' in self.channel or 'MuMu' in self.channel: file_patterns = "/*Muons.root"  # Adjust these patterns as needed
+	  if 'ElNu' in self.channel or 'ElEl' in self.channel: file_patterns = "/*Electrons.root"  # Adjust these patterns as needed
 
-          if 'Run' in file_pattern : file_patterns =['/all*root']
-
+          if 'Run' in file_pattern : file_patterns ='/all*Run*_*root'
 	  print "file_patterns", file_patterns, isLocal, file_pattern, location, self.location
 	  # Add all matching files to the TChain
+          file_location = location + file_patterns
+	  if not isLocal:
+              file_location = "root://cmseos.fnal.gov//" + location + file_patterns
+
+	  #for pattern in file_patterns:
+	  chain_events.Add(file_location)
+	  print("Added file to 'Events' chain:", file_location)
+	  #else:
+	  #    chain_weights.Add(file_location)
+	  #    print("Added weights file to 'hWeights' chain:", file_location)
+          '''
+         
+	  files = [file for file in os.listdir(location) if file.startswith('all') and file.endswith('.root')]
+
+	  for file_name in files:
+	      file_location = os.path.join(location, file_name)
+	      if not isLocal:
+	  	  file_location = "root://cmseos.fnal.gov//" + file_location
+
+	      chain_events.Add(file_location)
+	      print("Added file to 'Events' chain:", file_location, chain_events.GetEntries())
+
+          '''
+
+          '''
 	  if isLocal:
 	      for pattern in file_patterns:
 		  print('Getting files matching pattern:', pattern)
 		  files = []
-		  filesW = []
 		  for root, dirs, root_files in os.walk(location):
 		      for root_file in root_files:
 			  if pattern in root_file:
@@ -123,7 +146,7 @@ class Sample:
 		  #else:
 		  #    chain_weights.Add(file_location)
 		  #    print("Added weights file to 'hWeights' chain:", file_location)
-
+          '''
 	  # Now, you can use 'chain_events' to read from all matched files
 	  nEntries = chain_events.GetEntries()
 	  #nEntriesW = chain_weights.GetEntries()
@@ -131,11 +154,10 @@ class Sample:
 	  hWeights = None
 	  print 'ok. this works....'
 
-	  self.puWeight  = "1.0"
+
+
 	  if not self.isData:
               weights_2018={
-	    'QCD_Pt-120To170_MuEn' : 38023147.1431,
-	    'QCD_Pt-80To120_MuEn' : 45499860.1014,
 	    'ZZTo2L2Nu' : 55393059.2321,
 	    'TTTo2L2Nu' : 10457567170.1,
 	    'WJetsToLNu' : 899814058.903,
@@ -143,14 +165,12 @@ class Sample:
 	    'WW' : 15679122.7146,
 	    'QCD_HT1500to2000' : 10411831.0,
 	    'ZZTo4L' : 130483170.281,
-	    'QCD_Pt-30To50_MuEn' : 58737695.0,
 	    'WZ' : 7940000.0,
 	    'QCD_HT500to700' : 49184771.0,
 	    'ST_s-channel' : 68767081.0058,
 	    'ST_t-channel_top' : 18955983283.5,
 	    'WGToLNuG' : 9850083.0,
 	    'ZZZ' : 3690.78421879,
-	    'QCD_Pt-15To20_MuEn' : 9327292.78814,
 	    'W2JetsToLNu' : 40098866.6759,
 	    'ST_tW_antitop' : 251902154.461,
 	    'W1JetsToLNu' : 139159134.165,
@@ -158,81 +178,101 @@ class Sample:
 	    'TTToSemiLeptonic' : 1.43354138329e+11,
 	    'ST_tW_top' : 258137404.748,
 	    'DYJetsToLLM50' : 96233328.0,
-	    'QCD_Pt-1000_MuEn' : 27427130.0,
 	    'QCD_HT700to1000' : 48506751.0,
 	    'WZZ' : 17121.264862,
 	    'QCD_HT100to200' : 82114770.0,
-	    'QCD_Pt-600To800_MuEn' : 37197943.0862,
 	    'W3JetsToLNu' : 20236537.9556,
-	    'QCD_Pt-470To600_MuEn' : 38453444.9026,
 	    'WWW' : 51638.2565607,
-	    'QCD_Pt-20To30_MuEn' : 60641468.4398,
 	    'QCD_HT50to100' : 36944853.0,
-	    'QCD_Pt-170To300_MuEn' : 71870974.0,
 	    'ttWJets' : 27686862.0,
 	    'QCD_HT200to300' : 57336623.0,
 	    'WZTo3LNu' : 83145977.5623,
 	    'QCD_HT300to500' : 61675573.0,
-	    'QCD_Pt-800To1000_MuEn' : 78942993.0,
 	    'DYJetsToLLM10to50' : 94452816.0,
+	    'DYJetsToLLM10to50NLO' : 94452816.0,
 	    'ST_t-channel_antitop' : 6114949634.87,
 	    'ZZTo2Q2L' : 161924458.071,
-	    'QCD_Pt-20_MuEn' : 16556684.0,
 	    'QCD_HT2000toInf' : 5374711.0,
 	    'WJetsToLNu_NLO' : 5.01811676681e+12,
-	    'QCD_Pt-300To470_MuEn' : 58949766.2914,
+	    'WJetsToLNu_NLO61' : 5.01811676681e+12,
 	    'W4JetsToLNu' : 57029839635.0,
-	    'QCD_Pt-50To80_MuEn' : 40022458.0}
+	    'WJetsToLNu_HT-800To1200' : 7306187.0,
+	    'WJetsToLNu_HT-200To400' : 57880058.0,
+	    'WJetsToLNu_HT-600To800' : 7718765.0,
+	    'WJetsToLNu_HT-1200To2500' : 6481518.0,
+	    'WJetsToLNu_HT-100To200' : 66195407.0,
+	    'WJetsToLNu_HT-2500ToInf' : 2097648.0,
+	    'WJetsToLNu_HT-400To600' : 7444030.0,
+	    'WJetsToLNu_HT-70To100' : 65203183.0}
 
 
 
               weights_2017={
 		'ZZTo2L2Nu' : 39767479.5829,
+		'WJetsToLNu_HT-800To1200' : 5088483.0,
+		'WJetsToLNu_HT-200To400' : 40682216.0,
 		'TTTo2L2Nu' : 7695841652.17,
 		'WJetsToLNu' : 782170184.765,
+		'WJetsToLNuincl' : 1.0308170e+09,
 		'WW' : 15634116.1995,
 		'QCD_HT1500to2000' : 7613935.0,
-		'ZZTo4L' : 131377912.099,
-		'W1JetsToLNu' : 132885035.121,
+		'WJetsToLNu_HT-600To800' : 5545298.0,
+		'ZZTo4L' : 131669255.013,
+		'WZ' : 7889000.0,
 		'QCD_HT500to700' : 36194860.0,
 		'ST_s-channel' : 48361410.4205,
 		'ST_t-channel_top' : 5734591181.42,
 		'WGToLNuG' : 10302104.0,
-		'ZZZ' : 2232.54036875,
+		'QCD_HT50to100' : 26208347.0,
+		'WJetsToLNu_HT-600To800_ext1' : 3711469.0,
 		'W2JetsToLNu' : 38944765.4379,
 		'ST_tW_antitop' : 184446306.894,
-		'TTToSemiLeptonic' : 1.0374485332e+11,
+		'W1JetsToLNu' : 132885035.121,
+		'TTToSemiLeptonic' : 1.04129959629e+11,
 		'ST_tW_top' : 183284892.385,
-		'DYJetsToLLM50' : 102863931.0,
+		'WJetsToLNu_NLO' : 4.55989376573e+12,
+		'WJetsToLNu_NLO61' : 4.55989376573e+12,
 		'QCD_HT700to1000' : 32934816.0,
+		'WJetsToLNu_HT-1200To2500' : 4290420.0,
 		'WZZ' : 17023.6507413,
 		'QCD_HT100to200' : 73254068.0,
 		'QCD_HT1000to1500' : 4266174.0,
-		'WWW' : 36869.1608253,
+		'WJetsToLNu_HT-100To200' : 47424468.0,
 		'W4JetsToLNu' : 61149413352.2,
-		'ZZTo2Q2L' : 156721190.198,
+		'ZZTo2Q2L' : 162895522.709,
 		'ttWJets' : 27662138.0,
 		'QCD_HT200to300' : 42714435.0,
 		'QCD_HT300to500' : 43429979.0,
-		'QCD_HT50to100' : 26208347.0,
 		'DYJetsToLLM10to50' : 68480179.0,
+		'DYJetsToLLM10to50NLO' : 68480179.0,
 		'ST_t-channel_antitop' : 4462868882.06,
+		'WWW' : 36869.1608253,
+		'DYJetsToLLM50' : 102863931.0,
+		'WJetsToLNu_HT-400To600_ext1' : 1435543.0,
+		'WJetsToLNu_HT-2500ToInf' : 1185699.0,
 		'QCD_HT2000toInf' : 1847781.0,
-		'WJetsToLNu_NLO' : 4.53144357309e+12,
-		'W3JetsToLNu' : 19790787.9141}
+		'WJetsToLNu_HT-400To600' : 5468473.0,
+		'W3JetsToLNu' : 19790787.9141,
+		'WJetsToLNu_HT-70To100' : 40239665.0,}
+
+
+
 
               weights_2016 = {
 		'ZZTo2L2Nu' : 15509971.4162,
 		'TTTo2L2Nu' : 3140127310.67,
 		'WJetsToLNu' : 7.37278808976e+12,
+		'WJetsToLNuincl' : 9.6974101e+12,
 		'WW' : 15821137.2551,
+		'QCD_HT1500to2000' : 3003707.0,
 		'ZZTo4L' : 251315344.271,
 		'WZ' : 7584000.0,
 		'QCD_HT500to700' : 14212819.0,
-		'ST_s-channel' : 22286424.6235,
+		'QCD_HT100to200' : 23717410.0,
+                'ST_s-channel' : 22286424.6235,
 		'ST_t-channel_top' : 6703801969.77,
 		'WGToLNuG' : 8394172.0,
-		'ZZZ' : 66938.696801,
+		'QCD_HT50to100' : 11197186.0,
 		'W2JetsToLNu' : 39941566.5092,
 		'ST_tW_antitop' : 83024147.0543,
 		'W1JetsToLNu' : 1.26365736659e+12,
@@ -240,8 +280,8 @@ class Sample:
 		'ST_tW_top' : 80821434.5228,
 		'DYJetsToLLM50' : 82448537.0,
 		'QCD_HT700to1000' : 13194849.0,
-		'WZZ' : 260326.405728,
 		'QCD_HT100to200' : 23717410.0,
+		'WZZ' : 260326.405728,
 		'QCD_HT1000to1500' : 4365993.0,
 		'WWW' : 897983.02362,
 		'W4JetsToLNu' : 30810512901.7,
@@ -249,17 +289,23 @@ class Sample:
 		'ttWJets' : 901003.005917,
 		'QCD_HT200to300' : 17569141.0,
 		'QCD_HT300to500' : 16747056.0,
-		'QCD_HT50to100' : 11197186.0,
 		'DYJetsToLLM10to50' : 26927726.0,
+		'DYJetsToLLM10to50NLO' : 26927726.0,
 		'ST_t-channel_antitop' : 1957283183.15,
 		'QCD_HT2000toInf' : 1847781.0,
 		'WJetsToLNu_NLO' : 4.87296446076e+12,
+		'WJetsToLNu_NLO61' : 4.87296446076e+12,
 		'W3JetsToLNu' : 18887529.5137,}
+
+
+
+
 
               weights_2016preVFP={
 		'ZZTo2L2Nu' : 16419222.3522,
 		'TTTo2L2Nu' : 2704527656.16,
 		'WJetsToLNu' : 602065852.695,
+		'WJetsToLNuincl' : 7.9600471e+08,
 		'WW' : 15859130.7831,
 		'QCD_HT1500to2000' : 3503675.0,
 		'ZZTo4L' : 271601384.279,
@@ -268,7 +314,7 @@ class Sample:
 		'ST_s-channel' : 19596249.8351,
 		'ST_t-channel_top' : 5948135153.64,
 		'WGToLNuG' : 9714707.0,
-		'ZZZ' : 78317.0635339,
+		'QCD_HT50to100' : 12233035.0,
 		'W2JetsToLNu' : 44186948.5833,
 		'ST_tW_antitop' : 74766341.1971,
 		'W1JetsToLNu' : 197368322.281,
@@ -285,17 +331,167 @@ class Sample:
 		'ttWJets' : 27548593.0,
 		'QCD_HT200to300' : 16524587.0,
 		'QCD_HT300to500' : 16720486.0,
-		'QCD_HT50to100' : 12233035.0,
 		'DYJetsToLLM10to50' : 32305345.0,
+		'DYJetsToLLM10to50NLO' : 32305345.0,
 		'ST_t-channel_antitop' : 1983864432.8,
 		'QCD_HT2000toInf' : 1629000.0,
 		'WJetsToLNu_NLO' : 4.98951935909e+12,
+		'WJetsToLNu_NLO61' : 4.98951935909e+12,
 		'W3JetsToLNu' : 18073455.0193, }
 
-              weights_=weights_2018
-              if str(era) == "2017" : weights_ = weights_2017
-              if str(era) == "2016" : weights_ = weights_2016
-              if str(era) == "2016preVFP" : weights_ = weights_2016preVFP
+              weights_2Lep_2018={
+		'ZZTo2L2Nu' : 55393059.2321,
+		'TTTo2L2Nu' : 10457567170.1,
+		'WJetsToLNu' : 899814058.903,
+		'WW' : 15679122.7146,
+		'ZZTo4L' : 130483170.281,
+		'WZ' : 7940000.0,
+		'ST_s-channel' : 68767081.0058,
+		'ST_t-channel_top' : 18955983283.5,
+		'WGToLNuG' : 9850083.0,
+		'ZZZ' : 3690.78421879,
+		'W2JetsToLNu' : 40098866.6759,
+		'ST_tW_antitop' : 251902154.461,
+		'W1JetsToLNu' : 139159134.165,
+		'TTToSemiLeptonic' : 1.43354138329e+11,
+		'ST_tW_top' : 258137404.748,
+		'WZZ' : 17121.264862,
+		'WWW' : 51638.2565607,
+		'ZZTo2Q2L' : 161924458.071,
+		'W4JetsToLNu' : 57029839635.0,
+		'ttWJets' : 27686862.0,
+		'WZTo3LNu' : 83145977.5623,
+		'WWTo2L2Nu' : 110795280.393,
+		'DYJetsToLLM10to50' : 94452816.0,
+		'DYJetsToLLM10to50NLO' : 94452816.0,
+		'ST_t-channel_antitop' : 6114949634.87,
+		'DYJetsToLLM50NLO' : 3.32347727281e+12,
+		'WZTo2Q2L' : 274146237.028,
+		'WWZ' : 42310.5167204,
+		'DYJetsToLLM50' : 96233328.0,
+		'W3JetsToLNu' : 20236537.9556,}
+
+
+
+              weights_2Lep_2017={
+	        'ZZTo2L2Nu' : 39767479.5829,
+		'TTTo2L2Nu' : 7695841652.17,
+		'WJetsToLNu' : 782170184.765,
+		'WW' : 15634116.1995,
+		'QCD_HT1500to2000' : 7613935.0,
+		'ZZTo4L' : 131669255.013,
+		'WZ' : 7889000.0,
+		'QCD_HT500to700' : 36194860.0,
+		'ST_s-channel' : 48361410.4205,
+		'ST_t-channel_top' : 5734591181.42,
+		'WGToLNuG' : 10302104.0,
+		'ZZZ' : 2232.54036875,
+		'W2JetsToLNu' : 38944765.4379,
+		'ST_tW_antitop' : 184446306.894,
+		'W1JetsToLNu' : 132885035.121,
+		'TTToSemiLeptonic' : 1.04129959629e+11,
+		'ST_tW_top' : 183284892.385,
+		'QCD_HT700to1000' : 32934816.0,
+		'WZZ' : 17023.6507413,
+		'QCD_HT100to200' : 73254068.0,
+		'QCD_HT1000to1500' : 4266174.0,
+		'WWW' : 36869.1608253,
+		'W4JetsToLNu' : 61149413352.2,
+		'ZZTo2Q2L' : 162895522.709,
+		'ttWJets' : 27662138.0,
+		'QCD_HT200to300' : 42714435.0,
+		'WZTo3LNu' : 87396868.0337,
+		'QCD_HT300to500' : 43429979.0,
+		'WWTo2L2Nu' : 81217075.2477,
+		'QCD_HT50to100' : 26208347.0,
+		'DYJetsToLLM10to50' : 68480179.0,
+		'DYJetsToLLM10to50NLO' : 68480179.0,
+		'ST_t-channel_antitop' : 4462868882.06,
+		'DYJetsToLLM50NLO' : 3.32297132154e+12,
+		'WZTo2Q2L' : 279011951.235,
+		'WWZ' : 30386.2912494,
+		'QCD_HT2000toInf' : 1847781.0,
+		'DYJetsToLLM50' : 102863931.0,
+		'W3JetsToLNu' : 19790787.9141,}
+
+
+
+              weights_2Lep_2016={
+		'ZZTo2L2Nu' : 15509971.4162,
+		'TTTo2L2Nu' : 3140127310.67,
+		'WW' : 15821137.2551,
+		'ZZTo4L' : 251315344.271,
+		'WZ' : 7584000.0,
+		'ST_s-channel' : 22286424.6235,
+		'ST_t-channel_top' : 6703801969.77,
+		'WGToLNuG' : 8394172.0,
+		'ZZZ' : 66938.696801,
+		'ST_tW_antitop' : 83024147.0543,
+		'TTToSemiLeptonic' : 43548253970.6,
+		'ST_tW_top' : 80821434.5228,
+		'WZZ' : 260326.405728,
+		'WWW' : 897983.02362,
+		'ZZTo2Q2L' : 75775135.9249,
+		'ttWJets' : 901003.005917,
+		'WZTo3LNu' : 88368496.8435,
+		'WWTo2L2Nu' : 32147079.1672,
+		'DYJetsToLLM10to50' : 26927726.0,
+		'DYJetsToLLM10to50NLO' : 26927726.0,
+		'ST_t-channel_antitop' : 1957283183.15,
+		'DYJetsToLLM50NLO' : 1.22093461966e+12,
+		'WZTo2Q2L' : 129756624.839,
+		'WWZ' : 11495.7245052,
+		'WWZ_ext1' : 784713.668116,
+		'DYJetsToLLM50' : 82448537.0, }
+
+
+
+
+              weights_2Lep_2016preVFP={
+		'ZZTo2L2Nu' : 16419222.3522,
+		'TTTo2L2Nu' : 2704527656.16,
+		'WW' : 15859130.7831,
+		'ZZTo4L' : 271601384.279,
+		'WZ' : 7934000.0,
+		'ST_s-channel' : 19596249.8351,
+		'ST_t-channel_top' : 5948135153.64,
+		'WGToLNuG' : 9714707.0,
+		'ZZZ' : 78317.0635339,
+		'ST_tW_antitop' : 74766341.1971,
+		'TTToSemiLeptonic' : 39772305959.2,
+		'ST_tW_top' : 74624668.1187,
+		'WZZ' : 308416.915451,
+		'WWW' : 15310.5959079,
+		'ZZTo2Q2L' : 88594639.7718,
+		'ttWJets' : 27548593.0,
+		'WZTo3LNu' : 81516536.6689,
+		'WWTo2L2Nu' : 33456497.8642,
+		'DYJetsToLLM10to50' : 32305345.0,
+		'DYJetsToLLM10to50NLO' : 32305345.0,
+		'ST_t-channel_antitop' : 1983864432.8,
+		'DYJetsToLLM50NLO' : 1.52013901776e+12,
+		'WZTo2Q2L' : 150461586.121,
+		'WWZ' : 4447.16192749,
+		'WWZ_ext1' : 866227.881285,
+		'DYJetsToLLM50' : 95170542.0,}
+
+
+
+
+              weights_=None
+              if 'MuNu' in self.channel or 'ElNu' in self.channel:
+
+		  if str(era) == "2018" : weights_ = weights_2018
+		  if str(era) == "2017" : weights_ = weights_2017
+		  if str(era) == "2016" or str(era) == "2016postVFP": weights_ = weights_2016
+		  if str(era) == "2016preVFP" : weights_ = weights_2016preVFP
+
+              if 'MuMu' in self.channel or 'ElEl' in self.channel:
+
+		  if str(era) == "2018" : weights_ = weights_2Lep_2018
+		  if str(era) == "2017" : weights_ = weights_2Lep_2017
+		  if str(era) == "2016" or str(era) == "2016postVFP": weights_ = weights_2Lep_2016
+		  if str(era) == "2016preVFP" : weights_ = weights_2Lep_2016preVFP
              
               try : self.count = weights_[str(name)] 
 
@@ -347,7 +543,6 @@ class Sample:
 	  print 'will try to read from ', self.location, self.tfile.GetName(), name, era, channel
 	  self.ttree = self.tfile.Get('Events')
 	  print self.name
-	  self.puWeight  = "1.0"
 	  if not self.isData:
 	      htest = self.tfile.Get('hWeights')
 	      if isWinclWNjets :
@@ -407,11 +602,11 @@ class Sample:
    def getTH1F(self, lumi, name, var, nbin, xmin, xmax, cut, options, xlabel, channel):
       print 'inside the correct one....', name, var, options
       if(xmin == xmax):
-        h = TH1F(name, "", len(nbin)-1, array('d', nbin))
+        h = TH1D(name, "", len(nbin)-1, array('d', nbin))
         #h = TH1F(name, "", 10,0.,500.)
         ylabel = "# events"
       else:
-        h = TH1F(name, "", nbin, xmin, xmax)
+        h = TH1D(name, "", nbin, xmin, xmax)
         #h = TH1F(name, "", 10,0.,500.)
         bw = int((xmax-xmin)/nbin)
         ylabel = "Events / " + str(bw) + " GeV"
@@ -593,8 +788,8 @@ class Sample:
 		      var = var.replace('IDDown', '')
 		      var = var.replace('IDdown', '')
           
-          if 'WJets' in h.GetName() and 'NLO' not in h.GetName() :
-               cut = cut +  "&& ( " + "weight[0] " +  " ) < 10"
+          #if 'WJets' in h.GetName() and 'NLO' not in h.GetName() :
+          #     cut = cut +  "&& ( " + "weight[0] " +  " ) < 10"
       #if not self.isData :
       #    if 'QCD' in name : cut = cut +  "* ( " + "Photon_genPartFlav_1[0] !=1" +  " ) "
 
@@ -641,7 +836,13 @@ class Sample:
       evscale=1.
      
       
-      try : self.ttree.Project(name, var, cut, options)
+      #try : self.ttree.Project(name, var, cut, options)
+      #cut="( fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15&& iso_1>=0. && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat==1  && njets[0]  >=0 && METCorGoodboson_transm[0]  > 80. && VetoElectron[0]==0 && VetoMuon[0] == 0 && nbtagL[0]== 0.0 )"
+      #cut="(Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && cat==1  && njets[0]  >=0 && METCorGoodboson_transm[0]  > 80. && nbtagL[0]== 0.0 && VetoMuon[0]==0 && VetoElectron[0]==0)"
+      print 'UPDATEDDDDDDDDDDDDDDDDDDDDDDDDDDDd', cut, 'options------------>',options, self.isData
+      #h.SetPrecision(123)
+      if self.isData : self.ttree.SetWeight(1.)
+      try : self.ttree.Project(name, var, cut)
       except AttributeError : 
           h.Scale(0)
           print 'BIG PROBLEM================!!!!!!!!!!!!!!!!!!!!!!########################!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!######################', h.GetName()
@@ -649,11 +850,13 @@ class Sample:
       #except AttributeError : h.Scale(0)
 
 
-      try : print 'some info======================....', self.ttree.GetEntries(), h.GetName(), h.GetSumOfWeights(), h.GetTitle(), "cut", cut, "lumiWeight*lumi", str(self.lumWeight*lumi), "lumi", lumi, 'lumiW', self.lumWeight
+      try : print 'some info======================....entries ', self.ttree.GetEntries(), 'name', h.GetName(), 'SumOfWeights', h.GetSumOfWeights(), 'title', h.GetTitle(), "cut", cut, "lumiWeight*lumi", str(self.lumWeight*lumi), "lumi", lumi, 'lumiW', self.lumWeight
       except AttributeError : print 'cannot give more info....'
       
       #if not self.isData : h.Scale(lumi*self.lumWeight)
       if not self.isData : h.Scale(float(lumi*float(self.lumWeight))*evscale)
+
+      print 'aftermath...', h.GetSumOfWeights(), 'entries', h.GetEntries(), 'underflow', h.GetBinContent(0), 'overflow', h.GetBinContent(h.GetNbinsX() + 1) 
       return h
 
    def getTH2F(self, lumi, name, var, nbinx, xmin, xmax, nbiny, ymin, ymax, cut, options, xlabel, ylabel):
@@ -889,15 +1092,15 @@ class Tree:
      if 'jetIdx' in var : 
          nbin = arange(-1, 23,1)
 
-     if 'iso' in var : 
-         nbin = arange( 0., 0.10, 0.005)
+     if 'iso_1' in var : 
+         nbin = arange( 0., 0.20, 0.005)
 
      if 'sieie' in var : 
          nbin = arange( 0., 0.016, 0.002)
 
-     if 'WTmass' in var or 'Wmass' in var : 
+     if 'WTmass' in var or 'Wmass' in var or '_transm' in var: 
          islog  = False 
-         nbin = range(40,200,10)
+         nbin = range(20,200,10)
   
      if 'eta' in var : 
          nbin = arange(-2.4,2.4,0.1)

@@ -242,34 +242,36 @@ if __name__ == "__main__":
             #daDatasets = [ 'SingleMuon_Run2017B']  
         print 'the lumito be used is ',lumi
         isLocal = True
+        doChain = True
+        inn = str(opts.ExtraTag).lower()
         if str(opts.Local) == '0' or str(opts.Local).lower() == 'false' or str(opts.Local).lower() == 'no': isLocal = False
-        treeTT = Sample.Tree(helper.selectSamples(opts.sampleFile, ttDatasets, 'TOP'), 'TOP'  , 0, channel, isLocal)
+        if 'top' in inn : treeTT = Sample.Tree(helper.selectSamples(opts.sampleFile, ttDatasets, 'TOP'), 'TOP'  , 0, channel, isLocal, False, "cutID", doChain)
         #treeST = Sample.Tree(helper.selectSamples(opts.sampleFile, stDatasets, 'STOP'), 'STOP'  , 0)
-        treeDY = Sample.Tree(helper.selectSamples(opts.sampleFile, dyDatasets, 'DY'), 'DY'  , 0, channel, isLocal)
-        treeDYnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, dyDatasetsNLO, 'DYnlo'), 'DYnlo'  , 0, channel, isLocal)
-        treeEW = Sample.Tree(helper.selectSamples(opts.sampleFile, ewDatasets, 'EW'), 'EW'  , 0, channel, isLocal)
-        #treeEWK = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK'), 'EWK'  , 0, channel, isLocal)
+        if 'dy' in inn and 'nlo' not in inn: treeDY = Sample.Tree(helper.selectSamples(opts.sampleFile, dyDatasets, 'DY'), 'DY'  , 0, channel, isLocal, False, "cutID", doChain)
+        if 'dynlo' in inn : treeDYnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, dyDatasetsNLO, 'DYnlo'), 'DYnlo'  , 0, channel, isLocal, False, "cutID", doChain)
+        if 'ew' in inn and 'ewk' not in inn:treeEW = Sample.Tree(helper.selectSamples(opts.sampleFile, ewDatasets, 'EW'), 'EW'  , 0, channel, isLocal, False, "cutID", doChain)
+        #treeEWK = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK'), 'EWK'  , 0, channel, isLocal, False, "cutID", doChain)
 
         #treeEWKAll = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkAllDatasets, 'EWK'), 'EWK'  , 0, channel, isLocal, True)
 
-        #treeEWKNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkNLODatasets, 'EWKNLO'), 'EWKNLO'  , 0, channel, isLocal)
-        #treeEWK1 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk1Datasets, 'EWK1'), 'EWK1'  , 0, channel, isLocal)
-        #treeEWK2 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk2Datasets, 'EWK2'), 'EWK2'  , 0, channel, isLocal)
-        #treeEWK3 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk3Datasets, 'EWK3'), 'EWK3'  , 0, channel, isLocal)
-        #treeEWK4 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk4Datasets, 'EWK4'), 'EWK4'  , 0, channel, isLocal)
-        #treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasets, 'QCD'), 'QCD'  , 0, channel, isLocal)
-        #treeQCDPt = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPt, 'QCD'), 'QCD'  , 0, channel, isLocal)
-        #treeQCDPtBins = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPtBins, 'QCD'), 'QCD'  , 0, channel, isLocal)
+        #treeEWKNLO = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkNLODatasets, 'EWKNLO'), 'EWKNLO'  , 0, channel, isLocal, False, "cutID", doChain)
+        #treeEWK1 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk1Datasets, 'EWK1'), 'EWK1'  , 0, channel, isLocal, False, "cutID", doChain)
+        #treeEWK2 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk2Datasets, 'EWK2'), 'EWK2'  , 0, channel, isLocal, False, "cutID", doChain)
+        #treeEWK3 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk3Datasets, 'EWK3'), 'EWK3'  , 0, channel, isLocal, False, "cutID", doChain)
+        #treeEWK4 = Sample.Tree(helper.selectSamples(opts.sampleFile, ewk4Datasets, 'EWK4'), 'EWK4'  , 0, channel, isLocal, False, "cutID", doChain)
+        #treeQCD = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasets, 'QCD'), 'QCD'  , 0, channel, isLocal, False, "cutID", doChain)
+        #treeQCDPt = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPt, 'QCD'), 'QCD'  , 0, channel, isLocal, False, "cutID", doChain)
+        #treeQCDPtBins = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdDatasetsPtBins, 'QCD'), 'QCD'  , 0, channel, isLocal, False, "cutID", doChain)
         #treeEWKmcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWKmcnlo'), 'EWKmcnlo'  , 0)
         #treeEWK1mcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK1mcnlo'), 'EWK1mcnlo'  , 0)
         #treeEWK2mcnlo = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWK2mcnlo'), 'EWK2mcnlo'  , 0)
         #treeQCDPt = Sample.Tree(helper.selectSamples(opts.sampleFile, qcdPtDatasets, 'QCD'), 'QCD'  , 0)
 
-        treeDA = Sample.Tree(helper.selectSamples(opts.sampleFile, daDatasets, 'DA'), 'DATA', 1, channel, isLocal)
+        if 'data' in inn : treeDA = Sample.Tree(helper.selectSamples(opts.sampleFile, daDatasets, 'DA'), 'DATA', 1, channel, isLocal, False, "cutID", doChain)
         #mcTrees = [  treeTT, treeEWK,  treeDY, treeEWK]   
         #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK, treeEWK1, treeEWK2, treeEWK3, treeEWK4]   
         #mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWK]   
-        mcTrees = [ treeEW, treeTT, treeDY]   
+        #mcTrees = [ treeEW, treeTT, treeDY]   
         #mcTrees = [ treeDY]   
         #if 'NLO' in str(opts.ExtraTag) : mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWKNLO]   
 
@@ -283,7 +285,7 @@ if __name__ == "__main__":
         inn = str(opts.ExtraTag).lower()
         if 'data' not in inn : treeDA =[]
         mcTrees = []
-        if 'dy' in inn  : mcTrees = [treeDY]
+        if 'dy' in inn  and 'nlo' not in inn: mcTrees = [treeDY]
         if 'dynlo' in inn  : mcTrees = [treeDYnlo]
         if 'singlet' in inn  : mcTrees = [treeST]
         if 'top' in inn  : mcTrees = [treeTT]
@@ -459,11 +461,11 @@ if __name__ == "__main__":
 
             if 'cutbasedtight' in tagname :  jetCutMu  = jetCutMu + " && tightId_1>0 && tightId_2>0 && isTracker_1>0 && isTracker_2>0"
 
-	    jetCutEl = " ( nElectron[0]==2 && Flag_BadPFMuonDzFilter[0]==1  &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 && fabs(q_1[0])==1 && iso_1[0] <= .15 &&   !(fabs(eta_2[0])>1.4442 &&  fabs(eta_2[0])<1.5660) && fabs(d0_2[0])<0.045 && fabs(dZ_2[0])<0.2 &&  fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{3:s}[0] {1:s}   && nbtagL[0]==0.0 && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, losthits)
+	    jetCutEl = " ( nElectron[0]==2 && Flag_BadPFMuonDzFilter[0]==1  &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 && fabs(q_1[0])==1 && iso_1[0] <= .15 &&   !(fabs(eta_2[0])>1.4442 &&  fabs(eta_2[0])<1.5660) && fabs(d0_2[0])<0.045 && fabs(dZ_2[0])<0.2 &&  fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{3:s}[0] {1:s}   && nbtagL[0]==0.0 && Electron_convVeto_1[0] > 0 && Electron_lostHits_1[0]<{5:s} && Electron_convVeto_2[0] > 0 && Electron_lostHits_2[0]<{5:s}".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, losthits)
 
-	    jetCutEl = " ( nElectron[0]==2 && Flag_BadPFMuonDzFilter[0]==1  &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 && fabs(q_1[0])==1 && iso_1[0] <= .15 &&   !(fabs(eta_2[0])>1.4442 &&  fabs(eta_2[0])<1.5660) && fabs(d0_2[0])<0.045 && fabs(dZ_2[0])<0.2 &&  fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVGood[0]>2 && cat=={0:s} && njets{3:s}[0] {1:s}   && nbtagL[0]==0.0 && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, losthits)
+	    jetCutEl = " ( nElectron[0]==2 && Flag_BadPFMuonDzFilter[0]==1  &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 && fabs(q_1[0])==1 && iso_1[0] <= .15 &&   !(fabs(eta_2[0])>1.4442 &&  fabs(eta_2[0])<1.5660) && fabs(d0_2[0])<0.045 && fabs(dZ_2[0])<0.2 &&  fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVGood[0]>2 && cat=={0:s} && njets{3:s}[0] {1:s}   && nbtagL[0]==0.0 && Electron_convVeto_1[0] > 0 && Electron_lostHits_1[0]<{5:s} && Electron_convVeto_2[0] > 0 && Electron_lostHits_2[0]<{5:s}".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, losthits)
 
-	    jetCutEl = " ( nElectron[0]==2 && Flag_BadPFMuonDzFilter[0]==1  &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 && fabs(q_1[0])==1 && iso_1[0] <= .15 &&   !(fabs(eta_2[0])>1.4442 &&  fabs(eta_2[0])<1.5660) && fabs(d0_2[0])<0.045 && fabs(dZ_2[0])<0.2 &&  fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVGood[0]>2 && cat=={0:s} && njets{3:s}[0] {1:s}  && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, losthits)
+	    jetCutEl = " ( nElectron[0]==2 && Flag_BadPFMuonDzFilter[0]==1  &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 && fabs(q_1[0])==1 && iso_1[0] <= .15 &&   !(fabs(eta_2[0])>1.4442 &&  fabs(eta_2[0])<1.5660) && fabs(d0_2[0])<0.045 && fabs(dZ_2[0])<0.2 &&  fabs(q_2[0])==1 && iso_2[0] <= .15 && nPVGood[0]>2 && cat=={0:s} && njets{3:s}[0] {1:s}  && Electron_convVeto_1[0] > 0 && Electron_lostHits_1[0]<{5:s} && Electron_convVeto_2[0] > 0 && Electron_lostHits_2[0]<{5:s}".format(docat, jetcut, wtmasscut, njetsSyst, puppicut, losthits)
 
 
             jetCut= jetCutMu

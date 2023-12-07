@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import ROOT as r
-from   ROOT import gROOT, TCanvas, TFile, TGraphErrors, TMath,  SetOwnership, TColor, kYellow, kGreen, kWhite, kMagenta, kCyan, kBlue
+from   ROOT import gROOT, TCanvas, TFile, TGraphErrors, TMath,  SetOwnership, TColor, kYellow, kGreen, kWhite, kMagenta, kCyan, kBlue, kTeal, kOrange
 import math, sys, optparse, array, time, copy
 
 import include.helper     as helper
@@ -31,8 +31,8 @@ if __name__ == "__main__":
     doee = True
     if 'mm' in str(opts.Channel.lower()) or 'mu' in str(opts.Channel.lower()) : doee = False
     if 'el' in str(opts.Channel.lower()) : doee = True
-    if doee :   channel = 'ElEl'
-    else :   channel = 'MuMu'
+    if doee :   channel = 'ElNu'
+    else :   channel = 'MuNu'
     era = str(opts.Year)
     eras = str(opts.Year)
     ee = era
@@ -56,8 +56,26 @@ if __name__ == "__main__":
 
     #plotS_2018_data_njetsgeq0_hitslt2_METWmass_MuMu.root
     isLog = 1
+    SR = "isolt0p15_mtmassgt80"
+    B = "isolt0p15_mtmasslt80"
+    D = "isogt0p15_mtmasslt80"
+    C = "isogt0p15_mtmassgt80"
+
     fin ='{0:s}'.format(str(opts.FileIn))
+    finB = fin.replace(SR, B)
+    finC = fin.replace(SR, C)
+    finD = fin.replace(SR, D)
+
     fIn = TFile.Open(fin, 'read')
+    fInB = fInC = fInD = None
+    doQCD = int(opts.DoQCD)
+    #doQCD = True
+    if doQCD: 
+        print 'filenames in sideband', finB, finC, finD
+	fInB = TFile.Open(finB, 'read')
+	fInC = TFile.Open(finC, 'read')
+	fInD = TFile.Open(finD, 'read')
+
     #fIn = TFile.Open('plotS.root'.format(str(opts.Year), str(opts.varr), str(opts.Channel)), 'read')
     print 'fIn is.......', fIn.GetName()
     fIn.ls()
@@ -65,12 +83,25 @@ if __name__ == "__main__":
     #histo_dy_MET_T1_pt
 
     samples=['dy', 'qcd', 'top', 'ew', 'ewk']
-    samples=['top', 'ew', 'dy' ]
-    #samples=['dy' ]
+    #ewk ewknlo61 ewkincl
     givein ='{0:s}'.format(str(opts.varr))
-    if 'nlo' in str(opts.ExtraTag).lower() : 
-        samples=['top', 'ew', 'dynlo' ]
-        print 'NLO->', samples
+    inn = str(opts.ExtraTag).lower()
+    if 'nlo' in inn :
+        if '61' not in inn:  samples=['dy', 'qcd', 'top', 'ew', 'ewknlo']
+        if '61' in inn:   samples=['dy', 'qcd', 'top', 'ew', 'ewknlo61']
+
+    if 'winclwnjets' in inn : samples=['dy', 'qcd', 'top', 'ew', 'ewk']
+
+    if 'incl' in inn and 'nlo' not in inn and 'wnjets' not in inn:
+        if '61' not in inn:   samples=['dy', 'qcd', 'top', 'ew', 'ewkincl']
+        if '61' in inn:   samples=['dy', 'qcd', 'top', 'ew', 'ewkincl61']
+    
+    if 'winclht' in inn :
+        samples=['dy', 'qcd', 'top', 'ew', 'ewkht']
+
+    if 'qcdpt' in inn : 
+        samples[1]='qcdpt'
+        inn = inn.replace('QCDHT', 'QCDPt')
 
     #varbs = ['MET_T1_pt', 'PuppiMET_pt', 'boson_pt']
     #if 'all' not in givein : 
@@ -82,16 +113,18 @@ if __name__ == "__main__":
 
     dirs = ['Up', 'Down']
     colors = {'dy':kYellow, 'dynlo':kYellow+1, 'qcd':kMagenta, 'top':kBlue, 'ew':kGreen+2, 'ewk':kCyan, 'ewknlo':kCyan+1}
+    colors = {'dy':kYellow, 'qcd':kMagenta, 'qcdpt':kMagenta, 'top':kBlue, 'ew':kGreen+2, 'ewk':kCyan, 'ewknlo':kCyan+1, 'ewknlo61':kCyan+1, 'ewkincl':kTeal, 'ewkincl61':kTeal-4, 'ewkht':kCyan+1}
     channel=''
-    doQCD = int(opts.DoQCD)
     doStat = True
-    doSyst = True
-    #doSyst = False
     #doStat = False
-    if 'mll' in givein or 'Raw' in givein or 'boson_pt' in givein or 'boson_phi' in givein or '_significance' in givein: doSyst = False
-    if 'boson_pt' in givein or 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein: doSyst = False
-    if 'mm' in str(opts.Channel.lower()) or 'mu' in str(opts.Channel.lower()) : channel = 'MuMu'
-    else  : channel = 'ElEl'
+    doSyst = False
+    doSyst = True
+    #if 'mll' in givein or 'Raw' in givein or 'boson_pt' in givein or 'boson_phi' in givein or '_significance' in givein: doSyst = False
+    if 'mll' in givein or 'Raw' in givein or '_significance' in givein or 'njets_' in givein: doSyst = False
+    #if 'boson_pt' in givein or 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein: doSyst = False
+    if 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein: doSyst = False
+    if 'mm' in str(opts.Channel.lower()) or 'mu' in str(opts.Channel.lower()) : channel = 'MuNu'
+    else  : channel = 'ElNu'
     era = str(opts.Year)
     eras = str(opts.Year)
     run=era
@@ -99,6 +132,7 @@ if __name__ == "__main__":
     leg = [0.65, 0.6, 0.81, 0.9]
     puname=''
     data_hist = fIn.Get('histo_data')
+
     #data_hist.Sum2()
     varTitle    = 'p_{T}^{miss} [GeV]'
     if 'boson_pt' in givein.lower() : varTitle    = 'q_{T} [GeV]'
@@ -136,6 +170,10 @@ if __name__ == "__main__":
     for i in range(len(samples)):
 	s = str(samples[i])
 	histo = fIn.Get("histo_" + s + "_" + v)
+	if '61' in s : 
+	    #histo.Scale(kFactor) 
+	    histo.SetTitle ( histo.GetTitle().replace("-61", "") )  #histo.GetTitleSetTitle("W + jets (NLO)")
+	    histo.Sumw2()
 	
 	# Calculate the contribution of the current sample
 	contribution = histo.Integral() / hMC_total.Integral() * 100
@@ -176,24 +214,68 @@ if __name__ == "__main__":
 
     kFactor = float(data_hist.GetSumOfWeights()/hMC_total.GetSumOfWeights())
     if 'noscale' in str(opts.ExtraTag).lower() :  kFactor=1.
+
+
+    normQCD = 1.
+    if doQCD : 
+	for v in varbs :
+            data_histB = data_histC = data_histD = None
+	    histoB = histoC = histoD = None
+	    data_histB = fInB.Get('histo_data')
+	    data_histC = fInC.Get('histo_data')
+	    data_histD = fInD.Get('histo_data')
+            print 'data in sideband', data_histB.GetSumOfWeights(), data_histD.GetSumOfWeights(), 'shape', data_histC.GetSumOfWeights()
+	    #for s in samples :
+	    for i in range(0, len(samples)):
+		s = str(samples[i])
+		histo = fIn.Get("histo_"+s+"_"+v)
+		if 'qcd' not in s:  #get all histograms in the SB regions but not QCD --> this is what you are going to calculate 
+		    histoB = fInB.Get("histo_"+s+"_"+v)
+                    data_histB.Add(histoB, -1)
+		    histoC = fInC.Get("histo_"+s+"_"+v)
+                    data_histC.Add(histoC, -1)
+		    histoD = fInD.Get("histo_"+s+"_"+v)
+                    data_histD.Add(histoD, -1)
+
+            normQCD = data_histB.GetSumOfWeights()/data_histD.GetSumOfWeights()
+            print 'some infor for QCD data driven', data_histC.GetSumOfWeights(), normQCD, data_histB.Integral()/data_histD.Integral()
+    #exit()
+
     for v in varbs :
         #for s in samples :
         for i in range(0, len(samples)):
             s = str(samples[i])
-            histo = fIn.Get("histo_"+s+"_"+v)
+            if 'qcd' not in s : 
+                histo = fIn.Get("histo_"+s+"_"+v)
+                histo.SetName("histo_"+s+"_"+v)
+                print 'not qcd in current sample', doQCD, s, "histo_"+s+"_"+v
+
+            if 'qcd' in s and not doQCD: histo = fIn.Get("histo_"+s+"_"+v)
+            if 'qcd' in s and doQCD: 
+                histo = data_histC.Clone("histo_"+s+"_"+v)
+                histo.SetName("histo_"+s+"_"+v)
+                histo.SetTitle("QCD multijet (ABCD)")
+                histo.Scale(normQCD)
+                print 'SHOULD REPLACE QCD with DATA ESTIMATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1'
+                print 'datadriven QCD', histo.GetName(), histo.GetSumOfWeights()
+
             if kFactor !=1. : histo.Scale(kFactor)
             try : print histo.GetName(), histo.Integral()
 
             except ReferenceError : print 'something went wrong with', "histo_"+s+"_"+v
+            histo.SetName("histo_"+s+"_"+v)
             histo.SetFillColorAlpha(colors[s],0.5)
-            #allh1.Add(histo)
-            #    print 'SCaling MC to Data........................'
-            #    allh1.Add(histo)
-            if not mc_histo: mc_histo = copy.deepcopy(histo) 
-            else : mc_histo.Add(histo, 1.)
+
+            if not mc_histo: 
+                mc_histo = copy.deepcopy(histo) 
+            else : 
+                #if 'qcd' not in histo.GetName() : 
+		mc_histo.Add(histo, 1.)
+
             mc_stack.Add(histo)
+	    print '<====================just added=====================> ', histo.GetName(), ' to the list...'
             #mc_stack.Draw()
-            #if 'Cor' in v : v = v.replace("METCor","MET")
+
             if doStat : 
 		for sy in Othersysts : 
 		    for d in dirs :
@@ -255,9 +337,7 @@ if __name__ == "__main__":
 			    if not mc_jerup : 
 				mc_jerup = copy.deepcopy(htemp)
 				print 'should be jerup integral', hname, mc_jerup.Integral(), mc_jerup.Integral()/mc_histo.Integral()
-			    else : 
-                                mc_jerup.Add(htemp)
-                                print 'adding jerup', htemp.GetName(), htemp.GetTitle(), htemp.Integral()
+			    else : mc_jerup.Add(htemp)
 
 			if 'JERDown' in hname : 
 			    if not mc_jerdown : 
@@ -290,16 +370,18 @@ if __name__ == "__main__":
     #print data_hist.Integral(), mc_histo.Integral(), mc_jesup.Integral(), mc_jesdown.Integral()
     option=str(opts.varr)
     run_str =str(lumi)
+    logcase=[0, 1]
     logcase=[1]
-    print 'some testttttttttt', mc_histo.GetName(), mc_histo.GetSumOfWeights(), mc_histo.GetTitle(), data_hist.GetSumOfWeights()
     
     for ilog in logcase :
         isLog = ilog
 	plot_var = Canvas.Canvas("test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog"%(str(opts.varr),puname, channel, puname ,str(era), str(int(doQCD)), str(opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])               
+
 	plot_var.addStack(mc_stack  , "hist" , 1, 1)
 	plot_var.addHisto(data_hist, "E,SAME"   , "Data"  , "PL", r.kBlack , 1, 0)
 
 	plot_var.saveRatioGjets(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, mc_puup, mc_pudown, mc_idup, mc_iddown, varTitle , option, run_str)
+	#plot_var.saveRatio(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, varTitle , option, run_str)
 
 
     print color.blue+'********************************************DONE***************************************************'+color.end

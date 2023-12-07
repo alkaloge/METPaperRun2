@@ -359,10 +359,10 @@ if __name__ == "__main__":
        '''
     else : 
 	isLog = 1
-	plot_varr = Canvas.Canvas("test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog_norm"%(str(opts.varr),puname, channel, puname ,str(era), str(int(doQCD)), str(opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])               
-	plot_varr.addStack(mc_stack_norm  , "hist" , 1, 1)
+	plot_varr = Canvas.Canvas("test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog"%(str(opts.varr),puname, channel, puname ,str(era), str(int(doQCD)), str(opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])               
+	plot_varr.addStack(mc_stack  , "hist" , 1, 1)
 	plot_varr.addHisto(data_hist, "E,SAME"   , "Data"  , "PL", r.kBlack , 1, 0)
-	plot_varr.saveRatioGjets(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, mc_puup, mc_pudown, mc_idup, mc_iddown, varTitle , option+"_norm", run_str)
+	plot_varr.saveRatioGjets(1,1, isLog, lumi, data_hist, mc_histo,  mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, mc_puup, mc_pudown, mc_idup, mc_iddown, varTitle , option, run_str)
     '''
     if '_pu' in  str(opts.ExtraTag).lower() : 
 	for ilog in logcase :
