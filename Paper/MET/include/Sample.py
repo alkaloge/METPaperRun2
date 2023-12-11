@@ -799,25 +799,26 @@ class Sample:
 
       if 'u_par' in var or 'u_perp' in var :
 	  if 'parboson' not in var: var = "-1.*"+var
-	  if 'u_parboson' in var : 
-	      var = var.replace("parboson", "par")
+	  #if 'u_parboson' in var : 
+	  #    var = var.replace("parboson", "par")
 
-          if 'Gjets' in channel : 
+          if 'Gjets' in channel or 'ElEl' in channel or 'MuMu' in channel: 
 	      if 'u_perp'  in var: var = var + "/boson_pt"
 	      if 'u_parboson' in var : 
-		  #var = var.replace("parboson", "par")
+		  var = var.replace("parboson", "par")
 		  var  = var + "+ boson_pt"
 	      if 'resp' in var : 
 		  var = var.replace("resp", "")
 		  var  = "("+var + ")/boson_pt"
-          else: 
+
+          if 'ElNu' in channel or 'MuNu' in channel: 
               bpt= "METCorGoodboson_pt"
               if "METCorGood" in var and "Puppi" not in var : bpt = "METCorGood_T1_pt"
               if "PuppiMETCorGood" in var  : bpt = "PuppiMETCorGood_pt"
 	      if 'u_perp'  in var: var = var + "/"+bpt
 
 	      if 'u_parboson' in var : 
-		  #var = var.replace("parboson", "par")
+		  var = var.replace("parboson", "par")
 		  var  = var + "+ "+ bpt
 
 	      if 'resp' in var : 
