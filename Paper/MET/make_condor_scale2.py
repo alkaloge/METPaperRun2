@@ -1,9 +1,10 @@
 import os
 import errno
 
+proc = "ZToLL"
 # Directory containing the input files
 input_dir = "/eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/Gjets_out_cutBased/"
-input_dir = "/eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/2Lep/"
+if proc == "ZToLL" : input_dir = "/eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/2Lep/"
 
 # Output directory for JDL files
 output_ = "condor_jdls/"
@@ -14,7 +15,6 @@ get_scales_script = "get_scales2.py"
 # Create the output directory if it doesn't exist
 
 # List of dataset names to include
-datasets = ["DYJets"]
 
 # List of keywords to identify datasets
 keywords = ["DYJetsToLLM50_"]#, "SingleMuon", "SingleElectron", "EGamma"]
@@ -22,18 +22,20 @@ keywords = ["DYJetsToLLM50_", "SingleMuon", "SingleElectron"]
 keywords = ["DYJetsToLLM50_", "SingleMuon", 'EGamma']
 keywords = ["SingleMuon", "SingleElectron"]
 keywords = ["DYJetsToLLM50_", 'NLO']
-keywords = ['GJets_HT', 'EGamma', 'SinglePhoton', 'WJetsToLNu_NLO', 'QCD_HT']
-keywords = ["DYJetsToLLM10", "DYJetsToLLM50NLO_", "SingleMuon", "SingleElectron", "EGamma"]
-keywords = ["DYJetsToLLM50NLO_", "SingleMuon", "SingleElectron", "EGamma"]
+#keywords = ["DYJetsToLLM10", "DYJetsToLLM50NLO_", "SingleMuon", "SingleElectron", "EGamma"]
+if proc == "ZToLL" : keywords = ["DYJetsToLLM50NLO_", "SingleMuon", "SingleElectron", "EGamma"]
+
+#keywords = ['GJets_HT', 'EGamma', 'SinglePhoton', 'WJetsToLNu_NLO', 'QCD_HT']
 #keywords = ['WJetsToLNu_NLO', 'QCD_HT']
 #keywords = ['QCD_HT']
 
 isMC = 'ismc'
 #ismc MuMu 2018 dy
-Channels=['MuMu', 'ElEl']
-#Channels=['Gjets']
+Channels=['Gjets']
+if proc == "ZToLL" : Channels=['MuMu', 'ElEl']
+
 year='2016preVFP'
-year='2018'
+year='2017'
 Njet=['eq0', 'eq1', 'geq1', 'incl']
 #Njet=['eq1', 'incl']
 
