@@ -52,6 +52,7 @@ Njet=['eq1', 'geq1', 'incl']
 xsecslist = {
     "DYJets": 6077,
     "DYJetsNLO": 6529,
+    "DYJetsToLLM50NLO": 6529,
     'GJets_HT-100To200' : 9226.0,
     'GJets_HT-200To400' : 2300.0,
     'GJets_HT-400To600' : 277.0,
@@ -120,9 +121,11 @@ weights_2018  = { 'GJets_HT-100To200' : 31722998.0, 'GJets_HT-200To400' : 624391
     'ZLLGJets_PtG-130' : 204929.638267,
     'ZLLGJets_PtG-15to130' : 7322772437.29,
     'ZNuNuGJets_PtG-130' : 989122.179502,
+    'DYJetsToLLM50NLO' : 3.32347727281e+12
 }
 
 weights_2017={
+    'DYJetsToLLM50NLO' : 3.32297132154e+12,
     'GJets_HT-600ToInf' : 11425129.0,
     'ZLLGJets_PtG-130' : 204859.098256,
     'GJets_HT-100To200' : 23353502.0,
@@ -176,6 +179,7 @@ weights_2016={
     'GJets_HT-200To400' : 18315845.0,
     'WWG' : 236166.066732,
     'WJetsToLNu_NLO' : 4.87296446076e+12,
+    'DYJetsToLLM50NLO' : 1.22093461966e+12,
 
 
 }
@@ -206,6 +210,7 @@ weights_2016preVFP={
     'GJets_HT-200To400' : 19037560.0,
     'WWG' : 270688.411372,
     'WJetsToLNu_NLO' : 4.98951935909e+12,
+    'DYJetsToLLM50NLO' : 1.52013901776e+12,
 
 
 }
@@ -213,6 +218,7 @@ weights_2016preVFP={
 mc=str(sys.argv[1])
 year=str(sys.argv[2])
 njet=str(sys.argv[3])
+channel=str(sys.argv[4])
 
 weights_ =weights_2018
 if year=='2017' : weights_ = weights_2017
@@ -224,8 +230,8 @@ if '2016preVFP' in year: weights_ = weights_2016preVFP
 
 
 w_ = float(xsecslist[mc]*lumis[year]*1000./weights_[mc])
-if 'GJets' not in mc : w_ *=-1.
-mc_file_path = "scales_{0:s}_{1:s}_Gjets_Njet{2:s}.root".format(mc, year, njet)
+if 'GJets' not in mc and '50NLO' not in mc: w_ *=-1.
+mc_file_path = "scales_{0:s}_{1:s}_{3:s}_Njet{2:s}.root".format(mc, year, njet, channel)
 print 'will try', mc, 'xsec= ', xsecslist[mc], 'w= ', weights_[mc], 'njet', njet
 print mc_file_path, mc, 'xsec= ', xsecslist[mc], 'w= ', weights_[mc],  'lumi', lumis[year] , 'tot_w', xsecslist[mc]*lumis[year]*1000/weights_[mc], "scaled to ", w_
 scale_histos(mc_file_path, w_)

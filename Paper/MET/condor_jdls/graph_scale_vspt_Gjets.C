@@ -158,7 +158,8 @@ if (vs == "_npv_")
 */
 //std::vector<Double_t> bins;
 
- Float_t bins[12]; // Maximum size of the array //for Gjets
+ Float_t bins[10]; // Maximum size of the array //for Gjets
+// Float_t bins[12]; // Maximum size of the array //for Gjets
 
 //0., 20., 40., 60., 80., 100., 120., 160., 200., 300., 500
     if (vs == "_vspt_")
@@ -166,7 +167,7 @@ if (vs == "_npv_")
         //Float_t vspt_bins[] = {0., 20., 40., 60., 80., 100., 120., 160., 200., 300., 500.};
 
         //this is for Gjets, for DY that should start lower
-        Float_t vspt_bins[] = {0, 20., 40., 60., 80., 100., 120., 160., 200., 300., 500.};
+        Float_t vspt_bins[] = {40., 60., 80., 100., 120., 160., 200., 300., 500.};
 
         std::copy(vspt_bins, vspt_bins + sizeof(vspt_bins) / sizeof(Float_t), bins);
     }
