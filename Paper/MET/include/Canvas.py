@@ -418,7 +418,7 @@ class Canvas:
 	trigErr = binC*trigSys
 	hMC.SetBinError(km, math.sqrt(binE*binE + lumiErr*lumiErr + leptErr*leptErr + trigErr*trigErr))
 
-    if 'Raw' in option or 'boson_pt' in option or 'mll' in option : 
+    if 'Raw' in option  or 'mll' in option or ('boson_' in option and 'Goodboson_' not in option): 
         statOnly = 1
         doAllErrors = 0
     if option == "test": 
@@ -807,9 +807,9 @@ class Canvas:
 	hMC.SetBinError(km, math.sqrt(binE*binE + lumiErr*lumiErr + leptErr*leptErr + trigErr*trigErr))
 	#hMC.SetBinError(km, math.sqrt(binE*binE + lumiErr*lumiErr ))#+ leptErr*leptErr + trigErr*trigErr))
 
-    if 'boson_pt' in option : 
-	doAllErrors = 0
-	statOnly = 1
+    #if 'Goodboson_' in option : 
+    #	doAllErrors = 0
+    #	statOnly = 1
     
     if option == "test": 
 	doAllErrors = 0
@@ -1387,7 +1387,7 @@ class Canvas:
 	hdata.SetMaximum(hMC.GetMaximum())
 
 
-    if 'mll' in option  or 'boson_pt' in option or 'iso_' in option or 'Photon_' in option or 'Raw' in option: 
+    if 'mll' in option  or ('boson_pt' in option and 'Goodboson_' not in option) or 'iso_' in option or 'Photon_' in option or 'Raw' in option: 
         statOnly = 1
         doAllErrors = 0
 

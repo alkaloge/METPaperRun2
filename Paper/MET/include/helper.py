@@ -17,7 +17,7 @@ def selectSamples(inputfile, selList, sType = 'DATA'):
                     tmp_splitline = line.split()
                     tmp_splitline[0] = 'synching'
                     tmp_file.write('  '.join(tmp_splitline+['\n']))
-                checkedList.append(_sample)
+                if _sample not in checkedList : checkedList.append(_sample)
                 typeList   .append(int(line.split()[-1]))
     print "check 1", selList, "checkedList", checkedList
     for _selSample in selList:

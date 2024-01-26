@@ -115,7 +115,7 @@ class outTupleGjets() :
         self.allsystJets = []
         self.jetsVariations=[]
         self.list_of_arrays = []           
-        #self.list_of_arrays_noES = []           
+        self.list_of_arrays_noES = []           
         self.list_of_arraysJetsPt = []           
         self.list_of_arraysJetsEta = []           
         self.list_of_arraysJetsPhi = []           
@@ -125,6 +125,7 @@ class outTupleGjets() :
         self.list_of_arraysJetsNbtagM = []           
         self.list_of_arraysJetsNbtagT = []           
         self.list_of_arraysJetsNjets = []           
+        self.list_of_arraysJetsFlavour = []           
 	self.tauMass = 1.7768 
 
         if not isMC  :
@@ -147,7 +148,7 @@ class outTupleGjets() :
 			    if 'MET' in i_ and 'T1' in i_: 
 				self.allsystMET.append(i_+jes+var)
 				self.list_of_arrays.append(array('f', [ 0 ]))
-				#self.list_of_arrays_noES.append(array('f', [ 0 ]))
+				self.list_of_arrays_noES.append(array('f', [ 0 ]))
  
                     '''
 		    if 'nom' in jes :
@@ -156,7 +157,6 @@ class outTupleGjets() :
 			    #self.list_of_arrays.append(array('f', [ 0 ]))
 
                     ''' 
-                
             for jes in self.jessyst :
 		    if 'nom' in jes :   
 			self.allsystJets.append(jes)
@@ -164,11 +164,11 @@ class outTupleGjets() :
 			self.list_of_arraysJetsNbtagL.append( array('i',[-1]))
 			self.list_of_arraysJetsNbtagM.append( array('i',[-1]))
 			self.list_of_arraysJetsNbtagT.append( array('i',[-1]))
-			self.list_of_arraysJetsFlavour.append( array('i',[-1]*8))
-			self.list_of_arraysJetsEta.append( array('f',[-9.99]*8))
-			self.list_of_arraysJetsPt.append( array('f',[-9.99]*8))
-			self.list_of_arraysJetsPhi.append( array('f',[-9.99]*8))
-			#self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*12))
+			self.list_of_arraysJetsFlavour.append( array('i',[-1]*15))
+			self.list_of_arraysJetsEta.append( array('f',[-9.99]*15))
+			self.list_of_arraysJetsPt.append( array('f',[-9.99]*15))
+			self.list_of_arraysJetsPhi.append( array('f',[-9.99]*15))
+			self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*15))
 		    else :   
 		        for var in varss :
 			    self.allsystJets.append(jes+var)
@@ -176,11 +176,11 @@ class outTupleGjets() :
 			    self.list_of_arraysJetsNbtagL.append( array('i',[-1]))
 			    self.list_of_arraysJetsNbtagM.append( array('i',[-1]))
 			    self.list_of_arraysJetsNbtagT.append( array('i',[-1]))
-			    self.list_of_arraysJetsFlavour.append( array('i',[-1]*8))
-			    self.list_of_arraysJetsEta.append( array('f',[-9.99]*8))
-			    self.list_of_arraysJetsPt.append( array('f',[-9.99]*8))
-			    self.list_of_arraysJetsPhi.append( array('f',[-9.99]*8))
-			    #self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*12))
+			    self.list_of_arraysJetsFlavour.append( array('i',[-1]*12))
+			    self.list_of_arraysJetsEta.append( array('f',[-9.99]*12))
+			    self.list_of_arraysJetsPt.append( array('f',[-9.99]*12))
+			    self.list_of_arraysJetsPhi.append( array('f',[-9.99]*12))
+			    self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*12))
                      
                 
 	    #for i_ in self.allsystMET :  self.list_of_arrays.append(array('f', [ 0 ]))
@@ -215,7 +215,7 @@ class outTupleGjets() :
         self.Photon_mvaID_WP90_1             = array('f',[0])
         self.Photon_cutBased_1             = array('I',[0])
         self.Photon_genPartFlav_1             = array('I',[0])
-        self.Photon_jetIdx_1             = array('i',[0])
+        self.Photon_jetIdx_1             = array('I',[0])
         self.Photon_pdgId_1             = array('I',[0])
 
         self.VetoTau            = array('I',[0])
@@ -458,12 +458,17 @@ class outTupleGjets() :
         self.nbtagM     = array('i',[-1])
         self.nbtagT     = array('i',[-1])
 
-        self.jflavour     = array('i',[-1]*8)
-        self.jeta     = array('f',[-9.99]*8)
-        self.jpt     = array('f',[-9.99]*8)
-        self.jphi     = array('f',[-9.99]*8)
-        #self.btagDeep     = array('f',[-9.99]*8)
+        self.jflavour     = array('i',[-9]*12)
+        self.jeta     = array('f',[-9.99]*12)
+        self.jpt     = array('f',[-9.99]*12)
+        self.jphi     = array('f',[-9.99]*12)
+        self.btagDeep     = array('f',[-9.99]*12)
 
+        self.bpt_1     = array('f',[0]*12)
+        self.beta_1    = array('f',[0]*12)
+        self.bphi_1    = array('f',[0]*12)
+        self.bcsv_1    = array('f',[0]*12)
+        self.bcsvfv_1    = array('f',[0]*12)
       
         self.t.Branch('mll',        self.mll,         'mll/F' )
         self.t.Branch('zll_pt',        self.zll_pt,         'zll_pt/F' )
@@ -487,7 +492,7 @@ class outTupleGjets() :
         self.t.Branch('Photon_hoe_1',              self.Photon_hoe_1,               'Photon_hoe_1/F' )
         self.t.Branch('Photon_electronVeto_1',              self.Photon_electronVeto_1,               'Photon_electronVeto_1/F' )
         self.t.Branch('Photon_genPartFlav_1',              self.Photon_genPartFlav_1,               'Photon_genPartFlav_1/I' )
-        self.t.Branch('Photon_jetIdx_1',              self.Photon_jetIdx_1,               'Photon_jetIdx_1/i' )
+        self.t.Branch('Photon_jetIdx_1',              self.Photon_jetIdx_1,               'Photon_jetIdx_1/I' )
         self.t.Branch('Photon_pdgId_1',              self.Photon_pdgId_1,               'Photon_pdgId_1/I' )
         self.t.Branch('Photon_cutBased_1',              self.Photon_cutBased_1,               'Photon_cutBased_1/I' )
         self.t.Branch('Photon_mvaID_WP80_1',              self.Photon_mvaID_WP80_1,               'Photon_mvaID_WP80_1/F' )
@@ -651,11 +656,11 @@ class outTupleGjets() :
         self.t.Branch('nbtagM', self.nbtagM, 'nbtagM/i')
         self.t.Branch('nbtagT', self.nbtagT, 'nbtagT/i')
 
-        self.t.Branch('jflavour',     self.jflavour,     'jflavour[8]/i' )
-        self.t.Branch('jeta',     self.jeta,     'jeta[8]/F' )
-        self.t.Branch('jpt',     self.jpt,     'jpt[8]/F' )
-        self.t.Branch('jphi',     self.jphi,     'jphi[8]/F' )
-        #self.t.Branch('btagDeep', self.btagDeep, 'btagDeep[8]/F')
+        self.t.Branch('jflavour',     self.jflavour,     'jflavour[12]/i' )
+        self.t.Branch('jeta',     self.jeta,     'jeta[12]/F' )
+        self.t.Branch('jpt',     self.jpt,     'jpt[12]/F' )
+        self.t.Branch('jphi',     self.jphi,     'jphi[12]/F' )
+        self.t.Branch('btagDeep', self.btagDeep, 'btagDeep[12]/F')
 
         if doSyst : 
                 #Book the branches and the arrays needed to store variables
@@ -664,18 +669,20 @@ class outTupleGjets() :
                     iMET= 'MET'
                     iiMET=iMET+'_noES'
 	            self.t.Branch(iMET, self.list_of_arrays[i], '{0:s}/F'.format(iMET))
-	            #self.t.Branch(iiMET, self.list_of_arrays_noES[i], '{0:s}/F'.format(iiMET))
+	            self.t.Branch(iiMET, self.list_of_arrays_noES[i], '{0:s}/F'.format(iiMET))
 
 		for i, v in enumerate(self.allsystJets):
 		    self.t.Branch('njets{0:s}'.format(v), self.list_of_arraysJetsNjets[i], 'njets{0:s}/i'.format(v))
 		    self.t.Branch('nbtagL{0:s}'.format(v), self.list_of_arraysJetsNbtagL[i], 'nbtagL{0:s}/i'.format(v))
 		    self.t.Branch('nbtagM{0:s}'.format(v), self.list_of_arraysJetsNbtagM[i], 'nbtagM{0:s}/i'.format(v))
 		    self.t.Branch('nbtagT{0:s}'.format(v), self.list_of_arraysJetsNbtagT[i], 'nbtagT{0:s}/i'.format(v))
-		    self.t.Branch('jflavour{0:s}'.format(v), self.list_of_arraysJetsFlavour[i], 'jflavour{0:s}[8]/i'.format(v))
-		    self.t.Branch('jpt{0:s}'.format(v), self.list_of_arraysJetsPt[i], 'jpt{0:s}[8]/F'.format(v))
-		    self.t.Branch('jphi{0:s}'.format(v), self.list_of_arraysJetsPhi[i], 'jphi{0:s}[8]/F'.format(v))
-		    self.t.Branch('jeta{0:s}'.format(v), self.list_of_arraysJetsEta[i], 'jeta{0:s}[8]/F'.format(v))
-		    #self.t.Branch('btagDeep{0:s}'.format(v), self.list_of_arraysJetsNbtagDeep[i], 'bagDeep{0:s}[15]/i'.format(v))
+		    self.t.Branch('jflavour{0:s}'.format(v), self.list_of_arraysJetsFlavour[i], 'jflavour{0:s}[12]/i'.format(v))
+		    self.t.Branch('jpt{0:s}'.format(v), self.list_of_arraysJetsPt[i], 'jpt{0:s}[12]/F'.format(v))
+		    self.t.Branch('jphi{0:s}'.format(v), self.list_of_arraysJetsPhi[i], 'jphi{0:s}[12]/F'.format(v))
+		    self.t.Branch('jeta{0:s}'.format(v), self.list_of_arraysJetsEta[i], 'jeta{0:s}[12]/F'.format(v))
+		    self.t.Branch('btagDeep{0:s}'.format(v), self.list_of_arraysJetsNbtagDeep[i], 'btagDeep{0:s}[12]/F'.format(v))
+
+
 
 
         #self.MET_pt_jesEC2Up  = array('f',[0])
@@ -895,121 +902,8 @@ class outTupleGjets() :
 
         return jetList, bJetList,bJetListFlav
 
+
     def getJetsJMEMV(self,entry,LepList,era, syst,proc) :
-	jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = [], [], [], [], [], [], [], [], [], []
-        num_elements = 8
-        default_value = -99
-        #jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = [ [default_value] * num_elements for _ in range(10)]
-        jetList=[]
-	#print 'will try', len(LepList), 'syst', syst, 'proc', proc
-	#bjet_discrL = 0.2217
-	#bjet_discrM = 0.6321
-	#bjet_discrT = 0.8953
-
-        #deepCSV
-        #default is 2016 post
-	bjet_discrFlav = 0.0614
-	bjet_discrL = 0.1918
-	bjet_discrM = 0.5847
-	bjet_discrT = 0.8767
-        #print 'inside jets', era, proc
-	if '2016pre' in str(era): 
-	    bjet_discrL = 0.2027
-	    bjet_discrM = 0.6001
-	    bjet_discrT = 0.8819
-
-	if '2016post' in str(era): 
-	    bjet_discrL = 0.1918
-	    bjet_discrM = 0.5847
-	    bjet_discrT = 0.8767
-
-	if str(era) == '2017' : 
-	    bjet_discrL = 0.1355
-	    bjet_discrM = 0.4506
-	    bjet_discrT = 0.7738
-	if str(era) == '2018' : 
-	    bjet_discrL = 0.1208
-	    bjet_discrM = 0.4168
-	    bjet_discrT = 0.7665
-
-	failJets=[]
-        goodJets=[]
-        bJetListL=[]
-        bJetListM=[]
-        bJetListT=[]
-        bTagListDeep=[]
-        
-        #if syst !='' : syst="_"+syst
-     
-        if 'nom' in syst : syst='_nom'
-          
-        jpt=0.
-        for j in range(entry.nJet) :
-            try : 
-		jpt = getattr(entry, "Jet_pt{0:s}".format(str(syst)), None)
-
-                #if str(era) == '2018'  and jpt > 20 and entry.Jet_eta[j] -3.2 and entry.Jet_eta[j]> -1.3 and  entry.Jet_phi[j] >-1.57 and entry.Jet_phi[j]<-0.87 : continue  #remove HEM
-                jet_eta = entry.Jet_eta[j]
-                jet_phi = entry.Jet_phi[j]
-                if str(era) == '2018' and  -3.2 < jet_eta < -1.3 and -1.57 < jet_phi < 0.87: 
-                    #if jpt[j]>30 and entry.Jet_jetId[j]>5 : print 'found a HEM affected jet...', jpt[j], jet_eta, jet_phi, entry.Jet_jetId[j], entry.Jet_puId[j], entry.nJet
-                    continue
-		if jpt[j] < 30. : continue
-		if entry.Jet_jetId[j]  < 6  : continue  #pass tight and tightLepVeto ID. 
-		if jpt[j] < 50  and  entry.Jet_puId[j]  != 7  : continue #tight jetPU_iD
-
-		if abs(entry.Jet_eta[j]) > 4.7 : continue
-
-		for iv, lv  in  enumerate(LepList) :
-		    dr = self.getDRnV(entry, entry.Jet_eta[j], entry.Jet_phi[j], LepList[iv].Eta(), LepList[iv].Phi())
-		    if float(dr) > 0.5 : 
-			if j not in goodJets : goodJets.append(j)
-		    else: 
-			if j not in failJets : failJets.append(j)
-			#continue
-            except : continue
-
-        for j in failJets : 
-            if j in goodJets : goodJets.remove(j)
-        jpt=0
-        for jj in goodJets : 
-            #if isMC : 
-            try : 
-                jetListFlav.append(entry.Jet_partonFlavour[jj])
-            except AttributeError  : jetListFlav.append(0)
-            jetListEta.append(entry.Jet_eta[jj])
-            jetListPhi.append(entry.Jet_phi[jj])
-            jpt=0.
-            jpt = getattr(entry, "Jet_pt{0:s}".format(str(syst)), None)
-            jetListPt.append(jpt[jj])
-            #bTagListDeep.append(entry.Jet_btagDeepB[jj])
-
-            #print 'will check',  entry.luminosityBlock, entry.event, entry.run, goodJets, jj, jpt[jj], 'flav', entry.Jet_partonFlavour[jj]
-            if jpt[jj] > 30 : 
-
-                jetList.append(jj) 
-
-		if abs(entry.Jet_eta[jj]) < 2.4 : 
-                    #print entry.Jet_btagDeepB[jj],  bjet_discrL,  bjet_discrM ,  bjet_discrT
-		    if entry.Jet_btagDeepB[jj] > bjet_discrL : bJetListL.append(jj)
-		    if entry.Jet_btagDeepB[jj] > bjet_discrM : bJetListM.append(jj)
-		    if entry.Jet_btagDeepB[jj] > bjet_discrT : bJetListT.append(jj)
-		    if entry.Jet_btagDeepFlavB[jj] > bjet_discrFlav : bJetListFlav.append(jj)
-                #print '--added ', jj, 'in good list', jpt[jj], abs(entry.Jet_eta[jj])
-
-        #if len(jetList)!=len(jetListPt) : print 'going out....', jetList, jetListPt, syst, len(jetList), len(jetListPt), entry.luminosityBlock, entry.event, entry.run
-        #print 'going out....', jetList, jetListPt, syst, len(jetList), len(jetListPt), entry.luminosityBlock, entry.event, entry.run, btagWeightDeepCSVB
-        #print ''
-        #if entry.event == 207273709 : print 'this is check', jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
-        #print 'lets see', len(bJetListL), len(bJetListM), len(bJetListT), len(jetList)
-        #print ''
-        #print jetList, jetListEta, jetListPt
-        #return jetList, jetListFlav, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
-        return jetList, jetListFlav, jetListPhi, jetListEta,  jetListPt, bTagListDeep, bJetListL,bJetListM,bJetListT,bJetListFlav
-
-
-
-    def getJetsJMEMV_old(self,entry,LepList,era, syst,proc) :
 	jetList, jetListFlav, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = [], [], [], [], [], [], [], [], []
 	#print 'will try', len(LepList), 'syst', syst, 'proc', proc
 	#bjet_discrL = 0.2217
@@ -1369,7 +1263,6 @@ class outTupleGjets() :
             self.Photon_mvaID_WP90_1[0] = entry.Photon_mvaID_WP90[photonindex]
             self.Photon_cutBased_1[0] = entry.Photon_cutBased[photonindex]
 	    self.q_1[0]  = entry.Photon_charge[photonindex]
-            #print 'value', self.Photon_jetIdx_1[0], photonindex, entry.Photon_jetIdx[photonindex]
             self.Photon_jetIdx_1[0] = entry.Photon_jetIdx[photonindex]
             if isMC : 
 		self.Photon_pdgid_1[0] = entry.Photon_pdgId[photonindex]
@@ -1904,77 +1797,61 @@ class outTupleGjets() :
 	    if  doUncertainties : 
 
 
+
+
+		#print 'all systematics youcare ', self.allsystMET
 		for i, v in enumerate(self.allsystMET) : 
 
 
 		    try : j = getattr(entry, "{0:s}".format(str(v)))
 		    except AttributeError : j = -9.99
-		    #self.list_of_arrays_noES[i][0] = j
-		    self.list_of_arrays[i][0] = j
+		    self.list_of_arrays_noES[i][0] = j
 		    #if '_pt_jerUp' in v  : print '=====================================while filling-----------------',j, self.list_of_arrays[i][0], i, v, entry.event 
 
 		for i, v in enumerate(self.allsystJets) : 
 		#njets_sys, nbtag_sys
-	            #jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = [], [], [], [], [], [], [], [], [], []
-		    jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMV(entry,leplist, era, str(v), proc) 
+		    jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL,bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMVGjets(entry,leplist, era, str(v), proc) 
 		    try : 
 			self.list_of_arraysJetsNjets[i][0] = -1
 			self.list_of_arraysJetsNjets[i][0] = len(jetList)#fix
 			self.list_of_arraysJetsNbtagL[i][0] = len(bJetListL)
 			self.list_of_arraysJetsNbtagM[i][0] = len(bJetListM)
 			self.list_of_arraysJetsNbtagT[i][0] = len(bJetListT)
-                        #if entry.event == 12833099 : print 'jessyst===============!!!!!!!!!!!!', v, len(jetList), cat, jetList, self.list_of_arraysJetsNjets[i][0], entry.event
+			#print 'jessyst===============!!!!!!!!!!!!', v, len(jetList), cat, jetList, self.list_of_arraysJetsNjets[i][0]
 		    except IndexError : print 'hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
-		    if (len(jetList)) == 0 : 
-                            for kl in range(0,8):
-				self.list_of_arraysJetsPt[i][kl] = -9.99
-				self.list_of_arraysJetsEta[i][kl] = -9.99
-				self.list_of_arraysJetsPhi[i][kl] = -9.99
-				self.list_of_arraysJetsFlavour[i][kl] = -99
-                   
+
 		    for ifl in range(len(jetList)) :
 			try : 
-                            #if entry.event == 12833099 : print 'syst', v, 'for jet ', ifl, jetListPt[ifl]
 			    self.list_of_arraysJetsPt[i][ifl] = jetListPt[ifl]
 			    self.list_of_arraysJetsEta[i][ifl] = jetListEta[ifl]
 			    self.list_of_arraysJetsPhi[i][ifl] = jetListPhi[ifl]
 			    self.list_of_arraysJetsFlavour[i][ifl] = jetListFlav[ifl]
 			    #self.list_of_arraysJetsNbtagDeep[i][ifl] = bTagListDeep[ifl] #fix
-                            
 			except IndexError : print 'hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
-                    if 'nom' in v : 
-			self.njets[0], self.nbtagL[0], self.nbtagM[0], self.nbtagT[0]= -1, -1, -1, 1
-			self.njets[0] = len(jetList)
-			self.nbtagL[0] = len(bJetListL)
-			self.nbtagM[0] = len(bJetListM)
-			self.nbtagT[0] = len(bJetListT)
-			#print 'and again', len(bJetListL),  len(bJetListM), len(bJetListT), self.nbtagL[0], self.nbtagM[0], self.nbtagT[0]
 
-			for i in range(len(self.jpt)):
-			    self.jpt[i] = -9.99
-			    self.jeta[i] = -9.99
-			    self.jphi[i] = -9.99
-			    self.jflavour[i] = -99
-
-			for ifl in range(len(jetListPt)) :
-			    try :
-				self.jflavour[ifl]  = jetListFlav[ifl]
-				self.jeta[ifl]  = jetListEta[ifl]
-				self.jphi[ifl]  = jetListPhi[ifl]
-				self.jpt[ifl]  = jetListPt[ifl]
-				#self.btagDeep[ifl] = bTagListDeep[ifl]
-		            except IndexError : print 'we hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
-
-
-
-
-
-
-
-
-
-
-
+	    #fill the un-corrected or just in the case you dont care to doUncertainties      
+	    nom_=''
+	    sysj = ''
+	    if doUncertainties : sysj='nom'
+	    jetList, jetListFlav, jetListPhi, jetListEta, jetListPt, bTagListDeep, bJetListL, bJetListM, bJetListT, bJetListFlav = self.getJetsJMEMVGjets(entry,leplist,era,sysj,proc) 
+            #print 'jessyst=========%%%%%%%%%%======!!!!!!!!!!!!', v, len(jetList), sysj, jetList
+            self.njets[0], self.nbtagL[0], self.nbtagM[0], self.nbtagT[0]= -1, -1, -1, 1
+	    self.njets[0] = len(jetList)
+	    self.nbtagL[0] = len(bJetListL)
+	    self.nbtagM[0] = len(bJetListM)
+	    self.nbtagT[0] = len(bJetListT)
+            #print 'and again', len(bJetListL),  len(bJetListM), len(bJetListT), self.nbtagL[0], self.nbtagM[0], self.nbtagT[0]
+	    self.jpt[0]  = -9.99
+	    self.jeta[0]  = -9.99
+	    for ifl in range(len(jetListPt)) :
+		try :
+		    self.jflavour[ifl]  = jetListFlav[ifl]
+		    self.jeta[ifl]  = jetListEta[ifl]
+		    self.jphi[ifl]  = jetListPhi[ifl]
+		    self.jpt[ifl]  = jetListPt[ifl]
+		    self.btagDeep[ifl] = bTagListDeep[ifl]
+		except IndexError : print 'we hit the ceiling', len(jetListPt),  'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run
+	    #print self.jpt[0], self.jeta[0]
             '''
 	    if self.nMuon[0] !=1 : print 'failed nMuon', entry.event, self.nMuon[0]
 	    if self.nTau[0]!=0 :  print 'failed nTau', entry.event, self.nTau[0]

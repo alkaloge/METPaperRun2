@@ -213,6 +213,7 @@ if __name__ == "__main__":
             ewk61Datasets = ['WJetsToLNuincl61']
             ewkNLO61Datasets = ['WJetsToLNu_NLO61']
             ewkAllDatasets = ['W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu', 'WJetsToLNu']
+
             ewkHTDatasets = ['WJetsToLNu_HT-100To200',    'WJetsToLNu_HT-200To400',   'WJetsToLNu_HT-400To600', 'WJetsToLNu_HT-70To100', 'WJetsToLNu_HT-1200To2500',  'WJetsToLNu_HT-2500ToInf',  'WJetsToLNu_HT-600To800',  'WJetsToLNu_HT-800To1200']
             ewkHTDatasetsext = ['WJetsToLNu_HT-400To600_ext1', 'WJetsToLNu_HT-600To800_ext1']
             #if '2017' in era : ewkHTDatasets +=ewkHTDatasetsext
@@ -256,7 +257,7 @@ if __name__ == "__main__":
         print 'the lumito be used is ',lumi
         isLocal = True
         doChain = True
-        doNotChain = False
+        doNotChain = True
         #if '2017' in era : doNotChain = True
         if str(opts.Local) == '0' or str(opts.Local).lower() == 'false' or str(opts.Local).lower() == 'no': isLocal = False
         if'top' in inn : treeTT = Sample.Tree(helper.selectSamples(opts.sampleFile, ttDatasets, 'TOP'), 'TOP'  , 0, channel, isLocal, False, "cutID", doChain)
@@ -267,7 +268,7 @@ if __name__ == "__main__":
         if 'ew' in inn and 'ewk' not in inn : treeEW = Sample.Tree(helper.selectSamples(opts.sampleFile, ewDatasets, 'EW'), 'EW'  , 0, channel, isLocal, False, "cutID", doChain)
 
         if 'ewkht' in inn : 
-            treeEWKHT = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkHTDatasets, 'EWKHT'), 'EWKHT'  , 0, channel, isLocal, False, "cutID", doChain)
+            treeEWKHT = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkHTDatasets, 'EWKHT'), 'EWKHT'  , 0, channel, isLocal, False, "cutID", doNotChain)
 
         if 'ewkincl' in inn : 
             treeEWKincl = Sample.Tree(helper.selectSamples(opts.sampleFile, ewkDatasets, 'EWKincl'), 'EWKincl'  , 0, channel, isLocal, False, "cutID", doChain)
@@ -317,10 +318,10 @@ if __name__ == "__main__":
         if 'qcd' in inn : mcTrees = [treeQCD]
         if 'ewk_' in inn  and 'incl' not in inn and 'nlo' not in inn: mcTrees = [treeEWKAll]
         if 'ewkincl' in inn  and '61' not in inn: mcTrees = [treeEWKincl]
-        if 'ewk' in inn  and 'incl' in inn and '61' in inn : mcTrees = [treeEWKincl61]
-        if 'ewknlo' in inn and '61' not in inn : mcTrees = [treeEWKNLO]
+        if 'ewkincl61' in inn : mcTrees = [treeEWKincl61]
+        if 'ewknlo_' in inn and '61' not in inn : mcTrees = [treeEWKNLO]
         if 'ewknlo61' in inn : mcTrees = [treeEWKNLO61]
-        if 'ewkht' in inn : mcTrees = [treeEWKHT]
+        if 'ewkht_' in inn : mcTrees = [treeEWKHT]
         if 'ew' in inn and 'ewk' not in inn : mcTrees = [treeEW]
         if 'allmc' in inn : mcTrees = [ treeDY, treeQCD, treeTT, treeEW, treeEWKNLO]
         if doQCD : 

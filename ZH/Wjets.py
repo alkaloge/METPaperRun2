@@ -216,7 +216,7 @@ for count, e in enumerate(inTree) :
 if inTree.GetEntries()>0 : 
     for count, e in enumerate(inTree) :
 	#if count % 2000 == 0 :  outTuple.SaveSelfTree()
-
+        #if count<300000  : continue
 	if count % countMod == 0 :
 	    print("Count={0:d}".format(count))
 	    if count >= 10000 : countMod = 10000
@@ -321,7 +321,7 @@ if inTree.GetEntries()>0 :
 		if MC : cutCounterGenWeight[cat].countGenWeight('GoodLeptons', e.genWeight)
 
 		electronList = tauFun.makevetoElectronList(e)
-
+               
 		'''
 		#if e.nElectron > 0:
 		#	for i in range(e.nElectron):
@@ -396,6 +396,7 @@ if inTree.GetEntries()>0 :
             #some info [0] [] [0, 0, 1] [0] []
             #if lepMode == 'mnu' and len(muonList)> 0  : continue
             #if lepMode == 'enu' and len(electronList)> 0  : continue
+            #if len(electronList)>0 or len(muonList)> 0 : print 'stats', cat, lepList, tauList, photonList, 'electronList',electronList, 'muonList', muonList, e.event, e.run, e.luminosityBlock
 	    outTuple.FillW(e, cat,Lep,lepList, tauList, photonList, electronList, muonList, isMC,era,doJME, proc)
 
 	    if maxPrint > 0 :

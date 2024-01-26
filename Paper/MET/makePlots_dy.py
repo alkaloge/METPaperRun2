@@ -7,38 +7,32 @@ years = ["2016preVFP", "2016postVFP", "2017", "2018", "2016"]
 #years = ["2017", "2018"]
 years = ["2016preVFP", "2016postVFP", "2016", "2017", "2018"]
 #years = ["2016preVFP", "2016postVFP", "2016"]
-years = ["2018"]
+#years = ["2016preVFP"]
 
 channels = ["MuMu", "ElEl"]
 #channels = ["MuMu"]
 vars = ["RawMET_pt", "RawPuppiMET_pt", "METCorGood_T1_pt", "PuppiMETCorGood_pt", "METCorGood_T1Smear_pt", "boson_pt", "u_parboson_RawMET", "u_parboson_RawPuppiMET", "u_perp_RawMET", "u_perp_RawPuppiMET", "u_parboson_METCorGood_T1Smear", "u_parboson_METCorGood_T1", "u_perp_METCorGood_T1Smear", "u_perp_METCorGood_T1", "u_parboson_PuppiMETCorGood", "u_perp_PuppiMETCorGood"]
 #vars = ["METCorGood_T1_pt", "PuppiMETCorGood_pt", "boson_pt", "METCorGood_T1Smear_pt"]
 #vars=["iso_1", "Photon_hoe_1", "Photon_sieie_1"]
-vars=["METCorGood_T1_pt", "PuppiMETCorGood_pt", "boson_pt", "METCorGood_T1Smear_pt","mll"]
-vars=["RawMET_pt", "RawMET_phi", "RawPuppiMET_pt", "RawPuppiMET_phi", "u_parboson_RawMET", "u_parboson_RawPuppiMET", "u_perp_RawMET", "u_perp_RawPuppiMET", "u_parboson_METCorGood_T1Smear", "u_parboson_METCorGood_T1", "u_perp_METCorGood_T1Smear", "u_perp_METCorGood_T1", "u_parboson_PuppiMETCorGood", "u_perp_PuppiMETCorGood"]
-
 
 vars=["u_parboson_RawMET", "u_parboson_RawPuppiMET", "u_perp_RawMET", "u_perp_RawPuppiMET", "u_parboson_METCorGood_T1Smear", "u_parboson_METCorGood_T1", "u_perp_METCorGood_T1Smear", "u_perp_METCorGood_T1", "u_parboson_PuppiMETCorGood", "u_perp_PuppiMETCorGood"]
 
-vars=["RawMET_pt", "RawMET_phi", "RawPuppiMET_pt", "RawPuppiMET_phi"]
-
 vars=["u_parboson_RawMET", "u_parboson_RawPuppiMET", "u_perp_RawMET", "u_perp_RawPuppiMET"]
-vars=["u_parboson_METCorGood_T1Smear", "u_parboson_METCorGood_T1", "u_perp_METCorGood_T1Smear", "u_perp_METCorGood_T1", "u_parboson_PuppiMETCorGood", "u_perp_PuppiMETCorGood"]
 vars=["METCorGood_T1_phi", "PuppiMETCorGood_phi", "boson_phi", "METCorGood_T1Smear_phi","boson_phi"]
 
 vars=["METCorGood_T1_phi", "PuppiMETCorGood_phi", "boson_phi", "METCorGood_T1Smear_phi","boson_phi", "RawMET_phi","RawPuppiMET_phi"]
 
 vars=["METCorGood_T1_phi", "PuppiMETCorGood_phi", "boson_phi", "METCorGood_T1Smear_phi", "RawMET_phi", "RawPuppiMET_phi" , "RawMET_phi", "RawPuppiMET_phi", "RawMET_pt", "RawPuppiMET_pt", 'u_parboson_RawMET', 'u_parboson_RawPuppiMET', 'u_perp_RawMET', 'u_perp_RawPuppiMET', "u_parboson_RawMET", "u_parboson_RawPuppiMET", "u_perp_RawMET", "u_perp_RawPuppiMET", "u_parboson_METCorGood_T1Smear", "u_parboson_METCorGood_T1", "u_perp_METCorGood_T1Smear", "u_perp_METCorGood_T1", "u_parboson_PuppiMETCorGood", "u_perp_PuppiMETCorGood", "mll",  "METCorGood_T1_pt", "PuppiMETCorGood_pt", "boson_pt", "METCorGood_T1Smear_pt"]
 #vars=["PuppiMETCorGood_phi"]
-#vars=["MET_significance"]
 #vars = ["METCorGood_T1_pt", "PuppiMETCorGood_pt", "boson_pt", "mll"]
-#vars = ["METCorGood_T1_pt", "PuppiMETCorGood_pt", "boson_pt", "mll"]
-#vars = ["mll"]
-#vars=["METCorGood_T1Smear_pt"]
+vars=["MET_T1_phi", "MET_T1_pt", "PuppiMET_pt", "PuppiMET_phi", 'u_parboson_RawMET', 'u_parboson_RawPuppiMET', 'u_perp_RawMET', 'u_perp_RawPuppiMET', "u_parboson_RawMET", "u_parboson_RawPuppiMET", "u_perp_RawMET", "u_perp_RawPuppiMET", "u_parboson_METCorGood_T1Smear", "u_parboson_METCorGood_T1", "u_perp_METCorGood_T1Smear", "u_perp_METCorGood_T1", "u_parboson_PuppiMETCorGood", "u_perp_PuppiMETCorGood"]
 
+vars=["MET_T1_phi", "MET_T1_pt", "PuppiMET_pt", "PuppiMET_phi","METCorGood_T1_phi", "PuppiMETCorGood_phi", "boson_phi", "METCorGood_T1Smear_phi",  "RawMET_phi", "RawPuppiMET_phi", "RawMET_pt", "RawPuppiMET_pt", 'u_parboson_RawMET', 'u_parboson_RawPuppiMET', 'u_perp_RawMET', 'u_perp_RawPuppiMET', "u_parboson_RawMET", "u_parboson_RawPuppiMET", "u_perp_RawMET", "u_perp_RawPuppiMET", "u_parboson_METCorGood_T1Smear", "u_parboson_METCorGood_T1", "u_perp_METCorGood_T1Smear", "u_perp_METCorGood_T1", "u_parboson_PuppiMETCorGood", "u_perp_PuppiMETCorGood", "mll",  "METCorGood_T1_pt", "PuppiMETCorGood_pt", "boson_pt", "METCorGood_T1Smear_pt"]
+
+#vars = ["RawMET_phi", "RawPuppiMET_phi", "RawMET_pt", "RawPuppiMET_pt", "boson_pt", "boson_phi", "mll", "METCorGood_T1Smear_pt"]
 
 alljetcuts = ["njetsgeq0", "njetsgt0"]
-alljetcuts = ["njetsgeq0"]
+#alljetcuts = ["njetsgeq0"]
 ID = "cutbased"
 #ID = "mvaid"
 #njetsgt0_nbtagl_cutbased_varbins_isocuttight_cutbasedtight
@@ -61,7 +55,7 @@ if True:
 	#njets = nj+'_nbtagl_' + ID + "_varbins_isocuttight_cutbasedtight"+pu
 	njets = nj+'_nobtag_' + ID + "_varbins_isocuttight_cutbasedtight"+pu
 	#njets = nj+'_nbtagl_' + ID + "_varbins_isocut"+pu
-	#njets = nj+'_nobtag_' + ID + "_varbins_isocut"+pu
+	njets = nj+'_nobtag_' + ID + "_varbins_isocut"+pu
         #isocuttight_cutbasedtight
 	if ID == 'mvaid' : njets = nj+'_nbtagl_' + ID + "_varbins_isocuttight_mvaid80"+pu
 

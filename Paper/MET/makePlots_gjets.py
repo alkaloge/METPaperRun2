@@ -7,8 +7,10 @@ years = ["2016preVFP", "2016postVFP", "2017", "2018", "2016"]
 channels = ["Gjets"]
 vars = ["RawMET_pt", "RawPuppiMET_pt", "METCorGood_T1_pt", "PuppiMETCorGood_pt", "METCorGood_T1Smear_pt", "boson_pt", "u_parboson_RawMET", "u_parboson_RawPuppiMET", "u_perp_RawMET", "u_perp_RawPuppiMET", "u_parboson_METCorGood_T1Smear", "u_parboson_METCorGood_T1", "u_perp_METCorGood_T1Smear", "u_perp_METCorGood_T1", "u_parboson_PuppiMETCorGood", "u_perp_PuppiMETCorGood", "METCorGood_T1_phi", "PuppiMETCorGood_phi", "boson_phi", "METCorGood_T1Smear_phi", "RawMET_phi", "RawPuppiMET_phi"]
 
-#vars = ["METCorGood_T1_pt", "PuppiMETCorGood_pt", "boson_pt", "METCorGood_T1Smear_pt"]
-#vars=["iso_1", "Photon_hoe_1", "Photon_sieie_1"]
+vars = ["MET_T1_pt", "PuppiMET_pt", "MET_T1_phi", "PuppiMET_phi", "RawMET_pt", "RawPuppiMET_pt", "METCorGood_T1_pt", "PuppiMETCorGood_pt", "METCorGood_T1Smear_pt", "boson_pt", "u_parboson_RawMET", "u_parboson_RawPuppiMET", "u_perp_RawMET", "u_perp_RawPuppiMET", "u_parboson_METCorGood_T1Smear", "u_parboson_METCorGood_T1", "u_perp_METCorGood_T1Smear", "u_perp_METCorGood_T1", "u_parboson_PuppiMETCorGood", "u_perp_PuppiMETCorGood", "METCorGood_T1_phi", "PuppiMETCorGood_phi", "boson_phi", "METCorGood_T1Smear_phi", "RawMET_phi", "RawPuppiMET_phi"]
+
+vars = ["METCorGood_T1_pt", "PuppiMETCorGood_pt", "boson_pt", "METCorGood_T1Smear_pt"]
+vars=["iso_1", "Photon_hoe_1", "Photon_sieie_1"]
 #vars=["iso_1"]
 
 #vars=["boson_pt", "boson_phi"]
@@ -32,7 +34,7 @@ if True:
 	njets = nj+'_nbtagl_' + ID + "_varbins_isocuttight_cutbasedtight"+pu
 
 	njets = nj+'_nobtag_' + ID + "_varbins_isocuttight_cutbasedtight"+pu
-	#njets = nj+'_nobtag_' + ID + "_varbins_cutbasedtight"+pu
+	njets = nj+'_nobtag_' + ID + "_varbins_cutbasedtight"+pu
  
 	if ID == 'mvaid' : njets = nj+'_nbtagl_' + ID + "_varbins_isocuttight_mvaid80"+pu
 
@@ -91,14 +93,14 @@ if True:
 		    #METCorGood_T1_pt_2018_doQCD0_gjets_njetsgt0_nbtagl_cutbased_varbins_isocuttight_BtagL_T1_r9_noScale_Log_Gjets.pdf
 		    #${var}_gjets${yr}_doQCD_0${extraTag}_0Log.pdf
 
-		    os.system("cp plots/test/paperv2/{0:s}_gjets{1:s}_doQCD_0{2:s}_0Log.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/Gjv2/{0:s}_{1:s}_doQCD0_{2:s}_noLog_Gjets.pdf".format(var, yr, extraTag))
+		    os.system("cp plots/test/paperv2/{0:s}_gjets{1:s}_doQCD_0{2:s}_0Log.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/Gjv4/{0:s}_{1:s}_doQCD0_{2:s}_noLog_Gjets.pdf".format(var, yr, extraTag))
 
-		    os.system("cp plots/test/paperv2/{0:s}_gjets{1:s}_doQCD_0{2:s}_1Log.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/Gjv2/{0:s}_{1:s}_doQCD0_{2:s}_Log_Gjets.pdf".format(var, yr, extraTag))
+		    os.system("cp plots/test/paperv2/{0:s}_gjets{1:s}_doQCD_0{2:s}_1Log.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/Gjv4/{0:s}_{1:s}_doQCD0_{2:s}_Log_Gjets.pdf".format(var, yr, extraTag))
 
                     if '_pu' in extraTag : 
-			os.system("cp plots/test/paperv2/{0:s}_gjets{1:s}_doQCD_0{2:s}_0Log_norm.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/Gjv2/{0:s}_{1:s}_doQCD0_{2:s}_noLog_norm_Gjets.pdf".format(var, yr, extraTag))
+			os.system("cp plots/test/paperv2/{0:s}_gjets{1:s}_doQCD_0{2:s}_0Log_norm.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/Gjv4/{0:s}_{1:s}_doQCD0_{2:s}_noLog_norm_Gjets.pdf".format(var, yr, extraTag))
 
-			os.system("cp plots/test/paperv2/{0:s}_gjets{1:s}_doQCD_0{2:s}_1Log_norm.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/Gjv2/{0:s}_{1:s}_doQCD0_{2:s}_Log_norm_Gjets.pdf".format(var, yr, extraTag))
+			os.system("cp plots/test/paperv2/{0:s}_gjets{1:s}_doQCD_0{2:s}_1Log_norm.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/Gjv4/{0:s}_{1:s}_doQCD0_{2:s}_Log_norm_Gjets.pdf".format(var, yr, extraTag))
 
 
 		    # cp plots/test/paperv2/${var}_${ch}${yr}_doQCD_0${extraTagNLO}_1Log.pdf /publicweb/a/alkaloge/plots/MetStudiesPaper/${var}_${yr}_doQCD0_${extraTagNLO}_Log_${ch}.pdf

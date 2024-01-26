@@ -71,7 +71,10 @@ class Sample:
       loc = self.location.replace('group','user')
       self.location = loc
 
-      
+      if 'preVFP' in location : 
+          self.era = '2016preVFP'
+          era = '2016preVFP'
+
       if doChain : 
           print 'Ordered a TChaining...will run on the individual files.....'
 
@@ -90,6 +93,7 @@ class Sample:
 	  #file_patterns = ["Muons.root",  "weights"]  # Adjust these patterns as needed
 	  if 'MuNu' in self.channel or 'MuMu' in self.channel: file_patterns = "/*Muons.root"  # Adjust these patterns as needed
 	  if 'ElNu' in self.channel or 'ElEl' in self.channel: file_patterns = "/*Electrons.root"  # Adjust these patterns as needed
+	  if 'Gjets' in self.channel : file_patterns = "/*Gjets.root"  # Adjust these patterns as needed
 
           if 'Run' in file_pattern : file_patterns ='/all*Run*_*root'
 	  print "file_patterns", file_patterns, isLocal, file_pattern, location, self.location
@@ -304,8 +308,8 @@ class Sample:
               weights_2016preVFP={
 		'ZZTo2L2Nu' : 16419222.3522,
 		'TTTo2L2Nu' : 2704527656.16,
-		'WJetsToLNu' : 602065852.695,
-		'WJetsToLNuincl' : 7.9600471e+08,
+		'WJetsToLNu' : 594593806.297,
+		'WJetsToLNuincl' : 7.8610362e+08,
 		'WW' : 15859130.7831,
 		'QCD_HT1500to2000' : 3503675.0,
 		'ZZTo4L' : 271601384.279,
@@ -317,7 +321,7 @@ class Sample:
 		'QCD_HT50to100' : 12233035.0,
 		'W2JetsToLNu' : 44186948.5833,
 		'ST_tW_antitop' : 74766341.1971,
-		'W1JetsToLNu' : 197368322.281,
+		'W1JetsToLNu' : 197108356.934,
 		'TTToSemiLeptonic' : 39772305959.2,
 		'ST_tW_top' : 74624668.1187,
 		'DYJetsToLLM50' : 95170542.0,
@@ -326,7 +330,7 @@ class Sample:
 		'QCD_HT100to200' : 26312661.0,
 		'QCD_HT1000to1500' : 4773503.0,
 		'WWW' : 15310.5959079,
-		'W4JetsToLNu' : 28287448247.5,
+		'W4JetsToLNu' : 28828243056.1,
 		'ZZTo2Q2L' : 88594639.7718,
 		'ttWJets' : 27548593.0,
 		'QCD_HT200to300' : 16524587.0,
@@ -335,9 +339,15 @@ class Sample:
 		'DYJetsToLLM10to50NLO' : 32305345.0,
 		'ST_t-channel_antitop' : 1983864432.8,
 		'QCD_HT2000toInf' : 1629000.0,
+                'ZZZ' : 78317.0635339,
 		'WJetsToLNu_NLO' : 4.98951935909e+12,
 		'WJetsToLNu_NLO61' : 4.98951935909e+12,
-		'W3JetsToLNu' : 18073455.0193, }
+		'W3JetsToLNu' : 17980243.3872 }
+
+
+
+
+
 
               weights_2Lep_2018={
 		'ZZTo2L2Nu' : 55393059.2321,
@@ -479,12 +489,17 @@ class Sample:
 
 
               weights_=None
+              self.sampleWeight={}
+              WxGenweightsArr=[]
+              xsec_=[]
               if 'MuNu' in self.channel or 'ElNu' in self.channel:
 
 		  if str(era) == "2018" : weights_ = weights_2018
 		  if str(era) == "2017" : weights_ = weights_2017
 		  if str(era) == "2016" or str(era) == "2016postVFP": weights_ = weights_2016
 		  if str(era) == "2016preVFP" : weights_ = weights_2016preVFP
+                  
+          
 
               if 'MuMu' in self.channel or 'ElEl' in self.channel:
 
@@ -492,12 +507,39 @@ class Sample:
 		  if str(era) == "2017" : weights_ = weights_2Lep_2017
 		  if str(era) == "2016" or str(era) == "2016postVFP": weights_ = weights_2Lep_2016
 		  if str(era) == "2016preVFP" : weights_ = weights_2Lep_2016preVFP
-             
-              try : self.count = weights_[str(name)] 
+                
+              try : 
+                  self.count = weights_[str(name)] 
+                  #self.sampleWeight[str(name)]= weights_[str(name)]
+                  #self.sampleWeight['WJetsToLNu']= weights_['WJetsToLNu']
 
 	      except AttributeError: 
 		  self.count = 1.
 		  self.xSection = 0
+
+              '''
+              WxGenweightsArr.append(weights_['W1JetsToLNu'])
+              WxGenweightsArr.append(weights_['W2JetsToLNu'])
+              WxGenweightsArr.append(weights_['W3JetsToLNu'])
+              WxGenweightsArr.append(weights_['W4JetsToLNu'])
+              xsec_.append(10368.161)
+              xsec_.append(3233.36)
+              xsec_.append(920.765)
+              xsec_.append(437.19)
+              wjetsincl = 61526.
+              #print 'W1---------------->', self.sampleWeight['W1JetsToLNu'], self.sampleWeight['W2JetsToLNu']
+	      for i in range(1,5) :
+	          nn = 'W{0:d}JetsToLNu'.format(i)
+		  self.sampleWeight[nn] = (weights_['WJetsToLNu']/wjetsincl + WxGenweightsArr[i-1]/(xsec_[i-1]))
+
+                      #else: sampleWeight[nn] = Pblumi*weights['lumi']/(totalWeight['WJetsToLNuext']/xsec['WJetsToLNuext'] + WNJetsXsecs[i-1]/(xsec[nn]*WJets_kfactor))
+              '''
+        
+          #print '--------------weights, sampleWeight', weights_ , str(name), str(era), self.sampleWeight[str(name)]
+          #self.sampleWeight['WJetsToLNuW1']= weights_['W1JetsToLNu']
+          #self.sampleWeight['WJetsToLNuW2']= weights_['W2JetsToLNu']
+          #self.sampleWeight['WJetsToLNuW3']= weights_['W3JetsToLNu']
+          #self.sampleWeight['WJetsToLNuW4']= weights_['W4JetsToLNu']
 
 	  if self.xSection !=0 : print self.name, 'neentries', self.ttree.GetEntries()        
 	  #self.count = self.tfile.Get('demo/nEvents').GetSumOfWeights()
@@ -582,6 +624,16 @@ class Sample:
         #    #print '=========================================> changed for Wjets', self.name, self.count, float(self.xSection) / float(self.count)
      
         self.lumWeight = float(self.xSection) / float(self.count)
+        
+
+        '''
+        self.sWeightW1 = self.sampleWeight['W1JetsToLNu']
+        self.sWeightW2 = self.sampleWeight['W2JetsToLNu']
+        self.sWeightW3 = self.sampleWeight['W3JetsToLNu']
+        self.sWeightW4 = self.sampleWeight['W4JetsToLNu']
+        self.sWeightW0 = self.sampleWeight['WJetsToLNu']
+        '''
+
         print 'name ',self.name
         print 'xsec ',self.xSection
         print 'count ',self.count
@@ -624,6 +676,32 @@ class Sample:
       if not self.isData :
           print 'not data, will also apply weights'
 
+          if 'ElNu' in channel or 'MuNu' in channel: 
+              #print 'there you are', channel
+              #if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName() and 'incl' not in options: cut = cut +  " && LHE_Njets[0]<1 "
+              if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName() and 'incl' not in options and 'ewkht' not in options: 
+                  cut = cut +  " && LHE_Njets[0]<1 "
+              '''
+              if 'NLO' not in h.GetName() and 'incl' not in options and 'ewkht' not in options: 
+                  if 'ewkW0' in options : 
+                      cut = cut +  " && LHE_Njets[0]==0 "
+                      print 'prin ======= lumW', self.lumWeight
+                      self.lumWeight =self.sWeightW0
+                      print 'meta========= lumW', self.lumWeight
+                  if 'ewkW1' in options : 
+                      cut = cut +  " && LHE_Njets[0]==1 "
+                      self.lumWeight =self.sWeightW1
+                  if 'ewkW2' in options : 
+                      cut = cut +  " && LHE_Njets[0]==2 "
+                      self.lumWeight =self.sWeightW2
+                  if 'ewkW3' in options : 
+                      cut = cut +  " && LHE_Njets[0]==3 "
+                      self.lumWeight =self.sWeightW3
+                  if 'ewkW4' in options : 
+                      cut = cut +  " && LHE_Njets[0]==4 "
+                      self.lumWeight =self.sWeightW4
+              '''
+
           #cut =  cut    + "* ( " + str(lumi)  +  " )"  + "* ( " + str(self.lumWeight)  +  " )" + "* ( " + "Generator_weight " +  " )"  + "* ( " + "weightPUtrue " +  " )"  + "* ( " + "L1PreFiringWeight_Nom " +  " )"
           #cut =  cut    + "&&    (abs(gen_match_1[0])==1 || abs(gen_match_1[0])==15) )" 
           cut =  cut    + ")" 
@@ -642,12 +720,8 @@ class Sample:
               var = var.replace('PUdown', '')
 
 
-          if 'ElNu' in channel or 'MuNu' in channel: 
-              #print 'there you are', channel
-              #if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName() and 'incl' not in options: cut = cut +  " && LHE_Njets[0]<1 "
-              if 'WJetsToLNu' in h.GetName() and 'NLO' not in h.GetName() and 'incl' not in options and 'ewkht' not in options: 
-                  cut = cut +  " && LHE_Njets[0]<1 "
 
+          if 'ElNu' in channel or 'MuNu' in channel: 
               if 'MuNu' in channel : cut =  cut    + "* ( " + "TrigSF1[0] " +  " )"  
 	      if 'isoup' not in var.lower() and 'isodown' not in var.lower() :
 		  cut =  cut    + "* ( " + "IsoSF1[0] " +  " )"  
@@ -855,7 +929,8 @@ class Sample:
       except AttributeError : print 'cannot give more info....'
       
       #if not self.isData : h.Scale(lumi*self.lumWeight)
-      if not self.isData : h.Scale(float(lumi*float(self.lumWeight))*evscale)
+      if not self.isData : 
+              h.Scale(float(lumi*float(self.lumWeight))*evscale)
 
       print 'aftermath...', h.GetSumOfWeights(), 'entries', h.GetEntries(), 'underflow', h.GetBinContent(0), 'overflow', h.GetBinContent(h.GetNbinsX() + 1) 
       return h
@@ -1094,7 +1169,10 @@ class Tree:
          nbin = arange(-1, 23,1)
 
      if 'iso_1' in var : 
+
          nbin = arange( 0., 0.20, 0.005)
+     if 'iso_1' in var and 'Photon_r9' in cut: 
+         nbin = arange( 0., 0.10, 0.005)
 
      if 'sieie' in var : 
          nbin = arange( 0., 0.016, 0.002)

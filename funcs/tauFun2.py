@@ -1313,7 +1313,7 @@ def vetoElectron(entry, j) :
     if entry.Electron_pt[j] > ee['ele_pt'] and \
     abs(entry.Electron_eta[j]) < ee['ele_eta'] and \
     abs(entry.Electron_dxy[j]) < 0.05 and \
-    entry.Electron_mvaFall17V2noIso_WPL[j] : return True
+    entry.Electron_mvaFall17V2Iso_WPL[j] : return True
     #entry.Electron_pfRelIso03_all[j] <  ee['ele_iso'] and\
     #abs(entry.Electron_dz[j]) < ee['ele_dz'] and \
     #entry.Electron_cutBased[j] == 1: return True

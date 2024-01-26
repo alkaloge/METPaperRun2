@@ -34,6 +34,20 @@ EWK        r.kCyan+2    W2JetsToLNu    W2JetsToLNu    /eos/uscms/store/group/lpc
 EWK        r.kCyan+3    W3JetsToLNu    W3JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/W3JetsToLNu_2016preVFP 920.765     0    1   0  0 2016
 EWK        r.kCyan+4    W4JetsToLNu    W4JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/W4JetsToLNu_2016preVFP 437.19   0    1   0  0 2016
 EWK        r.kCyan      WJetsToLNu    WJetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2016preVFP 46567.220     0    1   0  0 2016
+#
+#EWKW0        r.kCyan      WJetsToLNuW0    WJetsToLNuW0    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2016preVFP 46567.220     0    1   0  0 2016
+#EWKW1        r.kCyan+1    W1JetsToLNu    W1JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/W1JetsToLNu_2016preVFP 10368.161     0    1   0  0 2016  
+#EWKW1        r.kCyan+1      WJetsToLNuW1    WJetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2016preVFP 46567.220     0    1   0  0 2016
+#
+#EWKW2        r.kCyan+2    W2JetsToLNu    W2JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/W2JetsToLNu_2016preVFP 3233.36     0    1   0  0 2016
+#EWKW2        r.kCyan+2      WJetsToLNu    WJetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2016preVFP 46567.220     0    1   0  0 2016
+#
+#EWKW3        r.kCyan+3    W3JetsToLNu    W3JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/W3JetsToLNu_2016preVFP 920.765     0    1   0  0 2016
+#EWKW3        r.kCyan+3      WJetsToLNu    WJetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2016preVFP 46567.220     0    1   0  0 2016
+#
+#EWKW4        r.kCyan+4    W4JetsToLNu    W4JetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/W4JetsToLNu_2016preVFP 437.19   0    1   0  0 2016
+#EWKW4        r.kCyan+4      WJetsToLNu    WJetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2016preVFP 46567.220     0    1   0  0 2016
+#
 EWKincl        r.kCyan      WJetsToLNuincl    WJetsToLNuincl    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2016preVFP 67350.7     0    1   0  0 2016
 EWKincl61        r.kCyan      WJetsToLNuincl61    WJetsToLNuincl61    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2016preVFP 61526.7     0    1   0  0 2016
 #EWK        r.kCyan    WJetsToLNu    WJetsToLNu    /eos/uscms/store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_2016preVFP 44152.6     0    1   0  0 2016

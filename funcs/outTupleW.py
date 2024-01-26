@@ -99,7 +99,6 @@ class outTupleW() :
         self.list_of_arraysJetsNbtagM = []           
         self.list_of_arraysJetsNbtagT = []           
         self.list_of_arraysJetsNjets = []           
-        self.list_of_arraysJetsFlavour = []           
 	self.tauMass = 1.7768 
 
         if not isMC  :
@@ -264,7 +263,6 @@ class outTupleW() :
         self.phi_1_tr  = array('f',[0])
         self.eta_1     = array('f',[0])
         self.eta_1_tr  = array('f',[0])
-        self.iso_1       = array('f',[0])
         self.q_1       = array('f',[0])
         self.Muon_Id_1       = array('f',[0])
         self.isGlobal_1       = array('f',[0])
@@ -274,8 +272,12 @@ class outTupleW() :
         self.GenPart_status_1     = array('i',[0])
         self.phi_1     = array('f',[0])
         self.eta_1     = array('f',[0])
+
         self.iso_1       = array('f',[0])
-        self.PFiso_1       = array('f',[0])
+        self.miniiso_1       = array('f',[0])
+        self.miniiso_Id_1       = array('f',[0])
+        self.PFiso_Id_1       = array('f',[0])
+
         self.q_1       = array('f',[0])
         self.Muon_Id_1       = array('f',[0])
         self.isGlobal_1       = array('f',[0])
@@ -485,7 +487,12 @@ class outTupleW() :
         self.t.Branch('phi_1',       self.phi_1,       'phi_1/F')  
         self.t.Branch('eta_1',       self.eta_1,       'eta_1/F')    
         self.t.Branch('iso_1',       self.iso_1,       'iso_1/F')
-        self.t.Branch('PFiso_1',       self.PFiso_1,       'PFiso_1/F')
+        self.t.Branch('miniiso_1',       self.miniiso_1,       'miniiso_1/F')
+        self.t.Branch('miniiso_Id_1',       self.miniiso_Id_1,       'miniiso_Id_1/F')
+        self.t.Branch('PFiso_Id_1',       self.PFiso_Id_1,       'PFiso_Id_1/F')
+
+
+
         self.t.Branch('q_1',       self.q_1,       'q_1/F')
         self.t.Branch('d0_1',        self.d0_1,        'd0_1/F')
         self.t.Branch('dZ_1',        self.dZ_1,        'dZ_1/F')
@@ -838,11 +845,17 @@ class outTupleW() :
             try : 
 		jpt = getattr(entry, "Jet_pt{0:s}".format(str(syst)), None)
 
+                #if str(era) == '2018'  and jpt > 20 and entry.Jet_eta[j] -3.2 and entry.Jet_eta[j]> -1.3 and  entry.Jet_phi[j] >-1.57 and entry.Jet_phi[j]<-0.87 : continue  #remove HEM
+                jet_eta = entry.Jet_eta[j]
+                jet_phi = entry.Jet_phi[j]
+                if str(era) == '2018' and  -3.2 < jet_eta < -1.3 and -1.57 < jet_phi < 0.87: 
+                    #if jpt[j]>30 and entry.Jet_jetId[j]>5 : print 'found a HEM affected jet...', jpt[j], jet_eta, jet_phi, entry.Jet_jetId[j], entry.Jet_puId[j], entry.nJet
+                    continue
 		if jpt[j] < 30. : continue
 		if entry.Jet_jetId[j]  < 6  : continue  #pass tight and tightLepVeto ID. 
-		if jpt[j] < 50  and  entry.Jet_puId[j]  != 7  : continue #loose jetPU_iD
+		if jpt[j] < 50  and  entry.Jet_puId[j]  != 7  : continue #tight jetPU_iD
 
-		if abs(entry.Jet_eta[j]) > 2.4 : continue
+		if abs(entry.Jet_eta[j]) > 4.7 : continue
 
 		for iv, lv  in  enumerate(LepList) :
 		    dr = self.getDRnV(entry, entry.Jet_eta[j], entry.Jet_phi[j], LepList[iv].Eta(), LepList[iv].Phi())
@@ -998,9 +1011,11 @@ class outTupleW() :
 	    self.lumi[0] = entry.luminosityBlock 
 	    self.evnt[0]  = entry.event
 	    self.iso_1[0]  = -1
-	    self.PFiso_1[0]  = -1
 	    self.q_1[0]  = -2
 
+            self.miniiso_1       = -1
+            self.miniiso_Id_1       = -1
+            self.PFiso_Id_1       = -1
 
 	    self.isGlobal_1[0]      = -1
 	    self.isStandalone_1[0]      = -1
@@ -1255,7 +1270,12 @@ class outTupleW() :
 
 	if channel_ll == 'mnu' : 
             self.iso_1[0]  = entry.Muon_pfRelIso04_all[lep_index_1]
-            self.PFiso_1[0]  = ord(entry.Muon_pfIsoId[lep_index_1])
+            self.PFiso_Id_1       = ord(entry.Muon_pfIsoId[lep_index_1])
+
+            self.miniiso_1       = entry.Muon_miniPFRelIso_all[lep_index_1]
+            self.miniiso_Id_1       = ord(entry.Muon_miniIsoId[lep_index_1])
+
+
 	    self.q_1[0]  = entry.Muon_charge[lep_index_1]
 	    self.d0_1[0]   = entry.Muon_dxy[lep_index_1]
 	    self.dZ_1[0]   = entry.Muon_dz[lep_index_1]
@@ -1313,14 +1333,14 @@ class outTupleW() :
 	SaveEventEl = False
 
 	if '2016' in era:  
-            SaveEventMu = cat=='mnu' and self.VetoElectron[0]==0 and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>26 and self.tightId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and (self.iso_1[0] < 0.25 or self.PFiso_1[0]>=4) #and fabs(self.PVz[0])<26 and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
-            SaveEventEl = cat=='enu' and self.VetoMuon[0]==0 and self.pt_1[0]>27 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and not ( fabs(self.eta_1[0])>1.4442 and  fabs(self.eta_1[0])<1.5660) and fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.25 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+            SaveEventMu = cat=='mnu' and (self.VetoMuon[0]==0 and self.VetoElectron[0]==0 and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>26 and self.tightId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.25) #and fabs(self.PVz[0])<26 and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+            SaveEventEl = cat=='enu' and self.VetoElectron[0]==0 and self.VetoMuon[0]==0 and self.pt_1[0]>27 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and not ( fabs(self.eta_1[0])>1.4442 and  fabs(self.eta_1[0])<1.5660) and fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.25 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
             #print "self.isGlobal_1[0]>0", self.isGlobal_1[0]>0, "self.isTracker_1[0]>0", self.isTracker_1[0]>0, "self.pt_1[0]>26", self.pt_1[0]>26, "self.tightId_1[0]>0", self.tightId_1[0]>0, "fabs(self.eta_1[0])<2.4", fabs(self.eta_1[0])<2.4, "fabs(self.dZ_1[0])<0.2", fabs(self.dZ_1[0])<0.2, "self.iso_1[0] < 0.5 or self.PFiso_1[0]>2", self.iso_1[0] < 0.5 or self.PFiso_1[0]>2, era, "self.isTrig_1[0]>0", self.isTrig_1[0]>0
-            print 'ok....' 
+            #print 'ok....' 
         else : 
-	    SaveEventMu = cat=='mnu'  and self.VetoElectron[0]==0 and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>29 and self.tightId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and (self.iso_1[0] < 0.25 or self.PFiso_1[0]>=4)#and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+	    SaveEventMu = cat=='mnu'  and (self.VetoMuon[0]==0 and self.VetoElectron[0]==0 and (self.isGlobal_1[0]>0 or self.isTracker_1[0]>0) and self.pt_1[0]>29 and self.tightId_1[0]>0 and fabs(self.eta_1[0])<2.4 and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.25) #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
 
-	    SaveEventEl = cat=='enu' and self.VetoMuon[0]==0 and self.pt_1[0]>37 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and not(fabs(self.eta_1[0])>1.4442 and  fabs(self.eta_1[0])<1.5660)    and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.25 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
+	    SaveEventEl = cat=='enu' and self.VetoElectron[0]==0 and self.VetoMuon[0]==0 and self.pt_1[0]>37 and self.Electron_mvaFall17V2Iso_WP90_1[0]>0 and fabs(self.eta_1[0])<2.1 and not(fabs(self.eta_1[0])>1.4442 and  fabs(self.eta_1[0])<1.5660)    and  fabs(self.dZ_1[0])<0.2 and  fabs(self.d0_1[0])<0.045 and self.isTrig_1[0]>0 and self.iso_1[0] < 0.25 #and fabs(self.PVz[0])<26  and (self.PVy[0]*self.PVy[0] + self.PVx[0]*self.PVx[0])<3 and self.nPV[0]>2 
 
         if SaveEventMu or SaveEventEl:
 

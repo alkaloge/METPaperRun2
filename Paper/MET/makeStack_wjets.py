@@ -5,11 +5,11 @@ from   ROOT import gROOT, TCanvas, TFile, TGraphErrors, TMath,  SetOwnership, TC
 import math, sys, optparse, array, time, copy
 
 import include.helper     as helper
-import include.Region     as Region
+#import include.Region     as Region
 import include.Canvas     as Canvas
-import include.CutManager as CutManager
+#import include.CutManager as CutManager
 import include.Sample     as Sample
-import include.Rounder    as Rounder        
+#import include.Rounder    as Rounder        
 
 
 era='2017'
@@ -117,12 +117,13 @@ if __name__ == "__main__":
     channel=''
     doStat = True
     #doStat = False
-    doSyst = False
+    doStat = True
     doSyst = True
     #if 'mll' in givein or 'Raw' in givein or 'boson_pt' in givein or 'boson_phi' in givein or '_significance' in givein: doSyst = False
     if 'mll' in givein or 'Raw' in givein or '_significance' in givein or 'njets_' in givein: doSyst = False
     #if 'boson_pt' in givein or 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein: doSyst = False
-    if 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein: doSyst = False
+    #if 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein or 'boson_pt' in givein: doSyst = False
+    if 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein : doSyst = False
     if 'mm' in str(opts.Channel.lower()) or 'mu' in str(opts.Channel.lower()) : channel = 'MuNu'
     else  : channel = 'ElNu'
     era = str(opts.Year)
@@ -135,13 +136,13 @@ if __name__ == "__main__":
 
     #data_hist.Sum2()
     varTitle    = 'p_{T}^{miss} [GeV]'
-    if 'boson_pt' in givein.lower() : varTitle    = 'q_{T} [GeV]'
+    if 'boson_pt' in givein: varTitle    = 'q_{T} [GeV]'
     if 'boson_phi' in givein : varTitle    = 'q_{#phi}'
     if 'PuppiMETmTmass' in givein : varTitle    = 'm_{T} [GeV]'
     if 'njets' in givein : varTitle    = 'njets'
     if 'DphiWMET' in givein : varTitle    = '#Delta#Phi(W,p_{T}^{miss})'
     if 'DphilMET' in givein : varTitle    = '#Delta#Phi(#mu,p_{T}^{miss})'
-    if 'PuppiMET' in givein : varTitle    = 'p_{T}^{miss}'
+    if 'PuppiMET' in givein : varTitle    = 'p_{T}^{miss} [GeV]'
     if 'wtmass' in givein.lower() : varTitle    = 'W_{T} [GeV]'
     if 'wmass' in givein.lower() : varTitle    = 'W [GeV]'
     if 'pt_1' in givein : varTitle    = 'p_{T}(#mu)'
@@ -151,6 +152,10 @@ if __name__ == "__main__":
     if 'u_perp' in givein : varTitle    = 'u_{#perp} [GeV]'
     if 'u_par' in givein : varTitle    = 'u_{#parallel}  [GeV]'
     if 'u_par_boson' in givein or "u_parboson" in givein : varTitle    = 'u_{#parallel} + q_{T} [GeV]'
+    if 'METCorGoodboson_pt' in givein: varTitle    = 'W q_{T} [GeV]'
+    if 'METCorGoodboson_phi' in givein: varTitle    = 'W #phi '
+    if 'METCorGoodboson_transm' in givein: varTitle    = '#W_T mass [GeV]'
+    if 'METCorGoodboson_m' in givein: varTitle    = 'W mass [GeV]'
     
     kFactor=1.
     #if 'phi' in givein : 
@@ -371,7 +376,7 @@ if __name__ == "__main__":
     option=str(opts.varr)
     run_str =str(lumi)
     logcase=[0, 1]
-    logcase=[1]
+    #logcase=[0]
     
     for ilog in logcase :
         isLog = ilog
