@@ -16,7 +16,7 @@ sys.path.append('../TauPOG')
 #from TauPOG.TauIDSFs.TauIDSFTool import TauESTool
 #from TauPOG.TauIDSFs.TauIDSFTool import TauFESTool
 
-__author__ = "Dan Marlow, Alexis Kalogeropoulos, Gage DeZoort"
+__author__ = "Alexis Kalogeropoulos"
 __date__   = "Monday, Oct. 28th, 2019"
 
 
@@ -1812,6 +1812,65 @@ def findW(goodElectronList, goodMuonList, entry) :
 
 
 
+def findZHZZ2L2Nu(goodElectronList, goodMuonList, entry) :
+    mm = selections['mm'] 
+    selpair,pairList, mZ, bestDiff = [],[], 91.1876, 99999. 
+    nElectron = len(goodElectronList)
+    #print 'going in tauFun', goodElectronList, nElectron, entry.event, entry.luminosityBlock, entry.run, bestDiff
+    if nElectron > 1 :
+        for i in range(nElectron) :
+            ii = goodElectronList[i] 
+            e1 = TLorentzVector()
+            e1.SetPtEtaPhiM(entry.Electron_pt[ii],entry.Electron_eta[ii],entry.Electron_phi[ii],0.0005)
+            for j in range(i+1,nElectron) :
+                jj = goodElectronList[j]
+                #print 'going in tauFun masses', goodElectronList, nElectron, entry.event, entry.luminosityBlock, entry.run, 'for', jj, ii, entry.Electron_charge[ii],  entry.Electron_charge[jj]
+                if entry.Electron_charge[ii] != entry.Electron_charge[jj] :
+                    e2 = TLorentzVector()
+                    e2.SetPtEtaPhiM(entry.Electron_pt[jj],entry.Electron_eta[jj],entry.Electron_phi[jj],0.0005)
+                    cand = e1 + e2
+                    mass = cand.M()
+		    if mass < 60 or mass > 120 : continue
+                    #print 'going in tauFun masses', goodElectronList, nElectron, entry.event, entry.luminosityBlock, entry.run, bestDiff, 'is abs(mass-mZ > bestDiff', abs(mass-mZ), bestDiff, 'for', jj, ii
+                    if abs(mass-mZ) < bestDiff :
+                        bestDiff = abs(mass-mZ)
+                        #print 'masses', bestDiff, mass, entry.Electron_charge[jj], entry.Electron_charge[ii], entry.event, entry.luminosityBlock, entry.run, 'elect', jj, ii, goodElectronList
+                        if entry.Electron_charge[ii] > 0. :
+                            pairList = [e1,e2]
+                            selpair = [ii,jj]
+                        else : 
+                            pairList = [e2,e1]
+                            selpair = [jj,ii]
+                           
+    nMuon = len(goodMuonList)
+    if nMuon > 1 : 
+        # find mass pairings
+        for i in range(nMuon) :
+            ii = goodMuonList[i]
+            #if entry.Muon_pfRelIso04_all[ii] >  mm['mu_iso']: continue
+            mu1 = TLorentzVector()
+            mu1.SetPtEtaPhiM(entry.Muon_pt[ii],entry.Muon_eta[ii],entry.Muon_phi[ii],0.105)
+            for j in range(i+1,nMuon) :
+                jj = goodMuonList[j]
+                if entry.Muon_charge[ii] != entry.Muon_charge[jj] :
+                    mu2 = TLorentzVector()
+                    mu2.SetPtEtaPhiM(entry.Muon_pt[jj],entry.Muon_eta[jj],entry.Muon_phi[jj],0.105)
+                    cand = mu1 + mu2
+                    mass = cand.M()
+		    if mass < 60 or mass > 120 : continue
+                    if abs(mass-mZ) < bestDiff :
+                        bestDiff = abs(mass-mZ)
+                        if entry.Muon_charge[ii] > 0. :
+                            pairList = [mu1,mu2]
+                            selpair = [ii,jj]
+                        else :
+                            pairList = [mu2,mu1]
+                            selpair = [jj,ii]
+
+    # first particle of pair is positive
+    #print 'returning', selpair,  'is muon', nMuon, goodMuonList, 'isEl', nElectron, goodElectronList, entry.event, entry.luminosityBlock, entry.run
+    return pairList, selpair
+                    
 
 
 def findZ(goodElectronList, goodMuonList, entry) :
