@@ -8,10 +8,12 @@ allsyst = [    "Nominal",    "JESUp",    "JESDown", "UnclusteredUp",    "Unclust
 samples = ["data",    "qcd",    "dy",    "top",    "ew",    "ewk",    "ewknlo61",    "ewkincl",    "ewkht"]
 samples = ["data", "qcd", "dy", "top", "ew", "ewk", "ewknlo61"]
 #samples = ["qcd", "dy", "top", "ew", "ewk", "ewknlo61"]
+#samples = ["qcd", "dy", "top", "ew", "ewk", "ewknlo61"]
 #samples=["qcd", "dy", "top", "ew", "ewknlo61", "ewkincl"]
 #samples=["data", "qcd", "dy", "top", "ew", "ewk",  "ewkincl"]
 #samples=["qcd", "dy", "top", "ew", "ewk", "ewknlo61", "ewkincl", "ewkht"]
-#samples=["data", "ewknlo61"]
+samples=["top", "ew", "ewk" ]
+samples=["data", "qcd", "dy", "ewknlo61"]
 channels = ["MuNu", "ElNu"]
 #channels = ["MuNu"]
 #years = ["2016preVFP", "2016postVFP"]
@@ -50,15 +52,16 @@ vars += ['dPhiMETCor_T1J1', 'dPhiPuppiMETCor_J1', 'dPhiMETCor_T1J2', 'dPhiPuppiM
 #vars=["njets", "iso_1", "METCorGoodboson_transm"]
 #vars += varsM
 # vars=varsall
-#vars = ["METCorGood_T1_pt", "PuppiMETCorGood_pt"]
-#vars = ["METCorGood_T1_pt"]
 #vaars += ["METCorGood_T1Smear_pt"]
+#vars = ["METCorGood_T1_pt", "PuppiMETCorGood_pt"]
+vars += ["METCorSmearboson_mt", "METCorboson_mt", "PuppiMETCorboson_mt"]
+vars += ["METCorGoodSmearboson_mt", "METCorGoodboson_mt", "PuppiMETCorGoodboson_mt"]
 
 IDWP = "_cutbased"
 
 #IDWP = "_mvaid"
 alljetcuts = ["njetsgeq0", "njetsgt0", "njetseq0"]
-#alljetcuts = ["njetsgeq0"]
+alljetcuts = ["njetsgt0"]
 
 #btag = "nbtagl" + IDWP + "_varbins"
 

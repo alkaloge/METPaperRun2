@@ -299,18 +299,17 @@ if __name__ == "__main__":
     #doSyst = False
     doRebin = False
     extractJacob = False
-    if 'transm' in givein : extractJacob = True
+    if '_mt' in givein : extractJacob = True
     bins= []
     for ib in range(0,410,10): bins.append(ib)
     for ib in range(410,500,50): bins.append(ib)
     bins.append(1000)
     bins=[]
     bins = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150,160, 170,180,190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 350]
-    if 'open' in fin : 
-        doRebin = True
     
-    if 'phi' in givein or '_m' in givein or 'dR' in givein or 'dPhi' in givein:
-        doRebin = False
+    if 'open' in fin :
+        if '_transm' in givein or '_mt' in givein: 
+            doRebin = True
 
     #if 'mll' in givein or 'Raw' in givein or 'boson_pt' in givein or 'boson_phi' in givein or '_significance' in givein: doSyst = False
     if 'mll' in givein or 'Raw' in givein or '_significance' in givein or 'njets_' in givein:
@@ -452,7 +451,7 @@ if __name__ == "__main__":
     if extractJacob : 
 
         histof = hMC_total.Clone()
-        fit_result = histof.Fit("gaus", "SN", "", 60, 250)  # Adjust range as needed
+        fit_result = histof.Fit("gaus", "SN", "", 60, 100)  # Adjust range as needed
 
         # Extract fit parameters
         mean = fit_result.Parameter(1)
