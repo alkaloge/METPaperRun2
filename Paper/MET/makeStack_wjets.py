@@ -331,7 +331,7 @@ if __name__ == "__main__":
     doRebin = False
     extractJacob = False
     if '_mt' in givein or '_pt' in givein: extractJacob = True
-    extractJacob = False
+    #extractJacob = False
     bins= []
     for ib in range(0,410,10): bins.append(ib)
     for ib in range(410,500,50): bins.append(ib)
@@ -548,128 +548,6 @@ if __name__ == "__main__":
     kFactor = float(data_hist.GetSumOfWeights() / hMC_total.GetSumOfWeights())
     if 'noscale' in str(opts.ExtraTag).lower():
         kFactor = 1.
-
-    if extractJacob : 
-        #reget data and subtract scaled MC now
-        hdata_wjets = data_hist.Clone("hdata_wjets")
-        hMC_wjets = data_hist.Clone("hMC_wjets")
-        if doRebin : 
-            hMC_wjets = data_hist_rebin.Clone("hMC_wjets")
-            hdata_wjets = data_hist_rebin.Clone("hdata_wjets")
-        
-        hMC_wjets.Reset()
-        for i in range(len(samples)):
-            s = str(samples[i])
-            histo= None
-            histo = fIn.Get("histo_" + s + "_" + v)
-            if doRebin : 
-                histo_rebin = rebinHisto(histo,bins,histo.GetName()+'_rebin')
-                histo = histo_rebin
-
-            if kFactor != 1 : histo.Scale(kFactor)
-
-            if '61' in s and 'ewk' in s:
-                histo.SetTitle(histo.GetTitle().replace("-61", ""))
-                hMC_wjets.Add(histo)
-            #if '61' not in s and 'ewk' not in s:
-            #    #hdata_wjets.Add(histo,-1)
-            #    for ibin in range(1, histo.GetNbinsX() + 1):
-            #        hdata_wjets.SetBinContent(ibin,  hdata_wjets.GetBinContent(ibin) - histo.GetBinContent(ibin))
-            #        hdata_wjets.SetBinError(ibin,  math.sqrt(hdata_wjets.GetBinContent(ibin)))
-
-        fit_function = None
-        fit_functionD = None
-        xMin = 0
-        xMax= 120
-        if '_mt' in givein : 
-            fit_function = TF1("fit_function", fit_func, 40, 135, 6)
-            fit_function.SetParameters(80.4, 15.0, 2300000, 20000, 2, 200)  # Initial guesses for the parameters
-            fit_functionD = TF1("fit_functionD", fit_funcD, 40, 135, 6)
-            fit_functionD.SetParameters(80.4, 15.0, 2300000, 20000, 2, 200)  # Initial guesses for the parameters
-            #fit_function.FixParameter(0, 40.2*2)
-            #fit_functionD.FixParameter(0, 40.2*2)
-
-        if '_pt' in givein and 'T1' not in givein: 
-            fit_function = TF1("fit_function", fit_func, 0, 120, 6)
-            fit_function.SetParameters(80.4/2, 15.0/2, 2300000, 20000, 2, 20)  # Initial guesses for the parameters
-            fit_functionD = TF1("fit_functionD", fit_funcD, 0, 120, 6)
-            fit_functionD.SetParameters(80.4/2, 15.0/2, 2300000, 20000, 2, 20)  # Initial guesses for the parameters
-        if '_pt' in givein and 'T1' in givein: 
-    
-            fit_function = TF1("fit_function", fit_func, 10, 120, 6)
-            fit_function.SetParameters(80.4/2, 15.0/2, 2300000, 0, 2, 20)  # Initial guesses for the parameters
-            fit_functionD = TF1("fit_functionD", fit_funcD, 10, 120, 6)
-            fit_functionD.SetParameters(80.4/2, 15.0/2, 2300000, 0, 2, 20)  # Initial guesses for the parameters
-        ###fit MC histogram
-        hdata_wjets.SetStats(0)
-        #hMC_wjets.Scale(1.0 / hMC_wjets.Integral()*hMC_wjets.GetBinWidth(1))
-        #hdata_wjets.Scale(1.0 / hdata_wjets.Integral()*hdata_wjets.GetBinWidth(1))
-        #fit_function.FixParameter(0, 80/4/2);
-        #fit_functionD.FixParameter(0, 80/4/2);
-        
-        hMC_wjets.Fit(fit_function, "R S", era, True)
-        # Extract fit results
-        peak_x = fit_function.GetMaximumX()
-        mean_fit = fit_function.GetParameter(0)
-        mean_error = fit_function.GetParError(0)
-        width_fit = fit_function.GetParameter(1)
-        width_error = fit_function.GetParError(1)
-
-        
-        norm_fit = fit_function.GetParameter(2)
-        
-        hdata_wjets.Fit(fit_functionD, "R S",era, False)
-        peak_xD = fit_functionD.GetMaximumX()
-        mean_fitD = fit_functionD.GetParameter(0)
-        mean_errorD = fit_functionD.GetParError(0)
-        width_fitD = fit_functionD.GetParameter(1)
-        width_errorD = fit_functionD.GetParError(1)
-
-        norm_fitD = fit_functionD.GetParameter(2)
-
-        mean_str = f"{peak_x:.2f} {mean_fit:.2f}  {mean_error:.2f}"
-        sigma_str = f"{width_fit:.2f}  {width_error:.2f}"
-        mean_strD = f"{peak_xD:.2f} {mean_fitD:.2f}  {mean_errorD:.2f}"
-        sigma_strD = f"{width_fitD:.2f}  {width_errorD:.2f}"
-
-        #print(f"Fitted mean (Jacobian peak position): {mean_str} GeV", channel, v)
-        #print(f"Fitted width: {sigma_str} GeV", channel, v)
-        print(f"============================================================Fitted mean (Jacobian peak position): {mean_str}  {sigma_str}  {mean_strD}  {sigma_strD} {channel} {v} {inn}")
-        jname="jacobian_peak_fit_"+era+"_"+v+"_"+inn+"_"+channel
-        #canvas.SaveAs(jname+".png")a
-        fit_function.SetMarkerSize(0.5)
-        fit_functionD.SetMarkerSize(0.5)
-        plot_jacob = Canvas.Canvas( jname, "png", leg[0], leg[1], leg[2], leg[3])
-        plot_jacob.addHisto(hdata_wjets, "E", "Data", "pe", r.kBlack, 1, 0)
-        plot_jacob.addHisto(hMC_wjets, "E,SAME", "MC W+jets", "pe", r.kBlue, 1, 1)
-        plot_jacob.addHisto(fit_function, "SAME", "MC Fit", "l", r.kRed, 1, 2)
-        plot_jacob.addHisto(fit_functionD, "SAME", "Data Fit", "pl", r.kGreen, 1, 3)
-        plot_jacob.saveCanvas(1, 1, 0, peak_x, mean_fit, mean_error, width_fit, width_error, peak_xD, mean_fitD, mean_errorD, width_fitD, width_errorD,lumi, hdata_wjets, hMC_wjets,fit_function,  varTitle, jname, option, run_str)
-        
-        #canvas = ROOT.TCanvas("canvas", "Transverse Mass Distribution", 800, 600)
-        #CMS.SetExtraText("")
-        #CMS.SetCmsText("Private work (CMS simulation)")
-        #CMS.SetCmsTextFont(52)
-        #CMS.SetCmsTextSize(0.75*0.76)
-        #CMS.SetLumi("50")
-        #canvas = CMS.cmsCanvas('', 0, 1, 0, 1, '', '', square = CMS.kSquare, extraSpace=0.01, iPos=11)
-        #legend = TLegend(0.6, 0.4, 0.9, 0.6)
-        #legend.AddEntry(hMC_wjets, "MC W+jets", "l")
-        #legend.AddEntry(hdata_wjets, "Data - nonW+jets", "p")
-        #legend.AddEntry(fit_function, "Fit", "l")
-        '''
-        canvas.Draw()
-        hMC_wjets.SetMarkerColor(kBlue)
-        hMC_wjets.SetLineColor(kBlue)
-        hMC_wjets.Draw("E")
-        
-        hdata_wjets.Draw("SAME ")
-        fit_function.Draw("same")
-        legend.Draw("same")
-
-        canvas.Update()
-        '''
-        #plot_j = Canvas.Canvas( "jacobian_peak_fit_"+v+".png", "png", leg[0], leg[1], leg[2], leg[3])
 
     # Print the contribution table
     normQCD = 1.
@@ -894,6 +772,139 @@ if __name__ == "__main__":
    
         print('some info for QCD data driven outside the loop', data_histC.GetSumOfWeights(), normQCD, 'B/D', data_histB.Integral() / data_histD.Integral() , 'C/D', data_histC.Integral() / data_histD.Integral())
     print (samples)
+
+    if extractJacob : 
+        #reget data and subtract scaled MC now
+        hdata_wjets = data_hist.Clone("hdata_wjets")
+        hMC_wjets = data_hist.Clone("hMC_wjets")
+        if doRebin : 
+            hMC_wjets = data_hist_rebin.Clone("hMC_wjets")
+            hdata_wjets = data_hist_rebin.Clone("hdata_wjets")
+        
+        hMC_wjets.Reset()
+        for i in range(len(samples)):
+            s = str(samples[i])
+            histo= None
+            if not doQCD : histo = fIn.Get("histo_" + s + "_" + v)
+            if doQCD : 
+                if 'qcd' not in s : histo = fIn.Get("histo_" + s + "_" + v)
+                if 'qcd'  in s : histo = fIn.Get("histo_qcd_data_B_" + v)
+            if doRebin : 
+                histo_rebin = rebinHisto(histo,bins,histo.GetName()+'_rebin')
+                histo = histo_rebin.Clone()
+
+            if kFactor != 1 : histo.Scale(kFactor)
+
+            if '61' in s and 'ewk' in s:
+                histo.SetTitle(histo.GetTitle().replace("-61", ""))
+                hMC_wjets.Add(histo)
+            if '61' not in s and 'ewk' not in s:
+                hdata_wjets.Add(histo,-1)
+            #    for ibin in range(1, histo.GetNbinsX() + 1):
+            #        hdata_wjets.SetBinContent(ibin,  hdata_wjets.GetBinContent(ibin) - histo.GetBinContent(ibin))
+            #        hdata_wjets.SetBinError(ibin,  math.sqrt(hdata_wjets.GetBinContent(ibin)))
+
+        fit_function = None
+        fit_functionD = None
+        xMin = 0
+        xMax= 120
+        if '_mt' in givein : 
+            fit_function = TF1("fit_function", fit_func, 40, 135, 6)
+            fit_function.SetParameters(80.4, 15.0, 2300000, 20000, 2, 200)  # Initial guesses for the parameters
+            fit_functionD = TF1("fit_functionD", fit_funcD, 40, 135, 6)
+            fit_functionD.SetParameters(80.4, 15.0, 2300000, 20000, 2, 200)  # Initial guesses for the parameters
+            #fit_function.FixParameter(0, 40.2*2)
+            #fit_functionD.FixParameter(0, 40.2*2)
+
+        if '_pt' in givein and 'T1' not in givein: 
+            fit_function = TF1("fit_function", fit_func, 0, 120, 6)
+            fit_function.SetParameters(80.4/2, 15.0/2, 2300000, 20000, 2, 20)  # Initial guesses for the parameters
+            fit_functionD = TF1("fit_functionD", fit_funcD, 0, 120, 6)
+            fit_functionD.SetParameters(80.4/2, 15.0/2, 2300000, 20000, 2, 20)  # Initial guesses for the parameters
+        if '_pt' in givein and 'T1' in givein: 
+    
+            fit_function = TF1("fit_function", fit_func, 10, 120, 6)
+            fit_function.SetParameters(80.4/2, 15.0/2, 2300000, 0, 2, 20)  # Initial guesses for the parameters
+            fit_functionD = TF1("fit_functionD", fit_funcD, 10, 120, 6)
+            fit_functionD.SetParameters(80.4/2, 15.0/2, 2300000, 0, 2, 20)  # Initial guesses for the parameters
+        ###fit MC histogram
+        hdata_wjets.SetStats(0)
+        #hMC_wjets.Scale(1.0 / hMC_wjets.Integral()*hMC_wjets.GetBinWidth(1))
+        #hdata_wjets.Scale(1.0 / hdata_wjets.Integral()*hdata_wjets.GetBinWidth(1))
+        #fit_function.FixParameter(0, 80/4/2);
+        #fit_functionD.FixParameter(0, 80/4/2);
+        
+        hMC_wjets.Fit(fit_function, "R S", era, True)
+        # Extract fit results
+        peak_x = fit_function.GetMaximumX()
+        mean_fit = fit_function.GetParameter(0)
+        mean_error = fit_function.GetParError(0)
+        width_fit = fit_function.GetParameter(1)
+        width_error = fit_function.GetParError(1)
+
+        
+        norm_fit = fit_function.GetParameter(2)
+        
+        hdata_wjets.Fit(fit_functionD, "R S",era, False)
+        peak_xD = fit_functionD.GetMaximumX()
+        mean_fitD = fit_functionD.GetParameter(0)
+        mean_errorD = fit_functionD.GetParError(0)
+        width_fitD = fit_functionD.GetParameter(1)
+        width_errorD = fit_functionD.GetParError(1)
+
+        norm_fitD = fit_functionD.GetParameter(2)
+
+        mean_str = f"{peak_x:.2f} {mean_fit:.2f}  {mean_error:.2f}"
+        sigma_str = f"{width_fit:.2f}  {width_error:.2f}"
+        mean_strD = f"{peak_xD:.2f} {mean_fitD:.2f}  {mean_errorD:.2f}"
+        sigma_strD = f"{width_fitD:.2f}  {width_errorD:.2f}"
+
+        #print(f"Fitted mean (Jacobian peak position): {mean_str} GeV", channel, v)
+        #print(f"Fitted width: {sigma_str} GeV", channel, v)
+        print(f"============================================================Fitted mean (Jacobian peak position): {mean_str}  {sigma_str}  {mean_strD}  {sigma_strD} {channel} {v} {inn}")
+        jname="jacobian_peak_fit_"+era+"_"+v+"_"+inn+"_"+channel
+        #canvas.SaveAs(jname+".png")a
+        fit_function.SetMarkerSize(0.5)
+        fit_functionD.SetMarkerSize(0.5)
+        plot_jacob = Canvas.Canvas( jname, "png", leg[0], leg[1], leg[2], leg[3])
+        plot_jacob.addHisto(hdata_wjets, "E", "Data", "pe", r.kBlack, 1, 0)
+        plot_jacob.addHisto(hMC_wjets, "E,SAME", "MC W+jets", "pe", r.kBlue, 1, 1)
+        plot_jacob.addHisto(fit_function, "SAME", "MC Fit", "l", r.kRed, 1, 2)
+        plot_jacob.addHisto(fit_functionD, "SAME", "Data Fit", "pl", r.kGreen, 1, 3)
+        plot_jacob.saveCanvas(1, 1, 0, peak_x, mean_fit, mean_error, width_fit, width_error, peak_xD, mean_fitD, mean_errorD, width_fitD, width_errorD,lumi, hdata_wjets, hMC_wjets,fit_function,  varTitle, jname, option, run_str)
+        
+        #canvas = ROOT.TCanvas("canvas", "Transverse Mass Distribution", 800, 600)
+        #CMS.SetExtraText("")
+        #CMS.SetCmsText("Private work (CMS simulation)")
+        #CMS.SetCmsTextFont(52)
+        #CMS.SetCmsTextSize(0.75*0.76)
+        #CMS.SetLumi("50")
+        #canvas = CMS.cmsCanvas('', 0, 1, 0, 1, '', '', square = CMS.kSquare, extraSpace=0.01, iPos=11)
+        #legend = TLegend(0.6, 0.4, 0.9, 0.6)
+        #legend.AddEntry(hMC_wjets, "MC W+jets", "l")
+        #legend.AddEntry(hdata_wjets, "Data - nonW+jets", "p")
+        #legend.AddEntry(fit_function, "Fit", "l")
+        '''
+        canvas.Draw()
+        hMC_wjets.SetMarkerColor(kBlue)
+        hMC_wjets.SetLineColor(kBlue)
+        hMC_wjets.Draw("E")
+        
+        hdata_wjets.Draw("SAME ")
+        fit_function.Draw("same")
+        legend.Draw("same")
+
+        canvas.Update()
+        '''
+        #plot_j = Canvas.Canvas( "jacobian_peak_fit_"+v+".png", "png", leg[0], leg[1], leg[2], leg[3])
+
+
+
+
+
+
+
+
     for v in varbs:
         for i in range(0, len(samples)):
             s = str(samples[i])
