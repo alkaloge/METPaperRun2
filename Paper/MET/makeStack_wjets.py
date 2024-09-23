@@ -1,14 +1,19 @@
 #!/usr/bin/env python
 
 import ROOT as r
-from ROOT import gROOT, TCanvas, TFile, TGraphErrors, TMath, SetOwnership, TColor, kYellow, kGreen, kWhite, kMagenta, kCyan, kBlue, kTeal, kOrange, TH1D, TH1F
+from ROOT import gROOT, TCanvas, TFile, TGraphErrors, TMath, SetOwnership, TColor, kYellow, kGreen, kWhite, kMagenta, kCyan, kBlue, kTeal, kOrange, TH1D, TH1F, TF1, kRed, TLegend
 import math
 import sys
 import optparse
 import array
 import time
 import copy
+import os,ROOT
 from array import array
+import numpy as np
+#import cmsstyle as CMS
+#import cmsstyle as CMS
+#import CMS_lumi, tdrstyle
 
 import include.helper as helper
 #import include.Region     as Region
@@ -18,70 +23,83 @@ import include.Sample as Sample
 #import include.Rounder    as Rounder
 
 
-def rebinHisto_(hist,bins,suffix):
-    nbins = hist.GetNbinsX()
-    newbins = len(bins)-1
-    name = hist.GetName()+"_"+suffix
-    title = hist.GetTitle()
-    newhist = TH1F(name,title,newbins,array('d',list(bins)))
-    for ib in range(1,nbins+1):
-        centre = hist.GetBinCenter(ib)
-        bin_id = newhist.FindBin(centre)
-        xbin = hist.GetBinContent(ib)
-        ebin = hist.GetBinError(ib)
-        xnew = newhist.GetBinContent(bin_id)
-        enew = newhist.GetBinError(bin_id)
-        x_update = xbin + xnew;
-        e_update = math.sqrt(ebin*ebin + enew*enew);
-        newhist.SetBinContent(bin_id,x_update)
-        newhist.SetBinError(bin_id,e_update)
-    return newhist
 
-import ROOT
-def rebinHistoo(hist, bins, suffix):
-    nbins = hist.GetNbinsX()
-    newbins = len(bins) - 1
-    name = hist.GetName() + "_" + suffix
-    title = hist.GetTitle()
-    newhist = ROOT.TH1F(name, title, newbins, array('d', list(bins)))
 
-    for ib in range(1, nbins + 1):
-        centre = hist.GetBinCenter(ib)
-        bin_id = newhist.FindBin(centre)
-        xbin = hist.GetBinContent(ib)
-        ebin = hist.GetBinError(ib)
-        xnew = newhist.GetBinContent(bin_id)
-        enew = newhist.GetBinError(bin_id)
-        x_update = xbin + xnew
-        e_update = math.sqrt(ebin**2 + enew**2)
-        newhist.SetBinContent(bin_id, x_update)
-        newhist.SetBinError(bin_id, e_update)
+def fit_func(x, params, year="2018", isMC=True):
+    mean = params[0]
+    width = params[1]
+    norm = params[2]
+    a = params[3]
+    b = params[4]
+    c = params[5]
+    sigma = params[1]
+    #ROOT.Math.MinimizerOptions.SetDefaultMinimizer("Minuit2")
+    gaussian=None
+    polynomial_background=None
+    # Breit-Wigner for the signal (Jacobian peak)
+    breit_wigner = norm * (width**2 / ((x[0] - mean)**2 + width**2))
+    # Polynomial for any remaining background
+    #if not isMC : 
+    #    if '2017' in year : polynomial_background = a + b*x[0] + c*x[0]**2 + 2*x[0]**3
+    #    if 'Run2' in year : polynomial_background = a - b*5*x[0] + c*x[0]**2 
+    #if isMC : polynomial_background = a + b*x[0] + c*x[0]**2 
+    polynomial_background = a + b*x[0] + c*x[0]**2 
+    
+    #if '2017' in year : polynomial_background = a + b*x[0] + c*x[0]**2 + 10*x[0]**3
+    gaussian = norm * ROOT.TMath.Gaus(x[0], mean, sigma, True)
+    # Polynomial for the background
+    return breit_wigner + polynomial_background
+    #return gaussian + polynomial_background
 
-    # Handle overflow bin: Add to the last bin of newhist
-    overflow_content = 0
-    overflow_error2 = 0
+def fit_funcD(x, params, year="2018", isMC=True):
+    mean = params[0]
+    width = params[1]
+    norm = params[2]
+    a = params[3]
+    b = params[4]
+    c = params[5]
+    sigma = params[1]
+    #ROOT.Math.MinimizerOptions.SetDefaultMinimizer("Minuit2")
+    gaussian=None
+    polynomial_background=None
+    # Breit-Wigner for the signal (Jacobian peak)
+    breit_wigner = norm * (width**2 / ((x[0] - mean)**2 + width**2))
+    # Polynomial for any remaining background
+    #if not isMC : 
+    #    if '2017' in year : polynomial_background = a + b*x[0] + c*x[0]**2 + 2*x[0]**3
+    #    if 'Run2' in year : polynomial_background = a - b*5*x[0] + c*x[0]**2 
+    #if isMC : polynomial_background = a + b*x[0] + c*x[0]**2 
+    polynomial_background = a + b*x[0] + c*x[0]**2 
+    
+    #if '2017' in year : polynomial_background = a + b*x[0] + c*x[0]**2 + 10*x[0]**3
+    gaussian = norm * ROOT.TMath.Gaus(x[0], mean, sigma, True)
+    # Polynomial for the background
+    #return breit_wigner + polynomial_background
+    #return gaussian + polynomial_background
+    return breit_wigner + polynomial_background
 
-    # Accumulate overflow from the last defined bin in the original histogram
-    for ib in range(nbins + 1, hist.GetNbinsX() + 2):  # From overflow to max bins
-        overflow_content += hist.GetBinContent(ib)
-        overflow_error2 += hist.GetBinError(ib)**2
+def fit_funcc(x, params):
+    mean = params[0]
+    sigma = params[1]
+    norm = params[2]
+    a = params[3]
+    b = params[4]
+    c = params[5]
 
-    # Add overflow content and error to the last bin of newhist
-    last_bin = newhist.GetNbinsX()  # Last bin index in the new histogram
-    last_bin_content = newhist.GetBinContent(last_bin)
-    last_bin_error = newhist.GetBinError(last_bin)
-    newhist.SetBinContent(last_bin, last_bin_content + overflow_content)
-    newhist.SetBinError(last_bin, math.sqrt(last_bin_error**2 + overflow_error2))
+    # Gaussian for the signal (Jacobian peak)
+    gaussian = norm * ROOT.TMath.Gaus(x[0], mean, sigma, True)
 
-    return newhist
+    # Polynomial for the background
+    polynomial_background = a + b*x[0] + c*x[0]**2 
 
-import ROOT
+    #return gaussian + polynomial_background
+    return gaussian 
+
 
 def rebinHisto(original_hist, new_bins, suffix):
 
     # Create the new histogram with the specified bin edges
-    new_hist = ROOT.TH1F( original_hist.GetName() + "_" + suffix, original_hist.GetTitle(), len(new_bins) - 1, array('d', new_bins)
-    )
+    new_hist = ROOT.TH1F( original_hist.GetName() + "_" + suffix, original_hist.GetTitle(), len(new_bins) - 1, array('d', new_bins) )
 
     # Iterate over the original histogram's bins
     for ibin in range(1, original_hist.GetNbinsX() + 1):
@@ -104,7 +122,7 @@ def rebinHisto(original_hist, new_bins, suffix):
             # Handle underflow content (if needed)
             new_hist.SetBinContent( 1, new_hist.GetBinContent(1) + bin_content)
             new_hist.SetBinError( 1, math.sqrt(new_hist.GetBinError(1)**2 + bin_error**2))
-
+    #if 'qcd' in original_hist.GetName().lower() or 'qcd' in  original_hist.GetTitle().lower(): print ('==^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^6======> during rebin', new_hist.Integral(), original_hist.Integral(), new_hist.GetNbinsX(), original_hist.GetNbinsX(), new_hist.GetBinError(10), original_hist.GetBinError(10))
     return new_hist
 
 
@@ -205,25 +223,35 @@ if __name__ == "__main__":
 
     # plotS_2018_data_njetsgeq0_hitslt2_METWmass_MuMu.root
     isLog = 1
-    SR = "isolt0p15_mtmassgt80"
-    B = "isolt0p15_mtmasslt80"
-    D = "isogt0p15_mtmasslt80"
-    C = "isogt0p15_mtmassgt80"
+    doNormPlot = 1
+    #SR = "isolt0p15_mtmassgt80"
+    #B = "isolt0p15_mtmasslt80"
+    #D = "isogt0p15_mtmasslt80"
+    #C = "isogt0p15_mtmassgt80"
+
+    #finB = fin.replace(SR, B)
+    #finC = fin.replace(SR, C)
+    #finD = fin.replace(SR, D)
 
     fin = '{0:s}'.format(str(opts.FileIn))
-    finB = fin.replace(SR, B)
-    finC = fin.replace(SR, C)
-    finD = fin.replace(SR, D)
+    finB = fin.replace('mtmassgt', 'mtmasslt')
+    finC = fin.replace('isolt0p15', 'isogt0p15')
+    finD = fin.replace('isolt0p15', 'isogt0p15')
+    finD = finD.replace('mtmassgt', 'mtmasslt')
 
-    fIn = TFile.Open(fin, 'read')
+    SRincl = "isolt0p15_mtmassincl_pt1gt35"
+    B = "isolt0p15_mtmassincl_pt1lt35"
+    C = "isogt0p15_mtmassincl_pt1gt35"
+    D = "isogt0p15_mtmassincl_pt1lt35"
+
+    finB = fin.replace(SRincl, B)
+    finC = fin.replace(SRincl, C)
+    finD = fin.replace(SRincl, D)
+
+    fIn = TFile.Open(fin, 'update')
     fInB = fInC = fInD = None
     doQCD = int(opts.DoQCD)
     #doQCD = True
-    if doQCD:
-        print('filenames in sideband', finB, finC, finD)
-        fInB = TFile.Open(finB, 'read')
-        fInC = TFile.Open(finC, 'read')
-        fInD = TFile.Open(finD, 'read')
 
     #fIn = TFile.Open('plotS.root'.format(str(opts.Year), str(opts.varr), str(opts.Channel)), 'read')
     print('fIn is.......', fIn.GetName())
@@ -244,12 +272,15 @@ if __name__ == "__main__":
     mc_unclup = 0
     mc_uncldown = 0
     mc_stack = r.THStack()
+    mc_stack_norm = r.THStack()
     # histo_dy_MET_T1_pt
 
     samples = ['dy', 'qcd', 'top', 'ew', 'ewk']
     # ewk ewknlo61 ewkincl
     givein = '{0:s}'.format(str(opts.varr))
     inn = str(opts.ExtraTag).lower()
+    option = str(opts.varr)
+    run_str = str(lumi)
     if 'nlo' in inn:
         if '61' not in inn:
             samples = ['dy', 'qcd', 'top', 'ew', 'ewknlo']
@@ -273,7 +304,7 @@ if __name__ == "__main__":
         inn = inn.replace('QCDHT', 'QCDPt')
 
     samples = ['dy',  'qcd', 'top', 'ew', 'ewknlo61']
-    samples = ['dy',  'qcd', 'ew', 'ewknlo61']
+    #samples = ['dy',  'qcd', 'ew', 'ewknlo61']
     samples = ['top',  'ew', 'dy', 'qcd',  'ewknlo61']
 
 
@@ -290,7 +321,7 @@ if __name__ == "__main__":
     colors = {'dy': kYellow,'dynlo': kYellow + 1,'qcd': kMagenta,        'top': kBlue,        'ew': kGreen + 2,        'ewk': kCyan,        'ewknlo': kCyan + 1}
     colors = {'dy': kYellow,'qcd': kMagenta,'qcdpt': kMagenta,        'top': kBlue,        'ew': kGreen + 2,        'ewk': kCyan,        'ewknlo': kCyan + 1,        'ewknlo61': kCyan + 1,        'ewkincl': kTeal,        'ewkincl61': kTeal - 4,        'ewkht': kCyan + 1}
 
-    colors = {'dy': "#f89c20",  'dynlo': "#f89c20", 'qcd': "#832db6",'top': "#3f90da",  'ew': "#e42536",'ewknlo': "#92dadd",'ewknlo61': "#92dadd"}
+    colors = {'dy': "#f89c20",  'dynlo': "#f89c20", 'qcd': "#832db6",'top': "#3f90da",  'ew': "#e42536",'ewknlo': "#92dadd",'ewknlo61': "#92dadd", 'ewk': "#92dadd", 'ewkincl': "#92dadd"}
 
     channel = ''
     doStat = True
@@ -299,24 +330,40 @@ if __name__ == "__main__":
     #doSyst = False
     doRebin = False
     extractJacob = False
-    if '_mt' in givein : extractJacob = True
+    if '_mt' in givein or '_pt' in givein: extractJacob = True
+    extractJacob = False
     bins= []
     for ib in range(0,410,10): bins.append(ib)
     for ib in range(410,500,50): bins.append(ib)
     bins.append(1000)
     bins=[]
     bins = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150,160, 170,180,190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 350]
-    
+    binsmt = [0, 5,10, 15,20, 25,30,35, 40,45, 50,55, 60,65, 70, 75,80, 85,90,95, 100,105, 110, 120, 130, 140, 150,160, 170,180,190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 350]
+    binsmt=list(range(0, 141, 5))
+    binslpt=list(range(0, 141, 4))
+    binslpt=list(np.arange(20, 141, 5))
+    binspt=list(range(0, 241, 5))
+    binsmt80=list(range(80, 141, 5))
+    binsmt10=list(range(0, 141, 10))
+    bins=binsmt
+    if 'gt80' in inn and 'boson_mt' in givein: bins=binsmt80
+    if '30to40' in inn or 'pugeq' in inn or '40to50' in inn: bins = binslpt
+    if 'boson_pt' in givein : bins=binspt
+    print (bins)
     if 'open' in fin :
-        if '_transm' in givein or '_mt' in givein: 
+        if '_transm' in givein or '_mt' in givein or '_pt' in givein : 
             doRebin = True
+
+        if 'pt_1' in givein : 
+            doRebin = True
+            bins = binslpt
 
     #if 'mll' in givein or 'Raw' in givein or 'boson_pt' in givein or 'boson_phi' in givein or '_significance' in givein: doSyst = False
     if 'mll' in givein or 'Raw' in givein or '_significance' in givein or 'njets_' in givein:
         doSyst = False
     #if 'boson_pt' in givein or 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein: doSyst = False
     #if 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein or 'boson_pt' in givein: doSyst = False
-    if 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein:
+    if 'Raw' in givein or 'mll' in givein or 'iso_1' in givein or 'Photon_' in givein or 'pt_1' in givein:
         doSyst = False
     if 'mm' in str(opts.Channel.lower()) or 'mu' in str(opts.Channel.lower()):
         channel = 'MuNu'
@@ -380,11 +427,13 @@ if __name__ == "__main__":
         varTitle = 'u_{#parallel}  [GeV]'
     if 'u_par_boson' in givein or "u_parboson" in givein:
         varTitle = 'u_{#parallel} + q_{T} [GeV]'
-    if 'METCorGoodboson_pt' in givein:
+    if 'METCorboson_pt' in givein:
         varTitle = 'W q_{T} [GeV]'
-    if 'METCorGoodboson_phi' in givein:
+    if 'METCorboson_phi' in givein:
         varTitle = 'W #phi'
-    if 'METCorGoodboson_transm' in givein:
+    if 'METCorboson_transm' in givein:
+        varTitle = 'm_{T} [GeV]'
+    if 'boson_mt' in givein:
         varTitle = 'm_{T} [GeV]'
     if '_transm' in givein:
         varTitle = 'm_{T} [GeV]'
@@ -417,30 +466,52 @@ if __name__ == "__main__":
 
     varTitle = varTitle.replace("[GeV] [GeV]", "[GeV]")
     kFactor = 1.
-    # if 'phi' in givein :
+    #### Jacobian Fit
     hMC_total = data_hist.Clone("hMC_total")
+    hMC_wjets = data_hist.Clone("hMC_wjets")
+    hdata_wjets = data_hist.Clone("hdata_wjets")
+
+    if doRebin : 
+        hMC_total = data_hist_rebin.Clone("hMC_total")
+        hMC_wjets = data_hist_rebin.Clone("hMC_wjets")
+        hdata_wjets = data_hist_rebin.Clone("hdata_wjets")
+    
     hMC_total.Reset()
+    hMC_wjets.Reset()
+
+    ## at this point we have a data histo, and two empty ones, one for total MC, another to fill Wjets only
 
     contribution_dict = {}
 
-    for v in varbs:
-        # for s in samples :
-        for i in range(0, len(samples)):
-            s = str(samples[i])
-            histo = fIn.Get("histo_" + s + "_" + v)
-            print("==================> histo_" + s + "_" + v)
-            hMC_total.Add(histo)
+    v=varbs[0]
+    for i in range(0, len(samples)):
+        s = str(samples[i])
+        histo = fIn.Get("histo_" + s + "_" + v)
+        print("==================> histo_" + s + "_" + v)
+        if doRebin : 
+            histo_rebin = rebinHisto(histo,bins,histo.GetName()+'_rebin')
+            histo = histo_rebin
+
+        hMC_total.Add(histo)
+
+    #hMC_total holds ALL MC now
 
     for i in range(len(samples)):
         s = str(samples[i])
         histo = fIn.Get("histo_" + s + "_" + v)
+        if doRebin : 
+            histo_rebin = rebinHisto(histo,bins,histo.GetName()+'_rebin')
+            histo = histo_rebin
+      
         if '61' in s:
-            # histo.Scale(kFactor)
-            # histo.GetTitleSetTitle("W + jets (NLO)")
             histo.SetTitle(histo.GetTitle().replace("-61", ""))
+            histo.Scale(kFactor)
+            hMC_wjets.Add(histo)
             # histo.Sumw2()
         #if 'dy' in s : histo.Scale(0.9)
-
+        if '61' not in s and 'ewk' not in s:
+            hdata_wjets.Add(histo,-1)
+        
         # Calculate the contribution of the current sample
         contribution = histo.Integral() / hMC_total.Integral() * 100
         contribution_dict[s] = contribution
@@ -448,18 +519,6 @@ if __name__ == "__main__":
         # Calculate the data/MC difference
         data_mc_difference = histo.Integral() - hMC_total.Integral()
 
-    if extractJacob : 
-
-        histof = hMC_total.Clone()
-        fit_result = histof.Fit("gaus", "SN", "", 60, 100)  # Adjust range as needed
-
-        # Extract fit parameters
-        mean = fit_result.Parameter(1)
-        sigma = fit_result.Parameter(2)
-
-        print(f"Estimated peak position (mean): {mean}")
-        print(f"Estimated width (sigma): {sigma}")
-    # Print the contribution table
     print("Contribution Table:")
 
     # Calculate the maximum length of process names for alignment
@@ -490,31 +549,351 @@ if __name__ == "__main__":
     if 'noscale' in str(opts.ExtraTag).lower():
         kFactor = 1.
 
+    if extractJacob : 
+        #reget data and subtract scaled MC now
+        hdata_wjets = data_hist.Clone("hdata_wjets")
+        hMC_wjets = data_hist.Clone("hMC_wjets")
+        if doRebin : 
+            hMC_wjets = data_hist_rebin.Clone("hMC_wjets")
+            hdata_wjets = data_hist_rebin.Clone("hdata_wjets")
+        
+        hMC_wjets.Reset()
+        for i in range(len(samples)):
+            s = str(samples[i])
+            histo= None
+            histo = fIn.Get("histo_" + s + "_" + v)
+            if doRebin : 
+                histo_rebin = rebinHisto(histo,bins,histo.GetName()+'_rebin')
+                histo = histo_rebin
+
+            if kFactor != 1 : histo.Scale(kFactor)
+
+            if '61' in s and 'ewk' in s:
+                histo.SetTitle(histo.GetTitle().replace("-61", ""))
+                hMC_wjets.Add(histo)
+            #if '61' not in s and 'ewk' not in s:
+            #    #hdata_wjets.Add(histo,-1)
+            #    for ibin in range(1, histo.GetNbinsX() + 1):
+            #        hdata_wjets.SetBinContent(ibin,  hdata_wjets.GetBinContent(ibin) - histo.GetBinContent(ibin))
+            #        hdata_wjets.SetBinError(ibin,  math.sqrt(hdata_wjets.GetBinContent(ibin)))
+
+        fit_function = None
+        fit_functionD = None
+        xMin = 0
+        xMax= 120
+        if '_mt' in givein : 
+            fit_function = TF1("fit_function", fit_func, 40, 135, 6)
+            fit_function.SetParameters(80.4, 15.0, 2300000, 20000, 2, 200)  # Initial guesses for the parameters
+            fit_functionD = TF1("fit_functionD", fit_funcD, 40, 135, 6)
+            fit_functionD.SetParameters(80.4, 15.0, 2300000, 20000, 2, 200)  # Initial guesses for the parameters
+            #fit_function.FixParameter(0, 40.2*2)
+            #fit_functionD.FixParameter(0, 40.2*2)
+
+        if '_pt' in givein and 'T1' not in givein: 
+            fit_function = TF1("fit_function", fit_func, 0, 120, 6)
+            fit_function.SetParameters(80.4/2, 15.0/2, 2300000, 20000, 2, 20)  # Initial guesses for the parameters
+            fit_functionD = TF1("fit_functionD", fit_funcD, 0, 120, 6)
+            fit_functionD.SetParameters(80.4/2, 15.0/2, 2300000, 20000, 2, 20)  # Initial guesses for the parameters
+        if '_pt' in givein and 'T1' in givein: 
+    
+            fit_function = TF1("fit_function", fit_func, 10, 120, 6)
+            fit_function.SetParameters(80.4/2, 15.0/2, 2300000, 0, 2, 20)  # Initial guesses for the parameters
+            fit_functionD = TF1("fit_functionD", fit_funcD, 10, 120, 6)
+            fit_functionD.SetParameters(80.4/2, 15.0/2, 2300000, 0, 2, 20)  # Initial guesses for the parameters
+        ###fit MC histogram
+        hdata_wjets.SetStats(0)
+        #hMC_wjets.Scale(1.0 / hMC_wjets.Integral()*hMC_wjets.GetBinWidth(1))
+        #hdata_wjets.Scale(1.0 / hdata_wjets.Integral()*hdata_wjets.GetBinWidth(1))
+        #fit_function.FixParameter(0, 80/4/2);
+        #fit_functionD.FixParameter(0, 80/4/2);
+        
+        hMC_wjets.Fit(fit_function, "R S", era, True)
+        # Extract fit results
+        peak_x = fit_function.GetMaximumX()
+        mean_fit = fit_function.GetParameter(0)
+        mean_error = fit_function.GetParError(0)
+        width_fit = fit_function.GetParameter(1)
+        width_error = fit_function.GetParError(1)
+
+        
+        norm_fit = fit_function.GetParameter(2)
+        
+        hdata_wjets.Fit(fit_functionD, "R S",era, False)
+        peak_xD = fit_functionD.GetMaximumX()
+        mean_fitD = fit_functionD.GetParameter(0)
+        mean_errorD = fit_functionD.GetParError(0)
+        width_fitD = fit_functionD.GetParameter(1)
+        width_errorD = fit_functionD.GetParError(1)
+
+        norm_fitD = fit_functionD.GetParameter(2)
+
+        mean_str = f"{peak_x:.2f} {mean_fit:.2f}  {mean_error:.2f}"
+        sigma_str = f"{width_fit:.2f}  {width_error:.2f}"
+        mean_strD = f"{peak_xD:.2f} {mean_fitD:.2f}  {mean_errorD:.2f}"
+        sigma_strD = f"{width_fitD:.2f}  {width_errorD:.2f}"
+
+        #print(f"Fitted mean (Jacobian peak position): {mean_str} GeV", channel, v)
+        #print(f"Fitted width: {sigma_str} GeV", channel, v)
+        print(f"============================================================Fitted mean (Jacobian peak position): {mean_str}  {sigma_str}  {mean_strD}  {sigma_strD} {channel} {v} {inn}")
+        jname="jacobian_peak_fit_"+era+"_"+v+"_"+inn+"_"+channel
+        #canvas.SaveAs(jname+".png")a
+        fit_function.SetMarkerSize(0.5)
+        fit_functionD.SetMarkerSize(0.5)
+        plot_jacob = Canvas.Canvas( jname, "png", leg[0], leg[1], leg[2], leg[3])
+        plot_jacob.addHisto(hdata_wjets, "E", "Data", "pe", r.kBlack, 1, 0)
+        plot_jacob.addHisto(hMC_wjets, "E,SAME", "MC W+jets", "pe", r.kBlue, 1, 1)
+        plot_jacob.addHisto(fit_function, "SAME", "MC Fit", "l", r.kRed, 1, 2)
+        plot_jacob.addHisto(fit_functionD, "SAME", "Data Fit", "pl", r.kGreen, 1, 3)
+        plot_jacob.saveCanvas(1, 1, 0, peak_x, mean_fit, mean_error, width_fit, width_error, peak_xD, mean_fitD, mean_errorD, width_fitD, width_errorD,lumi, hdata_wjets, hMC_wjets,fit_function,  varTitle, jname, option, run_str)
+        
+        #canvas = ROOT.TCanvas("canvas", "Transverse Mass Distribution", 800, 600)
+        #CMS.SetExtraText("")
+        #CMS.SetCmsText("Private work (CMS simulation)")
+        #CMS.SetCmsTextFont(52)
+        #CMS.SetCmsTextSize(0.75*0.76)
+        #CMS.SetLumi("50")
+        #canvas = CMS.cmsCanvas('', 0, 1, 0, 1, '', '', square = CMS.kSquare, extraSpace=0.01, iPos=11)
+        #legend = TLegend(0.6, 0.4, 0.9, 0.6)
+        #legend.AddEntry(hMC_wjets, "MC W+jets", "l")
+        #legend.AddEntry(hdata_wjets, "Data - nonW+jets", "p")
+        #legend.AddEntry(fit_function, "Fit", "l")
+        '''
+        canvas.Draw()
+        hMC_wjets.SetMarkerColor(kBlue)
+        hMC_wjets.SetLineColor(kBlue)
+        hMC_wjets.Draw("E")
+        
+        hdata_wjets.Draw("SAME ")
+        fit_function.Draw("same")
+        legend.Draw("same")
+
+        canvas.Update()
+        '''
+        #plot_j = Canvas.Canvas( "jacobian_peak_fit_"+v+".png", "png", leg[0], leg[1], leg[2], leg[3])
+
+    # Print the contribution table
     normQCD = 1.
     if doQCD:
-        for v in varbs:
-            data_histB = data_histC = data_histD = None
-            histoB = histoC = histoD = None
-            data_histB = fInB.Get('histo_data')
-            data_histC = fInC.Get('histo_data')
-            data_histD = fInD.Get('histo_data')
-            print('data in sideband', data_histB.GetSumOfWeights(), data_histD.GetSumOfWeights(), 'shape', data_histC.GetSumOfWeights())
-            # for s in samples :
-            for i in range(0, len(samples)):
-                s = str(samples[i])
-                histo = fIn.Get("histo_" + s + "_" + v)
-                if 'qcd' not in s:  # get all histograms in the SB regions but not QCD --> this is what you are going to calculate
-                    histoB = fInB.Get("histo_" + s + "_" + v)
-                    data_histB.Add(histoB, -1)
-                    histoC = fInC.Get("histo_" + s + "_" + v)
-                    data_histC.Add(histoC, -1)
-                    histoD = fInD.Get("histo_" + s + "_" + v)
-                    data_histD.Add(histoD, -1)
 
-            normQCD = data_histB.GetSumOfWeights() / data_histD.GetSumOfWeights()
-            print('some infor for QCD data driven', data_histC.GetSumOfWeights(), normQCD, data_histB.Integral() / data_histD.Integral())
+        print('filenames in sideband', finB, finC, finD)
+        fInB = TFile.Open(finB, 'read')
+        fInC = TFile.Open(finC, 'read')
+        fInD = TFile.Open(finD, 'read')
+        print('filenames in sideband', fInB.GetName(), fInC.GetName())
+        v=varbs[0]
+
+        data_histB = data_histC = data_histD = None
+        data_histB_orig = data_histC_orig = data_histD_orig = None
+        data_histB_syst = data_histC_syst = data_histD_syst =None
+        histoB = histoC = histoD = None
+        data_histB = fInB.Get('histo_dataB')
+        #fInB.Close()
+        data_histC = fInC.Get('histo_dataC')
+        #data_histC = fInC.Get('histo_ewknlo61_METCorboson_mt')
+        #fInC.Close()
+        data_histD = fInD.Get('histo_dataD')
+        #fInD.Close()
+        print('data in sideband before rebin B', data_histB.GetSumOfWeights())
+        print('data in sideband before rebin C', data_histC.GetSumOfWeights())
+        print('data in sideband before rebin D', data_histD.GetSumOfWeights())
+
+        if doRebin:
+            data_histB_rebin = rebinHisto(data_histB,bins,data_histB.GetName()+'_rebin')
+            data_histB =data_histB_rebin.Clone()
+
+            data_histC_rebin = rebinHisto(data_histC,bins,data_histC.GetName()+'_rebin')
+            data_histC = data_histC_rebin.Clone()
+
+            data_histD_rebin = rebinHisto(data_histD,bins,data_histD.GetName()+'_rebin')
+            data_histD = data_histD_rebin.Clone()
+
+        data_histB_orig = data_histB.Clone()
+        data_histC_orig = data_histC.Clone()
+        data_histD_orig = data_histD.Clone()
+
+        print ('reading from files', fInB.GetName(), fInC.GetName(), fInD.GetName())
+        print('data in sideband B', data_histB.GetSumOfWeights(), 'D', data_histD.GetSumOfWeights(), 'shape C', data_histC.GetSumOfWeights(), data_histB.GetNbinsX())
+        #print('data in sideband B', data_histB_orig.GetSumOfWeights(), 'D', data_histD_orig.GetSumOfWeights(), 'shape C ', data_histC_orig.GetSumOfWeights(), data_histB.GetNbinsX())
+        # for s in samples :
+        
+        for i in range(0, len(samples)):
+            s = str(samples[i])
+            #histo = fIn.Get("histo_" + s + "_" + v)
+            #if doRebin : 
+            #    histo_rebin = rebinHisto(histo,bins,histo.GetName()+'_rebin')
+            #    histo = histo_rebin.Clone()
+
+            if 'qcd' not in s:  # get all histograms in the SB regions but not QCD --> this is what you are going to calculate
+                histoB = fInB.Get("histo_" + s + "_" + v+"B")
+                histoC = fInC.Get("histo_" + s + "_" + v+"C")
+                histoD = fInD.Get("histo_" + s + "_" + v+"D")
+                print ('reading auxiliary histograms for qcd datadriven', histoB.Integral(), histoC.Integral(), histoD.Integral())
+                if doRebin : 
+                    histoB_rebin = rebinHisto(histoB,bins,histoB.GetName()+'_rebin')
+                    histoB = histoB_rebin
+                    histoC_rebin = rebinHisto(histoC,bins,histoC.GetName()+'_rebin')
+                    histoC = histoC_rebin
+                    histoD_rebin = rebinHisto(histoD,bins,histoD.GetName()+'_rebin')
+                    histoD = histoD_rebin
+                print ('reading auxiliary histograms for qcd datadriven', histoB.Integral(), histoC.Integral(), histoD.Integral(), histoB.GetName(), histoB.GetTitle())
+
+                data_histB.Add(histoB, -1)
+                data_histC.Add(histoC, -1)
+                data_histD.Add(histoD, -1)
+
+                #### systematics
+                if doStat:
+                    for sy in Othersysts:
+                        for d in dirs:
+                            hname = "histo_" + s + "_" + v + sy + d
+                            htemp = htemp=htempC=htempD= None
+                            htemp = fIn.Get(hname)
+                            htempB = fInB.Get(hname+"B")
+                            htempC = fInC.Get(hname+"C")
+                            htempD = fInD.Get(hname+"D")
+                            if doRebin : 
+                                htemp_rebin = rebinHisto(htemp,bins,htemp.GetName()+'_rebin')
+                                htemp = htemp_rebin
+                                htempB_rebin = rebinHisto(htempB,bins,htempB.GetName()+'_rebin')
+                                htempB = htempB_rebin
+                                htempC_rebin = rebinHisto(htempC,bins,htempC.GetName()+'_rebin')
+                                htempC = htempC_rebin
+                                htempD_rebin = rebinHisto(htempD,bins,htempD.GetName()+'_rebin')
+                                htempD = htempD_rebin
+                            data_histB_syst = data_histB_orig.Clone()
+                            data_histC_syst = data_histC_orig.Clone()
+                            data_histD_syst = data_histD_orig.Clone()
+
+                            data_histB_syst.Add(htempB, -1)
+                            data_histC_syst.Add(htempC, -1)
+                            data_histD_syst.Add(htempD, -1)
+                      
+                            ###this is for the iso vs mT  method             
+                            '''
+                            normQCDs = float(data_histB_syst.Integral() / data_histD_syst.Integral())
+                            data_histC_syst.Scale(normQCDs)
+                            data_histC_syst.SetTitle("histo_qcd_datadriven_invIso")
+                            data_histB_syst.SetTitle("histo_qcd_datadriven_invMt")
+                            data_histD_syst.SetTitle("histo_qcd_datadriven_invIsoinvMt")
+                            '''
+
+                            normQCDs = float(data_histC_syst.Integral() / data_histD_syst.Integral())
+                            data_histB_syst.Scale(normQCDs)
+
+                            data_histB_syst.SetName("histo_qcd_data_B_" + v + sy +d)
+                            data_histC_syst.SetName("histo_qcd_data_C_" + v + sy +d)
+                            data_histD_syst.SetName("histo_qcd_data_D_" + v + sy +d)
+
+                            data_histC_syst.SetTitle("histo_qcd_datadriven_invIso")
+                            data_histB_syst.SetTitle("histo_qcd_datadriven_invpT")
+                            data_histD_syst.SetTitle("histo_qcd_datadriven_invIsoinvpT")
+
+                            fIn.cd()
+                            data_histB_syst.Write()
+                            data_histC_syst.Write()
+                            data_histD_syst.Write()
+
+                            print ('estimation of qcd datadriven B for systematics',  data_histB_syst.Integral(), 'C', data_histC_syst.Integral(), 'D', data_histD_syst.Integral(), sy, d, 'norm', normQCDs)
+
+                if doSyst:
+                    for sy in systs:
+                        for d in dirs:
+                            hname = "histo_" + s + "_" + v + sy + d
+                            htemp = htemp=htempC=htempD= None
+                            htemp = fIn.Get(hname)
+                            htempB = fInB.Get(hname+"B")
+                            htempC = fInC.Get(hname+"C")
+                            htempD = fInD.Get(hname+"D")
+                            if doRebin : 
+                                htemp_rebin = rebinHisto(htemp,bins,htemp.GetName()+'_rebin')
+                                htemp = htemp_rebin
+                                htempB_rebin = rebinHisto(htempB,bins,htempB.GetName()+'_rebin')
+                                htempB = htempB_rebin
+                                htempC_rebin = rebinHisto(htempC,bins,htempC.GetName()+'_rebin')
+                                htempC = htempC_rebin
+                                htempD_rebin = rebinHisto(htempD,bins,htempD.GetName()+'_rebin')
+                                htempD = htempD_rebin
+                            data_histB_syst = data_histB_orig.Clone()
+                            data_histC_syst = data_histC_orig.Clone()
+                            data_histD_syst = data_histD_orig.Clone()
+
+                            data_histB_syst.Add(htempB, -1)
+                            data_histC_syst.Add(htempC, -1)
+                            data_histD_syst.Add(htempD, -1)
+                      
+                            '''
+                            normQCDs = float(data_histB_syst.Integral() / data_histD_syst.Integral())
+                            data_histC_syst.Scale(normQCDs)
+                            data_histB_syst.SetName("histo_qcd_data_B_" + v + sy +d)
+                            data_histC_syst.SetName("histo_qcd_data_C_" + v + sy +d)
+                            data_histD_syst.SetName("histo_qcd_data_D_" + v + sy +d)
+                            data_histC_syst.SetTitle("histo_qcd_datadriven_invIso")
+                            data_histB_syst.SetTitle("histo_qcd_datadriven_invMt")
+                            data_histD_syst.SetTitle("histo_qcd_datadriven_invIsoinvMt")
+                            '''
+
+
+                            normQCDs = float(data_histC_syst.Integral() / data_histD_syst.Integral())
+                            data_histB_syst.Scale(normQCDs)
+                            data_histB_syst.SetName("histo_qcd_data_B_" + v + sy +d)
+                            data_histC_syst.SetName("histo_qcd_data_C_" + v + sy +d)
+                            data_histD_syst.SetName("histo_qcd_data_D_" + v + sy +d)
+                            data_histC_syst.SetTitle("histo_qcd_datadriven_invIso")
+                            data_histB_syst.SetTitle("histo_qcd_datadriven_invpT")
+                            data_histD_syst.SetTitle("histo_qcd_datadriven_invIsoinvpT")
+
+                            fIn.cd()
+                            data_histB_syst.Write()
+                            data_histC_syst.Write()
+                            data_histD_syst.Write()
+
+                            print ('estimation of qcd datadriven B for systematics',  data_histB_syst.Integral(), 'C', data_histC_syst.Integral(), 'D', data_histD_syst.Integral(), sy, d, 'norm', normQCDs)
+
+        print ('estimation of qcd datadriven B',  data_histB.Integral(), 'C', data_histC.Integral(), 'D', data_histD.Integral())
+        fIn.cd()
+        for ibin in range(1, data_histB.GetNbinsX() + 1):
+            if data_histB.GetBinContent(ibin)< 0. :
+                data_histB.SetBinContent(ibin,0.)
+                data_histB.SetBinError(ibin,0.)
+
+            if data_histD.GetBinContent(ibin)< 0. :
+                data_histD.SetBinContent(ibin,0.)
+                data_histD.SetBinError(ibin,0.)
+
+            if data_histC.GetBinContent(ibin)< 0. :
+                data_histC.SetBinContent(ibin,0.)
+                data_histC.SetBinError(ibin,0.)
+
+
+        normQCD = float(data_histC.Integral() / data_histD.Integral())
+        data_histB.Scale(normQCD)
+        #normQCD = float(data_histB.Integral() / data_histD.Integral())
+        #data_histC.Scale(normQCD)
+
+        data_histC.SetName("histo_qcd_data_C_" + v)
+
+        data_histB.SetName("histo_qcd_data_B_" + v)
+        data_histD.SetName("histo_qcd_data_D_" + v)
+        '''
+        data_histC.SetTitle("histo_qcd_datadriven_invIso")
+        data_histB.SetTitle("histo_qcd_datadriven_invMt")
+        data_histD.SetTitle("histo_qcd_datadriven_invIsoinvMt")
+        '''
+
+        data_histC.SetTitle("histo_qcd_datadriven_invIso")
+        data_histB.SetTitle("histo_qcd_datadriven_invpT")
+        data_histD.SetTitle("histo_qcd_datadriven_invIsoinvpT")
+
+        data_histB.Write()
+        data_histC.Write()
+        data_histD.Write()
+        #fIn.Write()
+        fIn.ls()
+        print('some infor for QCD data driven', data_histC.GetSumOfWeights(), normQCD, 'B/D', data_histB.Integral() / data_histD.Integral() , 'C/D', data_histC.Integral() / data_histD.Integral())
     # exit()
-
+   
+        print('some info for QCD data driven outside the loop', data_histC.GetSumOfWeights(), normQCD, 'B/D', data_histB.Integral() / data_histD.Integral() , 'C/D', data_histC.Integral() / data_histD.Integral())
+    print (samples)
     for v in varbs:
         for i in range(0, len(samples)):
             s = str(samples[i])
@@ -526,12 +905,13 @@ if __name__ == "__main__":
             if 'qcd' in s and not doQCD:
                 histo = fIn.Get("histo_" + s + "_" + v)
             if 'qcd' in s and doQCD:
-                histo = data_histC.Clone("histo_" + s + "_" + v)
-                histo.SetName("histo_" + s + "_" + v)
+                #histo = data_histC.Clone("histo_" + s + "_" + v)
+                #histo.SetName("histo_" + s + "_" + v)
+                histo = fIn.Get("histo_qcd_data_B_" + v)
                 histo.SetTitle("QCD multijet (ABCD)")
-                histo.Scale(normQCD)
-                print('SHOULD REPLACE QCD with DATA ESTIMATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1')
-                print('datadriven QCD', histo.GetName(), histo.GetSumOfWeights())
+                #histo.Scale(normQCD)
+                print('===========================datadriven QCD', histo.GetName(), histo.GetSumOfWeights())
+                #print('\033[91m' + "-------QCD INFO------------------------------------------------------------------" + '\033[0m')
 
             if 'NLO' in str(histo.GetTitle()):
                 histo.SetTitle(histo.GetTitle().replace('(NLO)', ''))
@@ -573,13 +953,19 @@ if __name__ == "__main__":
                 mc_histo.Add(histo, 1.)
 
             mc_stack.Add(histo)
-            print('<====================just added=====================> ', histo.GetName(), ' to the list...', histo.GetNbinsX())
+
+            print('<====================just added=====================> ', histo.GetName(), ' to the list...', histo.GetNbinsX()), histo.Integral("width")
             # mc_stack.Draw()
 
             if doStat:
                 for sy in Othersysts:
                     for d in dirs:
+                        hname=None
                         hname = "histo_" + s + "_" + v + sy + d
+
+                        if doQCD and 'qcd' in s: 
+                            hname = "histo_qcd_data_B_" + v + sy +d
+                           
                         htemp = 0
                         htemp = fIn.Get(hname)
 
@@ -588,7 +974,7 @@ if __name__ == "__main__":
 
                             htemp = histo_rebin
 
-                        print('working on======================================>', hname)
+                        print('working on======================================>', hname, doQCD)
                         if kFactor != 1. and htemp:
                             print ('SCALINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG', kFactor)
                             htemp.Scale(kFactor)
@@ -627,6 +1013,8 @@ if __name__ == "__main__":
                 for sy in systs:
                     for d in dirs:
                         hname = "histo_" + s + "_" + v + sy + d
+                        if doQCD and 'qcd' in s: 
+                            hname = "histo_qcd_data_B_" + v + sy +d
                         htemp = 0
                         htemp = fIn.Get(hname)
                         print('working on======================================>', hname)
@@ -689,6 +1077,19 @@ if __name__ == "__main__":
     #mc_iddown = mc_histo
     #mc_puup = mc_histo
     #mc_pudown = mc_histo
+    #mc_stack_norm = mc_stack
+    last_histogram = mc_stack.GetStack().Last()
+    h = last_histogram.Clone("h")  # Clone and rename the histogram
+
+    # Normalize the histogram
+    integral_with_width = h.Integral("width")  # Calculate integral considering bin widths
+
+    h.Scale(1.0 / integral_with_width)  # Normalize by the integral
+
+    #ahisto_norm = histo.Clone()
+    #histo_norm.Scale(1./histo.Integral("width"))
+    mc_stack_norm.Add(h)
+
     if not doSyst :
         mc_jesup = mc_histo
         mc_jesdown = mc_histo
@@ -711,22 +1112,25 @@ if __name__ == "__main__":
 
     # print data_hist.Integral(), mc_histo.Integral(), mc_jesup.Integral(),
     # mc_jesdown.Integral()
-    option = str(opts.varr)
-    run_str = str(lumi)
     logcase = [0, 1]
     # logcase=[0]
 
+    if doNormPlot:
+        for ilog in logcase:
+            isLog = ilog
+            plot_varr = Canvas.Canvas( "test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog_norm" % (str( opts.varr), puname, channel, puname, str(era), str( int(doQCD)), str( opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])
+
+
+            plot_varr.addStack(mc_stack_norm, "hist", 1, 1)
+            data_zero = data_hist_rebin.Clone()
+            data_zero.Reset()
+            plot_varr.addHisto( data_zero, "E,SAME", "Data", "PL", r.kBlack, 1, 0)
+            plot_varr.saveRatioGjets( 1, 1, isLog, lumi, data_hist_rebin, mc_histo, mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, mc_puup, mc_pudown, mc_idup, mc_iddown, varTitle, option + "_norm", run_str)
 
 
     for ilog in logcase:
         isLog = ilog
-        plot_var = Canvas.Canvas(
-            "test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog" %
-            (str(
-                opts.varr), puname, channel, puname, str(era), str(
-                int(doQCD)), str(
-                opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])
-
+        plot_var = Canvas.Canvas( "test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog" % (str( opts.varr), puname, channel, puname, str(era), str( int(doQCD)), str( opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])
         plot_var.addStack(mc_stack, "hist", 1, 1)
         plot_var.addHisto(data_hist_rebin, "E,SAME", "Data", "PL", r.kBlack, 1, 0)
 

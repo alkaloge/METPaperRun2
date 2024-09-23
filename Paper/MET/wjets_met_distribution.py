@@ -671,20 +671,12 @@ if __name__ == "__main__":
         doVariables = ['gamma_pt', 'MET_pt', 'met_uPerp', 'met_uPara']
         binnings = [gammaPtbin, bin1, bin2, bin2]
         dependence = 'gamma_pt'
-        Gamma = Region.region(
-            'GammaJets',
-            cuts.gammas(),
-            doVariables,
-            dependence,
-            'met',
-            binnings,
-            True)
+        Gamma = Region.region( 'GammaJets', cuts.gammas(), doVariables, dependence, 'met', binnings, True)
         regions.append(Gamma)
 
     for reg in regions:
         print(
-            color.bold +
-            color.red +
+            color.bold + color.red +
             '==========================================')
         print('I am doing', reg.name, channel)
         print('==========================================' + color.end)
@@ -729,7 +721,8 @@ if __name__ == "__main__":
             nLep = 'nMuon'
 
             jetcut = '0'
-            wtmasscut = '80'
+            wtmasscut = '>= 80.'
+            ptlcut = '>= 0.'
             extracut = ''
             njetsSyst = ''
             puppicut = ''
@@ -758,12 +751,39 @@ if __name__ == "__main__":
             if 'massgt0' in tagname:
                 wtmasscut = '>=0.'
             if 'massgt80' in tagname:
-                wtmasscut = ' > 80.'
-            if 'masslt80' in tagname in tagname:
+                wtmasscut = ' >= 80.'
+            if 'masslt80' in tagname:
                 wtmasscut = ' < 80.'
+            if 'massgt40' in tagname:
+                wtmasscut = ' >= 40.'
+            if 'masslt40' in tagname:
+                wtmasscut = ' < 40.'
+            if 'massgt60' in tagname:
+                wtmasscut = ' >= 60.'
+            if 'masslt60' in tagname :
+                wtmasscut = ' < 60.'
 
-            if '_transm' in str(givein.lower()):
-                wtmasscut = '>=0.'
+            if 'mtmassincl' in tagname :
+                wtmasscut = ' >=0.'
+            if 'pt1incl' in tagname :
+                ptlcut = ' >= 0.'
+            if 'pt1gt30' in tagname :
+                ptlcut = ' >= 30. '
+            if 'pt1lt30' in tagname :
+                ptlcut = ' < 30. '
+            if 'pt1gt35' in tagname :
+                ptlcut = ' >= 35.'
+            if 'pt1lt35' in tagname :
+                ptlcut = ' < 35. '
+            if 'pt1gt40' in tagname :
+                ptlcut = ' >=40. '
+            if 'pt1lt40' in tagname :
+                ptlcut = ' < 40. '
+
+            #if 'boson_transm' in str(givein.lower()):
+            #    wtmasscut = '>=0.'
+            #if 'boson_mt' in str(givein.lower()):
+            #    wtmasscut = '>=0.'
 
             if 'jesup' in givein.lower():
                 extracut = 'JESUp'
@@ -810,6 +830,10 @@ if __name__ == "__main__":
             if 'iso_1' in str(givein.lower()):
                 isocut = '<0.5'
             isocut += "&& iso_1>=0."
+            tagg = ''
+            if 'pt1lt' in tagname and 'isolt' in tagname: tagg = 'B'
+            if 'pt1gt' in tagname and 'isogt' in tagname: tagg = 'C'
+            if 'pt1lt' in tagname and 'isogt' in tagname: tagg = 'D'
 
             # ACTUAL CUTS
             #jetCutMu = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets{6:s}[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst)
@@ -817,22 +841,27 @@ if __name__ == "__main__":
 
             #jetCutEl = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{7:s}[0] {1:s} && {4:s}METCorGoodboson_transm{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, losthits,btagcut, njetsSyst)
 
-            jetCutMu = " (Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] {7:s} && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets{6:s}[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0] {2:s} ".format(                docat,                jetcut,                wtmasscut,                extracut,                puppicut,                btagcut,                njetsSyst,                isocut)
+            jetCutMu = " (Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] {7:s} && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets{6:s}[0]  {1:s} && {4:s}METCorboson_mt{3:s}[0] {2:s} && pt_1[0] {8:s}".format(docat, jetcut, wtmasscut,  extracut, puppicut, btagcut, njetsSyst,  isocut, ptlcut)
 
-            jetCutEl = " (Flag_BadPFMuonDzFilter[0]==1  &&  fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(q_1[0])==1 && iso_1[0]  {8:s} && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{7:s}[0] {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]  {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(                docat,                jetcut,                wtmasscut,                extracut,                puppicut,                losthits,                btagcut,                njetsSyst,                isocut)
+            jetCutEl = " (Flag_BadPFMuonDzFilter[0]==1  &&  fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) && fabs(q_1[0])==1 && iso_1[0]  {8:s} && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && njets{7:s}[0] {1:s} && {4:s}METCorboson_mt{3:s}[0]  {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} && pt_1[0] {9:s}".format(docat,  jetcut,   wtmasscut, extracut, puppicut,   losthits,  btagcut,  njetsSyst,    isocut, ptlcut) 
 
-            jetCutInvIso = " (nMuon==1 && pt_1[0]> 29 && (isGlobal_1[0]>0 || isTracker_1[0]>0) && fabs(eta_1[0])<2.4 && fabs(dZ_1[0])<0.2 && fabs(d0_1[0])<0.045 && isTrig_1[0]==2 &&  tightId_1[0] >0   &&  fabs(q_1[0])==1 &&  iso_1[0] > .15 && mediumPromptId_1[0]>0 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets[0]<20 && METCorGoodboson_transm[0]>0 && isStandalone_1[0]>0 && nbtagL[0]==0"
-            jetCutMuInvIso = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1 &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} &&  nbtag{5:s}[0]==0 &&njets[0]> {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(                docat,                jetcut,                wtmasscut,                extracut,                puppicut,                btagcut)
 
             #jetCutInvIso = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPV[0]>2 && cat=={0:s} && nbtagL[0]==0".format(docat)
-            jetCutElInvIso = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && nbtag{6:s}[0]==0 &&njets[0]> {1:s} && {4:s}METCorGoodboson_transm{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(                docat,                jetcut,                wtmasscut,                extracut,                puppicut,                losthits,                btagcut)
-
             jetCut = jetCutMu
-            jetCutInvIso = jetCutMuInvIso
             if doee:
                 jetCut = jetCutEl
-                jetCutInvIso = jetCutElInvIso
-            # print 'CCCCCCCCCCCCCCCCUTTTTS', jetCut, 'GiveIn', givein.lower(),
+
+            jetCutInvIso_C = jetCut.replace('iso_1[0]  <= .15', 'iso_1[0] > .15')
+            jetCutInvMt_B = jetCut.replace('>= 80.',' < 80.')
+            jetCutInvMt_B = jetCut.replace('>= 60.',' < 60.')
+            jetCutInvIsoInvMt_D = jetCut.replace('iso_1[0]  <= .15', 'iso_1[0] > .15')
+            jetCutInvIsoInvMt_D = jetCutInvIsoInvMt_D.replace('>= 80.',' < 80.')
+            jetCutInvIsoInvMt_D = jetCutInvIsoInvMt_D.replace('>= 60.',' < 60.')
+
+            print ('CCCCCCCCCCCCCCCCUTTTTS Nominal', jetCut)
+            print ('CCCCCCCCCCCCCCCCUTTTTS InvIso_C', jetCutInvIso_C)
+            print ('CCCCCCCCCCCCCCCCUTTTTS InvMt_B', jetCutInvMt_B)
+            print ('CCCCCCCCCCCCCCCCUTTTTS InvIsoIvMt_D', jetCutInvIsoInvMt_D)
             # tagname
             if 'vetophoton' in str(opts.ExtraTag).lower():
                 jetCut = jetCut + "&&  VetoPhoton[0]==0"
@@ -854,6 +883,8 @@ if __name__ == "__main__":
                 jetCut = jetCut + " && nPVGood[0]<50 && nPVGood>=40"
             if 'pugeq50' in tagname:
                 jetCut = jetCut + " && nPVGood[0]>=50 "
+            if 'pugeq30' in tagname:
+                jetCut = jetCut + " && nPVGood[0]>=30 "
             if 'pugeq40' in tagname:
                 jetCut = jetCut + " && nPVGood[0]>=40 "
             if 'nbtagl' in tagname:
@@ -1215,8 +1246,8 @@ if __name__ == "__main__":
             tmp_histo = 0
             histo_err = 0
             tmp_full = 0
-            tmp_fullMCInvIso = 0
-            tmp_fullQCDInvIso = 0
+            tmp_fullMCInvIso_C = 0
+            tmp_fullQCDInvIso_C = 0
             #jetCut = "abs(zll_eta) < 1.4"
             #jetCut = "zll_pt > 440 && zll_pt < 500 && lep_hasGainSwitchFlag[0] < 1  && lep_hasGainSwitchFlag[1] < 1"
             #uParaCut = makeUPara("MET_pt", "met_phi", "gamma_pt", "gamma_phi")
@@ -1276,7 +1307,7 @@ if __name__ == "__main__":
                         htitle = 'SE'
                     print('looks like I will run in data....')
                     fOut.cd()
-                    data_hist.Write('histo_data')
+                    data_hist.Write('histo_data'+tagg)
 
                     print('data ------->', data_hist.Integral())
                     # if (option == 'qtZ' or option =='qtG' or option == 'qtgamma'):
@@ -1284,36 +1315,22 @@ if __name__ == "__main__":
 
                 kfactor = 1
                 if doQCD and met.index(m) == 0:
-                    data_histInvIso = treeDA.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index( var)], 1, 1, cuts.Add(cut, jetCutInvIso), inn, varTitle, channel, isLog)
+                    data_histInvIso_C = treeDA.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index( var)], 1, 1, cuts.Add(cut, jetCutInvIso_C), inn, varTitle, channel, isLog)
                     for itree, tree in enumerate(mcTrees):
                         ind = 0
                         cuts = CutManager.CutManager()
                         treename = tree.name.lower()
                         print('with  %s for QCD kfactor finding' % treename)
-                        print('var to get',
-                              var + "_" + reg.name + treename + str(met.index(m)),
-                              ' or',
-                              var,
-                              Variable,
-                              reg.bins[reg.rvars.index(var)],
-                              1,
-                              1,
-                              cuts.Add(cut,
-                                       jetCutInvIso),
-                              inn,
-                              varTitle,
-                              channel)
+                        print('var to get', var + "_" + reg.name + treename + str(met.index(m)), ' or', var, Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCutInvIso_C), inn, varTitle, channel)
 
                         if 'qcd' not in treename:
-                            tmp_fullMCInvIso = tree.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index(
-                                var)], 1, 1, cuts.Add(cut, jetCutInvIso), inn, varTitle, channel, isLog)
+                            tmp_fullMCInvIso_C = tree.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index( var)], 1, 1, cuts.Add(cut, jetCutInvIso_C), inn, varTitle, channel, isLog)
                         if 'qcd' in treename:
-                            tmp_fullQCDInvIso = tree.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index(
-                                var)], 1, 1, cuts.Add(cut, jetCutInvIso), inn, varTitle, channel, isLog)
+                            tmp_fullQCDInvIso_C = tree.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index( var)], 1, 1, cuts.Add(cut, jetCutInvIso_C), inn, varTitle, channel, isLog)
 
-                    data_histInvIso.Add(tmp_fullMCInvIso, -1)
-                    if tmp_fullQCDInvIso.GetSumOfWeights() > 0:
-                        kfactor = data_histInvIso.GetSumOfWeights() / tmp_fullQCDInvIso.GetSumOfWeights()
+                    data_histInvIso_C.Add(tmp_fullMCInvIso_C, -1)
+                    if tmp_fullQCDInvIso_C.GetSumOfWeights() > 0:
+                        kfactor = data_histInvIso_C.GetSumOfWeights() / tmp_fullQCDInvIso_C.GetSumOfWeights()
 
                 print(color.bold + color.red + '=' * 20)
                 print(' kfactor QCD is', kfactor)
@@ -1406,20 +1423,13 @@ if __name__ == "__main__":
                         tmp_histo = copy.deepcopy(
                             tmp_full.Clone(var + reg.name))
                         fOut.cd()
-                        tmp_histo.Write('histo_' + treename + '_' + m)
+                        tmp_histo.Write('histo_' + treename + '_' + m+tagg)
 
-                        for i in range(1, tmp_histo.GetNbinsX() + 1):
-                            print('bin i', i, tmp_histo.GetBinContent(i),
-                                  tmp_histo.GetName(), tmp_histo.Integral())
+                        #for i in range(1, tmp_histo.GetNbinsX() + 1):
+                        #    print('bin i', i, tmp_histo.GetBinContent(i), tmp_histo.GetName(), tmp_histo.Integral())
                         tmp_histo.GetXaxis().SetTitle(varTitle)
                         mc_stack.Add(tmp_histo)
-                        print(
-                            'some info on mcstack that I added',
-                            mc_stack.GetNhists(),
-                            mc_stack.GetName(),
-                            'from ',
-                            tmp_histo.GetName(),
-                            tmp_histo.Integral())
+                        print( 'some info on mcstack that I added', mc_stack.GetNhists(), mc_stack.GetName(), 'from ', tmp_histo.GetName(), tmp_histo.Integral())
                         # print 'itree ------->', itree, tree, mcTrees,
                         # len(mcTrees)
                         if not ind:
@@ -1463,86 +1473,6 @@ if __name__ == "__main__":
                                 mc_histo.GetName(),
                                 mc_histo.Integral())
 
-                    # when the array is longer than one, do jec and met
-                    # unclustered errors, and just get the histo, no stack
-                    # obvi, and this is of course only done for mc.
-                    if len(met) > 1:
-                        #met = ['MET_T1_pt', 'MET_T1_ptJESUp', 'MET_T1_ptJESDown','MET_T1_ptJERUp', 'MET_T1_ptJERUp', 'MET_T1_ptUnclusteredUp', 'MET_T1_ptUnclusteredDown']
-                        print(
-                            ' WILL WORK FOR INDEX ===============>',
-                            met.index(m),
-                            m)
-                        #mc_up = mc_histo; mc_down = mc_histo; mc_jesup = mc_histo; mc_jesdown = mc_histo;mc_unclUp = mc_histo; mc_unclDown = mc_histo
-
-                        if met.index(m) > 0:
-                            #histo_err= tree.getTH1F(lumi, var+"_"+reg.name+treename+str(met.index(m)),  Variable,  110, -1.7, -0.3, cuts.Add(cut, jetCut) , "", varTitle, doNPV)
-                            #histo_err= tree.getTH1F(lumi, var+"_"+reg.name+treename+str(met.index(m)),  Variable, reg.bins[reg.rvars.index(var)], 1, 1, cuts.Add(cut, jetCut) , "", varTitle, doNPV)
-                            histo_err = tree.getTH1F(lumi, var, Variable, reg.bins[reg.rvars.index(
-                                var)], 1, 1, cuts.Add(cut, jetCut), inn, varTitle, channel, isLog)
-                            fOut.cd()
-                            histo_err.Write('histo_' + treename + "_" + m)
-                            # if (option == 'qt' or option == 'qtZ' or option == 'qtG 'or option == 'qtgamma'):
-                            #    histo_err.Scale(1,"width")
-                            SetOwnership(histo_err, 0)
-                        if met.index(m) == 1:
-                            if not mc_jesup:
-                                mc_jesup = copy.deepcopy(histo_err)
-                                SetOwnership(mc_jesup, 0)
-                            else:
-                                mc_jesup.Add(histo_err)
-                            print('doing mc_JESup')
-                        if met.index(m) == 2:
-                            if not mc_jesdown:
-                                mc_jesdown = copy.deepcopy(histo_err)
-                                SetOwnership(mc_jesdown, 0)
-                            else:
-                                mc_jesdown.Add(histo_err)
-                            print('doing mc_JESdown')
-                        if met.index(m) == 3:
-                            if not mc_unclUp:
-                                mc_unclUp = copy.deepcopy(histo_err)
-                                SetOwnership(mc_unclUp, 0)
-                            else:
-                                mc_unclUp.Add(histo_err)
-                            print('doing mc_unclUp')
-                        if met.index(m) == 4:
-                            if not mc_unclDown:
-                                mc_unclDown = copy.deepcopy(histo_err)
-                                SetOwnership(mc_unclDown, 0)
-                            else:
-                                mc_unclDown.Add(histo_err)
-                        '''
-                        if met.index(m) == 1:
-                            if not mc_jerup:
-                                mc_jerup = copy.deepcopy(histo_err);SetOwnership(mc_jerup, 0 )
-                            else:
-                                mc_jerup.Add(histo_err)
-                            print 'doing JERUp'
-                        if met.index(m) == 2:
-                            if not mc_jerdown:
-                                mc_jerdown = copy.deepcopy(histo_err);SetOwnership(mc_jerdown, 0 )
-                            else:
-                                mc_jerdown.Add(histo_err)
-                            print 'doing JERdown'
-                            print 'doing mc_unclDown'
-                    '''
-                    # else: # else, just do stat errors
-                    if len(met) == 1:
-                        mc_jerup = mc_histo
-                        mc_jerdown = mc_histo
-                        mc_jesup = mc_histo
-                        mc_jesdown = mc_histo
-                        mc_unclUp = mc_histo
-                        mc_unclDown = mc_histo
-                    if len(met) == 3:
-                        mc_jerup = mc_histo
-                        mc_jerdown = mc_histo
-                        mc_unclUp = mc_histo
-                        mc_unclDown = mc_histo
-                    if len(met) == 5:
-                        mc_jerup = mc_histo
-                        mc_jerdown = mc_histo
-
             SetOwnership(mc_stack, 0)
             if len(mcTrees) > 0:
                 SetOwnership(tmp_histo, 0)
@@ -1559,11 +1489,8 @@ if __name__ == "__main__":
                     # made, which make the little chi2 line.
                     print("bin cont ", mc_histo.Integral())
 
-                    f = r.TF1("f", str(mc_histo.Integral()) +
-                              "*2*TMath::Prob(x, 2)", 1, 40)
-                    plot_var = Canvas.Canvas(
-                        "test/paper/%s_%s%s" %
-                        (var, reg.name, channel), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])
+                    f = r.TF1("f", str(mc_histo.Integral()) + "*2*TMath::Prob(x, 2)", 1, 40)
+                    plot_var = Canvas.Canvas( "test/paper/%s_%s%s" % (var, reg.name, channel), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])
                 else:
                     if doNPV:
                         puReweight = ''
@@ -1571,12 +1498,7 @@ if __name__ == "__main__":
                     else:
                         puReweight = '#Tr'
                         puname = 'ntiReweight'
-                    plot_var = Canvas.Canvas(
-                        "test/paper/%s_%s%s%s%s_doQCD_%s%s_%sLog" %
-                        (str(
-                            opts.varr), reg.name, channel, puname, str(era), str(
-                            int(doQCD)), str(
-                            opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])
+                    plot_var = Canvas.Canvas( "test/paper/%s_%s%s%s%s_doQCD_%s%s_%sLog" % (str( opts.varr), reg.name, channel, puname, str(era), str( int(doQCD)), str( opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])
                     #plot_var = Canvas.Canvas("test/paper/%s_%s%s%s_doQCD_%s%s"%(str(opts.varr), channel, puname, str(era), str(int(doQCD)), str(opts.ExtraTag)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])
                 # print "data mean ", data_hist.GetMean()
                 # pprint 'stacking histograms...', mc_stack.GetIntegral()
@@ -1608,22 +1530,7 @@ if __name__ == "__main__":
                     mc_jerup = mc_histo
                     mc_jerdown = mc_histo
 
-                    plot_var.saveRatio(
-                        1,
-                        1,
-                        isLog,
-                        lumi,
-                        data_hist,
-                        mc_histo,
-                        mc_jerup,
-                        mc_jerdown,
-                        mc_jesup,
-                        mc_jesdown,
-                        mc_unclUp,
-                        mc_unclDown,
-                        varTitle,
-                        option,
-                        run_str)
+                    #plot_var.saveRatio( 1, 1, isLog, lumi, data_hist, mc_histo, mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclUp, mc_unclDown, varTitle, option, run_str)
                     #plot_var.saveRatio(1,1, isLog, lumi, data_hist, mc_histo, mc_up, mc_down, mc_jesup, mc_jesdown, mc_unclUp, mc_unclDown, varTitle+"Int data"+str(data_hist.Integral()) , option, run_str)
             del plot_var
             del Variable

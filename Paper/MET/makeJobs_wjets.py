@@ -6,16 +6,15 @@ allsyst = [    "Nominal",    "JESUp",    "JESDown", "UnclusteredUp",    "Unclust
 #allsyst = ["Nominal"]
 #allsyst = ["JESUp", "JESDown", "JERUp", "JERDown", "UnclusteredUp", "UnclusteredDown", "PUUp", "PUDown", "IDUp", "IDDown"]
 samples = ["data",    "qcd",    "dy",    "top",    "ew",    "ewk",    "ewknlo61",    "ewkincl",    "ewkht"]
-samples = ["data", "qcd", "dy", "top", "ew", "ewk", "ewknlo61"]
+samples = ["data", "qcd", "dy", "top", "ew",  "ewknlo61"]
 #samples = ["qcd", "dy", "top", "ew", "ewk", "ewknlo61"]
 #samples = ["qcd", "dy", "top", "ew", "ewk", "ewknlo61"]
 #samples=["qcd", "dy", "top", "ew", "ewknlo61", "ewkincl"]
 #samples=["data", "qcd", "dy", "top", "ew", "ewk",  "ewkincl"]
 #samples=["qcd", "dy", "top", "ew", "ewk", "ewknlo61", "ewkincl", "ewkht"]
-samples=["top", "ew", "ewk" ]
-samples=["data", "qcd", "dy", "ewknlo61"]
+#samples=["ewk"]
 channels = ["MuNu", "ElNu"]
-#channels = ["MuNu"]
+channels = ["MuNu"]
 #years = ["2016preVFP", "2016postVFP"]
 years = ["2017", "2016postVFP", "2018"]
 #years = ["2016preVFP", "2016postVFP"]
@@ -23,44 +22,64 @@ years = ["2016preVFP", "2016postVFP"]
 #years = ["2018A","2018B", "2018C","2018D"]
 years = ["2018", "2017", "2016preVFP", "2016postVFP"]
 #years = ["2018", "2016preVFP", "2016postVFP"]
-years = ["2016preVFP", "2016postVFP"]
-#years += ["2018", "2017"]
+years += ["2018", "2017"]
+years = ["2016preVFP", "2016postVFP","2017", "2018"]
+#years = ["2016preVFP", "2016postVFP","2017"]
+#years += ["2017","2018"]
 years = ["2018"]
 extra = ""
 
 
 varsall = [ "MET_T1_pt", "PuppiMET_pt", "MET_T1_phi", "PuppiMET_phi", "METCorGood_T1_phi", "PuppiMETCorGood_phi", "METCorGoodboson_phi", "PuppiMETCorGoodboson_phi", "METCorGood_T1Smear_phi", "RawMET_phi", "RawPuppiMET_phi", "RawMET_phi", "RawPuppiMET_phi", "RawMET_pt", "RawPuppiMET_pt", "METCorGood_T1_pt", "PuppiMETCorGood_pt", "METCorGoodboson_pt", "PuppiMETCorGoodboson_pt", "METCorGood_T1Smear_pt", "METCorGoodboson_m", "PuppiMETCorGoodboson_m", "METCorGoodboson_transm", "PuppiMETCorGoodboson_transm", "METCorGoodboson_T1Smear_transm", "METCorGoodboson_T1Smear_phi", "METCorGoodboson_T1Smear_pt", "MET_T1Smear_phi", "METCorGoodSmearboson_pt", "METCorGoodSmearboson_transm", "METCorGoodSmearboson_m", "METCorGoodSmearboson_phi"] 
-varspaper = [ "METCorGoodSmearboson_m", "METCorGoodSmearboson_phi", "METCorGoodSmearboson_pt", "METCorGoodSmearboson_transm", "METCorGood_T1Smear_phi", "METCorGood_T1Smear_pt", "METCorGood_T1_phi", "METCorGood_T1_pt", "METCorGoodboson_m", "METCorGoodboson_phi", "METCorGoodboson_pt", "METCorGoodboson_transm", "MET_T1Smear_phi", "MET_T1Smear_pt", "MET_T1_phi", "MET_T1_pt", "PuppiMETCorGood_phi", "PuppiMETCorGood_pt", "PuppiMETCorGoodboson_m", "PuppiMETCorGoodboson_phi", "PuppiMETCorGoodboson_pt", "PuppiMETCorGoodboson_transm", "PuppiMET_phi", "PuppiMET_pt", "RawMET_phi", "RawMET_pt", "RawPuppiMET_phi", "RawPuppiMET_pt"] 
-
-varspaper +=["METCorSmearboson_m", "METCorSmearboson_phi", "METCorSmearboson_pt", "METCorSmearboson_transm", "METCor_T1Smear_phi", "METCor_T1Smear_pt", "METCor_T1_phi", "METCor_T1_pt", "METCorboson_m", "METCorboson_phi", "METCorboson_pt", "METCorboson_transm",  "PuppiMETCor_phi", "PuppiMETCor_pt", "PuppiMETCorboson_m", "PuppiMETCorboson_phi", "PuppiMETCorboson_pt", "PuppiMETCorboson_transm"]
-
-varsdR=["dRMETCorGood_T1J1", "dRMETCorGood_T1J2", "dRPuppiMETCorGood_T1J1","dRPuppiMETCorGood_J2"]
-varsdR+=["dRMETCor_T1J1", "dRMETCor_T1J2", "dRPuppiMETCor_T1J1","dRPuppiMETCor_J2"]
-
-vars= varspaper
-vars += ['dPhiMETCorGood_T1J1', 'dPhiPuppiMETCorGood_J1', 'dPhiMETCorGood_T1J2', 'dPhiPuppiMETCorGood_J2', 'dRMETCorGood_T1J1', 'dRPuppiMETCorGood_J1', 'dRMETCorGood_T1J2', 'dRPuppiMETCorGood_J2']
-vars += ['dPhiMETCor_T1J1', 'dPhiPuppiMETCor_J1', 'dPhiMETCor_T1J2', 'dPhiPuppiMETCor_J2', 'dRMETCor_T1J1', 'dRPuppiMETCor_J1', 'dRMETCor_T1J2', 'dRPuppiMETCor_J2']
 
 
-#vars= [var for var in varspaper if "_pt" in var]
-#vars = varspaper
-#replacement_string = 'CorGood'
-#new_string='Cor'
-#vars = [new_string if item == replacement_string else item for item in varspaper]
+varspaper =["METCorSmearboson_m", "METCorSmearboson_phi", "METCorSmearboson_pt", "METCorSmearboson_transm", "METCor_T1Smear_phi", "METCor_T1Smear_pt", "METCor_T1_phi", "METCor_T1_pt", "METCorboson_m", "METCorboson_phi", "METCorboson_pt", "METCorboson_transm",  "PuppiMETCor_phi", "PuppiMETCor_pt", "PuppiMETCorboson_m", "PuppiMETCorboson_phi", "PuppiMETCorboson_pt", "PuppiMETCorboson_transm"]
 
-#vars=["njets", "iso_1", "METCorGoodboson_transm"]
-#vars=["njets", "iso_1", "METCorGoodboson_transm"]
-#vars += varsM
-# vars=varsall
-#vaars += ["METCorGood_T1Smear_pt"]
-#vars = ["METCorGood_T1_pt", "PuppiMETCorGood_pt"]
+
+#varsdR=["dRMETCorGood_T1J1", "dRMETCorGood_T1J2", "dRPuppiMETCorGood_T1J1","dRPuppiMETCorGood_J2"]
+
+#varsdR += ['dPhiMETCorGood_T1J1', 'dPhiPuppiMETCorGood_J1', 'dPhiMETCorGood_T1J2', 'dPhiPuppiMETCorGood_J2', 'dRMETCorGood_T1J1', 'dRPuppiMETCorGood_J1', 'dRMETCorGood_T1J2', 'dRPuppiMETCorGood_J2']
+varsdR=["dRMETCor_T1J1", "dRMETCor_T1J2", "dRPuppiMETCor_T1J1","dRPuppiMETCor_J2"]
+varsdR += ['dPhiMETCor_T1J1', 'dPhiPuppiMETCor_J1', 'dPhiMETCor_T1J2', 'dPhiPuppiMETCor_J2', 'dRMETCor_T1J1', 'dRPuppiMETCor_J1', 'dRMETCor_T1J2', 'dRPuppiMETCor_J2']
+
+vars=["RawMET_phi", "RawMET_pt", "RawPuppiMET_phi", "RawPuppiMET_pt", "MET_T1_phi", "MET_T1_pt", "MET_T1Smear_phi", "MET_T1Smear_pt","METCor_T1_phi", "METCor_T1_pt", "METCor_T1Smear_phi", "METCor_T1Smear_pt", "PuppiMETCor_phi", "PuppiMETCor_pt"]
+
+
+varspaper= ["RawMET_phi", "RawPuppiMET_phi", "MET_T1_phi", "MET_T1Smear_phi", "PuppiMET_phi", "METCor_T1_phi", "METCor_T1Smear_phi", "PuppiMETCor_phi", "RawMET_pt", "RawPuppiMET_pt", "MET_T1_pt", "MET_T1Smear_pt", "PuppiMET_pt", "METCor_T1_pt", "METCor_T1Smear_pt", "PuppiMETCor_pt", "METCorboson_mt", "METCorSmearboson_mt", "PuppiMETCorboson_mt", "METCorboson_pt", "METCorSmearboson_pt", "PuppiMETCorboson_pt", "METCorboson_phi", "METCorSmearboson_phi", "PuppiMETCorboson_phi", "METCorboson_m", "METCorSmearboson_m", "PuppiMETCorboson_m"]
+
+#varsdR = ['dPhiMETCorGood_T1J1', 'dPhiPuppiMETCorGood_J1', 'dPhiMETCorGood_T1J2', 'dPhiPuppiMETCorGood_J2', 'dRMETCorGood_T1J1', 'dRPuppiMETCorGood_J1', 'dRMETCorGood_T1J2', 'dRPuppiMETCorGood_J2']
+varsdR = ['dPhiMETCor_T1J1', 'dPhiPuppiMETCor_J1', 'dPhiMETCor_T1J2', 'dPhiPuppiMETCor_J2', 'dRMETCor_T1J1', 'dRPuppiMETCor_J1', 'dRMETCor_T1J2', 'dRPuppiMETCor_J2']
+
+vars=varspaper
+
+vars = ["METCorSmearboson_m", "METCorboson_m", "PuppiMETCorboson_m"]
+vars += ["METCorSmearboson_phi", "METCorboson_phi", "PuppiMETCorboson_phi"]
+vars += ["METCorSmearboson_pt", "METCorboson_pt", "PuppiMETCorboson_pt"]
 vars += ["METCorSmearboson_mt", "METCorboson_mt", "PuppiMETCorboson_mt"]
-vars += ["METCorGoodSmearboson_mt", "METCorGoodboson_mt", "PuppiMETCorGoodboson_mt"]
 
+##varsQCD = do QCD datadriven
+varsQCD = ["METCorSmearboson_pt", "METCorboson_pt", "PuppiMETCorboson_pt", "PuppiMETCor_pt", "METCor_T1_pt", "METCor_T1Smear_pt"]
+varsQCD += ["METCorSmearboson_mt", "METCorboson_mt", "PuppiMETCorboson_mt"]
+varsQCD += ["METCorSmearboson_pt", "METCorboson_pt", "PuppiMETCorboson_pt"]
+vars=varsQCD
+#vars+=varsdR
+
+varsincl = ["iso_1", "METCorSmearboson_pt", "METCorboson_pt", "PuppiMETCorboson_pt"]
+varsincl += ["METCorSmearboson_m", "METCorboson_m", "PuppiMETCorboson_m"]
+varsincl = ["METCorSmearboson_mt", "METCorboson_mt", "PuppiMETCorboson_mt"]
+vars=varsincl
+#filtered_list = [item for item in vars if "CorGood" not in item]
+#vars=filtered_list
+vars =[ "RawMET_pt", "RawPuppiMET_pt", "MET_T1_pt", "MET_T1Smear_pt",  "METCor_T1_pt",  "METCor_T1Smear_pt", "PuppiMETCor_pt"]
+vars =[ "METCor_T1_pt",  "METCor_T1Smear_pt", "PuppiMETCor_pt"]
+vars = ["METCorSmearboson_mt", "METCorboson_mt", "PuppiMETCorboson_mt"]
+vars = ["METCorSmearboson_pt", "METCorboson_pt", "PuppiMETCorboson_pt"]
+vars = ["METCorboson_mt"]
 IDWP = "_cutbased"
 
 #IDWP = "_mvaid"
 alljetcuts = ["njetsgeq0", "njetsgt0", "njetseq0"]
+alljetcuts = ["njetsgeq0",  "njetseq0"]
 alljetcuts = ["njetsgt0"]
 
 #btag = "nbtagl" + IDWP + "_varbins"
@@ -76,11 +95,17 @@ SR = "isolt0p15_mtmassgt80"
 B = "isolt0p15_mtmasslt80"
 D = "isogt0p15_mtmasslt80"
 C = "isogt0p15_mtmassgt80"
-#SR = "isolt0p01_mtmassgt80"
 
+SRincl = "isolt0p15_mtmassincl_pt1gt35"
+B = "isolt0p15_mtmassincl_pt1lt35"
+C = "isogt0p15_mtmassincl_pt1gt35"
+D = "isogt0p15_mtmassincl_pt1lt35"
+#SR = "isolt0p01_mtmassgt80"
+#SR = C * B/D
 btag = "nbtagl" + IDWP + "_varbins_vetolept_" + SR
 btag = "nbtagl" + IDWP + "_longbins_vetolept_" + SR
-btag = "nbtagl" + IDWP + "_openbins_vetolept_" + SR
+
+btag = "nbtagl" + IDWP + "_openbins_vetolept_" + D
 # nbtagl_cutbased_varbins_vetolept
 
 OneByOne = False
@@ -88,8 +113,8 @@ OneByOne = False
 OneByOne = True
 #btag = "nobtag" + IDWP + "_varbins_isocut"
 
-allpv = ['_pult10',    '_pu10to20',    '_pu20to30',    '_pu30to40',    '_pu40to50',   '_pugeq50']
-# allpv=['_pugeq40']
+allpv = ['_pult10',    '_pu10to20',    '_pu20to30',    '_pu30to40',    '_pu40to50',  '_pugeq30', '_pugeq40',  '_pugeq50']
+#allpv = ['_pult10',    '_pu10to20',    '_pu20to30',    '_pu30to40',    '_pugeq40']
 # allpv=[]
 pu = ""
 veto = "1"
@@ -104,7 +129,7 @@ if True:
             for ss in samples:
                 #if 'top' in ss : OneByOne = True
                 #if ss=='ewk' : OneByOne = True
-
+                
                 ss = ss + "_" + jetcut + "_" + btag + pu + "_hitslt" + veto + extra
 
                 if not OneByOne:
