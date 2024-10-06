@@ -31,28 +31,29 @@ class outTupleWjets():
         # Electron_RunUL2016preVFP_Ele25_EtaLt2p1.root
         # Electron_RunUL2017_Ele35.root
         # Electron_RunUL2018_Ele35.root
-        self.TriggerSF = {
-            'dir': './',
-            'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root',
-            'fileElectron': 'Electron_RunUL2018_Ele35.root'}
+        '''
+        self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'Electron_RunUL2018_Ele35.root'}
         if '2016pre' in str(era):
-            self.TriggerSF = {
-                'dir': './',
-                'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root',
-                'fileElectron': 'Electron_RunUL2016preVFP_Ele25_EtaLt2p1.root'}
+            self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'Electron_RunUL2016preVFP_Ele25_EtaLt2p1.root'}
         if '2016' in str(era) and 'pre' not in str(era):
-            self.TriggerSF = {
-                'dir': './',
-                'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root',
-                'fileElectron': 'Electron_RunUL2016postVFP_Ele25_EtaLt2p1.root'}
+            self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'Electron_RunUL2016postVFP_Ele25_EtaLt2p1.root'}
         if '2017' in str(era):
-            self.TriggerSF = {
-                'dir': './',
-                'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root',
-                'fileElectron': 'Electron_RunUL2017_Ele35.root'}
+            self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'Electron_RunUL2017_Ele35.root'}
+
+        '''
+
+        self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'singleElTrigEff_2018.root'}
+        if '2016pre' in str(era):
+            self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'singleElTrigEff_2016preVFP.root'}
+        if '2016' in str(era) and 'pre' not in str(era):
+            self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'singleElTrigEff_2016postVFP.root'}
+        if '2017' in str(era):
+            self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'singleElTrigEff_2017.root'}
+
+
 
         print('era', era, self.TriggerSF['fileElectron'])
-        self.sf_EleTrig.ScaleFactor("{0:s}{1:s}".format(self.TriggerSF['dir'], self.TriggerSF['fileElectron']))
+        self.sf_EleTrig.ScaleFactorEl("{0:s}{1:s}".format(self.TriggerSF['dir'], self.TriggerSF['fileElectron']))
 
         self.evaluatorPU = ''
         self.fnamePU = "./puWeights_{0:s}.json.gz".format(str(era))
@@ -173,14 +174,10 @@ class outTupleWjets():
                         self.list_of_arraysJetsNbtagM.append(array('i', [-1]))
                         self.list_of_arraysJetsNbtagM2p4.append(array('i', [-1]))
                         self.list_of_arraysJetsNbtagT.append(array('i', [-1]))
-                        self.list_of_arraysJetsFlavour.append(
-                            array('i', [-1] * 8))
-                        self.list_of_arraysJetsEta.append(
-                            array('f', [-9.99] * 8))
-                        self.list_of_arraysJetsPt.append(
-                            array('f', [-9.99] * 8))
-                        self.list_of_arraysJetsPhi.append(
-                            array('f', [-9.99] * 8))
+                        self.list_of_arraysJetsFlavour.append( array('i', [-1] * 8))
+                        self.list_of_arraysJetsEta.append( array('f', [-9.99] * 8))
+                        self.list_of_arraysJetsPt.append( array('f', [-9.99] * 8))
+                        self.list_of_arraysJetsPhi.append( array('f', [-9.99] * 8))
                         #self.list_of_arraysJetsNbtagDeep.append( array('i',[-1]*12))
 
             #for i_ in self.allsystMET :  self.list_of_arrays.append(array('f', [ 0 ]))
@@ -900,26 +897,20 @@ class outTupleWjets():
                 # if str(era) == '2018' and  -3.2 < jet_eta < -1.3 and -1.57 < jet_phi < 0.87:
                 # if jpt[j]>30 and entry.Jet_jetId[j]>5 : print 'found a HEM affected jet...', jpt[j], jet_eta, jet_phi, entry.Jet_jetId[j], entry.Jet_puId[j], entry.nJet
                 #    continue
-                if jpt[j] < 30.:
-                    continue
-                if entry.Jet_jetId[j] < 6:
-                    continue  # pass tight and tightLepVeto ID.
-                if jpt[j] < 50 and entry.Jet_puId[j] != 7:
-                    continue  # tight jetPU_iD
+                if jpt[j] < 30.: continue
+                if entry.Jet_jetId[j] < 6: continue  # pass tight and tightLepVeto ID.
+                if jpt[j] < 50 and entry.Jet_puId[j] != 7: continue  # tight jetPU_iD
                 if str(era) == '2018' and entry.run >= 319077 and -3.0 < jet_eta and jet_eta < -1.30 and -1.57 < jet_phi and jet_phi < -0.87:
                     isHEM = 1
 
-                if abs(entry.Jet_eta[j]) > 4.7:
-                    continue
+                if abs(entry.Jet_eta[j]) > 4.7: continue
 
                 for iv, lv in enumerate(LepList):
                     dr = self.getDRnV( entry, entry.Jet_eta[j], entry.Jet_phi[j], LepList[iv].Eta(), LepList[iv].Phi())
                     if float(dr) > 0.5:
-                        if j not in goodJets:
-                            goodJets.append(j)
+                        if j not in goodJets: goodJets.append(j)
                     else:
-                        if j not in failJets:
-                            failJets.append(j)
+                        if j not in failJets: failJets.append(j)
                         # continue
             except BaseException:
                 continue
@@ -1212,6 +1203,10 @@ class outTupleWjets():
             except AttributeError:
                 bits.append(False)
             try:
+                bits.append(e.HLT_Ele32_WPTight_Gsf_L1DoubleEG)
+            except AttributeError:
+                bits.append(False)
+            try:
                 bits.append(e.HLT_Ele35_WPTight_Gsf)
             except AttributeError:
                 bits.append(False)
@@ -1379,12 +1374,15 @@ class outTupleWjets():
                 self.IDSFElWP90noIso_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(yearin, "sfdown", "wp90noiso", Lep.Eta(), Lep.Pt())
 
                 self.TrigSF1[0] = 1.
+                self.TrigSF1[0] = self.sf_EleTrig.get_SFFrom2D(Lep.Pt(), Lep.Eta())
+                '''
                 eff_trig_d_1 = self.sf_EleTrig.get_EfficiencyData(Lep.Pt, Lep.Eta()) 
                 eff_trig_mc_1 = self.sf_EleTrig.get_EfficiencyMC(Lep.Pt, Lep.Eta())
                 if eff_trig_mc_1 != 0:
                     self.TrigSF1[0] = float(eff_trig_d_1 / eff_trig_mc_1)
                 else:
                     self.TrigSF1[0] = 1.
+                '''
 
         lep_index_1 = lepList[0]
 
@@ -1508,23 +1506,10 @@ class outTupleWjets():
                     metV.SetPz(0.)
                     metV.SetE(metV.Pt())
 
-                    self.u_par_MET[0] = self.getu_par_MET(
-                        entry,
-                        metV.X(),
-                        metV.Y(),
-                        (LepP + LepM).X(),
-                        (LepP + LepM).Y(),
-                        (LepP + LepM).Pt())
-                    self.u_perp_MET[0] = self.getu_perp_MET(
-                        entry,
-                        metV.X(),
-                        metV.Y(),
-                        (LepP + LepM).X(),
-                        (LepP + LepM).Y(),
-                        (LepP + LepM).Pt())
+                    self.u_par_MET[0] = self.getu_par_MET( entry, metV.X(), metV.Y(), (LepP + LepM).X(), (LepP + LepM).Y(), (LepP + LepM).Pt())
+                    self.u_perp_MET[0] = self.getu_perp_MET( entry, metV.X(), metV.Y(), (LepP + LepM).X(), (LepP + LepM).Y(), (LepP + LepM).Pt())
 
-                    metUn.SetXYZT(entry.MET_MetUnclustEnUpDeltaX,
-                                  entry.MET_MetUnclustEnUpDeltaY, 0, 0)
+                    metUn.SetXYZT(entry.MET_MetUnclustEnUpDeltaX, entry.MET_MetUnclustEnUpDeltaY, 0, 0)
                     metUn.SetPz(0.)
                     metUn.SetE(metUn.Pt())
                 except AttributeError:

@@ -21,15 +21,7 @@ muonMass = 0.105
 
 class outTuple2Lep():
 
-    def __init__(
-            self,
-            fileName,
-            era,
-            doSyst=False,
-            shift=[],
-            isMC=True,
-            onlyNom=False,
-            isW=False):
+    def __init__( self, fileName, era, doSyst=False, shift=[], isMC=True, onlyNom=False, isW=False):
         from array import array
         from ROOT import TFile, TTree
 
@@ -41,31 +33,28 @@ class outTuple2Lep():
         # Electron_RunUL2016preVFP_Ele25_EtaLt2p1.root
         # Electron_RunUL2017_Ele35.root
         # Electron_RunUL2018_Ele35.root
-        self.TriggerSF = {
-            'dir': './',
-            'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root',
-            'fileElectron': 'Electron_RunUL2018_Ele35.root'}
+        '''
+        self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'Electron_RunUL2018_Ele35.root'}
         if '2016pre' in str(era):
-            self.TriggerSF = {
-                'dir': './',
-                'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root',
-                'fileElectron': 'Electron_RunUL2016preVFP_Ele25_EtaLt2p1.root'}
+            self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'Electron_RunUL2016preVFP_Ele25_EtaLt2p1.root'}
         if '2016' in str(era) and 'pre' not in str(era):
-            self.TriggerSF = {
-                'dir': './',
-                'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root',
-                'fileElectron': 'Electron_RunUL2016postVFP_Ele25_EtaLt2p1.root'}
+            self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'Electron_RunUL2016postVFP_Ele25_EtaLt2p1.root'}
         if '2017' in str(era):
-            self.TriggerSF = {
-                'dir': './',
-                'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root',
-                'fileElectron': 'Electron_RunUL2017_Ele35.root'}
+            self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'Electron_RunUL2017_Ele35.root'}
+        '''
+
+
+        self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'singleElTrigEff_2018.root'}
+        if '2016pre' in str(era):
+            self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'singleElTrigEff_2016preVFP.root'}
+        if '2016' in str(era) and 'pre' not in str(era):
+            self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'singleElTrigEff_2016postVFP.root'}
+        if '2017' in str(era):
+            self.TriggerSF = { 'dir': './', 'fileMuon': 'Muon/SingleMuon_Run2018_IsoMu24orIsoMu27.root', 'fileElectron': 'singleElTrigEff_2017.root'}
+
 
         print('era', era, self.TriggerSF['fileElectron'])
-        self.sf_EleTrig.ScaleFactor(
-            "{0:s}{1:s}".format(
-                self.TriggerSF['dir'],
-                self.TriggerSF['fileElectron']))
+        self.sf_EleTrig.ScaleFactor( "{0:s}{1:s}".format( self.TriggerSF['dir'], self.TriggerSF['fileElectron']))
 
         # lines above with .root files, lines below with correction lib
 
@@ -98,8 +87,7 @@ class outTuple2Lep():
             import gzip
             with gzip.open(self.fnameEl, 'rt') as file:
                 self.datasfEl = file.read().strip()
-                self.evaluatorEl = _core.CorrectionSet.from_string(
-                    self.datasfEl)
+                self.evaluatorEl = _core.CorrectionSet.from_string( self.datasfEl)
         else:
             self.evaluatorEl = _core.CorrectionSet.from_file(self.fnameEl)
             # Tau Decay types
@@ -1653,8 +1641,7 @@ class outTuple2Lep():
             hltListLep = []
             hltListLepSubL = []
 
-            TrigListLep, hltListLep, hltListLepSubL = GF.findSingleLeptTrigger(
-                lepList, entry, channel_ll, era)
+            TrigListLep, hltListLep, hltListLepSubL = GF.findSingleLeptTrigger( lepList, entry, channel_ll, era)
 
             TrigListLep = list(dict.fromkeys(TrigListLep))
             # if len(hltListLep) > 0 or len(hltListLepSubL)>0 :     print
@@ -1801,6 +1788,10 @@ class outTuple2Lep():
                 bits.append(False)
             try:
                 bits.append(e.HLT_Ele32_WPTight_Gsf)
+            except AttributeError:
+                bits.append(False)
+            try:
+                bits.append(e.HLT_Ele32_WPTight_Gsf_L1DoubleEG)
             except AttributeError:
                 bits.append(False)
             try:
@@ -2254,36 +2245,34 @@ class outTuple2Lep():
                     eleiso1 = 1.
                     eleiso2 = 1.
                     if LepP.Pt() > 20:
-                        eleid1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(
-                            yearin, "sf", "RecoAbove20", LepP.Eta(), LepP.Pt())
-                        self.IDSF1_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(
-                            yearin, "sfup", "RecoAbove20", LepP.Eta(), LepP.Pt())
-                        self.IDSF1_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(
-                            yearin, "sfdown", "RecoAbove20", LepP.Eta(), LepP.Pt())
+                        eleid1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sf", "RecoAbove20", LepP.Eta(), LepP.Pt())
+                        self.IDSF1_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sfup", "RecoAbove20", LepP.Eta(), LepP.Pt())
+                        self.IDSF1_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sfdown", "RecoAbove20", LepP.Eta(), LepP.Pt())
 
                     if LepM.Pt() > 20:
-                        eleid2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(
-                            yearin, "sf", "RecoAbove20", LepM.Eta(), LepM.Pt())
-                        self.IDSF2_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(
-                            yearin, "sfup", "RecoAbove20", LepM.Eta(), LepM.Pt())
-                        self.IDSF2_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(
-                            yearin, "sfdown", "RecoAbove20", LepM.Eta(), LepM.Pt())
-
+                        eleid2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sf", "RecoAbove20", LepM.Eta(), LepM.Pt())
+                        self.IDSF2_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sfup", "RecoAbove20", LepM.Eta(), LepM.Pt())
+                        self.IDSF2_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sfdown", "RecoAbove20", LepM.Eta(), LepM.Pt())
+                    '''
                     if LepP.Pt() > 20:
-                        eleiso1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(
-                            yearin, "sf", "wp90iso", LepP.Eta(), LepP.Pt())
-                        self.IsoSF1_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(
-                            yearin, "sfup", "wp90iso", LepP.Eta(), LepP.Pt())
-                        self.IsoSF1_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(
-                            yearin, "sfdown", "wp90iso", LepP.Eta(), LepP.Pt())
+                        eleiso1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sf", "wp90iso", LepP.Eta(), LepP.Pt())
+                        self.IsoSF1_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sfup", "wp90iso", LepP.Eta(), LepP.Pt())
+                        self.IsoSF1_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sfdown", "wp90iso", LepP.Eta(), LepP.Pt())
 
                     if LepM.Pt() > 20:
-                        eleiso2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(
-                            yearin, "sf", "wp90iso", LepM.Eta(), LepM.Pt())
-                        self.IsoSF2_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(
-                            yearin, "sfup", "wp90iso", LepM.Eta(), LepM.Pt())
-                        self.IsoSF2_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate(
-                            yearin, "sfdown", "wp90iso", LepM.Eta(), LepM.Pt())
+                        eleiso2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sf", "wp90iso", LepM.Eta(), LepM.Pt())
+                        self.IsoSF2_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sfup", "wp90iso", LepM.Eta(), LepM.Pt())
+                        self.IsoSF2_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sfdown", "wp90iso", LepM.Eta(), LepM.Pt())
+                    '''
+                    if LepP.Pt() > 20:
+                        eleiso1 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sf", "Tight", LepP.Eta(), LepP.Pt())
+                        self.IsoSF1_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sfup", "Tight", LepP.Eta(), LepP.Pt())
+                        self.IsoSF1_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sfdown", "Tight", LepP.Eta(), LepP.Pt())
+
+                    if LepM.Pt() > 20:
+                        eleiso2 = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sf", "Tight", LepM.Eta(), LepM.Pt())
+                        self.IsoSF2_up[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sfup", "Tight", LepM.Eta(), LepM.Pt())
+                        self.IsoSF2_down[0] = self.evaluatorEl["UL-Electron-ID-SF"].evaluate( yearin, "sfdown", "Tight", LepM.Eta(), LepM.Pt())
 
                     self.IDSF[0] = eleid1 * eleid2
                     self.IsoSF[0] = eleiso1 * eleiso2
@@ -2915,16 +2904,11 @@ class outTuple2Lep():
                         entry, leplist, era, str(v), proc)
                     try:
                         self.list_of_arraysJetsNjets[i][0] = -1
-                        self.list_of_arraysJetsNjets[i][0] = len(
-                            jetList)  # fix
-                        self.list_of_arraysJetsNjets_lPT_leta[i][0] = len(
-                            jetList_lPT_leta)  # fix
-                        self.list_of_arraysJetsNjets_lPT_heta[i][0] = len(
-                            jetList_lPT_heta)  # fix
-                        self.list_of_arraysJetsNjets_hPT_leta[i][0] = len(
-                            jetList_hPT_leta)  # fix
-                        self.list_of_arraysJetsNjets_hPT_heta[i][0] = len(
-                            jetList_hPT_heta)  # fix
+                        self.list_of_arraysJetsNjets[i][0] = len( jetList)  # fix
+                        self.list_of_arraysJetsNjets_lPT_leta[i][0] = len( jetList_lPT_leta)  # fix
+                        self.list_of_arraysJetsNjets_lPT_heta[i][0] = len( jetList_lPT_heta)  # fix
+                        self.list_of_arraysJetsNjets_hPT_leta[i][0] = len( jetList_hPT_leta)  # fix
+                        self.list_of_arraysJetsNjets_hPT_heta[i][0] = len( jetList_hPT_heta)  # fix
                         self.list_of_arraysJetsNbtagL[i][0] = len(bJetListL)
                         self.list_of_arraysJetsNbtagM[i][0] = len(bJetListM)
                         self.list_of_arraysJetsNbtagT[i][0] = len(bJetListT)
@@ -2933,15 +2917,7 @@ class outTuple2Lep():
                         # len(jetList), cat, jetList,
                         # self.list_of_arraysJetsNjets[i][0], entry.event
                     except IndexError:
-                        print(
-                            'hit the ceiling',
-                            len(jetListPt),
-                            'event',
-                            entry.event,
-                            'lumi',
-                            entry.luminosityBlock,
-                            'run',
-                            entry.run)
+                        print( 'hit the ceiling', len(jetListPt), 'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run)
                     if (len(jetList)) == 0:
                         for kl in range(0, 8):
                             self.list_of_arraysJetsPt[i][kl] = -9.99
@@ -2961,15 +2937,7 @@ class outTuple2Lep():
                             # bTagListDeep[ifl] #fix
 
                         except IndexError:
-                            print(
-                                'hit the ceiling',
-                                len(jetListPt),
-                                'event',
-                                entry.event,
-                                'lumi',
-                                entry.luminosityBlock,
-                                'run',
-                                entry.run)
+                            print( 'hit the ceiling', len(jetListPt), 'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run)
                     if 'nom' in v:
                         self.njets[0], self.nbtagL[0], self.nbtagM[0], self.nbtagT[0] = -1, -1, -1, 1
                         self.isHEM[0] = 0
@@ -2987,9 +2955,9 @@ class outTuple2Lep():
                         # self.nbtagT[0]
 
                         for i in range(len(self.jpt)):
-                            self.jpt[i] = -9.99
-                            self.jeta[i] = -9.99
-                            self.jphi[i] = -9.99
+                            self.jpt[i] = -1.
+                            self.jeta[i] = -1.
+                            self.jphi[i] = -1.
                             self.jflavour[i] = -99
 
                         for ifl in range(len(jetListPt)):
@@ -2999,16 +2967,7 @@ class outTuple2Lep():
                                 self.jphi[ifl] = jetListPhi[ifl]
                                 self.jpt[ifl] = jetListPt[ifl]
                                 #self.btagDeep[ifl] = bTagListDeep[ifl]
-                            except IndexError:
-                                print(
-                                    'we hit the ceiling',
-                                    len(jetListPt),
-                                    'event',
-                                    entry.event,
-                                    'lumi',
-                                    entry.luminosityBlock,
-                                    'run',
-                                    entry.run)
+                            except IndexError: print( 'we hit the ceiling', len(jetListPt), 'event', entry.event, 'lumi', entry.luminosityBlock, 'run', entry.run)
 
             # fill the un-corrected or just in the case you dont care to
             # doUncertainties

@@ -721,6 +721,7 @@ def findSingleLeptTrigger(goodLeptonList, entry, flavour, era, printOn=False):
     HLT_Ele27_eta2p1_WPTight_Gsf = False
     HLT_Ele27_WPTight_Gsf = False
     HLT_Ele32_WPTight_Gsf = False
+    HLT_Ele32_WPTight_Gsf = False
     HLT_Ele35_WPTight_Gsf = False
 
     if ('ee' in flavour or flavour == 'enu') and nLepton > 0:
@@ -738,6 +739,10 @@ def findSingleLeptTrigger(goodLeptonList, entry, flavour, era, printOn=False):
         except AttributeError:
             HLT_Ele32_WPTight_Gsf = False
         try:
+            HLT_Ele32_WPTight_Gsf_L1DoubleEG = entry.HLT_Ele32_WPTight_Gsf_L1DoubleEG
+        except AttributeError:
+            HLT_Ele32_WPTight_Gsf_L1DoubleEG = False
+        try:
             HLT_Ele35_WPTight_Gsf = entry.HLT_Ele35_WPTight_Gsf
         except AttributeError:
             HLT_Ele35_WPTight_Gsf = False
@@ -750,12 +755,14 @@ def findSingleLeptTrigger(goodLeptonList, entry, flavour, era, printOn=False):
         # if era == '2016' and not HLT_Ele25_eta2p1_WPTight_Gsf and not HLT_Ele27_eta2p1_WPTight_Gsf : return LepttrigList, hltList
         # if era != '2016' and not HLT_Ele32_WPTight_Gsf and not
         # HLT_Ele35_WPTight_Gsf :  return LepttrigList, hltList
+        # HLT_Ele32_WPTight_Gsf :  return LepttrigList, hltList UPADATE ON Oct6 2024 --> use Ele32 (we have TrigSF now)
 
-        if '2016' in era and not HLT_Ele25_eta2p1_WPTight_Gsf:
+        #if '2016' in era and not HLT_Ele25_eta2p1_WPTight_Gsf:
+        if '2016' in era and not HLT_Ele27_WPTight_Gsf:
             return LepttrigList, hltList, hltListSubL
-        if '2017' in era and not HLT_Ele35_WPTight_Gsf:
+        if '2017' in era and not HLT_Ele32_WPTight_Gsf_L1DoubleEG:
             return LepttrigList, hltList, hltListSubL
-        if '2018' in era and not HLT_Ele35_WPTight_Gsf:
+        if '2018' in era and not HLT_Ele32_WPTight_Gsf:
             return LepttrigList, hltList, hltListSubL
         if 'ee' in flavour and nLepton < 2:
             return LepttrigList, hltList, hltListSubL
@@ -927,19 +934,24 @@ def findSingleLeptTrigger(goodLeptonList, entry, flavour, era, printOn=False):
 
             if (flavour == 'ee' or flavour == 'enu'):
                 if '2016' in era :
-                    #if HLT_Ele27_WPTight_Gsf and abs(entry.Electron_eta[leadL]) < 2.5 and entry.Electron_pt[leadL] > 29 and isbit2:
-                    if HLT_Ele25_eta2p1_WPTight_Gsf and abs(entry.Electron_eta[leadL]) < 2.1 and entry.Electron_pt[leadL] > 27 and isbit2:
+                    if HLT_Ele27_WPTight_Gsf and abs(entry.Electron_eta[leadL]) < 2.5 and entry.Electron_pt[leadL] > 29 and isbit2:
+                    #if HLT_Ele25_eta2p1_WPTight_Gsf and abs(entry.Electron_eta[leadL]) < 2.1 and entry.Electron_pt[leadL] > 27 and isbit2:
                         hltList.append(True)
 
-                if '2016' not in era :
-                     if (HLT_Ele35_WPTight_Gsf) and abs(entry.Electron_eta[leadL]) < 2.5 and entry.Electron_pt[leadL] > 37 and isbit2 :
+                if '2017'  in era :
+                     #if (HLT_Ele35_WPTight_Gsf) and abs(entry.Electron_eta[leadL]) < 2.5 and entry.Electron_pt[leadL] > 37 and isbit2 :
+                     if (HLT_Ele32_WPTight_Gsf_L1DoubleEG) and abs(entry.Electron_eta[leadL]) < 2.5 and entry.Electron_pt[leadL] > 35 and isbit2 :  #UPDATE ON Oct6 2024 
+                        hltList.append(True)
+
+                if '2018'  in era :
+                     #if (HLT_Ele35_WPTight_Gsf) and abs(entry.Electron_eta[leadL]) < 2.5 and entry.Electron_pt[leadL] > 37 and isbit2 :
+                     if (HLT_Ele32_WPTight_Gsf) and abs(entry.Electron_eta[leadL]) < 2.5 and entry.Electron_pt[leadL] > 35 and isbit2 :  #UPDATE ON Oct6 2024 
                         hltList.append(True)
 
             if printOn:
                 print('')
                 print(entry.luminosityBlock, entry.run, entry.event)
-                print(("mm, iobj={7:d}, nTrigObj_id={0:d}, filter_bit={1:x}, dR_leading={2:f}, dR_subleading={3:f}, Muon_pT={4:f}, Muon_eta={5:f},  Muon_phi={6:f}, isbit2={8:b} isbit8={9:b}".format(
-                    entry.TrigObj_id[iobj], entry.TrigObj_filterBits[iobj], dR, dRr, entry.Muon_pt[leadL], abs(entry.Muon_eta[leadL]), entry.Muon_phi[leadL], iobj, isbit2, isbit8)))
+                print(("mm, iobj={7:d}, nTrigObj_id={0:d}, filter_bit={1:x}, dR_leading={2:f}, dR_subleading={3:f}, Muon_pT={4:f}, Muon_eta={5:f},  Muon_phi={6:f}, isbit2={8:b} isbit8={9:b}".format( entry.TrigObj_id[iobj], entry.TrigObj_filterBits[iobj], dR, dRr, entry.Muon_pt[leadL], abs(entry.Muon_eta[leadL]), entry.Muon_phi[leadL], iobj, isbit2, isbit8)))
                 # print 'HLT_IsoMu22:', HLT_IsoMu22, 'HLT_IsoMu22_eta2p1:', HLT_IsoMu22_eta2p1, 'HLT_IsoTkMu22:', HLT_IsoTkMu22, 'HLT_IsoTkMu22_eta2p1:', HLT_IsoTkMu22_eta2p1
 
         if dRr < 0.5:
@@ -961,14 +973,19 @@ def findSingleLeptTrigger(goodLeptonList, entry, flavour, era, printOn=False):
                             hltListSubL.append(True)
             if (flavour == 'ee' or flavour == 'enu'):
                 if '2016' in era :
-                    #if HLT_Ele27_WPTight_Gsf and abs(entry.Electron_eta[subleadL]) < 2.5 and entry.Electron_pt[subleadL] > 29 and isbit2:
-                    if HLT_Ele25_eta2p1_WPTight_Gsf and abs(entry.Electron_eta[subleadL]) < 2.1 and entry.Electron_pt[subleadL] > 27 and isbit2:
+                    if HLT_Ele27_WPTight_Gsf and abs(entry.Electron_eta[subleadL]) < 2.5 and entry.Electron_pt[subleadL] > 29 and isbit2:
+                    #if HLT_Ele25_eta2p1_WPTight_Gsf and abs(entry.Electron_eta[subleadL]) < 2.1 and entry.Electron_pt[subleadL] > 27 and isbit2:
                         hltListSubL.append(True)
 
-                if '2016' not in era :
-                    if (HLT_Ele35_WPTight_Gsf) and abs(entry.Electron_eta[subleadL]) < 2.5 and entry.Electron_pt[subleadL] > 37 and isbit2:
+                if '2017' in era :
+                    #if (HLT_Ele35_WPTight_Gsf) and abs(entry.Electron_eta[subleadL]) < 2.5 and entry.Electron_pt[subleadL] > 37 and isbit2:
+                    if (HLT_Ele32_WPTight_Gsf_L1DoubleEG) and abs(entry.Electron_eta[subleadL]) < 2.5 and entry.Electron_pt[subleadL] > 35 and isbit2: #UPDATE ON Oct6 2024
                         hltListSubL.append(True)
 
+                if '2018'  in era :
+                    #if (HLT_Ele35_WPTight_Gsf) and abs(entry.Electron_eta[subleadL]) < 2.5 and entry.Electron_pt[subleadL] > 37 and isbit2:
+                    if (HLT_Ele32_WPTight_Gsf) and abs(entry.Electron_eta[subleadL]) < 2.5 and entry.Electron_pt[subleadL] > 35 and isbit2: #UPDATE ON Oct6 2024
+                        hltListSubL.append(True)
 
     # print 'check 2 HLT_IsoMu24 finished:', HLT_IsoMu24, 'HLT_IsoTkMu24:',
     # HLT_IsoTkMu24

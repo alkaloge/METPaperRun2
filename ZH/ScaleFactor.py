@@ -14,6 +14,8 @@ class SFs():
         global eff_dataH  # = root.std.map("string", root.TGraphAsymmErrors)()
         global eff_mcH  # = root.std.map("string", root.TGraphAsymmErrors)()
         global inputRootFile
+        global SFel #= root.std.map("string", root.TGraphAsymmErrors)()
+        global histo2D
 
     def ScaleFactor(self, inputFile):
         self.inputRootFile = str(inputFile)
@@ -53,6 +55,20 @@ class SFs():
             # print "some checks.................",self.eff_mcH[etaLabel].GetXaxis().GetNbins(),self.eff_dataH[etaLabel].GetXaxis().GetNbins(),"etaLabel",etaLabel,self.eff_dataH[etaLabel].GetN(),"eff_mcH.GetN()",self.eff_mcH[etaLabel].GetN()
             # print "just get some value",self.eff_mcH[etaLabel].GetX()[5],"for
             # etaLabel",etaLabel
+
+    def ScaleFactorEl(self,inputFile) :
+        self.inputRootFile = str(inputFile)
+        self.SFel = "EGamma_SF2D" 
+        self.fileIn = root.TFile(self.inputRootFile,"read")  
+        self.histo2D = self.fileIn.Get("EGamma_SF2D")
+
+    def get_SFFrom2D(self,pt, eta) :
+        bin_x = self.histo2D.GetXaxis().FindBin(eta)
+        bin_y = self.histo2D.GetYaxis().FindBin(pt)
+        
+        sf = self.histo2D.GetBinContent(bin_x, bin_y)
+  
+        return sf
 
     def SetAxisBins(self, graph):
         NPOINTS = graph.GetN()

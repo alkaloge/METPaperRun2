@@ -44,8 +44,7 @@ def goodTrigger(e, year):
         goodDouble = (
             e.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ or e.HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ or e.HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL_DZ)
     elif (year == 2017 or year == 2018):
-        goodSingle = (
-            e.HLT_Ele27_WPTight_Gsf or e.HLT_Ele35_WPTight_Gsf or e.HLT_Ele32_WPTight_Gsf or e.HLT_IsoMu24 or e.HLT_IsoMu27)
+        goodSingle = ( e.HLT_Ele27_WPTight_Gsf or e.HLT_Ele35_WPTight_Gsf or e.HLT_Ele32_WPTight_Gsf or e.HLT_IsoMu24 or e.HLT_IsoMu27 or e.HLT_Ele32_WPTight_Gsf_L1DoubleEG)
 
         goodDouble = (e.HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL or e.HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ or e.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8 or e.HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8)
 
@@ -1778,6 +1777,7 @@ def goodElectronWjets(entry, j):
             return False
     if ee['ele_ID']:
         if not entry.Electron_mvaFall17V2Iso_WP90[j]:
+        #if  int(entry.Electron_cutBased[j])<4:  ## Changed on Oct 6 2024 for new TRigger SF
             return False
 
     return True
@@ -1785,10 +1785,7 @@ def goodElectronWjets(entry, j):
 
 def vetoElectron(entry, j):
     ee = selections['elveto']  # selections for Z->ee
-    if entry.Electron_pt[j] > ee['ele_pt'] and \
-            abs(entry.Electron_eta[j]) < ee['ele_eta'] and \
-            abs(entry.Electron_dxy[j]) < 0.05 and \
-            entry.Electron_mvaFall17V2Iso_WPL[j]:
+    if entry.Electron_pt[j] > ee['ele_pt'] and  abs(entry.Electron_eta[j]) < ee['ele_eta'] and  abs(entry.Electron_dxy[j]) < 0.05 and       entry.Electron_mvaFall17V2Iso_WP90[j]:
         return True
     # entry.Electron_pfRelIso03_all[j] <  ee['ele_iso'] and\
     # abs(entry.Electron_dz[j]) < ee['ele_dz'] and \
@@ -2539,10 +2536,7 @@ def findZHZZ2L2Nu(goodElectronList, goodMuonList, entry):
                 # entry.Electron_charge[ii],  entry.Electron_charge[jj]
                 if entry.Electron_charge[ii] != entry.Electron_charge[jj]:
                     e2 = TLorentzVector()
-                    e2.SetPtEtaPhiM(
-                        entry.Electron_pt[jj],
-                        entry.Electron_eta[jj],
-                        entry.Electron_phi[jj],
+                    e2.SetPtEtaPhiM( entry.Electron_pt[jj], entry.Electron_eta[jj], entry.Electron_phi[jj],
                         0.0005)
                     cand = e1 + e2
                     mass = cand.M()
