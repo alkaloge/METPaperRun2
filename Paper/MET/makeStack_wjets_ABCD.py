@@ -152,61 +152,6 @@ def SumAboveThreshold(hist, threshold):
 
 
 
-
-def normalize_thstack_to_max(thstack):
-    # Get the maximum bin content from all histograms in the stack
-    max_bin_content = 0.0
-    
-    # Iterate through the histograms in the THStack to find the maximum bin content
-    for hist in thstack.GetHists():
-        for bin_idx in range(1, hist.GetNbinsX() + 1):
-            bin_content = hist.GetBinContent(bin_idx)
-            if bin_content > max_bin_content:
-                max_bin_content = bin_content
-    
-    if max_bin_content == 0:
-        print("Warning: Maximum bin content is zero, skipping normalization.")
-        return
-    
-    # Normalize each histogram in the stack so that the maximum bin content is 1
-    for hist in thstack.GetHists():
-        hist.Scale(1.0 / max_bin_content)
-    
-    print(f"Histograms in THStack normalized to maximum bin content: {max_bin_content}")
-
-
-
-def normalize_thstack_per_bin(thstack):
-    nbins = None
-    histograms = thstack.GetHists()  # Get the list of histograms in the THStack
-    
-    if histograms.GetSize() == 0:
-        print("No histograms found in the THStack.")
-        return
-    
-    # Assume all histograms have the same number of bins
-    nbins = histograms[0].GetNbinsX()
-
-    # Loop over each bin
-    for bin_idx in range(1, nbins + 1):
-        # Calculate the total bin content for this bin across all histograms
-        total_bin_content = 0.0
-        for hist in histograms:
-            total_bin_content += hist.GetBinContent(bin_idx)
-        
-        # If the total content is 0, skip normalization for this bin
-        if total_bin_content == 0:
-            continue
-
-        # Normalize each histogram in this bin by dividing its content by the total bin content
-        for hist in histograms:
-            original_content = hist.GetBinContent(bin_idx)
-            hist.SetBinContent(bin_idx, original_content / total_bin_content)
-
-    print("Histograms in THStack have been normalized per bin.")
-
-
-
 era = '2017'
 channel = ''
 if __name__ == "__main__":
@@ -285,12 +230,19 @@ if __name__ == "__main__":
     #C = "isogt0p15_mtmassgt80"
 
     #finB = fin.replace(SR, B)
+    #finC = fin.replace(SR, C)
+    #finD = fin.replace(SR, D)
 
     fin = '{0:s}'.format(str(opts.FileIn))
     finB = fin.replace('mtmassgt', 'mtmasslt')
+    finC = fin.replace('isolt0p15', 'isogt0p15')
+    finD = fin.replace('isolt0p15', 'isogt0p15')
+    finD = finD.replace('mtmassgt', 'mtmasslt')
 
     SRincl = "isolt0p15_mtmassincl_pt1high"
     B = "isolt0p15_mtmassincl_pt1low"
+    C = "isogt0p15_mtmassincl_pt1high"
+    D = "isogt0p15_mtmassincl_pt1low"
 
     if 'pt1incl' in fin : 
         SRincl = "isolt0p15_mtmassincl_pt1incl"
@@ -299,6 +251,8 @@ if __name__ == "__main__":
             SRincl = "isolt0p1_mtmassincl_pt1incl"
             B = "isogt0p1_mtmassincl_pt1incl"
 
+        C = B
+        D = B
 
     pT=""
     if 'pt1gt35' in fin : pT = '35'
@@ -309,11 +263,14 @@ if __name__ == "__main__":
 
         SRincl = SRincl.replace("pt1high", "pt1gt"+pT)
         B = B.replace("pt1low", "pt1lt"+pT)
+        C = C.replace("pt1high", "pt1gt"+pT)
+        D = D.replace("pt1low", "pt1lt"+pT)
     
-    print (' OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK', SRincl, B )
+    print (' OKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK', SRincl, B, C, D )
 
     finB = fin.replace(SRincl, B)
-    if '2016_' in fin or 'Run2' in fin : finB = fin
+    finC = fin.replace(SRincl, C)
+    finD = fin.replace(SRincl, D)
 
     fIn = TFile.Open(fin, 'update')
     fInB = fInC = fInD = None
@@ -380,9 +337,8 @@ if __name__ == "__main__":
     varbs = []
     varbs.append(givein)
     print('will do the following', varbs, fIn.GetName())
+    systs = ['JES', 'Unclustered', 'JER']
     systs = ['JES', 'Unclustered']
-    if'smear' in givein.lower():
-        systs = ['JES', 'Unclustered', 'JER']
     Othersysts = ['ID', 'PU']
 
     dirs = ['Up', 'Down']
@@ -395,9 +351,9 @@ if __name__ == "__main__":
     doStat = True
     doSyst = True
 
-    doErr = True
-    #doStat = False
-    #doSyst = False
+    doErr = False
+    doStat = False
+    doSyst = False
     if doStat and doSyst : systs +=Othersysts
     if doStat and not doSyst : systs =Othersysts
 
@@ -656,178 +612,250 @@ if __name__ == "__main__":
     #normQCD = 1.
     if doQCD:
 
+        if dummyQCD  : 
+            finC=finB
+            finD=finB
+        print('filenames in sideband', finB, finC, finD, 'dummyQCD?', dummyQCD)
         fInB = TFile.Open(finB, 'read')
-        print('filenames in sideband', fInB.GetName())
+        fInC = TFile.Open(finC, 'read')
+        fInD = TFile.Open(finD, 'read')
+        print('filenames in sideband', fInB.GetName(), fInC.GetName())
         v=varbs[0]
 
         data_histB = data_histC = data_histD = None
         data_histB_orig = data_histC_orig = data_histD_orig = None
         data_histB_syst = data_histC_syst = data_histD_syst =None
         histoA =histoB = histoC = histoD = None
-        if '2016_' in fin or 'Run2' in fin :   data_histB = fInB.Get("histo_qcd_data_B_" + v)
-
-        else :    data_histB = fInB.Get('histo_dataB')
+        data_histB = fInB.Get('histo_dataB')
+        data_histC = fInC.Get('histo_data'+taggC)
+        data_histD = fInD.Get('histo_data'+taggD)
         #fInD.Close()
         print('data in sideband before rebin B', data_histB.GetSumOfWeights())
+        print('data in sideband before rebin C', data_histC.GetSumOfWeights())
+        print('data in sideband before rebin D', data_histD.GetSumOfWeights())
 
-        if not ('2016_' in fin or 'Run2' in fin) :   
-            if doRebin:
-                data_histB_rebin = rebinHisto(data_histB,bins,data_histB.GetName()+'_rebin')
-                data_histB =data_histB_rebin.Clone()
+        if doRebin:
+            data_histB_rebin = rebinHisto(data_histB,bins,data_histB.GetName()+'_rebin')
+            data_histB =data_histB_rebin.Clone()
 
+            data_histC_rebin = rebinHisto(data_histC,bins,data_histC.GetName()+'_rebin')
+            data_histC = data_histC_rebin.Clone()
 
-            data_histA = data_hist.Clone()
-            data_histA_orig = data_hist.Clone()
-            data_histB_orig = data_histB.Clone()
+            data_histD_rebin = rebinHisto(data_histD,bins,data_histD.GetName()+'_rebin')
+            data_histD = data_histD_rebin.Clone()
 
-            print('\033[91m' + "------!!!!!!!!!!!!!-----------------------------------------------------------------" + '\033[0m')
-            print ('reading from files', fIn.GetName(), fInB.GetName())
-            print('\033[91m' + "------!!!!!!!!!!!!!-----------------------------------------------------------------" + '\033[0m')
+        data_histA = data_hist.Clone()
+        data_histA_orig = data_hist.Clone()
+        data_histB_orig = data_histB.Clone()
+        data_histC_orig = data_histC.Clone()
+        data_histD_orig = data_histD.Clone()
+
+        print ('reading from files', fIn.GetName(), fInB.GetName(), fInC.GetName(), fInD.GetName())
+        print('data in sideband B', data_histB.GetSumOfWeights(), 'D', data_histD.GetSumOfWeights(), 'shape C', data_histC.GetSumOfWeights(), data_histB.GetNbinsX())
+        #print('data in sideband B', data_histB_orig.GetSumOfWeights(), 'D', data_histD_orig.GetSumOfWeights(), 'shape C ', data_histC_orig.GetSumOfWeights(), data_histB.GetNbinsX())
         
-            data_histA_syst=data_histB_syst = None
-            hsideB_top = hsideB_ew = hsideB_ewk = hsideB_qcd = hsideB_dy = hsibeB_qcd= hsideAll = None
+        data_histA_syst=data_histB_syst = data_histC_syst = data_histD_syst = None
+        '''
+        hsideB_top = hsideB_ew = hsideB_ewk = hsideB_qcd = hsideB_dy = hsibeB_qcd= hsideAll = None
 
-            hsideB_top = fInB.Get("histo_top_" + v+"B")
-            hsideB_ew =  fInB.Get("histo_ew_" + v+"B")
-            hsideB_ewk = fInB.Get("histo_ewknlo61_" + v+"B")
-            hsideB_dy =  fInB.Get("histo_dy_" + v+"B")
-            hsideB_qcd = fInB.Get("histo_qcd_" + v+"B")
+        hsideB_top = fInB.Get("histo_top_" + v+"B")
+        hsideB_ew =  fInB.Get("histo_ew_" + v+"B")
+        hsideB_ewk = fInB.Get("histo_ewknlo61_" + v+"B")
+        hsideB_dy =  fInB.Get("histo_dy_" + v+"B")
+        hsideB_qcd = fInB.Get("histo_qcd_" + v+"B")
 
-            print('Some tests: {}, {}, {}, {}, {} --done'.format( hsideB_top.GetName(), hsideB_ew.GetName(), hsideB_ewk.GetName(), hsideB_dy.GetName(), hsideB_qcd.GetName())) 
-            print('Some tests: {:.2f}, {:.2f}, {:.2f}, {:.2f}, {:.2f} --done'.format( hsideB_top.Integral(), hsideB_ew.Integral(), hsideB_ewk.Integral(), hsideB_dy.Integral(), hsideB_qcd.Integral())) 
+        print('Some tests: {:.2f}, {:.2f}, {:.2f}, {:.2f}, {:.2f} --done'.format( hsideB_top.Integral(), hsideB_ew.Integral(), hsideB_ewk.Integral(), hsideB_dy.Integral(), hsideB_qcd.Integral())) 
 
-            #hsideB_data = data_histB.Clone()
-            hsideAll = hsideB_top.Clone()
-            hsideAll.Add(hsideB_ew)
-            hsideAll.Add(hsideB_ewk)
-            hsideAll.Add(hsideB_dy)
-            hsideAll.Add(hsideB_qcd)
-            
-            print ('loaded B histos')
-            print('Composition in sideBand region B: '
-                  'top: {:.2f}  ew: {:.2f}  ewk: {:.2f}  dy: {:.2f}  qcd: {:.2f}'.format(
-                      float(hsideB_top.Integral() / hsideAll.Integral()),
-                      float(hsideB_ew.Integral() / hsideAll.Integral()),
-                      float(hsideB_ewk.Integral() / hsideAll.Integral()),
-                      float(hsideB_dy.Integral() / hsideAll.Integral()),
-                      float(hsideB_qcd.Integral() / hsideAll.Integral())) )
+        #hsideB_data = data_histB.Clone()
+        hsideAll = hsideB_top.Clone()
+        hsideAll.Add(hsideB_ew)
+        hsideAll.Add(hsideB_ewk)
+        hsideAll.Add(hsideB_dy)
+        hsideAll.Add(hsideB_qcd)
+        
+        print ('loaded B histos')
+        print('Composition in sideBand region B: '
+              'top: {:.2f}  ew: {:.2f}  ewk: {:.2f}  dy: {:.2f}  qcd: {:.2f}'.format(
+                  float(hsideB_top.Integral() / hsideAll.Integral()),
+                  float(hsideB_ew.Integral() / hsideAll.Integral()),
+                  float(hsideB_ewk.Integral() / hsideAll.Integral()),
+                  float(hsideB_dy.Integral() / hsideAll.Integral()),
+                  float(hsideB_qcd.Integral() / hsideAll.Integral())) )
+        '''
 
-            for i in range(0, len(samples)):
-                s = str(samples[i])
-                #histo = fIn.Get("histo_" + s + "_" + v)
-                #if doRebin : 
-                #    histo_rebin = rebinHisto(histo,bins,histo.GetName()+'_rebin')
-                #    histo = histo_rebin.Clone()
+        for i in range(0, len(samples)):
+            s = str(samples[i])
+            #histo = fIn.Get("histo_" + s + "_" + v)
+            #if doRebin : 
+            #    histo_rebin = rebinHisto(histo,bins,histo.GetName()+'_rebin')
+            #    histo = histo_rebin.Clone()
 
-                if 'qcd' not in s.lower():  # get all histograms in the SB regions but not QCD --> this is what you are going to calculate
+            if 'qcd' not in s.lower():  # get all histograms in the SB regions but not QCD --> this is what you are going to calculate
 
-                    histoA = fIn.Get("histo_" + s + "_" + v)
-                    histoB = fInB.Get("histo_" + s + "_" + v+"B")
+                histoA = fIn.Get("histo_" + s + "_" + v)
+                histoB = fInB.Get("histo_" + s + "_" + v+"B")
+                histoC = fInC.Get("histo_" + s + "_" + v+taggC)
+                histoD = fInD.Get("histo_" + s + "_" + v+taggD)
 
-                    histoA.SetName("histo_" + s + "_" + v)
-                    histoA.SetTitle(s)
-                    histoB.SetName("histo_" + s + "_" + v+"B")
-                    histoB.SetTitle(s)
+                histoA.SetName("histo_" + s + "_" + v)
+                histoA.SetTitle(s)
+                histoB.SetName("histo_" + s + "_" + v+"B")
+                histoB.SetTitle(s)
+                histoC.SetName("histo_" + s + "_" + v+taggC)
+                histoC.SetTitle(s)
+                histoD.SetName("histo_" + s + "_" + v+taggD)
+                histoD.SetTitle(s)
 
-                    print ('reading auxiliary histograms for qcd datadriven', histoA.Integral(), histoB.Integral(),  histoA.GetName(), histoB.GetName())
-                    if doRebin : 
-                        histoA_rebin = rebinHisto(histoA,bins,histoA.GetName()+'_rebin')
-                        histoA = histoA_rebin.Clone()
-                        histoB_rebin = rebinHisto(histoB,bins,histoB.GetName()+'_rebin')
-                        histoB = histoB_rebin.Clone()
-                    print ('reading auxiliary histograms for qcd datadriven after rebin', histoA.Integral(), histoB.Integral(),  histoA.GetName(), histoB.GetName(), )
+                print ('reading auxiliary histograms for qcd datadriven', histoA.Integral(), histoB.Integral(), histoC.Integral(), histoD.Integral(), histoA.GetName(), histoB.GetName(), histoC.GetName(), histoD.GetName())
+                if doRebin : 
+                    histoA_rebin = rebinHisto(histoA,bins,histoA.GetName()+'_rebin')
+                    histoA = histoA_rebin.Clone()
+                    histoB_rebin = rebinHisto(histoB,bins,histoB.GetName()+'_rebin')
+                    histoB = histoB_rebin.Clone()
+                    histoC_rebin = rebinHisto(histoC,bins,histoC.GetName()+'_rebin')
+                    histoC = histoC_rebin.Clone()
+                    histoD_rebin = rebinHisto(histoD,bins,histoD.GetName()+'_rebin')
+                    histoD = histoD_rebin.Clone()
+                print ('reading auxiliary histograms for qcd datadriven after rebin', histoA.Integral(), histoB.Integral(), histoC.Integral(), histoD.Integral(), histoA.GetName(), histoB.GetName(), histoC.GetName(), histoD.GetName())
 
 
-                    if kFactor != 1.:
-                        histoA.Scale(kFactor)
-                        #histoB.Scale(kFactor)
-                        #histoC.Scale(kFactor)
-                        #histoD.Scale(kFactor)
+                if kFactor != 1.:
+                    histoA.Scale(kFactor)
+                    #histoB.Scale(kFactor)
+                    #histoC.Scale(kFactor)
+                    #histoD.Scale(kFactor)
 
-                    data_histA.Add(histoA, -1)
-                    data_histB.Add(histoB, -1)
-                    print ('subtracted process ', s, 'integrals after', data_histA.Integral(), data_histB.Integral())
-                    #at this point we should have subtracted fro each sideband the nominal MC
-            for ibin in range(1, data_histB.GetNbinsX() + 1):
-                if data_histA.GetBinContent(ibin)< 0. :
-                    data_histA.SetBinContent(ibin,0.)
-                    data_histA.SetBinError(ibin,0.)
+                data_histA.Add(histoA, -1)
+                data_histB.Add(histoB, -1)
+                data_histC.Add(histoC, -1)
+                data_histD.Add(histoD, -1)
+                print ('subtracted process ', s, 'integrals after', data_histA.Integral(), data_histB.Integral(), data_histC.Integral(), data_histD.Integral())
+                #at this point we should have subtracted fro each sideband the nominal MC
+        for ibin in range(1, data_histB.GetNbinsX() + 1):
+            if data_histA.GetBinContent(ibin)< 0. :
+                data_histA.SetBinContent(ibin,0.)
+                data_histA.SetBinError(ibin,0.)
 
-                if data_histB.GetBinContent(ibin)< 0. :
-                    data_histB.SetBinContent(ibin,0.)
-                    data_histB.SetBinError(ibin,0.)
+            if data_histB.GetBinContent(ibin)< 0. :
+                data_histB.SetBinContent(ibin,0.)
+                data_histB.SetBinError(ibin,0.)
 
-           
-            print ('after all subtracted processes integrals ', data_histA.Integral(), data_histB.Integral())
-            normQCDv2 = float(data_histA.Integral() / data_histB.Integral())
-            #normQCDv2 = float(data_histA.Integral() *data_histB.Integral())
+            if data_histD.GetBinContent(ibin)< 0. :
+                data_histD.SetBinContent(ibin,0.)
+                data_histD.SetBinError(ibin,0.)
 
-            print ('scaling QCD by ', normQCDv2, kFactor ,  'integral vs SoW', float(data_histA.Integral() / data_histB.Integral()), float(data_histA.GetSumOfWeights() / data_histB.GetSumOfWeights()))
-            data_histB.Scale(normQCDv2*kFactor)
-            data_histB.SetName("histo_qcd_data_B_" + v)
-            data_histB.SetTitle("histo_qcd_datadriven_invpT")
+            if data_histC.GetBinContent(ibin)< 0. :
+                data_histC.SetBinContent(ibin,0.)
+                data_histC.SetBinError(ibin,0.)
 
-            fIn.cd()
-            data_histB.Write()
-
-            #### systematics
-            if doQCD : 
-                if doErr:
-                    for sy in systs:
-                        for d in dirs:
-
-                            data_histA_syst = data_histA_orig.Clone()
-                            data_histB_syst = data_histB_orig.Clone()
-
-                            for i in range(0, len(samples)):
-                                s = str(samples[i])
-                                if 'qcd' in s: continue
-                                hname = "histo_" + s + "_" + v + sy + d
-                                htemp = htemp=htempC=htempD= None
-                                htemp = fIn.Get(hname)
-                                htempB = fInB.Get(hname+"B")
-                                htemp.SetName(hname)
-                                htemp.SetTitle(s)
-                                htempB.SetName(hname+"B")
-                                htempB.SetTitle(s)
-                                print ('going to get the non-qcd and subtract', hname, s, htemp.GetName(), htemp.GetTitle())
-                                if doRebin : 
-                                    htemp_rebin = rebinHisto(htemp,bins,htemp.GetName()+'_rebin')
-                                    htemp = htemp_rebin
-                                    htempB_rebin = rebinHisto(htempB,bins,htempB.GetName()+'_rebin')
-                                    htempB = htempB_rebin
-
-                                if kFactor != 1.:
-                                    htemp.Scale(kFactor)
-
-                                data_histA_syst.Add(htemp, -1)
-                                data_histB_syst.Add(htempB, -1)
-
-                              
-
-                            for ibin in range(1, data_histA_syst.GetNbinsX() + 1):
-                                if data_histA_syst.GetBinContent(ibin)< 0. :
-                                    data_histA_syst.SetBinContent(ibin,0.)
-                                    data_histA_syst.SetBinError(ibin,0.)
-                                if data_histB_syst.GetBinContent(ibin)< 0. :
-                                    data_histB_syst.SetBinContent(ibin,0.)
-                                    data_histB_syst.SetBinError(ibin,0.)
-
-                            #normQCDs = float(data_histC_syst.Integral() / data_histD_syst.Integral())
-                            normQCDsv2 = float(data_histA_syst.Integral() / data_histB_syst.Integral())
-                            data_histB_syst.Scale(normQCDsv2*kFactor)
-                            data_histB_syst.SetName("histo_qcd_data_B_" + v + sy +d)
-                            data_histB_syst.SetTitle("histo_qcd_datadriven_invpT")
-
-                            fIn.cd()
-                            data_histB_syst.Write(data_histB_syst.GetName())
-
-                            print ('estimation of qcd datadriven B for systematics',  data_histB_syst.Integral(), sy, d, 'norm', 'normQCDsv2', normQCDsv2)
-
-                print ('estimation of qcd datadriven B',  data_histB.Integral(), )
-                #fIn.Write()
-                fIn.ls()
        
+        print ('after all subtracted processes integrals ', data_histA.Integral(), data_histB.Integral(), data_histC.Integral(), data_histD.Integral())
+        normQCD = float(data_histC.Integral() / data_histD.Integral())
+        normQCDv2 = float(data_histA.Integral() / data_histB.Integral())
+        #normQCDv2 = float(data_histA.Integral() *data_histB.Integral())
+
+        print ('scaling QCD by ', normQCD, normQCDv2, kFactor ,  'integral vs SoW', float(data_histA.Integral() / data_histB.Integral()), float(data_histA.GetSumOfWeights() / data_histB.GetSumOfWeights()))
+        data_histB.Scale(normQCDv2*kFactor)
+        data_histB.SetName("histo_qcd_data_B_" + v)
+        data_histC.SetName("histo_qcd_data_"+taggC+"_" + v)
+
+        data_histD.SetName("histo_qcd_data_"+taggD+"_" + v)
+
+        data_histC.SetTitle("histo_qcd_datadriven_invIso")
+        data_histB.SetTitle("histo_qcd_datadriven_invpT")
+        data_histD.SetTitle("histo_qcd_datadriven_invIsoinvpT")
+
+        fIn.cd()
+        data_histB.Write()
+        data_histC.Write()
+        data_histD.Write()
+
+        #### systematics
+        if doQCD : 
+            if doErr:
+                for sy in systs:
+                    for d in dirs:
+
+                        data_histA_syst = data_histA_orig.Clone()
+                        data_histB_syst = data_histB_orig.Clone()
+                        data_histC_syst = data_histC_orig.Clone()
+                        data_histD_syst = data_histD_orig.Clone()
+
+                        for i in range(0, len(samples)):
+                            s = str(samples[i])
+                            if 'qcd' in s: continue
+                            hname = "histo_" + s + "_" + v + sy + d
+                            htemp = htemp=htempC=htempD= None
+                            htemp = fIn.Get(hname)
+                            htempB = fInB.Get(hname+"B")
+                            htempC = fInC.Get(hname+taggC)
+                            htempD = fInD.Get(hname+taggD)
+                            htemp.SetName(hname)
+                            htemp.SetTitle(s)
+                            htempB.SetName(hname+"B")
+                            htempB.SetTitle(s)
+                            htempC.SetName(hname+taggC)
+                            htempC.SetTitle(s)
+                            htempD.SetName(hname+taggD)
+                            htempD.SetTitle(s)
+                            print ('going to get the non-qcd and subtract', hname, s, htemp.GetName(), htemp.GetTitle())
+                            if doRebin : 
+                                htemp_rebin = rebinHisto(htemp,bins,htemp.GetName()+'_rebin')
+                                htemp = htemp_rebin
+                                htempB_rebin = rebinHisto(htempB,bins,htempB.GetName()+'_rebin')
+                                htempB = htempB_rebin
+                                htempC_rebin = rebinHisto(htempC,bins,htempC.GetName()+'_rebin')
+                                htempC = htempC_rebin
+                                htempD_rebin = rebinHisto(htempD,bins,htempD.GetName()+'_rebin')
+                                htempD = htempD_rebin
+
+                            if kFactor != 1.:
+                                htemp.Scale(kFactor)
+
+                            data_histA_syst.Add(htemp, -1)
+                            data_histB_syst.Add(htempB, -1)
+                            data_histC_syst.Add(htempC, -1)
+                            data_histD_syst.Add(htempD, -1)
+
+                          
+
+                        for ibin in range(1, data_histA_syst.GetNbinsX() + 1):
+                            if data_histA_syst.GetBinContent(ibin)< 0. :
+                                data_histA_syst.SetBinContent(ibin,0.)
+                                data_histA_syst.SetBinError(ibin,0.)
+                            if data_histB_syst.GetBinContent(ibin)< 0. :
+                                data_histB_syst.SetBinContent(ibin,0.)
+                                data_histB_syst.SetBinError(ibin,0.)
+                            if data_histC_syst.GetBinContent(ibin)< 0. :
+                                data_histC_syst.SetBinContent(ibin,0.)
+                                data_histC_syst.SetBinError(ibin,0.)
+                            if data_histD_syst.GetBinContent(ibin)< 0. :
+                                data_histD_syst.SetBinContent(ibin,0.)
+                                data_histD_syst.SetBinError(ibin,0.)
+
+                        normQCDs = float(data_histC_syst.Integral() / data_histD_syst.Integral())
+                        normQCDsv2 = float(data_histA_syst.Integral() / data_histB_syst.Integral())
+                        data_histB_syst.Scale(normQCDsv2*kFactor)
+                        data_histB_syst.SetName("histo_qcd_data_B_" + v + sy +d)
+                        data_histC_syst.SetName("histo_qcd_data_"+taggC+"_" + v + sy +d)
+                        data_histD_syst.SetName("histo_qcd_data_"+taggD+"_" + v + sy +d)
+                        data_histC_syst.SetTitle("histo_qcd_datadriven_invIso")
+                        data_histB_syst.SetTitle("histo_qcd_datadriven_invpT")
+                        data_histD_syst.SetTitle("histo_qcd_datadriven_invIsoinvpT")
+
+                        fIn.cd()
+                        data_histB_syst.Write(data_histB_syst.GetName())
+                        data_histC_syst.Write(data_histC_syst.GetName())
+                        data_histD_syst.Write(data_histD_syst.GetName())
+
+                        print ('estimation of qcd datadriven B for systematics',  data_histB_syst.Integral(), 'C', data_histC_syst.Integral(), 'D', data_histD_syst.Integral(), sy, d, 'norm', normQCDs, 'normQCDsv2', normQCDsv2)
+
+            print ('estimation of qcd datadriven B',  data_histB.Integral(), 'C', data_histC.Integral(), 'D', data_histD.Integral())
+            #fIn.Write()
+            fIn.ls()
+            print('some infor for QCD data driven', data_histC.GetSumOfWeights(), normQCD, 'B/D', data_histB.Integral() / data_histD.Integral() , 'C/D', data_histC.Integral() / data_histD.Integral())
+   
+        if doQCD : print('some info for QCD data driven outside the loop', data_histC.GetSumOfWeights(), normQCD, 'B/D', data_histB.Integral() / data_histD.Integral() , 'C/D', data_histC.Integral() / data_histD.Integral())
     print (samples)
 
     if extractJacob : 
@@ -976,7 +1004,7 @@ if __name__ == "__main__":
                 #histo = data_histC.Clone("histo_" + s + "_" + v)
                 #histo.SetName("histo_" + s + "_" + v)
                 histo = fIn.Get("histo_qcd_data_B_" + v)
-                histo.SetTitle("QCD multijet")
+                histo.SetTitle("QCD multijet (ABCD)")
                 print('===========================datadriven QCD', histo.GetName(), histo.GetSumOfWeights())
                 #print('\033[91m' + "-------QCD INFO------------------------------------------------------------------" + '\033[0m')
 
@@ -984,12 +1012,6 @@ if __name__ == "__main__":
                 histo.SetTitle(histo.GetTitle().replace('(NLO)', ''))
             if 'dy' in s:
                 histo.SetTitle("Z/#gamma+jets")
-            if 'nlo61' in s:
-                histo.SetTitle("W+jets")
-            if 'ew' in s and 'nlo' not in s:
-                histo.SetTitle("Di/Triboson")
-            if 'top' in s :
-                histo.SetTitle("Top quark")
 
 
             #if kFactor != 1. and 'qcd' not in histo.GetName().lower():
@@ -1133,13 +1155,11 @@ if __name__ == "__main__":
     # Normalize the histogram
     integral_with_width = h.Integral("width")  # Calculate integral considering bin widths
 
-    #h.Scale(1.0 / integral_with_width)  # Normalize by the integral
+    h.Scale(1.0 / integral_with_width)  # Normalize by the integral
 
     #ahisto_norm = histo.Clone()
     #histo_norm.Scale(1./histo.Integral("width"))
     mc_stack_norm.Add(h)
-
-    
 
     if not doSyst :
         mc_jesup = mc_histo
@@ -1164,20 +1184,18 @@ if __name__ == "__main__":
     # print data_hist.Integral(), mc_histo.Integral(), mc_jesup.Integral(),
     # mc_jesdown.Integral()
     logcase = [0, 1]
-    #logcase=[0]
+    # logcase=[0]
 
     if doNormPlot:
         for ilog in logcase:
             isLog = ilog
             plot_varr = Canvas.Canvas( "test/paperv2/%s_%s%s%s%s_doQCD_%s%s_%sLog_norm" % (str( opts.varr), puname, channel, puname, str(era), str( int(doQCD)), str( opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])
 
-            mc_stack_norm = mc_stack.Clone()
-            #normalize_thstack_to_max(mc_stack_norm)
-            normalize_thstack_per_bin(mc_stack_norm)
+
             plot_varr.addStack(mc_stack_norm, "hist", 1, 1)
             data_zero = data_hist_rebin.Clone()
-            #data_zero.Reset()
-            #plot_varr.addHisto( data_zero, "E,SAME", "Data", "PL", r.kBlack, 1, 0)
+            data_zero.Reset()
+            plot_varr.addHisto( data_zero, "E,SAME", "Data", "PL", r.kBlack, 1, 0)
             plot_varr.saveRatioGjets( 1, 1, isLog, lumi, data_hist_rebin, mc_histo, mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclup, mc_uncldown, mc_puup, mc_pudown, mc_idup, mc_iddown, varTitle, option + "_norm", run_str)
 
 

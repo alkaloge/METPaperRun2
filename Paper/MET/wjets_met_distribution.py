@@ -33,6 +33,116 @@ import include.Rounder as Rounder
 #from METCor import correctedMET
 
 
+ptlcut_dict = {
+    'pt1lt30': {
+        '2018': {'MuNu': '< 30. ', 'ElNu': '< 30. '},
+        '2017': {'MuNu': '< 30. ', 'ElNu': '< 30. '},
+        '2016': {'MuNu': '< 30. ', 'ElNu': '< 30. '},
+        '2016preVFP': {'MuNu': '< 30. ', 'ElNu': '< 30. '},
+        '2016postVFP': {'MuNu': '< 30. ', 'ElNu': '< 30. '}
+    },
+    'pt1gt30': {
+        '2018': {'MuNu': '>= 30. ', 'ElNu': '>= 30. '},
+        '2017': {'MuNu': '>= 30. ', 'ElNu': '>= 30. '},
+        '2016': {'MuNu': '>= 30. ', 'ElNu': '>= 30. '},
+        '2016preVFP': {'MuNu': '>= 30. ', 'ElNu': '>= 30. '},
+        '2016postVFP': {'MuNu': '>= 30. ', 'ElNu': '>= 30. '}
+    },
+    'pt1lt35': {
+        '2018': {'MuNu': '< 35. ', 'ElNu': '< 35. '},
+        '2017': {'MuNu': '< 35. ', 'ElNu': '< 35. '},
+        '2016': {'MuNu': '< 35. ', 'ElNu': '< 35. '},
+        '2016preVFP': {'MuNu': '< 35. ', 'ElNu': '< 35. '},
+        '2016postVFP': {'MuNu': '< 35. ', 'ElNu': '< 35. '}
+    },
+    'pt1gt35': {
+        '2018': {'MuNu': '>= 35. ', 'ElNu': '>= 35. '},
+        '2017': {'MuNu': '>= 35. ', 'ElNu': '>= 35. '},
+        '2016': {'MuNu': '>= 35. ', 'ElNu': '>= 35. '},
+        '2016preVFP': {'MuNu': '>= 35. ', 'ElNu': '>= 35. '},
+        '2016postVFP': {'MuNu': '>= 35. ', 'ElNu': '>= 35. '}
+    },
+
+    'pt1lt40': {
+        '2018': {'MuNu': '< 40. ', 'ElNu': '< 40. '},
+        '2017': {'MuNu': '< 40. ', 'ElNu': '< 40. '},
+        '2016': {'MuNu': '< 40. ', 'ElNu': '< 40. '},
+        '2016preVFP': {'MuNu': '< 40. ', 'ElNu': '< 40. '},
+        '2016postVFP': {'MuNu': '< 40. ', 'ElNu': '< 40. '}
+    },
+    'pt1gt40': {
+        '2018': {'MuNu': '>= 40. ', 'ElNu': '>= 40. '},
+        '2017': {'MuNu': '>= 40. ', 'ElNu': '>= 40. '},
+        '2016': {'MuNu': '>= 40. ', 'ElNu': '>= 40. '},
+        '2016preVFP': {'MuNu': '>= 40. ', 'ElNu': '>= 40. '},
+        '2016postVFP': {'MuNu': '>= 40. ', 'ElNu': '>= 40. '}
+    },
+
+    'pt1lt45': {
+        '2018': {'MuNu': '< 45. ', 'ElNu': '< 45. '},
+        '2017': {'MuNu': '< 45. ', 'ElNu': '< 45. '},
+        '2016': {'MuNu': '< 45. ', 'ElNu': '< 45. '},
+        '2016preVFP': {'MuNu': '< 45. ', 'ElNu': '< 45. '},
+        '2016postVFP': {'MuNu': '< 45. ', 'ElNu': '< 45. '}
+    },
+    'pt1gt45': {
+        '2018': {'MuNu': '>= 45. ', 'ElNu': '>= 45. '},
+        '2017': {'MuNu': '>= 45. ', 'ElNu': '>= 45. '},
+        '2016': {'MuNu': '>= 45. ', 'ElNu': '>= 45. '},
+        '2016preVFP': {'MuNu': '>= 45. ', 'ElNu': '>= 45. '},
+        '2016postVFP': {'MuNu': '>= 45. ', 'ElNu': '>= 45. '}
+    },
+
+    'pt1high': {
+        '2018': {'MuNu': '>= 35. ', 'ElNu': '>= 40. '},
+        '2017': {'MuNu': '>= 35. ', 'ElNu': '>= 40. '},
+        '2016': {'MuNu': '>= 35. ', 'ElNu': '>= 30. '},
+        '2016preVFP': {'MuNu': '>= 35. ', 'ElNu': '>= 30. '},
+        '2016postVFP': {'MuNu': '>= 35. ', 'ElNu': '>= 30. '}
+    },
+    'pt1low': {
+        '2018': {'MuNu': '< 35. ', 'ElNu': '< 40. '},
+        '2017': {'MuNu': '< 35. ', 'ElNu': '< 40. '},
+        '2016': {'MuNu': '< 35. ', 'ElNu': '< 30. '},
+        '2016preVFP': {'MuNu': '< 35. ', 'ElNu': '< 30. '},
+        '2016postVFP': {'MuNu': '< 35. ', 'ElNu': '< 30. '}
+    }
+}
+
+
+def get_ptlcut(tagname, era, channel):
+    print ('trying to extract the ptlcut==================', tagname, era, channel)
+    if 'pt1high' in tagname:
+        key = 'pt1high'
+    elif 'pt1low' in tagname:
+        key = 'pt1low'
+    elif 'pt1lt30' in tagname:
+        key = 'pt1lt30'
+    elif 'pt1gt30' in tagname:
+        key = 'pt1gt30'
+
+    elif 'pt1lt35' in tagname:
+        key = 'pt1lt35'
+    elif 'pt1gt35' in tagname:
+        key = 'pt1gt35'
+
+    elif 'pt1lt40' in tagname:
+        key = 'pt1lt40'
+    elif 'pt1gt40' in tagname:
+        key = 'pt1gt40'
+
+    elif 'pt1lt45' in tagname:
+        key = 'pt1lt45'
+    elif 'pt1gt45' in tagname:
+        key = 'pt1gt45'
+    else:
+        return "Unknown cut"
+
+       
+    return ptlcut_dict.get(key, {}).get(era, {}).get(channel, "Unknown cut")
+
+
+
 def makeUParaOverQt(met, phi, boson, boson_phi):
     uParaOverQt = ( "((( -" + met + "*cos(" + phi + " ) " + " - " + boson + "*cos( " + boson_phi + "))* " + boson + "*cos( " + boson_phi + " )+(- " + met + "*sin( " + phi + " )- " + boson + "*sin(" + boson_phi + " ))* " + boson + "*sin( " + boson_phi + " ))/" + boson + ")/" + boson)
     return uParaOverQt
@@ -169,24 +279,9 @@ if __name__ == "__main__":
             #ttDatasets = ['ST_s-channel_antitop', 'ST_t-channel_antitop', 'ST_tW_antitop', 'ST_tW_top', 'TTTo2L2Nu', 'TTToHadronic', 'TTToSemiLeptonic']
             dyDatasets = ['DYJetsToLLM50', 'DYJetsToLLM10to50']
             ewDatasets = ['WW', 'WWW', 'WZZ']
-            ewDatasets = [
-                'WW',
-                'WZ',
-                'WZZ',
-                'WWW',
-                'ZZTo2L2Nu',
-                'ZZTo2Q2L',
-                'ZZTo4L',
-                'WGToLNuG']
+            ewDatasets = [ 'WW', 'WZ', 'WZZ', 'WWW', 'ZZTo2L2Nu', 'ZZTo2Q2L', 'ZZTo4L', 'WGToLNuG']
             if '2016' in era:
-                ewDatasets = [
-                    'WW',
-                    'WZ',
-                    'WWW',
-                    'ZZTo2L2Nu',
-                    'ZZTo2Q2L',
-                    'ZZTo4L',
-                    'WGToLNuG']
+                ewDatasets = [ 'WW', 'WZ', 'WWW', 'ZZTo2L2Nu', 'ZZTo2Q2L', 'ZZTo4L', 'WGToLNuG']
             # , 'W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu']
             ewk1Datasets = ['W1JetsToLNu']
             # , 'W1JetsToLNu','W2JetsToLNu','W3JetsToLNu','W4JetsToLNu']
@@ -779,6 +874,9 @@ if __name__ == "__main__":
                 ptlcut = ' >=40. '
             if 'pt1lt40' in tagname :
                 ptlcut = ' < 40. '
+ 
+                    
+            if 'pt1incl' not in tagname : ptlcut = get_ptlcut(tagname, era, channel)
 
             #if 'boson_transm' in str(givein.lower()):
             #    wtmasscut = '>=0.'
@@ -812,28 +910,35 @@ if __name__ == "__main__":
                 btagcut = "T"
             isocut = '<=0.15'
             if 'isolt0p01' in tagname:
-                isocut = '<= .01'
+                isocut = '<= .01 '
             if 'isolt0p005' in tagname:
-                isocut = '<= .005'
+                isocut = '<= .005 '
             if 'isolt0p05' in tagname:
                 isocut = '<= .05'
-            if 'isolt0p1' in tagname:
-                isocut = '<= .1'
-            if 'isogt0p1' in tagname:
-                isocut = '> .1'
+            if 'isolt0p1' in tagname and 'isolt0p15' not in tagname:
+                isocut = '<= .1 '
+            if 'isogt0p1' in tagname and 'isogt0p15' not in tagname:
+                isocut = '> .1 '
             if 'isogt0p15' in tagname:
-                isocut = '> .15'
+                isocut = '> .15 '
             if 'isolt0p15' in tagname:
-                isocut = '<= .15'
+                isocut = '<= .15 '
             if 'njets' in str(givein.lower()):
-                jetcut = '>=0'
+                jetcut = '>=0 '
             if 'iso_1' in str(givein.lower()):
-                isocut = '<0.5'
-            isocut += "&& iso_1>=0."
+                isocut = '<0.5 '
+
+            isocut += "&& iso_1>=0. "
             tagg = ''
+            if 'pt1low' in tagname and 'isolt' in tagname: tagg = 'B'
+            if 'pt1high' in tagname and 'isogt' in tagname: tagg = 'C'
+            if 'pt1low' in tagname and 'isogt' in tagname: tagg = 'D'
+
             if 'pt1lt' in tagname and 'isolt' in tagname: tagg = 'B'
             if 'pt1gt' in tagname and 'isogt' in tagname: tagg = 'C'
             if 'pt1lt' in tagname and 'isogt' in tagname: tagg = 'D'
+
+            if 'pt1incl' in tagname and 'isogt' in tagname: tagg = 'B'
 
             # ACTUAL CUTS
             #jetCutMu = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1  && fabs(d0_1[0])<0.045 && fabs(dZ_1[0])<0.2 &&  fabs(q_1[0])==1 && iso_1[0] <= .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s}  && njets{6:s}[0]  {1:s} && {4:s}METCorGoodboson_transm{3:s}[0]> {2:s} ".format(docat, jetcut, wtmasscut, extracut, puppicut, btagcut, njetsSyst)
@@ -1420,8 +1525,7 @@ if __name__ == "__main__":
                             tmp_full.SetTitle("Single-Top quark")
 
                         getattr(reg, attr).setHisto(tmp_full, 'MC', 'central')
-                        tmp_histo = copy.deepcopy(
-                            tmp_full.Clone(var + reg.name))
+                        tmp_histo = copy.deepcopy( tmp_full.Clone(var + reg.name))
                         fOut.cd()
                         tmp_histo.Write('histo_' + treename + '_' + m+tagg)
 
@@ -1449,29 +1553,18 @@ if __name__ == "__main__":
                             tmp_histo.GetName(),
                             tmp_histo.GetEntries())
 
-                        d = {
-                            '{0:s} tmp_full'.format(
-                                tmp_full.GetName()): tmp_full.Integral()}
+                        d = { '{0:s} tmp_full'.format( tmp_full.GetName()): tmp_full.Integral()}
                         yields.update(d)
                         d = {treename: tmp_full.Integral()}
                         yields.update(d)
 
-                        if doHighMetValues:
-                            highMet = tmp_histo.FindLastBinAbove(0, 1)
-                            print("high metbin: ", highMet)
 
                         if not mc_histo:
                             mc_histo = copy.deepcopy(tmp_histo)
-                            print(
-                                'creating copy at mc_histo',
-                                mc_histo.GetName(),
-                                mc_histo.Integral())
+                            print( 'creating copy at mc_histo', mc_histo.GetName(), mc_histo.Integral())
                         else:
                             mc_histo.Add(tmp_histo, 1.)
-                            print(
-                                'adding copy at mc_histo',
-                                mc_histo.GetName(),
-                                mc_histo.Integral())
+                            print( 'adding copy at mc_histo', mc_histo.GetName(), mc_histo.Integral())
 
             SetOwnership(mc_stack, 0)
             if len(mcTrees) > 0:
@@ -1492,51 +1585,29 @@ if __name__ == "__main__":
                     f = r.TF1("f", str(mc_histo.Integral()) + "*2*TMath::Prob(x, 2)", 1, 40)
                     plot_var = Canvas.Canvas( "test/paper/%s_%s%s" % (var, reg.name, channel), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])
                 else:
-                    if doNPV:
-                        puReweight = ''
-                        puname = ''
-                    else:
-                        puReweight = '#Tr'
-                        puname = 'ntiReweight'
+                    puReweight = ''
+                    puname = ''
                     plot_var = Canvas.Canvas( "test/paper/%s_%s%s%s%s_doQCD_%s%s_%sLog" % (str( opts.varr), reg.name, channel, puname, str(era), str( int(doQCD)), str( opts.ExtraTag), str(isLog)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])
-                    #plot_var = Canvas.Canvas("test/paper/%s_%s%s%s_doQCD_%s%s"%(str(opts.varr), channel, puname, str(era), str(int(doQCD)), str(opts.ExtraTag)), "png,root,pdf,C", leg[0], leg[1], leg[2], leg[3])
-                # print "data mean ", data_hist.GetMean()
-                # pprint 'stacking histograms...', mc_stack.GetIntegral()
-                if met.index(m) == 0 and (
-                        'up' in Variable.lower() or 'down' in Variable.lower()):
+                if met.index(m) == 0 and ( 'up' in Variable.lower() or 'down' in Variable.lower()):
                     data_hist = mc_histo
                 plot_var.addStack(mc_stack, "hist", 1, 1)
                 # fOut.cd()
-                # mc_stack.Write(htitle)
-                #plot_var.addLatex (0.65, 0.55, 'Uncert.')
                 if isSig:
-                    plot_var.addHisto(
-                        f, "E,SAME", "#chi^{2} d.o.f. 2", "L", r.kBlack, 1, 0)
+                    plot_var.addHisto( f, "E,SAME", "#chi^{2} d.o.f. 2", "L", r.kBlack, 1, 0)
                 if not data_hist:
                     data_hist = mc_histo
-                plot_var.addHisto(
-                    data_hist, "E,SAME", "Data", "PL", r.kBlack, 1, 0)
+                plot_var.addHisto( data_hist, "E,SAME", "Data", "PL", r.kBlack, 1, 0)
 
                 if noRatio:
                     plot_var.save(1, 1, lumi, "", "", varTitle, option)
                 else:
                     #data_hist = mc_histo
                     #met = ['MET_T1_pt', 'MET_T1_ptJESUp', 'MET_T1_ptJESDown','MET_T1_ptJERUp', 'MET_T1_ptJERUp', 'MET_T1_ptUnclusteredUp', 'MET_T1_ptUnclusteredUp']
-                    #plot_var.saveRatio(1,1, isLog, lumi, data_hist, mc_histo, mc_up, mc_down, mc_unclUp, mc_unclDown, varTitle , option, run_str)
-
-                    # for i in range(1, mc_histo.GetNbinsX()+1) :
-                    #	mc_histo.SetBinError(i, mc_histo.GetBinError(i)*0.25)
-                    #mc_jerup=mc_histo; mc_jerdown = mc_histo; mc_jesup = mc_histo; mc_jesdown = mc_histo;mc_unclUp = mc_histo; mc_unclDown = mc_histo
                     mc_jerup = mc_histo
                     mc_jerdown = mc_histo
 
-                    #plot_var.saveRatio( 1, 1, isLog, lumi, data_hist, mc_histo, mc_jerup, mc_jerdown, mc_jesup, mc_jesdown, mc_unclUp, mc_unclDown, varTitle, option, run_str)
-                    #plot_var.saveRatio(1,1, isLog, lumi, data_hist, mc_histo, mc_up, mc_down, mc_jesup, mc_jesdown, mc_unclUp, mc_unclDown, varTitle+"Int data"+str(data_hist.Integral()) , option, run_str)
             del plot_var
             del Variable
             print(yields)
             time.sleep(0.1)
-            print(
-                color.blue +
-                '********************************************DONE***************************************************' +
-                color.end)
+            print( color.blue + '********************************************DONE***************************************************' + color.end)

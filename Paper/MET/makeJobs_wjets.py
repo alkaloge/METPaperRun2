@@ -3,30 +3,24 @@ import os
 allsyst = [    "Nominal",    "JESUp",    "JESDown",    "JERUp",    "JERDown",    "UnclusteredUp",    "UnclusteredDown",    "PUUp",    "PUDown",    "IDUp",    "IDDown"]
 allsyst = [    "Nominal",    "JESUp",    "JESDown", "UnclusteredUp",    "UnclusteredDown",    "PUUp",    "PUDown",    "IDUp",    "IDDown"]
 #allsyst = [ "JESUp",    "JESDown",   "UnclusteredUp",    "UnclusteredDown",    "PUUp",    "PUDown",    "IDUp",    "IDDown"]
-#allsyst = ["Nominal"]
+allsyst += ["JERUp", "JERDown"]
 #allsyst = ["JESUp", "JESDown", "JERUp", "JERDown", "UnclusteredUp", "UnclusteredDown", "PUUp", "PUDown", "IDUp", "IDDown"]
+#allsyst = [ "UnclusteredUp", "UnclusteredDown"]
 samples = ["data",    "qcd",    "dy",    "top",    "ew",    "ewk",    "ewknlo61",    "ewkincl",    "ewkht"]
 samples = ["data", "qcd", "dy", "top", "ew",  "ewknlo61"]
-#samples = ["qcd", "dy", "top", "ew", "ewk", "ewknlo61"]
-#samples = ["qcd", "dy", "top", "ew", "ewk", "ewknlo61"]
-#samples=["qcd", "dy", "top", "ew", "ewknlo61", "ewkincl"]
-#samples=["data", "qcd", "dy", "top", "ew", "ewk",  "ewkincl"]
-#samples=["qcd", "dy", "top", "ew", "ewk", "ewknlo61", "ewkincl", "ewkht"]
-#samples=["ewk"]
+#samples = ["qcd", "dy", "top", "ew",  "ewknlo61"]
+#samples=["data"]
 channels = ["MuNu", "ElNu"]
-channels = ["MuNu"]
+#channels = ["MuNu"]
 #years = ["2016preVFP", "2016postVFP"]
 years = ["2017", "2016postVFP", "2018"]
 #years = ["2016preVFP", "2016postVFP"]
-years = ["2016preVFP", "2016postVFP"]
-#years = ["2018A","2018B", "2018C","2018D"]
 years = ["2018", "2017", "2016preVFP", "2016postVFP"]
-#years = ["2018", "2016preVFP", "2016postVFP"]
 years += ["2018", "2017"]
 years = ["2016preVFP", "2016postVFP","2017", "2018"]
 #years = ["2016preVFP", "2016postVFP","2017"]
-#years += ["2017","2018"]
-years = ["2018"]
+#years = ["2016preVFP", "2016postVFP"]
+#years = ["2018"]
 extra = ""
 
 
@@ -68,14 +62,18 @@ varsincl = ["iso_1", "METCorSmearboson_pt", "METCorboson_pt", "PuppiMETCorboson_
 varsincl += ["METCorSmearboson_m", "METCorboson_m", "PuppiMETCorboson_m"]
 varsincl = ["METCorSmearboson_mt", "METCorboson_mt", "PuppiMETCorboson_mt"]
 vars=varsincl
-#filtered_list = [item for item in vars if "CorGood" not in item]
-#vars=filtered_list
 vars =[ "RawMET_pt", "RawPuppiMET_pt", "MET_T1_pt", "MET_T1Smear_pt",  "METCor_T1_pt",  "METCor_T1Smear_pt", "PuppiMETCor_pt"]
 vars =[ "METCor_T1_pt",  "METCor_T1Smear_pt", "PuppiMETCor_pt"]
 vars = ["METCorSmearboson_mt", "METCorboson_mt", "PuppiMETCorboson_mt"]
 vars = ["METCorSmearboson_pt", "METCorboson_pt", "PuppiMETCorboson_pt"]
-vars = ["METCorboson_mt"]
+#vars = ["METCorboson_mt"]
+vars = ["METCorboson_mt", "METCorboson_pt",  "METCor_T1_pt", "PuppiMETCor_pt", "PuppiMETCorboson_mt", "PuppiMETCorboson_pt"]
+vars += ["METCorSmearboson_pt", "METCorSmearboson_mt", "METCorSmearboson_phi"]
+vars=varspaper
 IDWP = "_cutbased"
+#filtered_list = [item for item in vars if "Smear" in item]
+#vars=filtered_list
+
 
 #IDWP = "_mvaid"
 alljetcuts = ["njetsgeq0", "njetsgt0", "njetseq0"]
@@ -96,16 +94,35 @@ B = "isolt0p15_mtmasslt80"
 D = "isogt0p15_mtmasslt80"
 C = "isogt0p15_mtmassgt80"
 
-SRincl = "isolt0p15_mtmassincl_pt1gt35"
-B = "isolt0p15_mtmassincl_pt1lt35"
-C = "isogt0p15_mtmassincl_pt1gt35"
-D = "isogt0p15_mtmassincl_pt1lt35"
+SRincl = "isolt0p15_mtmassincl"
+
+C = "isogt0p15_mtmassincl_pt1high"
+D = "isogt0p15_mtmassincl_pt1low"
+
+SRinclpt = "isolt0p15_mtmassincl_pt1incl"
+#SRinclpt = "isoincl_mtmassincl_pt1incl"
+Bpt = "isogt0p15_mtmassincl_pt1incl"
+
+SRinclptl = "isolt0p15_mtmassincl_pt1incl"
+#SRinclptl = "isoincl_mtmassincl_pt1incl"
+Bptl = "isogt0p15_mtmassincl_pt1incl"
+'''
+pT="40"
+A = SR.replace("pt1high", "pt1gt"+pT)
+B = B.replace("pt1low", "pt1lt"+pT)
+C = C.replace("pt1high", "pt1gt"+pT)
+D = D.replace("pt1low", "pt1lt"+pT)
+'''
+
+SR = "isolt0p15_mtmassincl_pt1high"
+B = "isolt0p15_mtmassincl_pt1low"
+
 #SR = "isolt0p01_mtmassgt80"
 #SR = C * B/D
 btag = "nbtagl" + IDWP + "_varbins_vetolept_" + SR
 btag = "nbtagl" + IDWP + "_longbins_vetolept_" + SR
 
-btag = "nbtagl" + IDWP + "_openbins_vetolept_" + D
+btag = "nbtagl" + IDWP + "_openbins_vetolept_" + B
 # nbtagl_cutbased_varbins_vetolept
 
 OneByOne = False
@@ -196,11 +213,9 @@ if True:
                                 # continue
                                 if sy == "Nominal":
                                     sy = ""
-                                if ('Photon' in vr or 'Raw' in vr or 'iso_1' in vr or 'ignificance' in vr) and (
-                                        'JE' in sy or 'Uncl' in sy):
+                                if ('Photon' in vr or 'Raw' in vr or 'iso_1' in vr or 'ignificance' in vr) and ( 'JE' in sy or 'Uncl' in sy):
                                     continue
-                                script_file_path = 'Jobs_wjets' + IDWP + '/jobb_' + \
-                                    str(yr) + '_' + vr + sy + '_' + ss + '_' + ch + '.sh'
+                                script_file_path = 'Jobs_wjets' + IDWP + '/jobb_' + str(yr) + '_' + vr + sy + '_' + ss + '_' + ch + '.sh'
                                 jdl = 'jobb_' + \
                                     str(yr) + '_' + vr + sy + '_' + ss + '_' + ch + '.jdl'
                                 rootfile = 'plotS_' + \

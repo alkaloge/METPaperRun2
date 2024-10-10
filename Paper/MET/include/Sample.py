@@ -116,24 +116,26 @@ class Sample:
             # patterns as needed
             if 'MuNu' in self.channel or 'MuMu' in self.channel or '2Mu2Nu' in self.channel:
                 file_patterns = "/*file*Muons.root"  # Adjust these patterns as needed
+                file_patterns = "/*Muons*chunk*.root"  # Adjust these patterns as needed
             if 'ElNu' in self.channel or 'ElEl' in self.channel or '2El2Nu' in self.channel:
                 file_patterns = "/*file*Electrons.root"  # Adjust these patterns as needed
+                file_patterns = "/*Electrons*chunk*.root"  # Adjust these patterns as needed
             if 'Gjets' in self.channel:
                 file_patterns = "/*Gjets.root"  # Adjust these patterns as needed
 
             if 'Run' in file_pattern:
                 file_patterns = '/all*Run*_*root'
-            print(
-                "file_patterns",
-                file_patterns,
-                isLocal,
-                file_pattern,
-                location,
-                self.location)
+                file_patterns = "/*chunk*.root"  # Adjust these patterns as needed
             # Add all matching files to the TChain
             file_location = location + file_patterns
             if not isLocal:
-                file_location = "root://cmseos.fnal.gov//" + location + file_patterns
+                location=location.replace('/eos/uscms','')
+                file_location = "root://cmseos.fnal.gov/" + location + file_patterns
+                #file_location = "root://cmsxrootd.fnal.gov/" + location + file_patterns
+            print( "file_patterns", file_patterns, isLocal, file_pattern, location, self.location)
+            #axrdfs root://cmseos.fnal.gov ls -u location | grep file_patterns
+            #file_patterns /*file*Electrons.root False WJetsToLNu_NLO61_2018_ElNu/ /store/group/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_NLO_2018 /eos/uscms/store/user/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/WJetsToLNu_NLO_2018
+            #hadd test.root $(xrdfs root://cmseos.fnal.gov ls -u /store/user/lpcsusyhiggs/ntuples/nAODv9/Wjets_T1/DYJetsToLLM10to50_2017/ | grep file_patterns)
 
             # for pattern in file_patterns:
             chain_events.Add(file_location)
@@ -800,7 +802,8 @@ class Sample:
             if 'ElEl' in channel or 'MuMu' in channel or '2Nu' in channel:
                 # print 'there you are', channel
                 if 'MuMu' in channel or '2Mu2Nu' in channel:
-                    cut = cut + "* ( " + "TrigSF1[0] " + " )" + "* ( " + "TrigSF2[0] " + " )"
+                    #cut = cut + "* ( " + "TrigSF1[0] " + " )" + "* ( " + "TrigSF2[0] " + " )"
+                    cut = cut + "* ( " + "TrigSF1[0] + TrigSF2[0] - TrigSF1[0] * TrigSF2[0]" + " )"
                 if 'isoup' not in var.lower() and 'isodown' not in var.lower():
                     cut = cut + "* ( " + "IsoSF1[0] " + " )" + "* ( " + "IsoSF2[0] " + " )"
                 if 'isoup' in var.lower():
@@ -1232,8 +1235,10 @@ class Tree:
                     if 'onebin' in options:
                         nbin = range(50, 200, 1)
 
-        if 'openbin' in options and '_pt' in var :
-            nbin = range(0, 1000,1)
+        if 'openbin' in options :
+            if  '_pt' in var : nbin = range(0, 1000,1)
+            if  'boson_mt' in var : nbin = range(0, 1000,1)
+            if  'pt_1' in var : nbin = range(0, 400,1)
 
         if 'Photon_r9' in var:
             nbin = arange(0.8, 1.05, 0.01)

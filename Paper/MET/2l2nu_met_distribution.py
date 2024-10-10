@@ -341,7 +341,7 @@ if __name__ == "__main__":
             nLep = 'nMuon'
 
             jetcut='0'
-            metcut='80'
+            metcut='>= 0. '
             extracut=''
             njetsSyst=''
             ispuppimet=''
@@ -364,6 +364,7 @@ if __name__ == "__main__":
             if 'metlt100' in tagname in tagname: metcut=' < 100.'
        
             if '_transm' in str(givein.lower()): metcut='>=0.'
+            if '_mt' in str(givein.lower()): metcut='>=0.'
             
             if 'jesup' in givein.lower() : 
                 extracut = 'JESUp'
@@ -381,6 +382,7 @@ if __name__ == "__main__":
             if 'jerdown' in givein.lower() : 
                 extracut = 'JERDown'
                 njetsSyst = '_jerDown'
+
 
             if 'puppi' in str(givein.lower()) : ispuppimet='Puppi'
             if 'btagm' in tagname : btagcut="M"
@@ -407,14 +409,14 @@ if __name__ == "__main__":
             EventCutsEl = " &&  cat=={0:s} && nElectron[0]==2   &&  !(fabs(eta_1[0])>1.4442 &&  fabs(eta_1[0])<1.5660) &&  !(fabs(eta_2[0])>1.4442 &&  fabs(eta_2[0])<1.5660)  &&  Electron_convVeto_1[0] > 0 && Electron_lostHits_1[0]<{1:s} && Electron_convVeto_2[0] > 0 && Electron_lostHits_2[0]<{1:s}   ".format(docat, losthits )
 
             jetsCut = " && njets{0:s}[0] {1:s} ".format(njetsSyst, jetcut)
-            otherCut = "&& {0:s}METCorGood_T1_pt{1:s}[0]  {2:s} ".format(ispuppimet, extracut, metcut)
+            otherCut = "&& {0:s}METCor_T1_pt{1:s}[0]  {2:s} ".format(ispuppimet, extracut, metcut)
 
 
-            EventCutsInvIso = " (nMuon==1 && pt_1[0]> 29 && (isGlobal_1[0]>0 || isTracker_1[0]>0) && fabs(eta_1[0])<2.4 && fabs(dZ_1[0])<0.2 && fabs(d0_1[0])<0.045 && isTrig_1[0]==2 &&  tightId_1[0] >0   &&  fabs(q_1[0])==1 &&  iso_1[0] > .15 && mediumPromptId_1[0]>0 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets[0]<20 && METCorGood_T1_pt[0]>0 && isStandalone_1[0]>0 && nbtagL[0]==0"
-            EventCutsMuInvIso = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1 &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} &&  nbtag{5:s}[0]==0 &&njets[0]> {1:s} && {4:s}METCorGood_T1_pt{3:s}[0]> {2:s} ".format(docat, jetcut, metcut, extracut, ispuppimet, btagcut)
+            EventCutsInvIso = " (nMuon==1 && pt_1[0]> 29 && (isGlobal_1[0]>0 || isTracker_1[0]>0) && fabs(eta_1[0])<2.4 && fabs(dZ_1[0])<0.2 && fabs(d0_1[0])<0.045 && isTrig_1[0]==2 &&  tightId_1[0] >0   &&  fabs(q_1[0])==1 &&  iso_1[0] > .15 && mediumPromptId_1[0]>0 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && njets[0]<20 && METCor_T1_pt[0]>0 && isStandalone_1[0]>0 && nbtagL[0]==0"
+            EventCutsMuInvIso = " (nMuon[0]==1 && Flag_BadPFMuonDzFilter[0]==1 &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} &&  nbtag{5:s}[0]==0 &&njets[0]> {1:s} && {4:s}METCor_T1_pt{3:s}[0]> {2:s} ".format(docat, jetcut, metcut, extracut, ispuppimet, btagcut)
 
             #EventCutsInvIso = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPV[0]>2 && cat=={0:s} && nbtagL[0]==0".format(docat)
-            EventCutsElInvIso = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && nbtag{6:s}[0]==0 &&njets[0]> {1:s} && {4:s}METCorGood_T1_pt{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, metcut, extracut, ispuppimet, losthits,btagcut)
+            EventCutsElInvIso = " (nElectron[0]==1 && Flag_BadPFMuonDzFilter[0]==1  &&  fabs(q_1[0])==1 && iso_1[0] > .15 && nPVndof[0]>4 && fabs(PVz[0])<26 && (PVy[0]*PVy[0] + PVx[0]*PVx[0])<3 && nPVGood[0]>2 && cat=={0:s} && nbtag{6:s}[0]==0 &&njets[0]> {1:s} && {4:s}METCor_T1_pt{3:s}[0] > {2:s} && Electron_convVeto[0] > 0 && Electron_lostHits[0]<{5:s} ".format(docat, jetcut, metcut, extracut, ispuppimet, losthits,btagcut)
 
             EventCuts= EventCutsMu
             EventCutsInvIso= EventCutsMuInvIso
@@ -444,6 +446,8 @@ if __name__ == "__main__":
             if 'nbtagt' in tagname :  EventCuts  = EventCuts + " && nbtagT[0]== 0.0 "
             if 'isvbf' in tagname :  EventCuts  = EventCuts + " && isVBF[0] > 0 "
             if 'isnotvbf' in tagname :  EventCuts  = EventCuts + " && isVBF[0] < 1 "
+
+            if 'ishem' not in tagname: EventCuts = EventCuts + ' && isHEM < 1 '
             if 'PuppiMET' in EventCuts : 
                 newj = EventCuts.replace("T1_pt","pt")
                 EventCuts=newj
@@ -465,7 +469,7 @@ if __name__ == "__main__":
                 #met = ['TMath::Sqrt(     )']
                 #met = ['njets']
                 met = ['DphilMET']
-                met = ['METCorGoodboson_transm']
+                met = ['METCorboson_mt']
                 met = ['METWmass']
                 met = ['DphilMET']
                 met = ['DphiWMET']
@@ -669,7 +673,7 @@ if __name__ == "__main__":
                         tmp_histo.SetName('histo_'+treename+'_'+m)
                         tmp_histo.Write('histo_'+treename+'_'+m)
 
-                        for i in range(1,tmp_histo.GetNbinsX()+1) : print(('bin i', i, tmp_histo.GetBinContent(i), tmp_histo.GetName(), tmp_histo.Integral()))
+                        #for i in range(1,tmp_histo.GetNbinsX()+1) : print(('bin i', i, tmp_histo.GetBinContent(i), tmp_histo.GetName(), tmp_histo.Integral()))
                         tmp_histo.GetXaxis().SetTitle(varTitle)
                         mc_stack.Add(tmp_histo)
                         print(('some info on mcstack that I added', mc_stack.GetNhists(), mc_stack.GetName(), 'from ', tmp_histo.GetName(), tmp_histo.Integral()))
